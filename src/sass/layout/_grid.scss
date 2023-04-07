@@ -1,0 +1,127 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  &__row {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 25px;
+    @include mobile {
+      flex-direction: column;
+      transition: all 0.3s ease;
+      gap: 5px;
+    }
+    &__col {
+      width: 100%;
+      background-color: $color-colum-background;
+      padding: 10px 15px;
+      border-radius: 20px;
+
+      &__label {
+        font-size: 15px;
+        color: $color-subtitle;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+      &__input {
+        border-radius: 20px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        input,
+        textarea,
+        select {
+          border: none;
+          width: 100%;
+          max-width: 100%;
+          font-size: 15px;
+          border-radius: 20px;
+          padding: 5px 10px;
+          box-sizing: border-box;
+          &:focus {
+            border-color: blue;
+            box-shadow: 0px 0px 5px blue;
+            outline: none; /* Remove default outline */
+          }
+          &[type="radio"] {
+            width: 25px;
+            &:focus {
+              border-color: none;
+              box-shadow: none;
+              outline: none;
+            }
+          }
+          &[type="checkbox"] {
+            &:focus {
+              border-color: none;
+              box-shadow: none;
+              outline: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  &__btn {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-bottom: 25px;
+    @include mobile {
+      justify-content: center;
+    }
+    &__container {
+      display: flex;
+      gap: 5px;
+      button {
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 25px;
+        width: 100px;
+        padding: 10px 25px;
+      }
+    }
+  }
+}
+.dontdisp {
+  background-color: $color-white;
+  @include mobile {
+    display: none;
+  }
+}
+.specialColumn {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  @include mobile {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+.btnEdit {
+  background-color: $color-yellow-light;
+  border: none;
+  &:hover {
+    background-color: $color-btn-warning;
+  }
+}
+.btnSave {
+  background-color: $color-title-background;
+  border: none;
+  &:hover {
+    background-color: $color-title-background-light;
+  }
+}
+.addBtn {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 25px;
+  background-color: $color-blue-sidebar-title;
+  color: white;
+  font-weight: 800;
+  border: none;
+  &:hover {
+    background-color: $color-blue-sidebar-title-light;
+  }
+}

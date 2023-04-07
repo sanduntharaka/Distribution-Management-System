@@ -1,0 +1,26 @@
+.logContent {
+  width: 50%;
+  height: 50%;
+  background-color: $color-sidebar;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: row;
+  @include mobile {
+    width: 80%;
+    height: 80%;
+  }
+  &__img {
+    flex: 2;
+    @include mobile {
+      display: none;
+    }
+  }
+  &__form {
+    margin: 10px;
+    border-radius: 0px 25px 25px 0px;
+    background-color: rgb(255, 255, 255);
+    @include mobile {
+      border-radius: 25px;
+    }
+  }
+}
