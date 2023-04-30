@@ -26,43 +26,19 @@ const NotPerchase = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Reason</div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                  }}
-                >
+                <div className="form__row__col__input">
                   <input type="checkbox" />
                   <label htmlFor="">Have only our goods </label>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                  }}
-                >
+                <div className="form__row__col__input">
                   <input type="checkbox" />
                   <label htmlFor="">Have competitor goods </label>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                  }}
-                >
+                <div className="form__row__col__input">
                   <input type="checkbox" />
                   <label htmlFor="">payment problem </label>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    gap: "5px",
-                  }}
-                >
+                <div className="form__row__col__input">
                   <input type="checkbox" />
                   <label htmlFor="">Dealer not in </label>
                 </div>

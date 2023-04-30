@@ -1,14 +1,22 @@
-import React from "react";
-import Sidebar from "../components/Sidebar";
-
+import React from 'react';
+import Sidebar from './Sidebar';
+import { ThemeProvider, createTheme } from '@mui/material';
+const defaultMaterialTheme = createTheme();
 const Layout = (props) => {
   return (
-    <div className="page">
-      <div className="page__sidebar">
-        <Sidebar />
+    <React.Fragment>
+      <div className="page">
+        <div className="page__sidebar">
+          <Sidebar />
+        </div>
+
+        <main className="page__content">
+          <ThemeProvider theme={defaultMaterialTheme}>
+            <React.Fragment>{props.children}</React.Fragment>
+          </ThemeProvider>
+        </main>
       </div>
-      <div className="page__content">{props.children}</div>
-    </div>
+    </React.Fragment>
   );
 };
 

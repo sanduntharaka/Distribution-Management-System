@@ -1,0 +1,138 @@
+.inv {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 95vh;
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #000f80;
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 50px;
+  }
+  display: grid;
+  &__content {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 210mm;
+    height: 297mm;
+    background-color: white;
+    border: none;
+    padding: 10mm;
+    box-sizing: border-box;
+
+    &__row {
+      display: flex;
+      justify-content: space-between;
+      gap: 2mm;
+      font-size: 11px;
+      margin-bottom: 5mm;
+      .rowCol {
+        flex-basis: 100%;
+      }
+      &__col {
+        flex-basis: 33.33%;
+        // background-color: $color-blue-sidebar-title-dark;
+
+        .logo {
+          max-width: 100%;
+          max-height: 100%;
+        }
+
+        h2 {
+          text-align: center;
+        }
+        h3 {
+          text-align: center;
+        }
+        p {
+          font-size: 11px;
+        }
+        table {
+          border: 1px solid black;
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        td,
+        th {
+          border: 1px solid black;
+        }
+
+        td p.title {
+          font-weight: bold;
+        }
+
+        td[colspan='2'] {
+          text-align: center;
+        }
+        .details {
+          box-sizing: border-box;
+          padding: 5mm;
+          height: 20mm;
+          border: 1px solid black;
+        }
+        .details-sp {
+          box-sizing: border-box;
+          padding: 5mm;
+          height: max-content;
+          border: 1px solid black;
+        }
+      }
+      .img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .bottom {
+      position: absolute;
+      bottom: 0px;
+      &__row {
+        display: flex;
+        justify-content: space-between;
+        gap: 2mm;
+        font-size: 11px;
+        margin-bottom: 5mm;
+        width: 720px;
+        &__col {
+          .details-sp {
+            box-sizing: border-box;
+            padding: 5mm;
+            height: max-content;
+            border: 1px solid black;
+          }
+        }
+      }
+    }
+  }
+
+  &__btnsection {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    button {
+      margin-top: 10px;
+      width: 150px;
+      height: 50px;
+      font-size: 20px;
+      color: white;
+      border-radius: 25px;
+    }
+  }
+}

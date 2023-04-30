@@ -1,0 +1,71 @@
+.details {
+  &__content {
+    width: 60%;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    height: 40%;
+    background-color: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transform: translateY(-50%);
+    scrollbar-width: thin;
+    scrollbar-color: #000f80 #ffffff;
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #000f80;
+      border-radius: 25px;
+    }
+    &::-webkit-scrollbar-button {
+      height: 50px;
+    }
+    @include mobile {
+      width: 450px;
+    }
+    &__title {
+      text-align: center;
+      h4 {
+        background-color: $color-details;
+        padding: 5px;
+        color: $color-white;
+        border-radius: 20px;
+      }
+    }
+    &__table {
+      margin-top: 10px;
+      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+      border-radius: 20px;
+      padding: 10px;
+    }
+
+    &__buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      .btnEdit {
+        width: 80px;
+        height: 25px;
+        border-radius: 20px;
+      }
+      .btnDelete {
+        width: 80px;
+        height: 25px;
+        border-radius: 20px;
+      }
+    }
+  }
+}

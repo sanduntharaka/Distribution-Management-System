@@ -1,0 +1,87 @@
+.contain {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  border-radius: 25px 25px 0px 0px;
+}
+
+.bloc-tabs {
+  display: flex;
+  border-radius: 25px 25px 0px 0px;
+  gap: 5px;
+}
+.tabs {
+  background-color: #1c448e;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  border-radius: 0px 25px 0px 0px;
+  cursor: pointer;
+  box-sizing: content-box;
+  position: relative;
+  outline: none;
+
+  &:first-child {
+    border-radius: 25px 25px 0px 0px;
+  }
+  &:last-child {
+    border-radius: 0px 25px 0px 0px;
+  }
+}
+.tabs:not(:last-child) {
+  //   border-right: 1px solid rgba(0, 0, 0, 0.274);
+}
+
+.active-tabs {
+  background: white;
+  color: #000;
+
+  &:first-child {
+    border-radius: 25px 0px 0px 0px;
+  }
+  &:last-child {
+    border-radius: 0px 25px 0px 0px;
+  }
+}
+
+.active-tabs::before {
+  background: rgb(88, 147, 241);
+  &:first-child {
+    border-radius: 25px 0px 0px 0px;
+  }
+  &:last-child {
+    border-radius: 0px 25px 0px 0px;
+  }
+}
+
+button {
+  border: none;
+}
+.content-tabs {
+  flex-grow: 1;
+}
+.content {
+  background: white;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.content h2 {
+  padding: 0px 0 5px 0px;
+}
+.content hr {
+  width: 100px;
+  height: 2px;
+  background: #222;
+  margin-bottom: 5px;
+}
+.content p {
+  width: 100%;
+  height: 100%;
+}
+.active-content {
+  display: block;
+}

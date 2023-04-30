@@ -1,12 +1,12 @@
 .container {
   z-index: 1;
   width: 300px;
-  color: yellow;
+  color: $color-white;
   display: grid;
   height: 100vh;
   @include mobile {
     width: 50px;
-    transition: all 0.3s ease;
+    transition: $transition-normal;
   }
 
   &__header {
@@ -33,7 +33,7 @@
       font-weight: bolder;
       @include mobile {
         display: none;
-        transition: all 0.3s ease;
+        transition: $transition-normal;
       }
     }
   }
@@ -48,14 +48,16 @@
       align-items: center;
       justify-content: flex-start;
       text-transform: capitalize;
-      color: $color-yellow-light;
+      color: $color-white;
       font-size: 15px;
       font-weight: 700;
       gap: 10px;
+      text-decoration: none;
       &__icon {
         font-size: 25px;
         @include mobile {
           margin-left: -5px;
+          transition: $transition-normal;
         }
         &:hover {
           color: $color-underline;
@@ -66,6 +68,7 @@
         @include mobile {
           display: none;
           padding: 0px;
+          transition: $transition-normal;
         }
       }
       &:hover {
@@ -73,5 +76,56 @@
         text-decoration: underline;
       }
     }
+  }
+  &__footer {
+    position: absolute;
+    background-color: $color-blue-sidebar-title-light;
+    bottom: 0;
+    width: 300px;
+    max-height: 250px;
+    display: flex;
+    @include mobile {
+      width: 50px;
+      height: 100px;
+      transition: $transition-normal;
+    }
+    &__img {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        @include mobile {
+          width: 45px;
+          height: 45px;
+          transition: $transition-normal;
+        }
+      }
+    }
+    &__details {
+      flex: 2;
+      background-color: $color-blue-sidebar-title-dark;
+      padding: 5px;
+      @include mobile {
+        display: none;
+        transition: $transition-normal;
+      }
+
+      &__name {
+      }
+      &__buttons {
+        margin-top: 5px;
+        display: flex;
+        justify-content: space-evenly;
+      }
+    }
+  }
+}
+.active {
+  .container__list__item__icon {
+    color: $color-btn-warning;
   }
 }

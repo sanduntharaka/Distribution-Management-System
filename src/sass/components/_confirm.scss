@@ -1,0 +1,51 @@
+.confirm {
+  &__content {
+    width: 450px;
+    height: 200px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 25px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    transform: translateY(-50%);
+    &__title {
+      text-align: center;
+      h4 {
+        padding: 5px;
+        color: $color-danger;
+        border-radius: 20px;
+      }
+    }
+    &__details {
+      margin-top: 25px;
+    }
+    &__buttons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 5px;
+      .remBtn {
+        width: 80px;
+        height: 25px;
+        border-radius: 20px;
+        p {
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+      .addBtn {
+        width: 80px;
+        height: 25px;
+        border-radius: 20px;
+        p {
+          margin-left: auto;
+          margin-right: auto;
+        }
+      }
+    }
+  }
+}

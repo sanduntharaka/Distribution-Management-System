@@ -42,7 +42,14 @@
             box-shadow: 0px 0px 5px blue;
             outline: none; /* Remove default outline */
           }
-          &[type="radio"] {
+          &[type='checkbox'] {
+            border: 1px solid $color-subtitle;
+            border-radius: 20px;
+            height: 20px;
+            width: 20px;
+            margin-right: 5px;
+          }
+          &[type='radio'] {
             width: 25px;
             &:focus {
               border-color: none;
@@ -50,7 +57,18 @@
               outline: none;
             }
           }
-          &[type="checkbox"] {
+          &[type='file'] {
+            &::-webkit-file-upload-button {
+              border: none;
+              padding: 10px;
+              border-radius: 10px;
+            }
+            &:hover {
+              &::-webkit-file-upload-button {
+                border-color: blue;
+                box-shadow: 0px 0px 5px blue;
+              }
+            }
             &:focus {
               border-color: none;
               box-shadow: none;
@@ -74,11 +92,13 @@
       display: flex;
       gap: 5px;
       button {
+        text-align: center;
         text-transform: uppercase;
         font-weight: bold;
         border-radius: 25px;
-        width: 100px;
+        width: max-content;
         padding: 10px 25px;
+        color: white;
       }
     }
   }
@@ -99,10 +119,19 @@
   }
 }
 .btnEdit {
+  text-align: center;
   background-color: $color-yellow-light;
   border: none;
   &:hover {
     background-color: $color-btn-warning;
+  }
+}
+.btnDelete {
+  text-align: center;
+  background-color: $color-danger-dark;
+  border: none;
+  &:hover {
+    background-color: $color-danger;
   }
 }
 .btnSave {
@@ -123,5 +152,97 @@
   border: none;
   &:hover {
     background-color: $color-blue-sidebar-title-light;
+  }
+}
+.remBtn {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 25px;
+  background-color: $color-title-background-light;
+  color: white;
+  font-weight: 800;
+  border: none;
+  &:hover {
+    background-color: $color-blue-sidebar-title-light;
+  }
+}
+
+.showSelected {
+  height: 500px;
+
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 5px;
+  background-color: $color-white;
+  overflow-y: scroll;
+  @include mobile {
+    height: 250px;
+  }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #000f80;
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 50px;
+  }
+  table {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    .tableHead {
+      text-align: left;
+      background-color: $color-blue-sidebar-title;
+      height: 25px;
+    }
+    .datarow {
+      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+      height: 25px;
+      .btnDelete {
+        color: $color-white;
+        border-radius: 10px;
+      }
+      .action {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.searchContent {
+  z-index: 100;
+  background-color: $color-white;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  margin-top: 5px;
+  position: absolute;
+  width: 50%;
+  border-radius: 20px;
+  padding: 10px;
+  display: grid;
+  @include mobile {
+    width: 95%;
+  }
+  &__row {
+    padding: 5px;
+    border-bottom: 1px solid $color-colum-background;
+    &:hover {
+      color: $color-black;
+      background-color: $color-white-grey;
+    }
+    &__details {
+      display: flex;
+      gap: 15px;
+    }
   }
 }

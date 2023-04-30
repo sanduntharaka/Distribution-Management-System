@@ -1,9 +1,17 @@
-@import "./abstracts/mixin";
-@import "./abstracts/variables";
+@import './abstracts/mixin';
+@import './abstracts/variables';
 
-@import "./components/sidebar";
+@import './components/sidebar';
+@import './components/message';
+@import './components/tab';
+@import './components/details';
+@import './components/_edit';
+@import './components/confirm';
 
-@import "./layout/layout";
-@import "./layout/grid";
+@import './layout/layout';
+@import './layout/grid';
+@import './layout/table';
 
-@import "./pages/loginpage.scss";
+@import './pages/loginpage.scss';
+@import './pages/spinner.scss';
+@import './pages/invoice.scss';

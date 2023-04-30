@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -13,20 +13,25 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { axiosLoginInstance } from "../../axiosInstance";
+import Spinner from "../../components/loadingSpinner/Spinner";
 const theme = createTheme({});
 
 const FogotPassword = () => {
+  const [loading, setloading] = useState(false);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    setloading(true);
     axiosLoginInstance
       .post("/users/reset_password/", {
         email: data.get("email"),
       })
       .then((res) => {
+        setloading(false);
         console.log(res);
       })
       .catch((err) => {
+        setloading(false);
         console.log(err);
       });
   };
@@ -36,8 +41,8 @@ const FogotPassword = () => {
         <div
           style={{
             background: "white",
-            marginTop: 25,
-            marginBottom: 25,
+            margin: "10px",
+            width: "95%",
             marginLeft: "auto",
             marginRight: "auto",
             borderRadius: "25px",
@@ -83,10 +88,11 @@ const FogotPassword = () => {
                     sx={{ mt: 3, mb: 2 }}
                   >
                     Submit
+                    {loading ? <Spinner /> : ""}
                   </Button>
                   <Grid container>
                     <Grid item xs>
-                      <Link href="/login" variant="body2">
+                      <Link href="/" variant="body2">
                         login page
                       </Link>
                     </Grid>
