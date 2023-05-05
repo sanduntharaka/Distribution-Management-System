@@ -6,11 +6,25 @@ __pycache__
 db.sqlite3
 media
 0001_initial.py
-
-
+0002_userdetails_photo_alter_userdetails_company_number_and_more.py
+0002_remove_salesrefreturn_foc_remove_salesrefreturn_item_and_more.py
+0002_remove_salesrefreturn_foc_remove_salesrefreturn_item_and_more.py
+0003_remove_salesrefreturn_choice_salesrefreturn_added_by_and_more.py
+0004_alter_salesrefreturn_bill_code.py
+0005_alter_salesrefreturnitem_foc_and_more.py
+0002_remove_notbuydetails_reason_and_more.py
+0002_salesrefinvoice_payment_type.py
+0003_alter_salesrefinvoice_dealer.py
+0004_invoiceintem_bill.py
+0002_salesrefdistributor_added_by.py
+0002_alter_distributorinventory_date.py
+0003_distributorinventoryitems_foc.py
+0004_remove_distributorinventoryitems_item_and_more.py
+0002_alter_companyinvoice_invoice_number.py
+0003_companyinvoiceitems_description.py
 # Backup files # 
 *.bak 
-
+*.vscode
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml

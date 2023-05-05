@@ -11,7 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +42,31 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'users',
+    'userdetails',
+    'company_inventory',
+    'company_invoice',
+    'distributor_inventory',
+    # 'salesref_inventory',
+    'distrubutor_salesref',
+    'distrubutor_salesref_invoice',
+    'distributor_invoice',
+    'dealer_details',
+    'primary_sales_area',
+    'salesref_return',
+    'not_buy_details',
+    'api',
+    'api.userdetailsapp',
+    'api.companyInventory',
+    'api.distributor',
+    'api.companyInvoices',
+    # 'api.salesrefs',
+    'api.distrubutorsalesrefs',
+    'api.distributor_invoices',
+    'api.dealers',
+    'api.psa_api',
+    'api.distrubutorsalesrefinvoices',
+    'api.return_salesref',
+    'api.notbuydetails',
 ]
 
 MIDDLEWARE = [
@@ -122,7 +148,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFIELS_DIRS = [
+    os.path.join(BASE_DIR, "build/static")
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -133,7 +165,7 @@ AUTH_USER_MODEL = 'users.UserAccount'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
 EMAIL_HOST_USER = 'sandunsamsung@gmail.com'
-EMAIL_HOST_PASSWORD = 'mqesfckzfwovcdsz'
+EMAIL_HOST_PASSWORD = 'wgxouauawfyhbinc'
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -142,12 +174,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication'
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 
 }
 SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('JWT',),
 }
 DOMAIN = 'localhost:3000'
@@ -156,7 +190,7 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
     'PASSWORD_RESET_CONFIRM_URL': True,
     'USER_CREATE_PASSWORD_RETYPE': True,
-    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'reset/{uid}/{token}',
     # 'ACTIVATION_URL': 'activate/{uid}/{token}',
     # 'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {
