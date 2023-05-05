@@ -7,113 +7,57 @@ import Box from '@mui/material/Box';
 
 import UserCreation from './UserCreation';
 import UserDetails from './UserDetails';
-
-import { TabComponent } from '../../components/tab/TabsComponent';
-import { TabButtons } from '../../components/tab/TabButtons';
-import { TabContent } from '../../components/tab/TabsContent';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+import DistributorSalesRef from './DistributorSalesRef';
 
 const UserTabs = () => {
-  const [toggleState, setToggleState] = useState(1);
-
-  const toggleTab = (index) => {
-    setToggleState(index);
+  const [selected, setSelected] = useState(0);
+  const handleSelect = (i) => {
+    setSelected(i);
   };
-  const [value, setValue] = React.useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
   return (
-    // <TabComponent>
-    //   <TabButtons>
-    //     <button
-    //       className={toggleState === 1 ? 'tabs active-tabs' : 'tabs'}
-    //       onClick={() => toggleTab(1)}
-    //     >
-    //       Create user
-    //     </button>
-    //     <button
-    //       className={toggleState === 2 ? 'tabs active-tabs' : 'tabs'}
-    //       onClick={() => toggleTab(2)}
-    //     >
-    //       Add details
-    //     </button>
-    //     <button
-    //       className={toggleState === 3 ? 'tabs active-tabs' : 'tabs'}
-    //       onClick={() => toggleTab(3)}
-    //     >
-    //       Show users
-    //     </button>
-    //   </TabButtons>
-    //   <TabContent>
-    //     <div
-    //       className={toggleState === 1 ? 'content  active-content' : 'content'}
-    //     >
-    //       <UserCreation />
-    //     </div>
-
-    //     <div
-    //       className={toggleState === 2 ? 'content  active-content' : 'content'}
-    //     >
-    //       <UserDetails />
-    //     </div>
-    //     <div
-    //       className={toggleState === 3 ? 'content  active-content' : 'content'}
-    //     >
-    //       <h3>User details</h3>
-    //     </div>
-    //   </TabContent>
-    // </TabComponent>
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ maxWidth: { xs: 320, sm: 480 }, bgcolor: 'background.paper' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="scrollable"
-          scrollButtons={false}
-          aria-label="scrollable prevent tabs example"
+    <div className="tab">
+      <div className="tab_contaner">
+        <div
+          className={`item ${selected === 0 ? 'selected' : ''}`}
+          onClick={() => handleSelect(0)}
         >
-          <Tab label="User creation" />
-          <Tab label="Add user details" />
-          <Tab label="View user" />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <UserCreation />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <UserDetails />
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-    </Box>
+          User creation
+        </div>
+        <div
+          className={`item ${selected === 1 ? 'selected' : ''}`}
+          onClick={() => handleSelect(1)}
+        >
+          Add user details
+        </div>
+        <div
+          className={`item ${selected === 2 ? 'selected' : ''}`}
+          onClick={() => handleSelect(2)}
+        >
+          Assign Sales Ref
+        </div>
+        <div
+          className={`item ${selected === 3 ? 'selected' : ''}`}
+          onClick={() => handleSelect(3)}
+        >
+          View user
+        </div>
+      </div>
+      <div className="tab_page">
+        {selected === 0 ? (
+          <UserCreation />
+        ) : selected === 1 ? (
+          <UserDetails />
+        ) : selected === 2 ? (
+          <DistributorSalesRef />
+        ) : selected === 3 ? (
+          // <DistributorSalesRef />
+          ''
+        ) : (
+          ''
+        )}
+      </div>
+    </div>
   );
 };
 

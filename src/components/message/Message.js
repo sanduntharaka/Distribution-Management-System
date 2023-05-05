@@ -5,7 +5,6 @@ import {
   FaRegThumbsDown,
   FaRegHandPointUp,
 } from 'react-icons/fa';
-import { MdDetails } from 'react-icons/md';
 
 const Message = (props) => {
   //this is message component

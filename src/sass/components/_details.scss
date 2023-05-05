@@ -1,12 +1,12 @@
 .details {
   &__content {
-    width: 60%;
+    width: 40%;
     overflow-y: scroll;
     scrollbar-gutter: stable;
-    height: 40%;
+    height: 350px;
     background-color: white;
     border-radius: 25px;
-    padding: 25px;
+    padding: 50px;
     box-sizing: border-box;
     position: absolute;
     top: 50%;
@@ -33,6 +33,7 @@
     }
     @include mobile {
       width: 450px;
+      padding: 25px;
     }
     &__title {
       text-align: center;
@@ -43,28 +44,46 @@
         border-radius: 20px;
       }
     }
-    &__table {
-      margin-top: 10px;
-      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-      border-radius: 20px;
-      padding: 10px;
+    &__row {
+      display: flex;
+      justify-content: space-between;
+      &.buttons {
+        margin-top: 15px;
+        justify-content: space-around;
+      }
+      &__col {
+        .btnEdit,
+        .btnDelete,
+        .addBtn {
+          text-align: center;
+          width: 100px;
+          height: 35px;
+          font-size: medium;
+          font-weight: bold;
+          color: $color-white;
+          border-radius: 25px;
+        }
+      }
     }
 
-    &__buttons {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      .btnEdit {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
+    table {
+      width: 100%;
+      border: 1px solid grey;
+      thead {
+        background-color: #000f80;
+        tr {
+          td {
+            text-align: center;
+            color: white;
+          }
+        }
       }
-      .btnDelete {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
+      tbody {
+        tr {
+          &.even {
+            background-color: $color-colum-background;
+          }
+        }
       }
     }
   }

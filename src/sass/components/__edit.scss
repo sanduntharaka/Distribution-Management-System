@@ -6,7 +6,7 @@
     height: 350px;
     background-color: white;
     border-radius: 25px;
-    padding: 25px;
+    padding: 50px;
     box-sizing: border-box;
     position: absolute;
     top: 50%;
@@ -33,6 +33,7 @@
     }
     @include mobile {
       width: 450px;
+      padding: 25px;
     }
     &__title {
       text-align: center;
@@ -92,22 +93,26 @@
       justify-content: center;
       gap: 5px;
       .remBtn {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
-        p {
-          margin-left: auto;
-          margin-right: auto;
-        }
+        display: flex;
+        justify-content: center;
+        width: 150px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: white;
       }
       .addBtn {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
-        p {
-          margin-left: auto;
-          margin-right: auto;
-        }
+        display: flex;
+        justify-content: center;
+        width: 150px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: white;
       }
     }
   }

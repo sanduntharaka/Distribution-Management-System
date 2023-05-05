@@ -1,66 +1,39 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import NotPerchase from "./NotPerchase";
+import React, { useState, useEffect } from 'react';
+import NotPerchase from './NotPerchase';
+import NotBuyDetails from './NotBuyDetails';
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 const PurchTab = () => {
-  const [value, setValue] = React.useState(0);
+  const [selected, setSelected] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleSelect = (i) => {
+    setSelected(i);
   };
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
+    <div className="tab">
+      <div className="tab_contaner">
+        <div
+          className={`item ${selected === 0 ? 'selected' : ''}`}
+          onClick={() => handleSelect(0)}
         >
-          <Tab label="Not Purchase" {...a11yProps(0)} />
-          <Tab label="Show" {...a11yProps(1)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={value} index={0}>
-        <NotPerchase />
-      </TabPanel>
-      <TabPanel value={value} index={1}></TabPanel>
-    </Box>
+          None Buy
+        </div>
+        <div
+          className={`item ${selected === 1 ? 'selected' : ''}`}
+          onClick={() => handleSelect(1)}
+        >
+          All reasons
+        </div>
+      </div>
+      <div className="tab_page">
+        {selected === 0 ? (
+          <NotPerchase />
+        ) : selected === 1 ? (
+          <NotBuyDetails />
+        ) : (
+          ''
+        )}
+      </div>
+    </div>
   );
 };
 

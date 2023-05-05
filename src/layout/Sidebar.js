@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlineUserAdd, AiOutlineShop } from 'react-icons/ai';
-import { MdOutlineInventory } from 'react-icons/md';
+import { MdOutlineInventory, MdRoute } from 'react-icons/md';
 import {
   TbFileInvoice,
   TbLayoutDashboard,
@@ -126,7 +126,7 @@ const Sidebar = () => {
             Distribution control
           </div>
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/sales"
           className={(isActive, isPending) =>
             handleClassname(isActive, isPending)
@@ -142,8 +142,25 @@ const Sidebar = () => {
           >
             Sales control
           </div>
-        </NavLink>
+        </NavLink> */}
         <NavLink
+          to="/psa"
+          className={(isActive, isPending) =>
+            handleClassname(isActive, isPending)
+          }
+          style={showSidebar ? { padding: '10px 20px' } : {}}
+        >
+          <div className="container__list__item__icon">
+            <MdRoute />
+          </div>
+          <div
+            className="container__list__item__name"
+            style={showSidebar ? { display: 'block' } : {}}
+          >
+            PSA
+          </div>
+        </NavLink>
+        {/* <NavLink
           to="/invoice"
           className={(isActive, isPending) =>
             handleClassname(isActive, isPending)
@@ -159,7 +176,7 @@ const Sidebar = () => {
           >
             invoice
           </div>
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/dealer"
           className={(isActive, isPending) =>

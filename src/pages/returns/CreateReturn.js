@@ -1,12 +1,250 @@
-import React from "react";
-import SearchIcon from "@mui/icons-material/Search";
-import { AiOutlinePlus } from "react-icons/ai";
+import React, { useEffect, useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import Message from '../../components/message/Message';
+import Modal from '@mui/material/Modal';
+import { axiosInstance } from '../../axiosInstance';
+import Spinner from '../../components/loadingSpinner/Spinner';
+const MyMessage = React.forwardRef((props, ref) => {
+  return (
+    <Message
+      hide={() => props.handleClose()}
+      success={props.success}
+      error={props.error}
+      title={props.title}
+      msg={props.msg}
+      ref={ref}
+    />
+  );
+});
 
-const CreateReturn = () => {
+const CreateReturn = ({ inventory }) => {
+  //message modal
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [title, setTitle] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  //products filter
+  const [products, setProducts] = useState([]);
+  const [showProducts, setShowProducts] = useState(false);
+  const [product, setProduct] = useState();
+  const [value2, setValue2] = useState('');
+  const [items, setItems] = useState([]);
+
+  const [psas, setPsas] = useState([]);
+  const [dealers, setDealers] = useState([]);
+
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth();
+    let day = d.getDate();
+    return `${year}-${month}-${day}`;
+  });
+
+  const [is_return_goods, setIs_return_goods] = useState(false);
+  const [is_deduct_bill, setIs_deduct_bill] = useState(false);
+
+  const [qty, setQty] = useState(0);
+  const [foc, setFoc] = useState(0);
+  const [reason, setReason] = useState('');
+
+  const [data, setData] = useState({
+    psa: '',
+    dealer: '',
+    date: currentDate,
+
+    is_return_goods: is_return_goods,
+    is_deduct_bill: is_deduct_bill,
+    added_by: JSON.parse(sessionStorage.getItem('user')).id,
+  });
+  useEffect(() => {
+    axiosInstance
+      .get('/psa/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setPsas(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axiosInstance
+      .get('/dealer/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setDealers(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axiosInstance
+      .get(`/distributor/salesref/inventory/items/${inventory.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setProducts(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const handleSelectDealer = (e) => {
+    let itm = e.target.value;
+    let deler = dealers.find((item) => item.id == itm);
+    setData({
+      ...data,
+      dealer: deler.id,
+      dealer_name: deler.name,
+      dealer_address: deler.address,
+    });
+  };
+
+  const filterProducts = (e) => {
+    setShowProducts(true);
+    setValue2(e.target.value);
+  };
+
+  const hanldeProductFilter = (e, item) => {
+    setValue2(item.item_code);
+    setProduct(item);
+    setShowProducts(false);
+  };
+
+  const handleReturnGoods = (e) => {
+    setIs_deduct_bill(false);
+    setIs_return_goods(true);
+    if (e.target.checked) {
+      setData({ ...data, is_return_goods: true, is_deduct_bill: false });
+    }
+  };
+
+  const handleReturnBill = (e) => {
+    setIs_return_goods(false);
+    setIs_deduct_bill(true);
+    if (e.target.checked) {
+      setData({ ...data, is_deduct_bill: true, is_return_goods: false });
+    }
+  };
+  const handleAdd = (e) => {
+    e.preventDefault();
+    setItems([
+      ...items,
+      {
+        id: product.id,
+        item_code: product.item_code,
+        qty: qty,
+        foc: foc,
+        reason: reason,
+      },
+    ]);
+  };
+
+  const handleRemove = (e, id) => {
+    e.preventDefault();
+    const newItems = [...items];
+    const index = newItems.findIndex((item) => item.id === id);
+    newItems.splice(index, 1);
+    setItems(newItems);
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    axiosInstance
+      .post('/salesref/return/add/', data, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        axiosInstance
+          .post(
+            `/salesref/return/add/items/${res.data.id}`,
+            {
+              items: items,
+            },
+            {
+              headers: {
+                Authorization:
+                  'JWT ' +
+                  JSON.parse(sessionStorage.getItem('userInfo')).access,
+              },
+            }
+          )
+          .then((res) => {
+            setLoading(false);
+            setError(false);
+            setSuccess(true);
+            setTitle('Success');
+            setMsg('Your data added successfully');
+            handleOpen();
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+            setSuccess(false);
+            setError(true);
+            setTitle('Error');
+            setMsg(
+              'Your data cannot saved. Please refresh your page and try again.'
+            );
+            handleOpen();
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg(
+          'Your data cannot saved. Please refresh your page and try again.'
+        );
+        handleOpen();
+      });
+  };
+
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
+      <Modal open={open} onClose={handleClose}>
+        <MyMessage
+          handleClose={handleClose}
+          success={success}
+          error={error}
+          title={title}
+          msg={msg}
+        />
+      </Modal>
       <div className="page__title">
-        <p>Create Returns</p>
+        <p>Add Dealer Returns</p>
       </div>
       <div className="page__pcont">
         <div className="form">
@@ -15,22 +253,29 @@ const CreateReturn = () => {
               <div className="form__row__col">
                 <div className="form__row__col__label">Select pas</div>
                 <div className="form__row__col__input">
-                  <select name="cars" id="cars">
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
+                  <select
+                    name="psa"
+                    onChange={(e) => setData({ ...data, psa: e.target.value })}
+                  >
+                    <option selected>Select psa</option>
+                    {psas.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.area_name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">Select dealer</div>
                 <div className="form__row__col__input">
-                  <select name="cars" id="cars">
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
+                  <select name="psa" onChange={(e) => handleSelectDealer(e)}>
+                    <option selected>Select dealer</option>
+                    {dealers.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -38,85 +283,162 @@ const CreateReturn = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Product</div>
+                <div className="form__row__col__label">Item</div>
                 <div className="form__row__col__input">
                   <div
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      position: "relative",
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
                     }}
                   >
-                    <input type="text" placeholder="search..." />
+                    <input
+                      type="text"
+                      placeholder="search..."
+                      value={value2}
+                      onChange={(e) => filterProducts(e)}
+                    />
                     <SearchIcon
                       style={{
-                        padding: "5px",
-                        position: "absolute",
+                        padding: '5px',
+                        position: 'absolute',
                         right: 0,
                         top: 0,
                         bottom: 0,
                       }}
                     />
                   </div>
-                </div>
-                <div
-                  style={{
-                    height: "100px",
-                    background: "white",
-                    marginTop: "5px",
-                  }}
-                >
                   <div
-                    style={{
-                      marginTop: "2px",
-                      background: "lightgrey",
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                    }}
+                    className="searchContent"
+                    style={
+                      !showProducts ? { display: 'none' } : { display: 'grid' }
+                    }
                   >
-                    <p>Product name 1</p>
-                    <p>Qty</p>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "2px",
-                      background: "lightgrey",
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <p>Product name 2</p>
-                    <p>Qty</p>
-                  </div>
-                  <div
-                    style={{
-                      marginTop: "2px",
-                      background: "lightgrey",
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                    }}
-                  >
-                    <p>Product name 3</p>
-                    <p>Qty</p>
-                  </div>
-                </div>
-                <div style={{ marginTop: "5px" }}>
-                  <div className="form__row__col__input">
-                    <input type="number" placeholder="Qty" />
+                    {' '}
+                    <div className="searchContent__row">
+                      <div className="searchContent__row__details">
+                        <p>Item Code</p>
+                        <p>Qty</p>
+                      </div>
+                    </div>
+                    {products
+                      .filter((item) => {
+                        const searchTerm = value2.toLowerCase();
+                        const ItemCode = item.item_code.toLowerCase();
+
+                        return (
+                          ItemCode.includes(searchTerm) &&
+                          ItemCode !== searchTerm
+                        );
+                      })
+                      .map((item) => (
+                        <div
+                          className="searchContent__row"
+                          onClick={(e) => hanldeProductFilter(e, item)}
+                        >
+                          <div className="searchContent__row__details">
+                            <p>{item.item_code}</p>
+                            <p>{item.qty}</p>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
-              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    value={qty}
+                    onChange={(e) => setQty(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">FOC</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    value={foc}
+                    onChange={(e) => setFoc(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Reason</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div
+                className="form__row__col"
+                style={{
+                  background: 'white',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <button
+                  className="btnSave"
+                  style={{
+                    width: '250px',
+                    height: '50px',
+                    marginTop: 'auto',
+                    marginBottom: 'auto',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    borderRadius: '25px',
+                    fontSize: '20px',
+                    color: 'white',
+                  }}
+                  onClick={(e) => handleAdd(e)}
+                >
+                  Add
+                </button>
+              </div>
             </div>
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Free of charge</div>
-                <div className="form__row__col__input">
-                  <input type="number" placeholder="type qty here" />
+                <p className="form__row__col__label">Selected Products</p>
+                <div className="showSelected">
+                  <table>
+                    <tr className="tableHead">
+                      <th> Item Code</th>
+                      <th>Foc</th>
+                      <th>Qty</th>
+                      <th>Reason</th>
+                      <th>Action</th>
+                    </tr>
+                    {items.map((item, i) => (
+                      <tr className="datarow" key={i}>
+                        <td>{item.item_code}</td>
+                        <td>{item.foc}</td>
+                        <td>{item.qty}</td>
+                        <td>{item.reason}</td>
+
+                        <td className="action">
+                          <button
+                            className="btnDelete"
+                            onClick={(e) => handleRemove(e, item.id)}
+                          >
+                            remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </table>
                 </div>
               </div>
-              <div className="form__row__col dontdisp"></div>
             </div>
 
             <div className="form__row">
@@ -125,24 +447,32 @@ const CreateReturn = () => {
                 <div className="form__row__col__input">
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      gap: "5px",
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      gap: '5px',
                     }}
                   >
-                    <input type="radio" />
+                    <input
+                      type="radio"
+                      checked={is_return_goods}
+                      onChange={(e) => handleReturnGoods(e)}
+                    />
                     <label htmlFor="">Return from goods</label>
                   </div>
                 </div>
                 <div className="form__row__col__input">
                   <div
                     style={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      gap: "5px",
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      gap: '5px',
                     }}
                   >
-                    <input type="radio" />
+                    <input
+                      type="radio"
+                      checked={is_deduct_bill}
+                      onChange={(e) => handleReturnBill(e)}
+                    />
                     <label htmlFor="">Deduct from bill</label>
                   </div>
                 </div>
@@ -152,9 +482,51 @@ const CreateReturn = () => {
               </div>
             </div>
 
+            {is_deduct_bill ? (
+              <div className="form__row">
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Bill code</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        setData({ ...data, bill_code: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Bill number</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="number"
+                      onChange={(e) =>
+                        setData({ ...data, bill_number: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Amount</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="number"
+                      onChange={(e) =>
+                        setData({ ...data, amount: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+
             <div className="form__btn">
               <div className="form__btn__container">
-                <button className="btnEdit">save</button>
+                <button className="btnEdit" onClick={(e) => handleSave(e)}>
+                  save
+                </button>
                 <button className="btnSave">edit</button>
               </div>
             </div>

@@ -1,39 +1,121 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { AiFillEdit, AiFillDelete } from 'react-icons/ai';
-
-import { CgDetailsMore } from 'react-icons/cg';
-
-import Pagination from '@mui/material/Pagination';
-import Stack from '@mui/material/Stack';
+import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import Message from '../../components/message/Message';
-import UserConfirm from '../../components/userComfirm/UserConfirm';
 import ProductDetails from './componets/ProductDetails';
 import ProductEdit from './componets/ProductEdit';
 import ProductDelete from './componets/ProductDelete';
+import Message from '../../components/message/Message';
+import { CgDetailsMore } from 'react-icons/cg';
+import MaterialTable from 'material-table';
+import AddBox from '@material-ui/icons/AddBox';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import Check from '@material-ui/icons/Check';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import Clear from '@material-ui/icons/Clear';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
+import FilterList from '@material-ui/icons/FilterList';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Remove from '@material-ui/icons/Remove';
+import SaveAlt from '@material-ui/icons/SaveAlt';
+import Search from '@material-ui/icons/Search';
+import ViewColumn from '@material-ui/icons/ViewColumn';
+
+import { styled, alpha } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import EditIcon from '@mui/icons-material/Edit';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
+const StyledMenu = styled((props) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'right',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'right',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 180,
+    color:
+      theme.palette.mode === 'light'
+        ? 'rgb(55, 65, 81)'
+        : theme.palette.grey[300],
+    boxShadow:
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    '& .MuiMenu-list': {
+      padding: '4px 0',
+    },
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      '&:active': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity
+        ),
+      },
+    },
+  },
+}));
+const tableIcons = {
+  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef((props, ref) => (
+    <ChevronRight {...props} ref={ref} />
+  )),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef((props, ref) => (
+    <ChevronLeft {...props} ref={ref} />
+  )),
+  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+};
+
 const ViewInventory = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const [showMenuIndex, setShowMenuIndex] = useState('');
-  const [items, setItems] = useState([]);
-
-  //table pagination
-  const [curPage, setCurPage] = useState(1);
-  const [recordsPerPage, setRecordsPerPage] = useState(5);
-  const lastIndex = curPage * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  const records = items.slice(firstIndex, lastIndex);
-  const npage = Math.ceil(items.length / recordsPerPage);
-
-  //message modal
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
-  const [msg, setMsg] = useState('');
-  const [title, setTitle] = useState('');
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [data, setData] = useState([]);
+  const [tblData, setTableData] = useState([]);
+  const columns = [
+    {
+      title: 'ID',
+      field: 'id',
+      cellStyle: { width: '10px' },
+      width: '10px',
+      headerStyle: { width: '10px' },
+    },
+    { title: 'Item Code', field: 'item_code' },
+    { title: 'Description', field: 'description' },
+    { title: 'Pack Size', field: 'pack_size' },
+    { title: 'Whole Sale Price', field: 'whole_sale_price' },
+    { title: 'Retail Price', field: 'retail_price' },
+    { title: 'Foc', field: 'free_of_charge' },
+    { title: 'Qty', field: 'qty' },
+  ];
 
   //modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -44,12 +126,30 @@ const ViewInventory = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [itemDetails, setItemDetails] = useState();
 
-  //edit
-  const [editOpen, setEditOpen] = useState(false);
+  //edit-details
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
 
-  //delete
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  //delete-details
+  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
+  //mesage show
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [title, setTitle] = useState('');
+
+  //item_codes
+  const [itemCodes, setItemCodes] = useState([]);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   useEffect(() => {
     axiosInstance
       .get('/company/inventory/all/', {
@@ -59,218 +159,272 @@ const ViewInventory = () => {
         },
       })
       .then((res) => {
-        setItems(res.data);
+        console.log(res.data);
+        setData(res.data);
+        setTableData(res.data);
+        res.data.forEach((item) => {
+          if (!itemCodes.includes(item.item_code)) {
+            itemCodes.push(item.item_code);
+          }
+        });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [open]);
-  const handleShowMenu = (i) => {
-    setShowMenuIndex(i);
-    setShowMenu(true);
+  }, [messageOpen]);
+
+  const handleViewDetails = (e, value) => {
+    e.preventDefault();
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.free_of_charge,
+    });
+    setMessageOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(true);
+
+    handleModalOpen();
   };
 
-  const handlePagi = (e, value) => {
-    setCurPage(value);
-  };
-  const handleShowDetails = (item) => {
-    axiosInstance
-      .get(`/company/inventory/${item.id}/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setItemDetails(res.data);
-        setDeleteOpen(false);
-        setEditOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const handleShowEdit = (item) => {
-    axiosInstance
-      .get(`/company/inventory/${item}/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setItemDetails(res.data);
-        setDeleteOpen(false);
-        setDetailsOpen(false);
-        setEditOpen(true);
-        handleModalOpen();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  const handleShowDelete = (item) => {
+  const handleEditDetails = (e, value) => {
+    console.log(value);
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.free_of_charge,
+    });
+
+    setMessageOpen(false);
+    setDeleteDetailsOpen(false);
     setDetailsOpen(false);
-    setEditOpen(false);
-    setDeleteOpen(true);
-    setItemDetails(item);
+    setEditDetailsOpen(true);
     handleModalOpen();
+  };
+  const handleDeleteDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.free_of_charge,
+    });
+    setMessageOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(true);
+    handleModalOpen();
+  };
+
+  const handleFilter = (i) => {
+    handleClose();
+    console.log(i);
+    if (i === 'all') {
+      setTableData(data);
+    } else {
+      let filteredItems = data.filter((item) => item.item_code === i);
+      //
+      console.log(filteredItems);
+      setTableData(filteredItems);
+    }
   };
   return (
     <div className="page">
-      <Modal open={open} onClose={handleClose}>
-        <Message
-          hide={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
-
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
           <ProductDetails
             data={itemDetails}
-            openEdit={handleShowEdit}
-            openDelete={handleShowDelete}
+            showDetails={setDetailsOpen}
+            showEdit={setEditDetailsOpen}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
           />
-        ) : editOpen ? (
+        ) : editdetailsOpen ? (
           <ProductEdit
             data={itemDetails}
-            openMessage={handleOpen}
-            success={setSuccess}
-            error={setError}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
             msg={setMsg}
-            title={setTitle}
-            closeCurrent={handleModalClose}
+            showEdit={setEditDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/company/inventory/edit'}
           />
-        ) : deleteOpen ? (
+        ) : deletedetailsOpen ? (
           <ProductDelete
             data={itemDetails}
-            openMessage={handleOpen}
-            success={setSuccess}
-            error={setError}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
             msg={setMsg}
-            title={setTitle}
-            closeCurrent={handleModalClose}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/company/inventory/delete'}
+          />
+        ) : messageOpen ? (
+          <Message
+            hide={handleModalClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
           />
         ) : (
           <p>No modal</p>
         )}
       </Modal>
       <div className="page__title">
-        <p>View inventory</p>
+        <p>View Company inventory</p>
       </div>
       <div className="page__pcont">
-        <div className="table">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Item Code</th>
-                <th>Qty</th>
-                <th>Wholesale price</th>
-                <th>Retail price</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map((item, index) => (
-                <tr className="sp">
-                  <td scope="row">{index + 1}</td>
-                  <td>{item.item_code}</td>
-                  <td>{item.qty}</td>
-                  <td>{item.whole_sale_price}</td>
-                  <td>{item.retail_price}</td>
-
-                  <td>
-                    <div>
-                      {' '}
-                      <button
-                        className="btn details"
-                        title="see more details"
-                        onClick={() => handleShowDetails(item)}
-                      >
-                        <CgDetailsMore />
-                      </button>
-                      <button
-                        className="btn edit"
-                        title="edit item"
-                        onClick={() => handleShowEdit(item.id)}
-                      >
-                        <AiFillEdit />
-                      </button>
-                      <button
-                        className="btn delete"
-                        title="delete item"
-                        onClick={() => handleShowDelete(item.id)}
-                      >
-                        <AiFillDelete />
-                      </button>
-                    </div>
-
-                    <div
-                      className="action_btn"
-                      onClick={() => handleShowMenu(index)}
-                    >
-                      <BsThreeDotsVertical />
-                    </div>
-                  </td>
-                  {showMenu && index === showMenuIndex ? (
-                    <div
-                      className="tbl_side_menu"
-                      onClick={() => setShowMenu(false)}
-                    >
-                      <div
-                        className="tbl_side_menu__row"
-                        onClick={() => handleShowDetails(item)}
-                      >
-                        Details
-                      </div>
-                      <div
-                        className="tbl_side_menu__row"
-                        onClick={() => handleShowEdit(item.id)}
-                      >
-                        Edit
-                      </div>
-                      <div
-                        className="tbl_side_menu__row"
-                        onClick={() => handleShowDelete(item.id)}
-                      >
-                        Delete
-                      </div>
-                    </div>
-                  ) : (
-                    ''
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <nav className="pagination">
-            <div className="pagination__pagecount">
-              <select onChange={(e) => setRecordsPerPage(e.target.value)}>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-              </select>
-            </div>
-
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col">
             <div>
-              <Stack spacing={2}>
-                <Pagination
-                  count={npage}
-                  onChange={(e, value) => handlePagi(e, value)}
-                  variant="outlined"
-                  color="secondary"
-                />
-              </Stack>
+              <Button
+                id="demo-customized-button"
+                aria-controls={open ? 'demo-customized-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                variant="contained"
+                disableElevation
+                onClick={handleClick}
+                endIcon={<KeyboardArrowDownIcon />}
+              >
+                Filter By
+              </Button>
+              <StyledMenu
+                id="demo-customized-menu"
+                MenuListProps={{
+                  'aria-labelledby': 'demo-customized-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={() => handleFilter('all')} disableRipple>
+                  All
+                </MenuItem>
+                {itemCodes.map((item, i) => (
+                  <MenuItem
+                    onClick={() => handleFilter(item)}
+                    key={i}
+                    disableRipple
+                  >
+                    {item}
+                  </MenuItem>
+                ))}
+              </StyledMenu>
             </div>
-          </nav>
+          </div>
+          <div className="page__pcont__row__col dontdisp"></div>
+          <div className="page__pcont__row__col dontdisp"></div>
+          <div className="page__pcont__row__col dontdisp"></div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col">
+            <div className="dataTable">
+              <MaterialTable
+                title={false}
+                columns={columns}
+                data={tblData}
+                sx={{
+                  ['&.MuiTable-root']: {
+                    background: 'red',
+                  },
+                }}
+                options={{
+                  exportButton: true,
+                  actionsColumnIndex: 0,
+                }}
+                icons={tableIcons}
+                actions={[
+                  {
+                    icon: CgDetailsMore,
+                    tooltip: 'View details',
+                    onClick: (event, rowData) =>
+                      handleViewDetails(event, rowData),
+                  },
+                  {
+                    icon: EditIcon,
+                    tooltip: 'Edit details',
+                    onClick: (event, rowData) =>
+                      handleEditDetails(event, rowData),
+                  },
+                  {
+                    icon: DeleteOutline,
+                    tooltip: 'Delete details',
+                    onClick: (event, rowData) =>
+                      handleDeleteDetails(event, rowData),
+                  },
+                ]}
+                components={{
+                  Action: (props) => (
+                    <React.Fragment>
+                      {props.action.icon === CgDetailsMore ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'green' }} // customize the icon color
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === EditIcon ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'red' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <DeleteOutline />
+                        </IconButton>
+                      )}
+                    </React.Fragment>
+                  ),
+                }}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

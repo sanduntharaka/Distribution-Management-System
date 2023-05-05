@@ -1,13 +1,21 @@
 import React from 'react';
 
 const ProductDetails = (props) => {
+  console.log(props);
   const data = props.data;
 
   const handleEdit = () => {
-    props.openEdit(data.id);
+    props.showDetails(false);
+    props.showEdit(true);
   };
+
   const handleDelete = () => {
-    props.openDelete(data.id);
+    props.showDetails(false);
+    props.showConfirm(true);
+  };
+
+  const handleCancel = () => {
+    props.closeModal();
   };
   return (
     <div className="details">
@@ -65,6 +73,9 @@ const ProductDetails = (props) => {
           </button>
           <button className="btnDelete" onClick={handleDelete}>
             Delete
+          </button>
+          <button className="addBtn" onClick={handleCancel}>
+            Cancel
           </button>
         </div>
       </div>

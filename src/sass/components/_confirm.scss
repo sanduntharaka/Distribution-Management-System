@@ -27,24 +27,32 @@
       margin-top: 25px;
       display: flex;
       justify-content: flex-end;
+
       gap: 5px;
+      @include mobile {
+        justify-content: center;
+      }
       .remBtn {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
-        p {
-          margin-left: auto;
-          margin-right: auto;
-        }
+        display: flex;
+        justify-content: center;
+        width: 150px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: white;
       }
       .addBtn {
-        width: 80px;
-        height: 25px;
-        border-radius: 20px;
-        p {
-          margin-left: auto;
-          margin-right: auto;
-        }
+        display: flex;
+        justify-content: center;
+        width: 150px;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+        border-radius: 25px;
+        padding: 10px 25px;
+        color: white;
       }
     }
   }

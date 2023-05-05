@@ -201,7 +201,7 @@ const AssignSalesRef = () => {
     return <Invoice distributor={props.distributor} items={props.items} />;
   });
   return (
-    <div className="page__pcont">
+    <div className="page">
       <Modal open={open} onClose={handleClose}>
         <MyMessage
           handleClose={handleClose}
@@ -211,12 +211,17 @@ const AssignSalesRef = () => {
           msg={msg}
         />
       </Modal>
+
+      <div className="page__title">
+        <p>Assign products</p>
+      </div>
+
       <div className="page__pcont">
         <div className="form">
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__label">Sales ref</div>
 
                 <div className="form__row__col__input">
                   <div

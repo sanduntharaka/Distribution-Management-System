@@ -5,30 +5,31 @@ const ProductDelete = (props) => {
     e.preventDefault();
     e.stopPropagation();
     axiosInstance
-      .delete(`/company/inventory/delete/${props.data}`, {
+      .delete(`${props.url}/${props.data.id}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
-        props.error(false);
-        props.success(true);
-        props.msg('Your data has been deleted successfully.');
-        props.title('success');
-        props.closeCurrent();
-        props.openMessage();
+        console.log(res);
+        props.showConfirm(false);
+        props.msgErr(false);
+        props.msgSuccess(true);
+        props.msgTitle('Success');
+        props.msg('Item deleted successfully');
+        props.openMsg(true);
       })
       .catch((err) => {
         console.log(err);
-        props.success(false);
-        props.error(true);
+        props.showConfirm(false);
+        props.msgSuccess(false);
+        props.msgErr(true);
+        props.msgTitle('Error');
         props.msg(
-          'Your data cannot delete. Please check your data and try again.'
+          'Item cannot delete.Please check this item has some recodes in another fields.'
         );
-        props.title('Error');
-        props.closeCurrent();
-        props.openMessage();
+        props.openMsg(true);
       });
   };
   return (

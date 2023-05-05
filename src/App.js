@@ -18,6 +18,8 @@ import InventoryTabs from './pages/inventory/InventoryTabs';
 import DistributionTabs from './pages/distribution/DistributionTabs';
 import SalesTabs from './pages/sales/SalesTabs';
 import DealersTab from './pages/dealer/DealersTab';
+import BillingTab from './pages/bill/BillingTab';
+import PsaTab from './pages/psa/PsaTab';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -40,11 +42,11 @@ function App() {
           <Route path="/user" element={<UserTabs />} />
           <Route path="/inventory" element={<InventoryTabs />} />
           <Route path="/distribution" element={<DistributionTabs />} />
-          <Route path="/sales" element={<SalesTabs />} />
-
+          {/* <Route path="/sales" element={<SalesTabs />} /> */}
+          <Route path="/psa" element={<PsaTab />} />
           <Route path="/invoice" element={<InvoiceTab />} />
           <Route path="/dealer" element={<DealersTab />} />
-          <Route path="/bill" element={<CreateBill />} />
+          <Route path="/bill" element={<BillingTab />} />
           <Route path="/purchase" element={<PurchTab />} />
           <Route path="/return" element={<ReturnTab />} />
         </Routes>

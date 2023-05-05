@@ -1,9 +1,11 @@
 import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
-
+import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import ProductDetails from './componets/ProductDetails';
-
+import ProductEdit from './componets/ProductEdit';
+import ProductDelete from './componets/ProductDelete';
+import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
@@ -27,10 +29,6 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
-import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const StyledMenu = styled((props) => (
@@ -129,6 +127,19 @@ const DistributorInventory = ({ inventory }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [itemDetails, setItemDetails] = useState();
 
+  //edit-details
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
+
+  //delete-details
+  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
+
+  //mesage show
+  const [messageOpen, setMessageOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [title, setTitle] = useState('');
+
   //item_codes
   const [itemCodes, setItemCodes] = useState([]);
 
@@ -142,7 +153,6 @@ const DistributorInventory = ({ inventory }) => {
   };
 
   useEffect(() => {
-    console.log(inventory);
     axiosInstance
       .get(`/distributor/items/all/${inventory.id}`, {
         headers: {
@@ -163,24 +173,68 @@ const DistributorInventory = ({ inventory }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [messageOpen]);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    console.log(itemCodes);
     setItemDetails({
-      employee: value.added_by,
       id: value.id,
       item_code: value.item_code,
-      retail_price: value.retail_price,
-      base: value.base,
-      pack_size: value.pack_size,
-      qty: value.qty,
-      free_of_charge: value.foc,
       description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
       whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.foc,
     });
+    setMessageOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(false);
     setDetailsOpen(true);
+
+    handleModalOpen();
+  };
+
+  const handleEditDetails = (e, value) => {
+    console.log(value);
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.foc,
+    });
+
+    setMessageOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(true);
+    handleModalOpen();
+  };
+  const handleDeleteDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.foc,
+    });
+    setMessageOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(true);
     handleModalOpen();
   };
 
@@ -196,14 +250,49 @@ const DistributorInventory = ({ inventory }) => {
       setTableData(filteredItems);
     }
   };
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
           <ProductDetails
             data={itemDetails}
-            openEdit={false}
-            openDelete={false}
+            showDetails={setDetailsOpen}
+            showEdit={setEditDetailsOpen}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+          />
+        ) : editdetailsOpen ? (
+          <ProductEdit
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showEdit={setEditDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/distributor/items/edit'}
+          />
+        ) : deletedetailsOpen ? (
+          <ProductDelete
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/distributor/items/delete'}
+          />
+        ) : messageOpen ? (
+          <Message
+            hide={handleModalClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
           />
         ) : (
           <p>No modal</p>
@@ -280,7 +369,62 @@ const DistributorInventory = ({ inventory }) => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
+                  {
+                    icon: EditIcon,
+                    tooltip: 'Edit details',
+                    onClick: (event, rowData) =>
+                      handleEditDetails(event, rowData),
+                  },
+                  {
+                    icon: DeleteOutline,
+                    tooltip: 'Delete details',
+                    onClick: (event, rowData) =>
+                      handleDeleteDetails(event, rowData),
+                  },
                 ]}
+                components={{
+                  Action: (props) => (
+                    <React.Fragment>
+                      {props.action.icon === CgDetailsMore ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'green' }} // customize the icon color
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === EditIcon ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'red' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <DeleteOutline />
+                        </IconButton>
+                      )}
+                    </React.Fragment>
+                  ),
+                }}
               />
             </div>
           </div>

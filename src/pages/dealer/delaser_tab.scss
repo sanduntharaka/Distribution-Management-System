@@ -24,8 +24,9 @@
         background-color: rgba(51, 197, 255, 0.2);
       }
       &.selected {
-        background-color: rgba(51, 146, 255, 1);
-        color: white;
+        // background-color: rgba(51, 146, 255, 1);
+        border-bottom: 2px solid rgba(51, 146, 255, 1);
+        color: rgba(51, 146, 255, 1);
       }
     }
   }

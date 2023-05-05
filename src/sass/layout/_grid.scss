@@ -142,13 +142,8 @@
   }
 }
 .addBtn {
-  display: flex;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 25px;
   background-color: $color-blue-sidebar-title;
   color: white;
-  font-weight: 800;
   border: none;
   &:hover {
     background-color: $color-blue-sidebar-title-light;

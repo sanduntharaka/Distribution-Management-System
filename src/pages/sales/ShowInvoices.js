@@ -162,7 +162,7 @@ const ShowInvoices = () => {
     )}
   </Modal> */}
       <div className="page__title">
-        <p>View distributor inventory</p>
+        <p>View invoices</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

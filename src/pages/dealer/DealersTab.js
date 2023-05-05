@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import './delaser_tab.scss';
-import Message from '../../components/message/Message';
-import Modal from '@mui/material/Modal';
 import CreateDealer from './CreateDealer';
+import ShowDealers from './ShowDealers';
 const DealersTab = () => {
   const [selected, setSelected] = useState(0);
   const handleSelect = (i) => {
@@ -25,7 +24,15 @@ const DealersTab = () => {
           View Dealers
         </div>
       </div>
-      <div className="tab_page">{selected === 0 ? <CreateDealer /> : ''}</div>
+      <div className="tab_page">
+        {selected === 0 ? (
+          <CreateDealer />
+        ) : selected === 1 ? (
+          <ShowDealers inventory={0} />
+        ) : (
+          ''
+        )}
+      </div>
     </div>
   );
 };

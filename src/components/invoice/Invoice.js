@@ -4,7 +4,7 @@ import html2canvas from 'html2canvas';
 import { axiosInstance } from '../../axiosInstance';
 const Invoice = (props) => {
   const [invCode, setInvCode] = useState('IN');
-  const [invNum, setInvNum] = useState(4522);
+  const [invNum, setInvNum] = useState(8752);
   const [date, setDate] = useState('2022-03-23');
   const [customer, setCustomer] = useState({
     id: '',

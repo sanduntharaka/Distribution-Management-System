@@ -146,37 +146,37 @@ const AssignDistribution = () => {
   //submit all selected items to database
   const handleSave = (e) => {
     e.preventDefault();
-    if (items.length > 0) {
-      axiosInstance
-        .post(
-          '/distributor/items/add/',
-          {
-            distributor: distributor.user,
-            items: items,
-            added_by: JSON.parse(sessionStorage.getItem('user')).email,
-          },
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res);
-          showInvoice();
-          setSuccess(true);
-          setError(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setSuccess(false);
-          setError(true);
-          setTitle('Error');
-          setMsg('Check your inputs and try again later. ');
-          handleOpen();
-        });
-    }
+    // if (items.length > 0) {
+    //   axiosInstance
+    //     .post(
+    //       '/distributor/items/add/',
+    //       {
+    //         distributor: distributor.user,
+    //         items: items,
+    //         added_by: JSON.parse(sessionStorage.getItem('user')).email,
+    //       },
+    //       {
+    //         headers: {
+    //           Authorization:
+    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+    //         },
+    //       }
+    //     )
+    //     .then((res) => {
+    //       console.log(res);
+    showInvoice();
+    setSuccess(true);
+    setError(false);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    //   setSuccess(false);
+    //   setError(true);
+    //   setTitle('Error');
+    //   setMsg('Check your inputs and try again later. ');
+    //   handleOpen();
+    // });
+    // }
   };
 
   const MyMessage = React.forwardRef((props, ref) => {
@@ -197,7 +197,7 @@ const AssignDistribution = () => {
   });
 
   return (
-    <React.Fragment>
+    <div className="page">
       <Modal open={open} onClose={handleClose}>
         <MyMessage
           handleClose={handleClose}
@@ -207,245 +207,235 @@ const AssignDistribution = () => {
           msg={msg}
         />
       </Modal>
-      {isLoading ? (
-        <Stack spacing={1}>
-          {/* For variant="text", adjust the height via font-size */}
-          <Skeleton variant="text" sx={{ fontSize: '1rem' }} />
-          {/* For other variants, adjust the size with `width` and `height` */}
-          <Skeleton variant="circular" width={40} height={40} />
-          <Skeleton variant="rectangular" width={210} height={60} />
-          <Skeleton variant="rounded" width={210} height={60} />
-        </Stack>
-      ) : (
-        <div className="page__pcont">
-          <div className="form">
-            <form action="" onSubmit={handleSubmit}>
-              <div className="form__row">
-                <div className="form__row__col">
-                  <div className="form__row__col__label">Distributor</div>
+      <div className="page__title">
+        <p>Assign Distribution</p>
+      </div>
+      <div className="page__pcont">
+        <div className="form">
+          <form action="" onSubmit={handleSubmit}>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
 
-                  <div className="form__row__col__input">
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        position: 'relative',
-                      }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="search..."
-                        value={value}
-                        onChange={(e) => filterDistributors(e)}
-                      />
-                      <SearchIcon
-                        style={{
-                          padding: '5px',
-                          position: 'absolute',
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                        }}
-                      />
-                    </div>
-                    <div
-                      ref={catMenu}
-                      className="searchContent"
-                      style={
-                        !showDistributors
-                          ? { display: 'none' }
-                          : { display: 'grid' }
-                      }
-                    >
-                      {distributors
-
-                        .filter((item) => {
-                          const searchTerm = value.toLowerCase();
-                          const fullName = item.full_name.toLowerCase();
-
-                          return (
-                            fullName.includes(searchTerm) &&
-                            fullName !== searchTerm
-                          );
-                        })
-                        .map((item) => (
-                          <ul
-                            className="searchContent__row"
-                            onClickCapture={habldtest}
-                            onClick={(e) => hanldeCatchFilter(e, item)}
-                          >
-                            <li
-                              style={{ cursor: 'pointer' }}
-                              className="searchContent__row__details"
-                            >
-                              {item.full_name}
-                            </li>
-                          </ul>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="form__row">
-                <div className="form__row__col">
-                  <div className="form__row__col__label">Item</div>
-                  <div className="form__row__col__input">
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        position: 'relative',
-                      }}
-                    >
-                      <input
-                        type="text"
-                        placeholder="search..."
-                        value={value2}
-                        onChange={(e) => filterProducts(e)}
-                      />
-                      <SearchIcon
-                        style={{
-                          padding: '5px',
-                          position: 'absolute',
-                          right: 0,
-                          top: 0,
-                          bottom: 0,
-                        }}
-                      />
-                    </div>
-                    <div
-                      className="searchContent"
-                      style={
-                        !showProducts
-                          ? { display: 'none' }
-                          : { display: 'grid' }
-                      }
-                    >
-                      {' '}
-                      <div className="searchContent__row">
-                        <div className="searchContent__row__details">
-                          <p>Item Code</p>
-                          <p>Qty</p>
-                        </div>
-                      </div>
-                      {products
-                        .filter((item) => {
-                          const searchTerm = value2.toLowerCase();
-                          const ItemCode = item.item_code.toLowerCase();
-
-                          return (
-                            ItemCode.includes(searchTerm) &&
-                            ItemCode !== searchTerm
-                          );
-                        })
-                        .map((item) => (
-                          <div
-                            className="searchContent__row"
-                            onClick={(e) => hanldeProductFilter(e, item)}
-                          >
-                            <div className="searchContent__row__details">
-                              <p>{item.item_code}</p>
-                              <p>{item.qty}</p>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="form__row__col">
-                  <div className="form__row__col__label">QTY</div>
-                  <div className="form__row__col__input">
+                <div className="form__row__col__input">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                    }}
+                  >
                     <input
                       type="text"
-                      value={qty}
-                      onChange={(e) => setQty(e.target.value)}
+                      placeholder="search..."
+                      value={value}
+                      onChange={(e) => filterDistributors(e)}
+                    />
+                    <SearchIcon
+                      style={{
+                        padding: '5px',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                      }}
                     />
                   </div>
-                </div>
-                <div className="form__row__col">
-                  <div className="form__row__col__label">FOC</div>
-                  <div className="form__row__col__input">
-                    <input
-                      type="text"
-                      value={foc}
-                      onChange={(e) => setFoc(e.target.value)}
-                    />
-                  </div>
-                </div>
+                  <div
+                    ref={catMenu}
+                    className="searchContent"
+                    style={
+                      !showDistributors
+                        ? { display: 'none' }
+                        : { display: 'grid' }
+                    }
+                  >
+                    {distributors
 
-                <button
-                  className="btnSave"
-                  style={{
-                    width: '200px',
-                    height: '50px',
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    borderRadius: '25px',
-                    fontSize: '20px',
-                    color: 'white',
-                  }}
-                  onClick={(e) => handleAdd(e)}
-                >
-                  Add
-                </button>
-              </div>
+                      .filter((item) => {
+                        const searchTerm = value.toLowerCase();
+                        const fullName = item.full_name.toLowerCase();
 
-              <div className="form__row">
-                <div className="form__row__col">
-                  <p className="form__row__col__label">Selected Products</p>
-                  <div className="showSelected">
-                    <table>
-                      <tr className="tableHead">
-                        <th> Item Code</th>
-                        <th>Whole sale</th>
-                        <th>Retail</th>
-                        <th>FOC</th>
-                        <th>Qty</th>
-
-                        <th>Action</th>
-                      </tr>
-                      {items.map((item, i) => (
-                        <tr className="datarow" key={i}>
-                          <td>{item.item_code}</td>
-                          <td>{item.whole_sale_price}</td>
-                          <td>{item.retail_price}</td>
-                          <td>{item.free_of_charge}</td>
-
-                          <td>{item.qty}</td>
-
-                          <td className="action">
-                            <button
-                              className="btnDelete"
-                              onClick={(e) => handleRemove(e, item.id)}
-                            >
-                              remove
-                            </button>
-                          </td>
-                        </tr>
+                        return (
+                          fullName.includes(searchTerm) &&
+                          fullName !== searchTerm
+                        );
+                      })
+                      .map((item) => (
+                        <ul
+                          className="searchContent__row"
+                          onClickCapture={habldtest}
+                          onClick={(e) => hanldeCatchFilter(e, item)}
+                        >
+                          <li
+                            style={{ cursor: 'pointer' }}
+                            className="searchContent__row__details"
+                          >
+                            {item.full_name}
+                          </li>
+                        </ul>
                       ))}
-                    </table>
                   </div>
                 </div>
               </div>
-              <div className="form__btn">
-                <div className="form__btn__container">
-                  <button className="btnEdit" onClick={(e) => handleSave(e)}>
-                    complete
-                  </button>
-                  <button className="btnDelete">clear</button>
+            </div>
+
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Item</div>
+                <div className="form__row__col__input">
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    <input
+                      type="text"
+                      placeholder="search..."
+                      value={value2}
+                      onChange={(e) => filterProducts(e)}
+                    />
+                    <SearchIcon
+                      style={{
+                        padding: '5px',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                      }}
+                    />
+                  </div>
+                  <div
+                    className="searchContent"
+                    style={
+                      !showProducts ? { display: 'none' } : { display: 'grid' }
+                    }
+                  >
+                    {' '}
+                    <div className="searchContent__row">
+                      <div className="searchContent__row__details">
+                        <p>Item Code</p>
+                        <p>Qty</p>
+                      </div>
+                    </div>
+                    {products
+                      .filter((item) => {
+                        const searchTerm = value2.toLowerCase();
+                        const ItemCode = item.item_code.toLowerCase();
+
+                        return (
+                          ItemCode.includes(searchTerm) &&
+                          ItemCode !== searchTerm
+                        );
+                      })
+                      .map((item) => (
+                        <div
+                          className="searchContent__row"
+                          onClick={(e) => hanldeProductFilter(e, item)}
+                        >
+                          <div className="searchContent__row__details">
+                            <p>{item.item_code}</p>
+                            <p>{item.qty}</p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </form>
-          </div>
-          <Modal open={showinv} onClose={() => handleCloseInv()}>
-            <MyInvoice distributor={distributor} items={items} oldinv={false} />
-          </Modal>
+              <div className="form__row__col">
+                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    value={qty}
+                    onChange={(e) => setQty(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">FOC</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    value={foc}
+                    onChange={(e) => setFoc(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <button
+                className="btnSave"
+                style={{
+                  width: '200px',
+                  height: '50px',
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  borderRadius: '25px',
+                  fontSize: '20px',
+                  color: 'white',
+                }}
+                onClick={(e) => handleAdd(e)}
+              >
+                Add
+              </button>
+            </div>
+
+            <div className="form__row">
+              <div className="form__row__col">
+                <p className="form__row__col__label">Selected Products</p>
+                <div className="showSelected">
+                  <table>
+                    <tr className="tableHead">
+                      <th> Item Code</th>
+                      <th>Whole sale</th>
+                      <th>Retail</th>
+                      <th>FOC</th>
+                      <th>Qty</th>
+
+                      <th>Action</th>
+                    </tr>
+                    {items.map((item, i) => (
+                      <tr className="datarow" key={i}>
+                        <td>{item.item_code}</td>
+                        <td>{item.whole_sale_price}</td>
+                        <td>{item.retail_price}</td>
+                        <td>{item.free_of_charge}</td>
+
+                        <td>{item.qty}</td>
+
+                        <td className="action">
+                          <button
+                            className="btnDelete"
+                            onClick={(e) => handleRemove(e, item.id)}
+                          >
+                            remove
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div className="form__btn">
+              <div className="form__btn__container">
+                <button className="btnEdit" onClick={(e) => handleSave(e)}>
+                  complete
+                </button>
+                <button className="btnDelete">clear</button>
+              </div>
+            </div>
+          </form>
         </div>
-      )}
-    </React.Fragment>
+        <Modal open={showinv} onClose={() => handleCloseInv()}>
+          <MyInvoice distributor={distributor} items={items} oldinv={false} />
+        </Modal>
+      </div>
+    </div>
   );
 };
 

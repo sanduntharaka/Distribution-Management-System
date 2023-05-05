@@ -43,11 +43,12 @@
         }
         margin-top: 10px;
         &__row {
-          margin-top: 5px;
+          margin-top: 25px;
           display: flex;
           flex-direction: row;
           justify-content: space-evenly;
           gap: 25px;
+          color: #000;
           @include mobile {
             flex-direction: column;
             transition: all 0.3s ease;

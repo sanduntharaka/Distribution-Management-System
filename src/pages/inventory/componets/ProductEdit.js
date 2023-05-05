@@ -17,30 +17,31 @@ const ProductEdit = (props) => {
     e.preventDefault();
     e.stopPropagation();
     axiosInstance
-      .put(`/company/inventory/edit/${data.id}`, data, {
+      .put(`${props.url}/${props.data.id}`, data, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
-        props.error(false);
-        props.success(true);
-        props.msg('Your data has been updated successfully.');
-        props.title('success');
-        props.closeCurrent();
-        props.openMessage();
+        console.log(res);
+        props.showEdit(false);
+        props.msgErr(false);
+        props.msgSuccess(true);
+        props.msgTitle('Success');
+        props.msg('Item details edited successfully');
+        props.openMsg(true);
       })
       .catch((err) => {
         console.log(err);
-        props.success(false);
-        props.error(true);
+        props.showEdit(false);
+        props.msgSuccess(false);
+        props.msgErr(true);
+        props.msgTitle('Error');
         props.msg(
-          'Your data cannot update. Please check your data and try again.'
+          'Item details cannot update at the moment. Please try again later'
         );
-        props.title('Error');
-        props.closeCurrent();
-        props.openMessage();
+        props.openMsg(true);
       });
   };
 
