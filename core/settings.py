@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -184,7 +184,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'localhost:3000'
+DOMAIN = 'front.ditributor.codesolusions.online'
 SITE_NAME = 'abcd'
 DJOSER = {
     'LOGIN_FIELD': 'email',
@@ -203,4 +203,6 @@ DJOSER = {
 }
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://front.ditributor.codesolusions.online",
+    "https://front.ditributor.codesolusions.online",
 ]
