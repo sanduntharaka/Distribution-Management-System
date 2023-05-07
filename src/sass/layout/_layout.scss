@@ -2,8 +2,50 @@
   position: relative;
   display: flex;
   height: 100vh;
+
+  &__menu {
+    display: none;
+    z-index: 50;
+    @include mobile {
+      display: block;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 25px;
+      height: 25px;
+      background-color: $color-colum-background;
+      padding: 5px;
+      border-radius: 25px;
+
+      &:hover {
+        background-color: $color-blue-sidebar-title-dark;
+        color: $color-white;
+      }
+    }
+  }
   &__sidebar {
     background-color: $color-sidebar;
+    display: block;
+    @include mobile {
+      display: none;
+    }
+    &.show {
+      @include mobile {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 200;
+      }
+    }
+    &.hide {
+      @include mobile {
+        display: none;
+      }
+    }
+    @include mobile {
+      border-radius: 0px 25px 0px 0px;
+    }
   }
   &__content {
     overflow-y: scroll;

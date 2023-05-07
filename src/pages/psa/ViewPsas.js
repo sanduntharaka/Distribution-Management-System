@@ -248,7 +248,7 @@ const ViewPsas = () => {
     }
   };
   return (
-    <div className="page">
+    <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
           <ProductDetails

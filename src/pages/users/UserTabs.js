@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import UserCreation from './UserCreation';
 import UserDetails from './UserDetails';
 import DistributorSalesRef from './DistributorSalesRef';
+import AllUsers from './AllUsers';
 
 const UserTabs = () => {
   const [selected, setSelected] = useState(0);
@@ -40,7 +41,7 @@ const UserTabs = () => {
           className={`item ${selected === 3 ? 'selected' : ''}`}
           onClick={() => handleSelect(3)}
         >
-          View user
+          View details
         </div>
       </div>
       <div className="tab_page">
@@ -51,8 +52,7 @@ const UserTabs = () => {
         ) : selected === 2 ? (
           <DistributorSalesRef />
         ) : selected === 3 ? (
-          // <DistributorSalesRef />
-          ''
+          <AllUsers />
         ) : (
           ''
         )}

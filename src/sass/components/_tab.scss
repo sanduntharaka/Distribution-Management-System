@@ -1,83 +1,47 @@
-.contain {
-  display: flex;
-  flex-direction: column;
+.tab {
   width: 100%;
   height: 100vh;
-  border-radius: 25px 25px 0px 0px;
-
-  button {
-    border: none;
-  }
-  .content-tabs {
-    flex-grow: 1;
-  }
-  .content {
-    position: relative;
-    background: white;
-    padding: 20px;
+  .tab_contaner {
+    height: 50px;
     width: 100%;
-    height: 100%;
-    display: none;
+    display: flex;
+    align-items: center;
+    border-radius: 25px;
+    padding: 0px 25px 0px 25px;
+    box-sizing: border-box;
+    gap: 5px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+    @include mobile {
+      overflow-x: scroll;
+    }
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .item {
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      box-sizing: border-box;
+      cursor: pointer;
+      @include mobile {
+        flex-shrink: 0;
+      }
+      &:hover {
+        background-color: rgba(51, 197, 255, 0.2);
+      }
+      &.selected {
+        // background-color: rgba(51, 146, 255, 1);
+        border-bottom: 2px solid rgba(51, 146, 255, 1);
+        color: rgba(51, 146, 255, 1);
+      }
+    }
   }
-  .content h2 {
-    padding: 0px 0 5px 0px;
-  }
-  .content hr {
-    width: 100px;
-    height: 2px;
-    background: #222;
-    margin-bottom: 5px;
-  }
-
-  .active-content {
-    display: block;
-  }
-}
-
-.bloc-tabs {
-  display: flex;
-  border: 2px solid blue;
-  border-radius: 25px 25px 0px 0px;
-  gap: 5px;
-}
-.tabs {
-  background-color: #1c448e;
-  color: #fff;
-  padding: 15px;
-  text-align: center;
-  width: 100%;
-  border-radius: 0px 25px 0px 0px;
-  cursor: pointer;
-  box-sizing: content-box;
-  position: relative;
-  outline: none;
-
-  &:first-child {
-    border-radius: 25px 25px 0px 0px;
-  }
-  &:last-child {
-    border-radius: 0px 25px 0px 0px;
-  }
-}
-
-.active-tabs {
-  background: white;
-  color: #000;
-
-  &:first-child {
-    border-radius: 25px 0px 0px 0px;
-  }
-  &:last-child {
-    border-radius: 0px 25px 0px 0px;
-  }
-}
-
-.active-tabs::before {
-  background: rgb(88, 147, 241);
-  &:first-child {
-    border-radius: 25px 0px 0px 0px;
-  }
-  &:last-child {
-    border-radius: 0px 25px 0px 0px;
+  .tab_page {
+    height: 100vh;
   }
 }

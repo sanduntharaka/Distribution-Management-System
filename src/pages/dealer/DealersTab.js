@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './delaser_tab.scss';
 import CreateDealer from './CreateDealer';
 import ShowDealers from './ShowDealers';
 const DealersTab = () => {

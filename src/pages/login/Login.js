@@ -98,7 +98,7 @@ const Login = () => {
                   sx={{ mt: 3, mb: 2 }}
                 >
                   Sign In
-                  {loading ? <Spinner /> : ''}
+                  {loading ? <Spinner login={true} /> : ''}
                 </Button>
                 <Grid container>
                   <Grid item xs>

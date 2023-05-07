@@ -105,7 +105,7 @@ const DistributorSalesRef = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>Create Primary Sales Area</p>
+        <p>Assign SalesRef</p>
       </div>
       <div className="page__pcont">
         <div className="form">

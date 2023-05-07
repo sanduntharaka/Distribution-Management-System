@@ -2,10 +2,7 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from '../inventory/componets/ProductDetails';
-import ProductEdit from '../inventory/componets/ProductEdit';
-import ProductDelete from '../inventory/componets/ProductDelete';
-import Message from '../../components/message/Message';
+
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
@@ -25,12 +22,16 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import DistributorSalesrefConfirm from '../../components/userComfirm/DistributorSalesrefConfirm';
+
+import DealerDetails from '../../components/details/DealerDetails';
+import EditDealerDetails from '../../components/edit/EditDealerDetails';
+import DealerDeleteConfirm from '../../components/userComfirm/DealerDeleteConfirm';
+import Message from '../../components/message/Message';
+import UserDetails from '../../components/details/UserDetails';
+import UserDetailsEdit from '../../components/edit/UserDetailsEdit';
+import UserDetailsDelete from '../../components/userComfirm/UserDetailsDelete';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -98,7 +99,7 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const ViewAllDistributorsSalesRefs = () => {
+const AllUsers = () => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -109,14 +110,12 @@ const ViewAllDistributorsSalesRefs = () => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Distributor Name', field: 'distributor_name' },
-    { title: 'Salesref', field: 'salesref_name' },
+    { title: 'Name', field: 'full_name' },
+    { title: 'Designation', field: 'designation' },
+    { title: 'Phone', field: 'personal_number' },
+    { title: 'Terriotory', field: 'terriotory' },
   ];
-  //  added_by
-  //  distributor
-  //  sales_ref
-  //  distributor_name
-  //  salesref_name
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -152,8 +151,9 @@ const ViewAllDistributorsSalesRefs = () => {
   };
 
   useEffect(() => {
+    console.log('called');
     axiosInstance
-      .get(`/distributor/salesref/all/`, {
+      .get(`/users/all/`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -164,8 +164,8 @@ const ViewAllDistributorsSalesRefs = () => {
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
-          if (!itemCodes.includes(item.created_by)) {
-            itemCodes.push(item.created_by);
+          if (!itemCodes.includes(item.item_code)) {
+            itemCodes.push(item.item_code);
           }
         });
       })
@@ -174,9 +174,63 @@ const ViewAllDistributorsSalesRefs = () => {
       });
   }, [success]);
 
+  const handleViewDetails = (e, value) => {
+    e.preventDefault();
+    console.log(value);
+    setItemDetails({
+      id: value.id,
+      full_name: value.full_name,
+      address: value.address,
+      designation: value.designation,
+      dob: value.dob,
+      company_number: value.company_number,
+      personal_number: value.personal_number,
+      home_number: value.home_number,
+      immediate_contact_person_name: value.immediate_contact_person_name,
+      immediate_contact_person_number: value.immediate_contact_person_number,
+      terriotory: value.terriotory,
+    });
+    setMessageOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(true);
+
+    handleModalOpen();
+  };
+
+  const handleEditDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+      full_name: value.full_name,
+      address: value.address,
+      designation: value.designation,
+      dob: value.dob,
+      company_number: value.company_number,
+      personal_number: value.personal_number,
+      home_number: value.home_number,
+      immediate_contact_person_name: value.immediate_contact_person_name,
+      immediate_contact_person_number: value.immediate_contact_person_number,
+      terriotory: value.terriotory,
+    });
+    setMessageOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(true);
+    handleModalOpen();
+  };
   const handleDeleteDetails = (e, value) => {
     setItemDetails({
       id: value.id,
+      name: value.name,
+      contact_number: value.contact_number,
+      address: value.address,
+      owner_name: value.owner_name,
+      company_number: value.company_number,
+      owner_personal_number: value.owner_personal_number,
+      owner_home_number: value.owner_home_number,
+      assistant_name: value.assistant_name,
+      assistant_contact_number: value.assistant_contact_number,
+      added: value.added,
     });
     setMessageOpen(false);
     setDetailsOpen(false);
@@ -190,16 +244,36 @@ const ViewAllDistributorsSalesRefs = () => {
     if (i === 'all') {
       setTableData(data);
     } else {
-      let filteredItems = data.filter((item) => item.created_by === i);
+      let filteredItems = data.filter((item) => item.item_code === i);
       console.log(filteredItems);
       setTableData(filteredItems);
     }
   };
   return (
-    <div>
+    <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {deletedetailsOpen ? (
-          <DistributorSalesrefConfirm
+        {detailsOpen ? (
+          <UserDetails
+            data={itemDetails}
+            showDetails={setDetailsOpen}
+            showEdit={setEditDetailsOpen}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+          />
+        ) : editdetailsOpen ? (
+          <UserDetailsEdit
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showEdit={setEditDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/users/edit'}
+          />
+        ) : deletedetailsOpen ? (
+          <UserDetailsDelete
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -208,7 +282,7 @@ const ViewAllDistributorsSalesRefs = () => {
             msg={setMsg}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/salesref/delete'}
+            url={'/users/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -223,48 +297,48 @@ const ViewAllDistributorsSalesRefs = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Primary Sales Areas</p>
+        <p>View All User Details</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             {/* <div>
-              <Button
-                id="demo-customized-button"
-                aria-controls={open ? 'demo-customized-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                variant="contained"
-                disableElevation
-                onClick={handleClick}
-                endIcon={<KeyboardArrowDownIcon />}
-                fullWidth={150}
-              >
-                Filter By
-              </Button>
-              <StyledMenu
-                id="demo-customized-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'demo-customized-button',
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => handleFilter('all')} disableRipple>
-                  All
-                </MenuItem>
-                {itemCodes.map((item, i) => (
-                  <MenuItem
-                    onClick={() => handleFilter(item)}
-                    key={i}
-                    disableRipple
-                  >
-                    {item}
+                <Button
+                  id="demo-customized-button"
+                  aria-controls={open ? 'demo-customized-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  variant="contained"
+                  disableElevation
+                  onClick={handleClick}
+                  endIcon={<KeyboardArrowDownIcon />}
+                  fullWidth={150}
+                >
+                  Filter By
+                </Button>
+                <StyledMenu
+                  id="demo-customized-menu"
+                  MenuListProps={{
+                    'aria-labelledby': 'demo-customized-button',
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => handleFilter('all')} disableRipple>
+                    All
                   </MenuItem>
-                ))}
-              </StyledMenu>
-            </div> */}
+                  {itemCodes.map((item, i) => (
+                    <MenuItem
+                      onClick={() => handleFilter(item)}
+                      key={i}
+                      disableRipple
+                    >
+                      {item}
+                    </MenuItem>
+                  ))}
+                </StyledMenu>
+              </div> */}
           </div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
@@ -294,6 +368,18 @@ const ViewAllDistributorsSalesRefs = () => {
                 icons={tableIcons}
                 actions={[
                   {
+                    icon: CgDetailsMore,
+                    tooltip: 'View details',
+                    onClick: (event, rowData) =>
+                      handleViewDetails(event, rowData),
+                  },
+                  {
+                    icon: EditIcon,
+                    tooltip: 'Edit details',
+                    onClick: (event, rowData) =>
+                      handleEditDetails(event, rowData),
+                  },
+                  {
                     icon: DeleteOutline,
                     tooltip: 'Delete details',
                     onClick: (event, rowData) =>
@@ -303,7 +389,31 @@ const ViewAllDistributorsSalesRefs = () => {
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === DeleteOutline ? (
+                      {props.action.icon === CgDetailsMore ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'green' }} // customize the icon color
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === EditIcon ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      ) : (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -315,8 +425,6 @@ const ViewAllDistributorsSalesRefs = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
-                      ) : (
-                        ''
                       )}
                     </React.Fragment>
                   ),
@@ -329,5 +437,4 @@ const ViewAllDistributorsSalesRefs = () => {
     </div>
   );
 };
-
-export default ViewAllDistributorsSalesRefs;
+export default AllUsers;
