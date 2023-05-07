@@ -22,6 +22,21 @@ class CreateUserDetails(generics.CreateAPIView):
             return Response({"status": "error", "errors": serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class EditUserDetails(generics.UpdateAPIView):
+    queryset = UserDetails.objects.all()
+    serializer_class = serializers.UserDetailsUpdateSerializer
+
+
+class DeleteUserDetails(generics.DestroyAPIView):
+    queryset = UserDetails.objects.all()
+    serializer_class = serializers.UserDetailsUpdateSerializer
+
+
+class AllUserDetails(generics.ListAPIView):
+    queryset = UserDetails.objects.all()
+    serializer_class = serializers.UserDetailsCreateSerializer
+
+
 class getUsersDetailsByMainUser(generics.RetrieveAPIView):
 
     serializer_class = serializers.GetBasicUserDetail

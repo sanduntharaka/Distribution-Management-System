@@ -9,6 +9,16 @@ class CreateDistributorSalesRefSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class GetDistributorSalesRefSerializer(serializers.ModelSerializer):
+    distributor_name = serializers.CharField(source='distributor.full_name')
+    salesref_name = serializers.CharField(source='sales_ref.full_name')
+
+    class Meta:
+        model = SalesRefDistributor
+        fields = ('id', 'added_by', 'distributor', 'sales_ref',
+                  'distributor_name', 'salesref_name')
+
+
 class DistributorInventory(serializers.ModelSerializer):
     class Meta:
         model = DistributorInventory
