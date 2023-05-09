@@ -73,3 +73,8 @@ class AllSalesRefs(generics.ListAPIView):
     def get_queryset(self):
         queryset = UserDetails.objects.filter(user__is_salesref=True)
         return get_list_or_404(queryset)
+
+
+class ProfilePictureUpload(generics.UpdateAPIView):
+    queryset = UserDetails.objects.all()
+    serializer_class = serializers.ProfilePicUpdateSerializer

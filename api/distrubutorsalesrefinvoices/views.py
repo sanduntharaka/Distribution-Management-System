@@ -51,7 +51,6 @@ class CreateInvoiceItems(generics.CreateAPIView):
     queryset = InvoiceIntem.objects.all()
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         bill = SalesRefInvoice.objects.get(id=request.data['bill'])
         item_objs = []
         inventory_items = []
@@ -76,12 +75,9 @@ class CreateInvoiceItems(generics.CreateAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-# {
-#     'bill': 5,
-#     'items': [
-#         {'id': 72, 'item_code': 'BXD4521', 'description': 'sa asd fasdf asdf asdfawer wdfasdf',
-#             'whole_sale_price': 150, 'price': 200, 'qty': '5', 'foc': 0, 'pack_size': 10, 'extended_price': 1000},
-#         {'id': 73, 'item_code': 'TGX4788', 'description': 'asf asdf asdf asdf', 'whole_sale_price': 500,
-#          'price': 350, 'qty': '8', 'foc': '2', 'pack_size': 10, 'extended_price': 2800}
-#     ]
-# }
+class InvoiceItems(generics.ListAPIView):
+    serializer_class = serializers.CreateInvoiceItemsSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        return get_list_or_404(InvoiceIntem, bill=item)

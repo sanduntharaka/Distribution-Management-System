@@ -22,6 +22,8 @@ media
 0004_remove_distributorinventoryitems_item_and_more.py
 0002_alter_companyinvoice_invoice_number.py
 0003_companyinvoiceitems_description.py
+distrubutor_salesref_invoice/migrations/0002_initial.py
+0002_initial.py
 # Backup files # 
 *.bak 
 *.vscode

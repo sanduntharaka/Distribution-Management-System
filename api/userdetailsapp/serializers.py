@@ -25,7 +25,15 @@ class AllDistributorsSerializer(serializers.ModelSerializer):
 
 
 class GetBasicUserDetail(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.email')
+
     class Meta:
         model = UserDetails
-        fields = ('id', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
+        fields = ('id', 'user', 'photo', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
                   'home_number', 'immediate_contact_person_name', 'immediate_contact_person_number', 'terriotory')
+
+
+class ProfilePicUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDetails
+        fields = ('photo',)

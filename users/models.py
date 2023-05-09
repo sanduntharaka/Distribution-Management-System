@@ -33,7 +33,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     is_distributor = models.BooleanField(default=False)
     is_salesref = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
+    last_login = models.DateTimeField(auto_now=True)
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'

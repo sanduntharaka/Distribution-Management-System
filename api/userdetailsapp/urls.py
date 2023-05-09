@@ -8,6 +8,7 @@ urlpatterns = [
     path('distributors/', views.AllDistributors.as_view()),
     path('salesrefs/', views.AllSalesRefs.as_view()),
     path('get/<id>', views.getUsersDetails.as_view()),
+    path('upload/image/<int:pk>', views.ProfilePictureUpload.as_view()),
     path('get/user/<id>', views.getUsersDetailsByMainUser.as_view()),
 
 ]

@@ -37,9 +37,7 @@ class DeleteReturn(generics.DestroyAPIView):
 class AddReturnItem(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        arr = [i for i in range(1, 100000)]
-        print(arr)
+
         sales_ref_return = SalesRefReturn.objects.get(id=self.kwargs.get('id'))
         return_items = []
         try:

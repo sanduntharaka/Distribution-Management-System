@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    # 'rest_framework.authtoken',
     'djoser',
     'users',
     'userdetails',
@@ -54,12 +55,15 @@ INSTALLED_APPS = [
     'primary_sales_area',
     'salesref_return',
     'not_buy_details',
+    'sales_ref_leave',
+    'sales_return',
     'api',
     'api.userdetailsapp',
     'api.companyInventory',
     'api.distributor',
     'api.companyInvoices',
     # 'api.salesrefs',
+    'api.dashboard',
     'api.distrubutorsalesrefs',
     'api.distributor_invoices',
     'api.dealers',
@@ -150,7 +154,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFIELS_DIRS = [
-    os.path.join(BASE_DIR, "build/static")
+    os.path.join(BASE_DIR, "static")
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -181,8 +185,9 @@ REST_FRAMEWORK = {
 
 }
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
 DOMAIN = 'front.ditributor.codesolusions.online'

@@ -5,6 +5,9 @@ User = settings.AUTH_USER_MODEL
 
 
 class UserDetails(models.Model):
+    def user_photo_upload_path(instance, filename):
+        return f'user/{instance.id}/{filename}'
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     full_name = models.CharField(max_length=255, null=False)
     address = models.CharField(max_length=255, null=False)
@@ -18,4 +21,4 @@ class UserDetails(models.Model):
     immediate_contact_person_number = models.CharField(
         max_length=15, null=True)
     terriotory = models.CharField(max_length=100, null=False)
-    photo = models.ImageField(upload_to=f'user/{id}/', blank=True)
+    photo = models.ImageField(upload_to=user_photo_upload_path, blank=True)
