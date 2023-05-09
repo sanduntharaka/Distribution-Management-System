@@ -15,10 +15,6 @@ export const login = (email, password) => async (dispatch) => {
       email: email,
       password: password,
     });
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
 
     sessionStorage.setItem('userInfo', JSON.stringify(data));
     axiosLoginInstance
@@ -37,6 +33,10 @@ export const login = (email, password) => async (dispatch) => {
           })
           .then((res) => {
             sessionStorage.setItem('user_details', JSON.stringify(res.data));
+            dispatch({
+              type: USER_LOGIN_SUCCESS,
+              payload: data,
+            });
           })
           .catch((err) => {
             console.log(err);

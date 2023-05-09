@@ -1,0 +1,41 @@
+.wcontainer {
+  display: flex;
+  flex-direction: column;
+
+  &__row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    .title {
+      width: 100%;
+      text-align: start;
+      color: white;
+      font-size: 25px;
+    }
+
+    &.mt {
+      margin-top: 15px;
+    }
+
+    &__col {
+      flex: 1;
+      text-align: center;
+      color: $color-blue-sidebar-title;
+      font-weight: 500;
+
+      &.icon {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .up {
+          color: $color-details;
+        }
+        .down {
+          color: $color-danger;
+        }
+      }
+    }
+  }
+}

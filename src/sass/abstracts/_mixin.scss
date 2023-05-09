@@ -1,5 +1,41 @@
 @mixin mobile {
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: $screen-sm) {
+    @content;
+  }
+}
+
+@mixin screenXXS {
+  @media screen and (min-width: $screen-xxs) {
+    @content;
+  }
+}
+
+@mixin screenXS {
+  @media screen and (min-width: $screen-xs) {
+    @content;
+  }
+}
+
+@mixin screenSM {
+  @media screen and (min-width: $screen-sm) {
+    @content;
+  }
+}
+
+@mixin screenMD {
+  @media screen and (min-width: $screen-md) {
+    @content;
+  }
+}
+
+@mixin screenLG {
+  @media screen and (min-width: $screen-lg) {
+    @content;
+  }
+}
+
+@mixin screenXL {
+  @media screen and (min-width: $screen-xl) {
     @content;
   }
 }

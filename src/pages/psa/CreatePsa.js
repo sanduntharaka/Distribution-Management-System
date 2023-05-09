@@ -3,6 +3,7 @@ import ViewPsas from './ViewPsas';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import Spinner from '../../components/loadingSpinner/Spinner';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -18,6 +19,8 @@ const ShowMessage = forwardRef((props, ref) => {
 
 const CreatePsa = () => {
   const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -33,6 +36,7 @@ const CreatePsa = () => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     axiosInstance
       .post('/psa/create/', data, {
         headers: {
@@ -41,6 +45,8 @@ const CreatePsa = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setError(false);
         setSuccess(true);
         setTitle('Success');
@@ -48,6 +54,8 @@ const CreatePsa = () => {
         handleOpen();
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
         setSuccess(false);
         setError(true);
@@ -60,6 +68,15 @@ const CreatePsa = () => {
   };
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <ShowMessage
           ref={inputRef}

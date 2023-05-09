@@ -81,7 +81,7 @@
       }
       &__pcont {
         @include mobile {
-          width: 92%;
+          width: 100%;
         }
         margin-top: 10px;
         &__row {
@@ -92,6 +92,8 @@
           gap: 25px;
           color: #000;
           @include mobile {
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
             transition: all 0.3s ease;
             gap: 5px;
@@ -118,8 +120,41 @@
 .dataTable {
   width: 100%;
   @include mobile {
-    width: 400px;
     margin-left: auto;
     margin-right: auto;
+  }
+  .testTbl {
+    background-color: $color-blue-sidebar-title-light;
+  }
+  @include screenXXS {
+    width: 300px;
+    display: block;
+
+    &:first-child {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  @include screenXS {
+    width: 500px;
+    display: block;
+
+    &:first-child {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  @include screenSM {
+    width: 668px;
+    display: block;
+
+    &:first-child {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  @include screenMD {
+    width: 100%;
   }
 }

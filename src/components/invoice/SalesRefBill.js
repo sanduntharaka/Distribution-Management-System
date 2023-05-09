@@ -22,7 +22,6 @@ const SalesRefBill = (props) => {
   const hanldlePrint = () => {
     Print();
   };
-  console.log(props);
   return (
     <div className="inv">
       <div className="inv__content" id="pdf-content">

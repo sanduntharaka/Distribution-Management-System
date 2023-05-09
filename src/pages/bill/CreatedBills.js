@@ -23,7 +23,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
+import SalesRefBill from '../../components/invoice/SalesRefBill';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -61,7 +61,6 @@ const CreatedBills = () => {
     },
     { title: 'Sales Ref', field: 'sales_ref' },
     { title: 'Bill No', field: 'code' },
-    { title: 'Date', field: 'date' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Total', field: 'total' },
@@ -133,36 +132,38 @@ const CreatedBills = () => {
       .catch((err) => {
         console.log(err);
       });
-    console.log(sales_refs);
-    console.log(distributors);
   }, ['']);
-
+  const [invoice, setInvoice] = useState();
+  const [items, setItems] = useState();
+  const [dataSingle, setSataSingle] = useState();
   const handleViewDetails = (e, value) => {
     e.preventDefault();
     console.log(value);
-    setItemDetails({
-      id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
-    });
-    setMessageOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(true);
-
-    handleModalOpen();
+    setInvoice(value);
+    setSataSingle(value);
+    axiosInstance
+      .get(`/salesref/invoice/items/${value.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        setItems(res.data);
+        setMessageOpen(false);
+        setEditDetailsOpen(false);
+        setDeleteDetailsOpen(false);
+        setDetailsOpen(true);
+        handleModalOpen();
+      })
+      .catch((err) => {
+        console.log();
+      });
   };
 
   const handleEditDetails = (e, value) => {
-    setItemDetails({
+    setInvoice({
       id: value.id,
       name: value.name,
       contact_number: value.contact_number,
@@ -175,6 +176,7 @@ const CreatedBills = () => {
       assistant_contact_number: value.assistant_contact_number,
       added: value.added,
     });
+
     setMessageOpen(false);
     setDeleteDetailsOpen(false);
     setDetailsOpen(false);
@@ -224,17 +226,26 @@ const CreatedBills = () => {
       setTableData(filteredItems);
     }
   };
-
+  const MyInvoice = React.forwardRef((props, ref) => {
+    return (
+      <SalesRefBill
+        issued_by={props.issued_by}
+        items={props.items}
+        invoice={props.invoice}
+        data={props.data}
+      />
+    );
+  });
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
-          <ProductDetails
-            data={itemDetails}
-            showDetails={setDetailsOpen}
-            showEdit={setEditDetailsOpen}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
+          <MyInvoice
+            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
+            items={items}
+            invoice={invoice}
+            oldinv={false}
+            data={dataSingle}
           />
         ) : editdetailsOpen ? (
           <ProductEdit

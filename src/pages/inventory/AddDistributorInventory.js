@@ -1,11 +1,24 @@
 import React, { useState } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
-
+import Spinner from '../../components/loadingSpinner/Spinner';
 import Modal from '@mui/material/Modal';
-
+const MyMessage = React.forwardRef((props, ref) => {
+  return (
+    <Message
+      hide={() => props.hide()}
+      success={props.success}
+      error={props.error}
+      title={props.title}
+      msg={props.msg}
+      ref={ref}
+    />
+  );
+});
 const AddDistributorInventory = ({ inventory }) => {
   //message modal
+  const [loading, setLoading] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -29,7 +42,7 @@ const AddDistributorInventory = ({ inventory }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(inventory.id);
+    setLoading(true);
     axiosInstance
       .post('/distributor/items/add/', data, {
         headers: {
@@ -38,6 +51,8 @@ const AddDistributorInventory = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setError(false);
         setSuccess(true);
         setTitle('Success');
@@ -45,6 +60,8 @@ const AddDistributorInventory = ({ inventory }) => {
         handleOpen();
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
         setSuccess(false);
         setError(true);
@@ -53,10 +70,36 @@ const AddDistributorInventory = ({ inventory }) => {
         handleOpen();
       });
   };
+
+  const handleClear = (e) => {
+    e.preventDefault();
+
+    setData({
+      ...data,
+      item_code: '',
+      description: '',
+      base: '',
+      qty: '',
+      pack_size: '',
+      free_of_charge: '',
+      whole_sale_price: '',
+      retail_price: '',
+    });
+  };
+
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
-        <Message
+        <MyMessage
           hide={handleClose}
           success={success}
           error={error}
@@ -77,6 +120,8 @@ const AddDistributorInventory = ({ inventory }) => {
                   <input
                     type="text"
                     placeholder="type here"
+                    name="item_code"
+                    value={data.item_code === undefined ? '' : data.item_code}
                     onChange={(e) =>
                       setData({ ...data, item_code: e.target.value })
                     }
@@ -89,6 +134,8 @@ const AddDistributorInventory = ({ inventory }) => {
                   <input
                     type="text"
                     placeholder="type here"
+                    name="base"
+                    value={data.base === undefined ? '' : data.base}
                     onChange={(e) => setData({ ...data, base: e.target.value })}
                   />
                 </div>
@@ -104,6 +151,12 @@ const AddDistributorInventory = ({ inventory }) => {
                     step="0.01"
                     min="0"
                     placeholder="type here"
+                    name="whole_sale_price"
+                    value={
+                      data.whole_sale_price === undefined
+                        ? ''
+                        : data.whole_sale_price
+                    }
                     onChange={(e) =>
                       setData({ ...data, whole_sale_price: e.target.value })
                     }
@@ -118,6 +171,10 @@ const AddDistributorInventory = ({ inventory }) => {
                     placeholder="type here"
                     step="0.01"
                     min="0"
+                    name="retail_price"
+                    value={
+                      data.retail_price === undefined ? '' : data.retail_price
+                    }
                     onChange={(e) =>
                       setData({ ...data, retail_price: e.target.value })
                     }
@@ -132,6 +189,12 @@ const AddDistributorInventory = ({ inventory }) => {
                     placeholder="type here"
                     step="0.01"
                     min="0"
+                    name="free_of_charge"
+                    value={
+                      data.free_of_charge === undefined
+                        ? ''
+                        : data.free_of_charge
+                    }
                     onChange={(e) =>
                       setData({ ...data, free_of_charge: e.target.value })
                     }
@@ -146,6 +209,8 @@ const AddDistributorInventory = ({ inventory }) => {
                   <input
                     type="number"
                     placeholder="type here"
+                    name="qty"
+                    value={data.qty === undefined ? '' : data.qty}
                     onChange={(e) => setData({ ...data, qty: e.target.value })}
                   />
                 </div>
@@ -156,6 +221,8 @@ const AddDistributorInventory = ({ inventory }) => {
                   <input
                     type="number"
                     placeholder="type here"
+                    name="pack_size"
+                    value={data.pack_size === undefined ? '' : data.pack_size}
                     onChange={(e) =>
                       setData({ ...data, pack_size: e.target.value })
                     }
@@ -169,11 +236,14 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__label">Description</div>
                 <div className="form__row__col__input">
                   <textarea
-                    id="message"
-                    name="message"
+                    id="description"
                     rows="5"
                     cols="30"
                     placeholder="type here..."
+                    name="description"
+                    value={
+                      data.description === undefined ? '' : data.description
+                    }
                     onChange={(e) =>
                       setData({ ...data, description: e.target.value })
                     }
@@ -187,7 +257,9 @@ const AddDistributorInventory = ({ inventory }) => {
                 <button className="btnEdit" type="submit">
                   save
                 </button>
-                <button className="btnSave">edit</button>
+                <button className="btnSave" onClick={(e) => handleClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

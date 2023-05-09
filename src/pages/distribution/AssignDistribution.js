@@ -7,12 +7,21 @@ import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import { axiosInstance } from '../../axiosInstance';
 import Invoice from '../../components/invoice/Invoice';
-
+import Spinner from '../../components/loadingSpinner/Spinner';
 const AssignDistribution = () => {
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    let day = d.getDate();
+    return `${year}-${month}-${day}`;
+  });
+
   const catMenu = useRef();
   const catMenuItems = useRef();
 
   //message modal
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -33,7 +42,7 @@ const AssignDistribution = () => {
   const [product, setProduct] = useState();
   const [value2, setValue2] = useState('');
   const [items, setItems] = useState([]);
-
+  const [invData, setInvdata] = useState('');
   // qty
 
   const [qty, setQty] = useState(0);
@@ -146,37 +155,75 @@ const AssignDistribution = () => {
   //submit all selected items to database
   const handleSave = (e) => {
     e.preventDefault();
-    // if (items.length > 0) {
-    //   axiosInstance
-    //     .post(
-    //       '/distributor/items/add/',
-    //       {
-    //         distributor: distributor.user,
-    //         items: items,
-    //         added_by: JSON.parse(sessionStorage.getItem('user')).email,
-    //       },
-    //       {
-    //         headers: {
-    //           Authorization:
-    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       console.log(res);
-    showInvoice();
-    setSuccess(true);
-    setError(false);
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    //   setSuccess(false);
-    //   setError(true);
-    //   setTitle('Error');
-    //   setMsg('Check your inputs and try again later. ');
-    //   handleOpen();
-    // });
-    // }
+    setLoading(true);
+    if (items.length > 0) {
+      const data = {
+        invoice_code: 'IN',
+        solled_to: distributor.user,
+        issued_by: JSON.parse(sessionStorage.getItem('user')).id,
+        date: currentDate,
+      };
+      axiosInstance
+        .post(
+          '/company/invoice/add/',
+          {
+            data: {
+              inv: data,
+            },
+          },
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setInvdata(res.data);
+          console.log(res.data);
+          axiosInstance
+            .post(
+              `/company/invoice/add/items/${res.data.id}`,
+              {
+                data: {
+                  items: items,
+                },
+              },
+              {
+                headers: {
+                  Authorization:
+                    'JWT ' +
+                    JSON.parse(sessionStorage.getItem('userInfo')).access,
+                },
+              }
+            )
+            .then((res) => {
+              setLoading(false);
+
+              showInvoice();
+              setSuccess(true);
+              setError(false);
+            })
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+              setSuccess(false);
+              setError(true);
+              setTitle('Error');
+              setMsg('Check your inputs and try again later. ');
+              handleOpen();
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          setSuccess(false);
+          setError(true);
+          setTitle('Error');
+          setMsg('Check your inputs and try again later. ');
+          handleOpen();
+        });
+    }
   };
 
   const MyMessage = React.forwardRef((props, ref) => {
@@ -193,11 +240,26 @@ const AssignDistribution = () => {
   });
 
   const MyInvoice = React.forwardRef((props, ref) => {
-    return <Invoice distributor={props.distributor} items={props.items} />;
+    return (
+      <Invoice
+        distributor={props.distributor}
+        items={props.items}
+        inv={props.inv}
+      />
+    );
   });
 
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <MyMessage
           handleClose={handleClose}
@@ -432,7 +494,12 @@ const AssignDistribution = () => {
           </form>
         </div>
         <Modal open={showinv} onClose={() => handleCloseInv()}>
-          <MyInvoice distributor={distributor} items={items} oldinv={false} />
+          <MyInvoice
+            distributor={distributor}
+            items={items}
+            oldinv={false}
+            inv={invData}
+          />
         </Modal>
       </div>
     </div>

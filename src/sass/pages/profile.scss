@@ -1,0 +1,70 @@
+.profile_container {
+  height: max-content;
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  @include mobile {
+    display: grid;
+    margin-bottom: 50px;
+  }
+  .section_one {
+    flex: 5;
+    border: 1px solid $color-blue-sidebar-title;
+    padding: 25px;
+    border-radius: 25px;
+    box-sizing: border-box;
+  }
+  .section_two {
+    flex: 1;
+    display: block;
+
+    .photo {
+      width: 200px;
+      height: 200px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 25px;
+      overflow: hidden;
+
+      img {
+        display: block; /* added display property to remove any default image alignment */
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+      }
+    }
+    .button {
+      display: flex;
+      justify-content: center;
+      .btnEdit {
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: bold;
+        color: white;
+      }
+    }
+  }
+}
+
+.progress-bar {
+  margin-top: 10px;
+  height: 20px;
+  background-color: #ddd;
+  position: relative;
+
+  .progrestxt {
+    text-align: center;
+    font-weight: bold;
+    .error {
+      color: red;
+    }
+  }
+
+  .progress-bar-fill {
+    background-color: #007bff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: width 0.2s ease-in-out;
+  }
+}

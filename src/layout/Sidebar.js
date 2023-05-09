@@ -13,11 +13,9 @@ import { SiPurescript } from 'react-icons/si';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/actions/UserActions';
+import UserData from './UserData';
 
 const Sidebar = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const handleClassname = ({ isActive, isPending }) => {
     // isPending ? "pending" : isActive ? "active" : "";
     const claName = 'container__list__item';
@@ -28,10 +26,6 @@ const Sidebar = () => {
     }
   };
 
-  const handleLogOut = () => {
-    dispatch(logout());
-    navigate('/');
-  };
   return (
     <>
       <div className="container">
@@ -174,21 +168,7 @@ const Sidebar = () => {
           </NavLink>
         </div>
         <div className="container__footer">
-          <div className="container__footer__img">
-            <img src="./images/profile.jpg" alt="" />
-          </div>
-          <div className="container__footer__details">
-            <div className="container__footer__details__name">
-              <h4>Mr Sandun tharaka</h4>
-              <p>Manager</p>
-            </div>
-            <div className="container__footer__details__buttons">
-              <button className="addBtn">Profile</button>
-              <button className="remBtn" onClick={handleLogOut}>
-                Logout
-              </button>
-            </div>
-          </div>
+          <UserData />
         </div>
       </div>
     </>

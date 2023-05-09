@@ -3,18 +3,21 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { axiosInstance } from '../../axiosInstance';
 const Invoice = (props) => {
-  const [invCode, setInvCode] = useState('IN');
-  const [invNum, setInvNum] = useState(8752);
-  const [date, setDate] = useState('2022-03-23');
+  const [invCode, setInvCode] = useState(props.inv.invoice_code);
+  const [invNum, setInvNum] = useState(props.inv.invoice_number);
+  const [date, setDate] = useState(props.inv.date);
   const [customer, setCustomer] = useState({
     id: '',
     full_name: '',
     address: '',
   });
 
+  // issued_by
+  // solled_to
+
   useEffect(() => {
     axiosInstance
-      .get(`/users/get/${props.distributor.user}`, {
+      .get(`/users/get/${props.inv.solled_to}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -49,34 +52,7 @@ const Invoice = (props) => {
     });
   };
   const hanldlePrint = () => {
-    if (props.oldinv) {
-      Print();
-    } else {
-      const data = {
-        inv: {
-          invoice_code: invCode,
-          invoice_number: invNum,
-          issued_by: JSON.parse(sessionStorage.getItem('user')).id,
-          solled_to: customer.id,
-          date: date,
-        },
-        items: props.items,
-      };
-      axiosInstance
-        .post('/company/invoice/add/', data, {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        })
-        .then((res) => {
-          console.log(res);
-          Print();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    Print();
   };
 
   return (
@@ -109,7 +85,7 @@ const Invoice = (props) => {
               <tr>
                 <td>
                   <p className="title">Date</p>
-                  <p>Oct 10, 2022</p>
+                  <p>{date}</p>
                 </td>
                 <td>
                   {' '}
@@ -120,13 +96,16 @@ const Invoice = (props) => {
               <tr>
                 <td colSpan="2">
                   <p className="title">Invoice Number</p>
-                  <p>IN0021545454</p>
+                  <p>
+                    {invCode}
+
+                  </p>
                 </td>
               </tr>
               <tr>
                 <td colSpan="2">
                   <p className="title">Delivary Number</p>
-                  <p>IN0021545454</p>
+                  <p></p>
                 </td>
               </tr>
             </table>

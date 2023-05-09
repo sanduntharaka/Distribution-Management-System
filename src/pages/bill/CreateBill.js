@@ -4,11 +4,12 @@ import { axiosInstance } from '../../axiosInstance';
 import SalesRefBill from '../../components/invoice/SalesRefBill';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import Spinner from '../../components/loadingSpinner/Spinner';
 const CreateBill = ({ inventory }) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
     let year = d.getFullYear();
-    let month = d.getMonth();
+    let month = d.getMonth() + 1;
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
@@ -58,6 +59,7 @@ const CreateBill = ({ inventory }) => {
   };
 
   //message modal
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -289,6 +291,15 @@ const CreateBill = ({ inventory }) => {
 
   return (
     <div className="page">
+      {isLoading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal
         open={showinv && isLoading === false}
         onClose={() => handleCloseInv()}

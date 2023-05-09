@@ -41,7 +41,7 @@ const CreateReturn = ({ inventory }) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
     let year = d.getFullYear();
-    let month = d.getMonth();
+    let month = d.getMonth() + 1;
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });

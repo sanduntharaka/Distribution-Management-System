@@ -12,15 +12,20 @@ const ReturnTab = () => {
   };
 
   useEffect(() => {
-    // JSON.parse(sessionStorage.getItem('user_details')).id
+    //
     setIsLoading(true);
     axiosInstance
-      .get(`/distributor/salesref/inventory/${11}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
+      .get(
+        `/distributor/salesref/inventory/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
       .then((res) => {
         setInventory(res.data);
         setIsLoading(false);

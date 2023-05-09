@@ -19,3 +19,26 @@ $color-white: #fff;
 $color-black: #000;
 
 $transition-normal: all 0.3s ease;
+
+//screen sizes
+
+$screen-xxs: 400px;
+$screen-xs: 600px;
+
+// Small devices (portrait tablets and large phones, 768px and up)
+$screen-sm: 768px;
+
+// Medium devices (landscape tablets, 992px and up)
+$screen-md: 992px;
+
+// Large devices (laptops/desktops, 1200px and up)
+$screen-lg: 1200px;
+
+// Extra large devices (large desktops, 1400px and up)
+$screen-xl: 1400px;
+
+// Set max width for small, medium, large and extra large screens
+$max-sm: $screen-sm - 1;
+$max-md: $screen-md - 1;
+$max-lg: $screen-lg - 1;
+$max-xl: $screen-xl - 1;

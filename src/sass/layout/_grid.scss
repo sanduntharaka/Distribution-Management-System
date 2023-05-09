@@ -1,6 +1,5 @@
 .form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   &__row {
     margin-top: 5px;
     display: flex;
@@ -9,6 +8,7 @@
     gap: 25px;
     @include mobile {
       flex-direction: column;
+      align-items: center;
       transition: all 0.3s ease;
       gap: 5px;
     }
@@ -17,6 +17,9 @@
       background-color: $color-colum-background;
       padding: 10px 15px;
       border-radius: 20px;
+      @include mobile {
+        width: 90%;
+      }
 
       &__label {
         font-size: 15px;

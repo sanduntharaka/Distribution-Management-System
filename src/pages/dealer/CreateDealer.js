@@ -2,6 +2,7 @@ import React, { useState, forwardRef, useRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import Spinner from '../../components/loadingSpinner/Spinner';
 
 const ShowMessage = React.forwardRef((props, ref) => {
   return (
@@ -18,6 +19,7 @@ const ShowMessage = React.forwardRef((props, ref) => {
 
 const CreateDealer = () => {
   const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -41,6 +43,7 @@ const CreateDealer = () => {
 
   const handleSave = (e) => {
     e.preventDefault();
+    setLoading(true);
     axiosInstance
       .post('/dealer/add/', data, {
         headers: {
@@ -49,6 +52,8 @@ const CreateDealer = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setError(false);
         setSuccess(true);
         setTitle('Success');
@@ -57,6 +62,8 @@ const CreateDealer = () => {
         console.log(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         setSuccess(false);
         setError(true);
         setTitle('Error');
@@ -67,6 +74,15 @@ const CreateDealer = () => {
   };
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <ShowMessage
           ref={inputRef}

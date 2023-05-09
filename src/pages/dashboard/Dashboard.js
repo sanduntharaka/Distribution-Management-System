@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import './dashboard.scss';
 import MainChart from './widgets/MainChart';
 import SimplePieChart from './widgets/SimplePieChart';
+import ToDaySales from './widgets/ToDaySales';
+import InventoryStatus from './widgets/InventoryStatus';
+import TotalReturns from './widgets/TotalReturns';
 const Dashboard = () => {
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    let day = d.getDate() - 1;
+    return `${year}-${month}-${day}`;
+  });
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
   const navigate = useNavigate();
@@ -28,15 +37,21 @@ const Dashboard = () => {
         <p>Dashboard</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
+        <div className="page__pcont__row center">
           <div className="page__pcont__col">
-            <div className="widget"></div>
+            <div className="widget">
+              <ToDaySales date={currentDate} />
+            </div>
           </div>
           <div className="page__pcont__col">
-            <div className="widget"></div>
+            <div className="widget">
+              <InventoryStatus date={currentDate} />
+            </div>
           </div>
           <div className="page__pcont__col">
-            <div className="widget"></div>
+            <div className="widget">
+              <TotalReturns date={currentDate} />
+            </div>
           </div>
           <div className="page__pcont__col">
             <div className="widget"></div>
@@ -50,6 +65,7 @@ const Dashboard = () => {
           </div>
           <div className="page__pcont__col f4">
             <div className="chart">
+              <div className="title">Last moths income</div>
               <MainChart />
             </div>
           </div>

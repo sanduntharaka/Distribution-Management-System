@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
-
+import Spinner from '../../components/loadingSpinner/Spinner';
 import Modal from '@mui/material/Modal';
 const AddInventory = () => {
   //message modal
+  const [loading, setLoading] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -26,7 +28,8 @@ const AddInventory = () => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleOpen();
+    setLoading(true);
+
     axiosInstance
       .post('/company/inventory/add/', data, {
         headers: {
@@ -35,23 +38,38 @@ const AddInventory = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setError(false);
         setSuccess(true);
         setTitle('Success');
         setMsg('Product add to the inventory.');
+        handleOpen();
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
         setSuccess(false);
         setError(true);
 
         setTitle('Error');
         setMsg('Cannot save data. Please check and try again.');
+        handleOpen();
       });
   };
 
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <Message
           hide={handleClose}
