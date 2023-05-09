@@ -23,7 +23,11 @@ media
 0002_alter_companyinvoice_invoice_number.py
 0003_companyinvoiceitems_description.py
 distrubutor_salesref_invoice/migrations/0002_initial.py
+0003_companyinventory_date.py
+0002_alter_salesrefleave_approved.py
 0002_initial.py
+0003_remove_salesrefleave_leave_type_and_more.py
+0003_alter_userdetails_photo.py
 # Backup files # 
 *.bak 
 *.vscode

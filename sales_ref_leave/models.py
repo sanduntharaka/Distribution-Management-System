@@ -10,7 +10,25 @@ class SalesRefLeave(models.Model):
     leave_end_date = models.DateField()
     reason = models.TextField()
     number_of_dates = models.IntegerField()
-    leave_type = models.TextField(max_length=50)
+    is_annual = models.BooleanField(default=False)
+    is_casual = models.BooleanField(default=False)
+    is_sick = models.BooleanField(default=False)
     return_to_work = models.DateField()
-    approved = models.BooleanField()
+    approved = models.BooleanField(default=False)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    def get_leave_type(self):
+        leave_type = ''
+        if self.is_annual:
+            leave_type = leave_type + ' Annual'
+        if self.is_casual:
+            leave_type = leave_type + ' Casual'
+        if self.is_sick:
+            leave_type = leave_type + ' Sick'
+        return leave_type
+
+    def get_aproved_status(self):
+        if self.approved:
+            return 'Yes'
+        else:
+            return 'No'

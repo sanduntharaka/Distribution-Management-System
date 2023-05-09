@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'api.distrubutorsalesrefinvoices',
     'api.return_salesref',
     'api.notbuydetails',
+    'api.salesrefleave',
 ]
 
 MIDDLEWARE = [

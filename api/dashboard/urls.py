@@ -10,4 +10,6 @@ urlpatterns = [
          views.today_market_return),
     path('get/allsales/company/months',
          views.allSalesinvoicedataBymonth),
+    path('get/lowqty/company/',
+         views.allLawQtyCompany),
 ]

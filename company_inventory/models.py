@@ -13,3 +13,4 @@ class CompanyInventory(models.Model):
     free_of_charge = models.FloatField(blank=False, default=0)
     whole_sale_price = models.FloatField(blank=False)
     retail_price = models.FloatField(blank=False)
+    date = models.DateField(auto_created=True, default='2023-01-01')

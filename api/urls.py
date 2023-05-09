@@ -14,4 +14,6 @@ urlpatterns = [
     path('dealer/', include('api.dealers.urls')),
     path('psa/', include('api.psa_api.urls')),
     path('not-buy/', include('api.notbuydetails.urls')),
+    path('leave/', include('api.salesrefleave.urls')),
+
 ]

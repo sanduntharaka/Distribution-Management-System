@@ -12,6 +12,7 @@ from distrubutor_salesref_invoice.models import SalesRefInvoice
 from company_inventory.CountCompanyInventory import CountCompanyInventory
 from salesref_return.TotalMarketReturn import TotalMarketReturn
 from distrubutor_salesref_invoice.SalesData import SalesData
+from company_inventory.LowQty import LowQty
 
 
 @api_view(['GET'])
@@ -53,3 +54,8 @@ def allSalesinvoicedataBymonth(request):
     inv = SalesData()
 
     return Response(data=inv.getData(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def allLawQtyCompany(request):
+    return Response(data=LowQty.getQty(), status=status.HTTP_200_OK)
