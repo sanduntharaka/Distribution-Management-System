@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'not_buy_details',
     'sales_ref_leave',
     'sales_return',
+    'item_category',
     'api',
     'api.userdetailsapp',
     'api.companyInventory',

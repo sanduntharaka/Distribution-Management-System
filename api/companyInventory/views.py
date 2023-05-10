@@ -1,3 +1,5 @@
+from tablib import Dataset
+import pandas as pd
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
@@ -5,6 +7,7 @@ from company_inventory.models import CompanyInventory
 from . import serializers
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
+from users.models import UserAccount
 
 
 class AddInventory(generics.CreateAPIView):
@@ -36,3 +39,48 @@ class EditProduct(generics.UpdateAPIView):
 class DeleteProduct(generics.DestroyAPIView):
     serializer_class = serializers.CompanyInventorySerializer
     queryset = CompanyInventory.objects.all()
+
+
+class AddInventoryFromExcel(generics.CreateAPIView):
+
+    def row_generator(self, dataset, user):
+
+        for row in dataset:
+            data = {
+                'employee': user,
+                'item_code': row[1],
+                'description': row[2],
+                'qty': row[3],
+                'whole_sale_price': row[4],
+                'retail_price': row[5],
+            }
+            yield data
+
+    def create(self, request, *args, **kwargs):
+        user_account = request.data['user']
+        file = request.data['file']
+        df = pd.read_excel(file)
+        rename_coulumns = {
+            "Category": "category",
+            "Item Code": "item_code",
+            "Discription": "description",
+            "Qty": "qty",
+            "Whole Sale price": "whole_sale_price",
+            "Retail price": "retail_price",
+        }
+
+        df.rename(columns=rename_coulumns, inplace=True)
+        dataset = Dataset().load(df)
+        erros = []
+        for row in self.row_generator(dataset=dataset, user=user_account):
+            serializer = serializers.CompanyInventorySerializer(data=row)
+            if serializer.is_valid():
+                serializer.save()
+
+            else:
+                print(serializer.errors)
+                erros.append(serializer.errors)
+        if len(erros) > 0:
+            return Response(data=erros, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response(status=status.HTTP_201_CREATED)
