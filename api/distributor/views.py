@@ -1,3 +1,6 @@
+from item_category.models import Category
+from rest_framework.views import APIView
+import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
 from distributor_inventory.models import DistributorInventoryItems, DistributorInventory
@@ -6,6 +9,7 @@ from rest_framework import generics
 from django.shortcuts import get_object_or_404, get_list_or_404
 from users.models import UserAccount
 from userdetails.models import UserDetails
+from tablib import Dataset
 
 
 class AddItems(generics.ListCreateAPIView):
@@ -46,3 +50,66 @@ class EditDistributorItem(generics.UpdateAPIView):
 class DeleteDistributorItem(generics.DestroyAPIView):
     serializer_class = serializers.EditItemsSerializer
     queryset = DistributorInventoryItems.objects.all()
+
+
+class AddItemsExcel(APIView):
+    def row_generator(self, dataset, user, inventory):
+        i = 1
+        for row in dataset:
+            try:
+                category = Category.objects.get(category_name=row[0]).id
+            except:
+                category = None
+            data = {
+                'inventory': inventory,
+                'added_by': user,
+                'category': category,
+                'item_code': row[1],
+                'description': row[2],
+                'qty': row[3],
+                'whole_sale_price': row[4],
+                'retail_price': row[5],
+            }
+            i += 1
+            yield data, i
+
+    def post(self, request):
+
+        user_account = request.data['user']
+        inventory = DistributorInventory.objects.get(
+            id=request.data['inventory']).id
+        file = request.data['file']
+        df = pd.read_excel(file)
+        rename_coulumns = {
+            "Category": "category",
+            "Item Code": "item_code",
+            "Discription": "description",
+            "Qty": "qty",
+            "Whole Sale price": "whole_sale_price",
+            "Retail price": "retail_price",
+        }
+        df.rename(columns=rename_coulumns, inplace=True)
+        dataset = Dataset().load(df)
+        erros_reson = []
+        erros = []
+        success = []
+        for row, i in self.row_generator(dataset=dataset, user=user_account, inventory=inventory):
+            try:
+                serializer = serializers.AddItemsSerializer(data=row)
+                if serializer.is_valid():
+                    serializer.save()
+                    print(row)
+                    print(i)
+                    success.append(i)
+                else:
+                    print(serializer.errors)
+                    erros.append(i)
+                    erros_reson.append(serializer.errors)
+            except Exception as e:
+                erros.append(i)
+                erros_reson.append(e)
+
+        if len(erros) > 0 and len(success) < 1:
+            return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors': erros, 'resons': erros_reson}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors_count': len(erros), 'error_rows': erros, 'resons': erros_reson}, status=status.HTTP_201_CREATED)

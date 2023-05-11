@@ -9,6 +9,7 @@ class AddItemsSerializer(serializers.ModelSerializer):
 
 
 class EditItemsSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = DistributorInventoryItems
         fields = ('item_code', 'description', 'base', 'qty',
@@ -16,14 +17,16 @@ class EditItemsSerializer(serializers.ModelSerializer):
 
 
 class GetInventory(serializers.ModelSerializer):
+
     class Meta:
         model = DistributorInventory
         fields = ('__all__')
 
 
 class GetInventoryItems(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.category_name')
 
     class Meta:
         model = DistributorInventoryItems
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
-                  'base', 'pack_size', 'whole_sale_price', 'retail_price')
+                  'base', 'pack_size', 'whole_sale_price', 'retail_price', 'category_name')

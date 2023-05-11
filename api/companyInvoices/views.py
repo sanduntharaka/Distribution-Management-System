@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from company_invoice.models import CompanyInvoice, CompanyInvoiceItems
+from rest_framework.views import APIView
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
@@ -11,7 +12,7 @@ from company_inventory.models import CompanyInventory
 class AddInvoice(generics.CreateAPIView):
     get_serializer = serializers.AddInvoiceSerializer
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         last_invoice = CompanyInvoice.objects.all().last()
         invoice_data = request.data['data']['inv']
         print(last_invoice)
@@ -33,8 +34,8 @@ class AddInvoice(generics.CreateAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class AddInvoiceItems(generics.CreateAPIView):
-    def create(self, request, *args, **kwargs):
+class AddInvoiceItems(APIView):
+    def post(self, request, *args, **kwargs):
         invoice = CompanyInvoice.objects.get(id=self.kwargs.get('id'))
         item_obj = []
         inventory_item = []

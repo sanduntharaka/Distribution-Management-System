@@ -9,6 +9,8 @@ class CompanyInventorySerializer(serializers.ModelSerializer):
 
 
 class GetCompanyInventory(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.category_name')
+
     class Meta:
         model = CompanyInventory
         fields = ('__all__')

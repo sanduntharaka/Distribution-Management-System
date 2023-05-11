@@ -5,6 +5,7 @@ from distributor_inventory.models import DistributorInventoryItems
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
+from rest_framework.views import APIView
 
 
 class AddReturn(generics.CreateAPIView):
@@ -22,7 +23,7 @@ class GetReturn(generics.RetrieveAPIView):
     queryset = SalesRefReturn.objects.all()
 
 
-class DeleteReturn(generics.DestroyAPIView):
+class DeleteReturn(APIView):
     def delete(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         salesref_return = SalesRefReturn.objects.get(id=item)
@@ -34,9 +35,9 @@ class DeleteReturn(generics.DestroyAPIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class AddReturnItem(generics.CreateAPIView):
+class AddReturnItem(APIView):
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
 
         sales_ref_return = SalesRefReturn.objects.get(id=self.kwargs.get('id'))
         return_items = []

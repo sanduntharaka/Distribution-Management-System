@@ -8,6 +8,7 @@ from . import serializers
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 from users.models import UserAccount
+from item_category.models import Category
 
 
 class AddInventory(generics.CreateAPIView):
@@ -41,12 +42,17 @@ class DeleteProduct(generics.DestroyAPIView):
     queryset = CompanyInventory.objects.all()
 
 
-class AddInventoryFromExcel(generics.CreateAPIView):
+class AddInventoryFromExcel(APIView):
 
     def row_generator(self, dataset, user):
-
+        i = 1
         for row in dataset:
+            try:
+                category = Category.objects.get(category_name=row[0]).id
+            except:
+                category = None
             data = {
+                'category': category,
                 'employee': user,
                 'item_code': row[1],
                 'description': row[2],
@@ -54,9 +60,10 @@ class AddInventoryFromExcel(generics.CreateAPIView):
                 'whole_sale_price': row[4],
                 'retail_price': row[5],
             }
-            yield data
+            i += 1
+            yield data, i
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user_account = request.data['user']
         file = request.data['file']
         df = pd.read_excel(file)
@@ -71,16 +78,19 @@ class AddInventoryFromExcel(generics.CreateAPIView):
 
         df.rename(columns=rename_coulumns, inplace=True)
         dataset = Dataset().load(df)
+        erros_reson = []
         erros = []
-        for row in self.row_generator(dataset=dataset, user=user_account):
+        success = []
+        for row, i in self.row_generator(dataset=dataset, user=user_account):
             serializer = serializers.CompanyInventorySerializer(data=row)
             if serializer.is_valid():
                 serializer.save()
-
+                success.append(i)
             else:
                 print(serializer.errors)
-                erros.append(serializer.errors)
-        if len(erros) > 0:
-            return Response(data=erros, status=status.HTTP_406_NOT_ACCEPTABLE)
+                erros.append(i)
+                erros_reson.append(serializer.errors)
+        if len(erros) > 0 and len(success) < 1:
+            return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors': erros, 'resons': erros_reson}, status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
-            return Response(status=status.HTTP_201_CREATED)
+            return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors_count': len(erros), 'error_rows': erros, 'resons': erros_reson}, status=status.HTTP_201_CREATED)

@@ -15,5 +15,5 @@ urlpatterns = [
     path('psa/', include('api.psa_api.urls')),
     path('not-buy/', include('api.notbuydetails.urls')),
     path('leave/', include('api.salesrefleave.urls')),
-
+    path('category/', include('api.itemcategory.urls')),
 ]

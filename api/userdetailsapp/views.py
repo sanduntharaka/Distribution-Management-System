@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 class CreateUserDetails(generics.CreateAPIView):
     queryset = UserDetails.objects.all()
+    serializer_class = serializers.UserDetailsCreateSerializer
 
     def create(self, request):
 

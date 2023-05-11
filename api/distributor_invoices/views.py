@@ -4,12 +4,12 @@ from distributor_invoice.models import DistributorInvoice, DistributorInvoiceIte
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_object_or_404, get_list_or_404
+from rest_framework.views import APIView
 
 
-class AddInvoice(generics.CreateAPIView):
+class AddInvoice(APIView):
 
-    def create(self, request, *args, **kwargs):
-        print(request.data)
+    def post(self, request, *args, **kwargs):
         invoice_data = request.data['inv']
         invoice_items = request.data['items']
         serializer = serializers.AddInvoiceSerializer(data=invoice_data)

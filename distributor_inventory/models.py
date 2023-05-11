@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from userdetails.models import UserDetails
+from item_category.models import Category
 from company_inventory.models import CompanyInventory
 User = settings.AUTH_USER_MODEL
 
@@ -12,11 +13,9 @@ class DistributorInventory(models.Model):
 
 
 class DistributorInventoryItems(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     inventory = models.ForeignKey(
         DistributorInventory, on_delete=models.CASCADE)
-    # item = models.ForeignKey(CompanyInventory, on_delete=models.DO_NOTHING)
-    # qty = models.IntegerField()
-    # foc = models.IntegerField(default=0)
     item_code = models.CharField(max_length=50, default="0")
     description = models.TextField(null=True, default="aaaaa")
     base = models.CharField(max_length=250, default="0")

@@ -30,6 +30,8 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0003_alter_userdetails_photo.py
 0004_alter_companyinventory_base.py
 0005_companyinventory_category.py
+0003_distributorinventoryitems_category.py
+0002_alter_category_date.py
 # Backup files # 
 *.bak 
 *.vscode
