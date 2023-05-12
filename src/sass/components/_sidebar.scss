@@ -6,7 +6,15 @@
   flex-direction: column;
   gap: 25px;
   height: 100vh;
-
+  &__logo {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      width: 150px;
+    }
+  }
   &__header {
     display: flex;
     align-items: center;
@@ -21,9 +29,6 @@
     margin-left: auto;
     margin-right: auto;
 
-    &__logo {
-      color: rgb(119, 9, 9);
-    }
     &__brand {
       color: $color-blue-sidebar-title;
       font-size: 15px;
@@ -34,7 +39,26 @@
 
   &__list {
     margin-top: 0px;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    margin-bottom: 150px;
+    scrollbar-width: thin;
+    scrollbar-color: $color-colum-background #ffffff;
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
 
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $color-colum-background;
+      border-radius: 25px;
+    }
+    &::-webkit-scrollbar-button {
+      height: 50px;
+    }
     &__item {
       cursor: pointer;
       padding: 10px 20px;

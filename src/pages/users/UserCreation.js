@@ -5,6 +5,7 @@ import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 
 const UserCreation = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [visible, setVisible] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -26,6 +27,78 @@ const UserCreation = () => {
     is_salesref: false,
     is_superuser: false,
   });
+
+  const handleCheckSuperuser = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_superuser: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_superuser: false,
+      });
+    }
+  };
+  const handleCheckManager = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_manager: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_manager: false,
+      });
+    }
+  };
+  const handleCheckDistributor = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_distributor: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_distributor: false,
+      });
+    }
+  };
+
+  const handleCheckSalesRef = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_salesref: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_salesref: false,
+      });
+    }
+  };
+  const handleCheckStaff = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_companyStaff: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_companyStaff: false,
+      });
+    }
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +128,22 @@ const UserCreation = () => {
         }
       });
   };
-
+  const handleClear = (e) => {
+    e.preventDefault();
+    setData({
+      ...data,
+      email: '',
+      user_name: '',
+      nic: '',
+      is_companyStaff: false,
+      is_manager: false,
+      password: '',
+      re_password: '',
+      is_distributor: false,
+      is_salesref: false,
+      is_superuser: false,
+    });
+  };
   return (
     <div className="page">
       <div className="page__title">
@@ -85,9 +173,11 @@ const UserCreation = () => {
                     type="text"
                     placeholder="type name here"
                     autoComplete="username"
+                    value={data.user_name ? data.user_name : ''}
                     onChange={(e) =>
                       setData({ ...data, user_name: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -100,7 +190,9 @@ const UserCreation = () => {
                     type="text"
                     placeholder="type nic here"
                     autoComplete="nic"
+                    value={data.nic ? data.nic : ''}
                     onChange={(e) => setData({ ...data, nic: e.target.value })}
+                    required
                   />
                 </div>
               </div>
@@ -113,9 +205,11 @@ const UserCreation = () => {
                     type="email"
                     placeholder="type email here"
                     autoComplete="email"
+                    value={data.email ? data.email : ''}
                     onChange={(e) =>
                       setData({ ...data, email: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -127,66 +221,71 @@ const UserCreation = () => {
                   <p>User type</p>
                 </div>
                 <div className="specialColumn" style={{ display: 'grid' }}>
-                  <div className="form__row__col__input">
-                    <input
-                      type="checkbox"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          is_superuser: e.target.value ? true : false,
-                        })
-                      }
-                    />
-                    <label htmlFor="">Superuser</label>
-                  </div>
-                  <div className="form__row__col__input">
-                    <input
-                      type="checkbox"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          is_manager: e.target.value ? true : false,
-                        })
-                      }
-                    />
-                    <label htmlFor="">Manager</label>
-                  </div>
-                  <div className="form__row__col__input">
-                    <input
-                      type="checkbox"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          is_distributor: e.target.value ? true : false,
-                        })
-                      }
-                    />
-                    <label htmlFor="">Distributor</label>
-                  </div>
-                  <div className="form__row__col__input">
-                    <input
-                      type="checkbox"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          is_salesref: e.target.value ? true : false,
-                        })
-                      }
-                    />
-                    <label htmlFor="">Sales ref</label>
-                  </div>
-                  <div className="form__row__col__input">
-                    <input
-                      type="checkbox"
-                      onChange={(e) =>
-                        setData({
-                          ...data,
-                          is_companyStaff: e.target.value ? true : false,
-                        })
-                      }
-                    />
-                    <label htmlFor="">Company staff</label>
-                  </div>
+                  {/* {user.is_superuser ? (
+                    <div className="form__row__col__input">
+                      <input
+                        type="checkbox"
+                        checked={data.is_superuser}
+                        onChange={(e) => handleCheckSuperuser(e)}
+                      />
+                      <label htmlFor="">Superuser</label>
+                    </div>
+                  ) : (
+                    ''
+                  )} */}
+                  {user.is_superuser || user.is_companyStaff ? (
+                    <div className="form__row__col__input">
+                      <input
+                        type="checkbox"
+                        checked={data.is_manager}
+                        onChange={(e) => handleCheckManager(e)}
+                      />
+                      <label htmlFor="">Manager</label>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                  {user.is_companyStaff ||
+                  user.is_manager ||
+                  user.is_superuser ? (
+                    <div className="form__row__col__input">
+                      <input
+                        type="checkbox"
+                        checked={data.is_distributor}
+                        onChange={(e) => handleCheckDistributor(e)}
+                      />
+                      <label htmlFor="">Distributor</label>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                  {user.is_companyStaff ||
+                  user.is_manager ||
+                  user.is_superuser ||
+                  user.is_distributor ? (
+                    <div className="form__row__col__input">
+                      <input
+                        type="checkbox"
+                        checked={data.is_salesref}
+                        onChange={(e) => handleCheckSalesRef(e)}
+                      />
+                      <label htmlFor="">Sales ref</label>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                  {user.is_superuser ? (
+                    <div className="form__row__col__input">
+                      <input
+                        type="checkbox"
+                        checked={data.is_companyStaff}
+                        onChange={(e) => handleCheckStaff(e)}
+                      />
+                      <label htmlFor="">Company staff</label>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
               <div className="form__row__col dontdisp"></div>
@@ -203,9 +302,11 @@ const UserCreation = () => {
                     type="password"
                     name="password1"
                     placeholder="type password here"
+                    value={data.password ? data.password : ''}
                     onChange={(e) =>
                       setData({ ...data, password: e.target.value })
                     }
+                    required
                   />
                 </div>
                 <div
@@ -229,9 +330,11 @@ const UserCreation = () => {
                     type="password"
                     name="password2"
                     placeholder="type password again"
+                    value={data.re_password ? data.re_password : ''}
                     onChange={(e) =>
                       setData({ ...data, re_password: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -244,7 +347,9 @@ const UserCreation = () => {
                 <button className="btnEdit" type="submit">
                   save
                 </button>
-                <button className="btnSave">edit</button>
+                <button className="btnSave" onClick={(e) => handleClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

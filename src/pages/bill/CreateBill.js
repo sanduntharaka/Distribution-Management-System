@@ -424,7 +424,9 @@ const CreateBill = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__label">
+                  QTY(add qty with foc)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
@@ -434,7 +436,9 @@ const CreateBill = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">FOC</div>
+                <div className="form__row__col__label">
+                  FOC(add foc count only)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"

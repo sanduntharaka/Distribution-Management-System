@@ -1,7 +1,6 @@
 import React from 'react';
 
-const ProductDetails = (props) => {
-  console.log(props);
+const LeaveDetails = (props) => {
   const data = props.data;
 
   const handleEdit = () => {
@@ -21,13 +20,13 @@ const ProductDetails = (props) => {
     <div className="details">
       <div className="details__content">
         <dib className="details__content__title">
-          <h4>Details</h4>
+          <h4>Leave Details</h4>
         </dib>
         <div className="details__content__body">
           <div className="details__content__row">
             <div className="details__content__row__col .title">By</div>
             <div className="details__content__row__col .detail">
-              {data.employee}
+              {data.created_by}
             </div>
           </div>
           <div className="details__content__row">
@@ -35,55 +34,56 @@ const ProductDetails = (props) => {
             <div className="details__content__row__col .detail">{data.id}</div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Item code</div>
+            <div className="details__content__row__col .title">
+              Leave Apply Date
+            </div>
             <div className="details__content__row__col .detail">
-              {data.item_code}
+              {data.leave_apply_date}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Wholesale price
+              Leave End Date
             </div>
             <div className="details__content__row__col .detail">
-              Rs {data.whole_sale_price} /-
+              {data.leave_end_date}
+            </div>
+          </div>
+          <div className="details__content__row">
+            <div className="details__content__row__col .title">Leave Type</div>
+            <div className="details__content__row__col .detail">
+              {data.leave_type}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Retail Price
+              Return to Work
             </div>
             <div className="details__content__row__col .detail">
-              Rs {data.retail_price}/-
-            </div>
-          </div>
-          <div className="details__content__row">
-            <div className="details__content__row__col .title">Base</div>
-            <div className="details__content__row__col .detail">
-              {data.base}
-            </div>
-          </div>
-          <div className="details__content__row">
-            <div className="details__content__row__col .title">Pack size</div>
-            <div className="details__content__row__col .detail">
-              {data.pack_size}
+              {data.return_to_work}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Free of charge
+              Number of Dates
             </div>
             <div className="details__content__row__col .detail">
-              {data.free_of_charge}
+              {data.number_of_dates}
             </div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Description</div>
+            <div className="details__content__row__col .title">Reason</div>
             <div className="details__content__row__col .detail">
-              {data.description}
+              {data.reason}
+            </div>
+          </div>
+          <div className="details__content__row">
+            <div className="details__content__row__col .title">Status</div>
+            <div className="details__content__row__col .detail">
+              {data.leave_status === 'No' ? 'Not Approved' : 'Approved'}
             </div>
           </div>
         </div>
-
         <div className="details__content__row buttons">
           <div className="details__content__row__col">
             <button className="btnEdit" onClick={handleEdit}>
@@ -106,4 +106,4 @@ const ProductDetails = (props) => {
   );
 };
 
-export default ProductDetails;
+export default LeaveDetails;

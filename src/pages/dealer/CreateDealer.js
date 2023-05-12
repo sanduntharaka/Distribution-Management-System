@@ -72,6 +72,23 @@ const CreateDealer = () => {
         console.log(err.data);
       });
   };
+
+  const handleClear = (e) => {
+    e.preventDefault();
+
+    setData({
+      ...data,
+      name: '',
+      contact_number: '',
+      address: '',
+      owner_name: '',
+      company_number: '',
+      owner_personal_number: '',
+      owner_home_number: '',
+      assistant_name: '',
+      assistant_contact_number: '',
+    });
+  };
   return (
     <div className="page">
       {loading ? (
@@ -108,6 +125,8 @@ const CreateDealer = () => {
                     type="text"
                     placeholder="type name here"
                     onChange={(e) => setData({ ...data, name: e.target.value })}
+                    value={data.name ? data.name : ''}
+                    required
                   />
                 </div>
               </div>
@@ -120,6 +139,8 @@ const CreateDealer = () => {
                     onChange={(e) =>
                       setData({ ...data, contact_number: e.target.value })
                     }
+                    value={data.contact_number ? data.contact_number : ''}
+                    required
                   />
                 </div>
               </div>
@@ -135,6 +156,8 @@ const CreateDealer = () => {
                     onChange={(e) =>
                       setData({ ...data, address: e.target.value })
                     }
+                    value={data.address ? data.address : ''}
+                    required
                   />
                 </div>
               </div>
@@ -150,6 +173,8 @@ const CreateDealer = () => {
                     onChange={(e) =>
                       setData({ ...data, owner_name: e.target.value })
                     }
+                    value={data.owner_name ? data.owner_name : ''}
+                    required
                   />
                 </div>
               </div>
@@ -168,6 +193,8 @@ const CreateDealer = () => {
                       onChange={(e) =>
                         setData({ ...data, company_number: e.target.value })
                       }
+                      value={data.company_number ? data.company_number : ''}
+                      required
                     />
                   </div>
 
@@ -181,6 +208,12 @@ const CreateDealer = () => {
                           owner_personal_number: e.target.value,
                         })
                       }
+                      value={
+                        data.owner_personal_number
+                          ? data.owner_personal_number
+                          : ''
+                      }
+                      required
                     />
                   </div>
 
@@ -191,6 +224,10 @@ const CreateDealer = () => {
                       onChange={(e) =>
                         setData({ ...data, owner_home_number: e.target.value })
                       }
+                      value={
+                        data.owner_home_number ? data.owner_home_number : ''
+                      }
+                      required
                     />
                   </div>
                 </div>
@@ -207,6 +244,8 @@ const CreateDealer = () => {
                     onChange={(e) =>
                       setData({ ...data, assistant_name: e.target.value })
                     }
+                    value={data.assistant_name ? data.assistant_name : ''}
+                    required
                   />
                 </div>
               </div>
@@ -224,6 +263,12 @@ const CreateDealer = () => {
                         assistant_contact_number: e.target.value,
                       })
                     }
+                    value={
+                      data.assistant_contact_number
+                        ? data.assistant_contact_number
+                        : ''
+                    }
+                    required
                   />
                 </div>
               </div>
@@ -234,7 +279,9 @@ const CreateDealer = () => {
                 <button className="btnEdit" onClick={(e) => handleSave(e)}>
                   save
                 </button>
-                <button className="btnSave">edit</button>
+                <button className="btnSave" onClick={(e) => handleClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

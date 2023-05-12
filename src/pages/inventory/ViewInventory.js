@@ -109,6 +109,7 @@ const ViewInventory = () => {
       headerStyle: { width: '10px' },
     },
     { title: 'Item Code', field: 'item_code' },
+    { title: 'Category', field: 'category_name' },
     { title: 'Description', field: 'description' },
     { title: 'Pack Size', field: 'pack_size' },
     { title: 'Whole Sale Price', field: 'whole_sale_price' },
@@ -144,9 +145,6 @@ const ViewInventory = () => {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -302,40 +300,22 @@ const ViewInventory = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div>
-              <Button
-                id="demo-customized-button"
-                aria-controls={open ? 'demo-customized-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                variant="contained"
-                disableElevation
-                onClick={handleClick}
-                endIcon={<KeyboardArrowDownIcon />}
+              <select
+                name=""
+                id=""
+                onChange={(e) => handleFilter(e.target.value)}
               >
-                Filter By
-              </Button>
-              <StyledMenu
-                id="demo-customized-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'demo-customized-button',
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => handleFilter('all')} disableRipple>
-                  All
-                </MenuItem>
+                {' '}
+                <option value="" selected>
+                  Filter
+                </option>
+                <option value={'all'}>All</option>
                 {itemCodes.map((item, i) => (
-                  <MenuItem
-                    onClick={() => handleFilter(item)}
-                    key={i}
-                    disableRipple
-                  >
+                  <option value={item} key={i}>
                     {item}
-                  </MenuItem>
+                  </option>
                 ))}
-              </StyledMenu>
+              </select>
             </div>
           </div>
           <div className="page__pcont__row__col dontdisp"></div>

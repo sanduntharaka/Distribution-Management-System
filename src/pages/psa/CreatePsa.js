@@ -126,7 +126,6 @@ const CreatePsa = () => {
                 <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
                   save
                 </button>
-                <button className="btnSave">edit</button>
               </div>
             </div>
           </form>

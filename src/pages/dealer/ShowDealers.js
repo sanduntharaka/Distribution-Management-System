@@ -97,6 +97,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 const ShowDealers = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -369,6 +370,7 @@ const ShowDealers = () => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
+
                   {
                     icon: EditIcon,
                     tooltip: 'Edit details',
@@ -397,7 +399,8 @@ const ShowDealers = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon ? (
+                      ) : props.action.icon === EditIcon &&
+                        (user.is_distributor || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -409,7 +412,8 @@ const ShowDealers = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : (
+                      ) : props.action.icon === EditIcon &&
+                        (user.is_distributor || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -421,6 +425,8 @@ const ShowDealers = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

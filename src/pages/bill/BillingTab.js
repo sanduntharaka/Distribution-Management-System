@@ -18,6 +18,7 @@ const MyMessage = React.forwardRef((props, ref) => {
   );
 });
 const BillingTab = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   //message modal
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -28,7 +29,9 @@ const BillingTab = () => {
   const handleClose = () => setOpen(false);
 
   const [inventory, setInventory] = useState();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(
+    user.is_distributor || user.is_distributor ? 1 : 0
+  );
   const [isLoading, setIsLoading] = useState(false);
   const handleSelect = (i) => {
     setSelected(i);
@@ -37,31 +40,60 @@ const BillingTab = () => {
   useEffect(() => {
     // JSON.parse(sessionStorage.getItem('user_details')).id
     setIsLoading(true);
-    axiosInstance
-      .get(
-        `/distributor/salesref/inventory/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setInventory(res.data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('This user has not inventory assigned.');
-        setTitle('Error');
-        handleOpen();
-      });
+    if (user.is_salesref) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/inventory/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setInventory(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('This user has not inventory assigned.');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
+    if (user.is_distributor) {
+      axiosInstance
+        .get(
+          `/distributor/get/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setInventory(res.data);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('This user has not inventory assigned.');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
   }, []);
   return (
     <div className="tab">
@@ -74,13 +106,19 @@ const BillingTab = () => {
           msg={msg}
         />
       </Modal>
+
       <div className="tab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          Create Bill
-        </div>
+        {user.is_salesref ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            Create Bill
+          </div>
+        ) : (
+          ''
+        )}
+
         <div
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}

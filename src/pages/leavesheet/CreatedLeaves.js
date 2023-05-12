@@ -2,9 +2,9 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from './componets/ProductDetails';
-import ProductEdit from './componets/ProductEdit';
-import ProductDelete from './componets/ProductDelete';
+import ProductDetails from '../inventory/componets/ProductDetails';
+import ProductEdit from '../inventory/componets/ProductEdit';
+import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -30,6 +30,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import LeaveDetails from '../../components/details/LeaveDetails';
+import EditLeave from '../../components/edit/EditLeave';
+import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -54,8 +57,7 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-
-const DistributorInventory = ({ inventory, user }) => {
+const CreatedLeaves = () => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -66,14 +68,11 @@ const DistributorInventory = ({ inventory, user }) => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Item Code', field: 'item_code' },
-    { title: 'Category', field: 'category_name' },
-    { title: 'Description', field: 'description' },
-    { title: 'Pack Size', field: 'pack_size' },
-    { title: 'Whole Sale Price', field: 'whole_sale_price' },
-    { title: 'Retail Price', field: 'retail_price' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Qty', field: 'qty' },
+    { title: 'Apply Date', field: 'leave_apply_date' },
+    { title: 'End Date', field: 'leave_end_date' },
+    { title: 'No of  Dates', field: 'number_of_dates' },
+    { title: 'Type', field: 'leave_type' },
+    { title: 'Approved', field: 'leave_status' },
   ];
 
   //modal
@@ -91,15 +90,15 @@ const DistributorInventory = ({ inventory, user }) => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
+  //item_codes
+  const [itemCodes, setItemCodes] = useState([]);
+
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -111,41 +110,51 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   useEffect(() => {
+    console.log('called');
     axiosInstance
-      .get(`/distributor/items/all/${inventory.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
+      .get(
+        `/leave/all/salesref/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
+          if (!itemCodes.includes(item.created_by)) {
+            itemCodes.push(item.created_by);
           }
         });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [messageOpen]);
+  }, [success]);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
+    console.log(value);
     setItemDetails({
       id: value.id,
-      item_code: value.item_code,
-      description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
+      is_annual: value.is_annual,
+      is_casual: value.is_casual,
+      leave_apply_date: value.leave_apply_date,
+      is_sick: value.is_sick,
+      leave_end_date: value.leave_end_date,
+      leave_status: value.leave_status,
+      leave_type: value.leave_type,
+      number_of_dates: value.number_of_dates,
+      reason: value.reason,
+      created_by: value.created_by,
+      return_to_work: value.return_to_work,
+      salesref: value.salesref,
     });
     setMessageOpen(false);
     setEditDetailsOpen(false);
@@ -156,20 +165,19 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   const handleEditDetails = (e, value) => {
-    console.log(value);
     setItemDetails({
       id: value.id,
-      item_code: value.item_code,
-      description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
+      name: value.name,
+      contact_number: value.contact_number,
+      address: value.address,
+      owner_name: value.owner_name,
+      company_number: value.company_number,
+      owner_personal_number: value.owner_personal_number,
+      owner_home_number: value.owner_home_number,
+      assistant_name: value.assistant_name,
+      assistant_contact_number: value.assistant_contact_number,
+      added: value.added,
     });
-
     setMessageOpen(false);
     setDeleteDetailsOpen(false);
     setDetailsOpen(false);
@@ -179,15 +187,6 @@ const DistributorInventory = ({ inventory, user }) => {
   const handleDeleteDetails = (e, value) => {
     setItemDetails({
       id: value.id,
-      item_code: value.item_code,
-      description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
     });
     setMessageOpen(false);
     setDetailsOpen(false);
@@ -195,25 +194,22 @@ const DistributorInventory = ({ inventory, user }) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-
   const handleFilter = (i) => {
     handleClose();
     console.log(i);
     if (i === 'all') {
       setTableData(data);
     } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      //
+      let filteredItems = data.filter((item) => item.created_by === i);
       console.log(filteredItems);
       setTableData(filteredItems);
     }
   };
-
   return (
-    <div className="page">
+    <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
-          <ProductDetails
+          <LeaveDetails
             data={itemDetails}
             showDetails={setDetailsOpen}
             showEdit={setEditDetailsOpen}
@@ -221,7 +217,7 @@ const DistributorInventory = ({ inventory, user }) => {
             closeModal={handleModalClose}
           />
         ) : editdetailsOpen ? (
-          <ProductEdit
+          <EditLeave
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -233,7 +229,7 @@ const DistributorInventory = ({ inventory, user }) => {
             url={'/distributor/items/edit'}
           />
         ) : deletedetailsOpen ? (
-          <ProductDelete
+          <DeleteNotBuy
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -242,7 +238,7 @@ const DistributorInventory = ({ inventory, user }) => {
             msg={setMsg}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/delete'}
+            url={'/leave/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -257,17 +253,13 @@ const DistributorInventory = ({ inventory, user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View distributor inventory</p>
+        <p>View All Leaves</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div>
-              <select
-                name=""
-                id=""
-                onChange={(e) => handleFilter(e.target.value)}
-              >
+              <select name="" id="">
                 {itemCodes.map((item, i) => (
                   <option value={item} key={i}>
                     {item}
@@ -291,6 +283,11 @@ const DistributorInventory = ({ inventory, user }) => {
                   ['&.MuiTable-root']: {
                     background: 'red',
                   },
+                }}
+                actionsColumnIndex={-1} // hide the actions column from view
+                actionsCellStyle={{
+                  // customize the actions cell style
+                  background: '#fde',
                 }}
                 options={{
                   exportButton: true,
@@ -332,8 +329,7 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon &&
-                        user.is_distributor ? (
+                      ) : props.action.icon === EditIcon ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -345,8 +341,7 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : props.action.icon === DeleteOutline &&
-                        user.is_distributor ? (
+                      ) : (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -358,8 +353,6 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <DeleteOutline />
                         </IconButton>
-                      ) : (
-                        ''
                       )}
                     </React.Fragment>
                   ),
@@ -373,4 +366,4 @@ const DistributorInventory = ({ inventory, user }) => {
   );
 };
 
-export default DistributorInventory;
+export default CreatedLeaves;

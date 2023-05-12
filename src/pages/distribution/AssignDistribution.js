@@ -57,10 +57,9 @@ const AssignDistribution = () => {
     setShowInv(true);
   };
   //for skelton
-  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     //get distributors lizt and product list
-    setIsLoading(true);
+    setLoading(true);
     axiosInstance
       .get('/users/distributors/', {
         headers: {
@@ -69,10 +68,17 @@ const AssignDistribution = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
         setDistributors(res.data);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg('Distributors details not loading. ');
+        handleOpen();
       });
 
     axiosInstance
@@ -83,12 +89,18 @@ const AssignDistribution = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
         setProducts(res.data);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg('Inventory items details not loading. ');
+        handleOpen();
       });
-    setIsLoading(false);
   }, []);
 
   //show distributors drop down
@@ -333,7 +345,7 @@ const AssignDistribution = () => {
                             style={{ cursor: 'pointer' }}
                             className="searchContent__row__details"
                           >
-                            {item.full_name}
+                            {item.user_name}
                           </li>
                         </ul>
                       ))}
@@ -407,7 +419,9 @@ const AssignDistribution = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__label">
+                  QTY(add qty with foc)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
@@ -417,7 +431,10 @@ const AssignDistribution = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">FOC</div>
+                <div className="form__row__col__label">
+                  {' '}
+                  FOC(add foc count only)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"

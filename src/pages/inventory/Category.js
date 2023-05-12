@@ -1,9 +1,9 @@
-import React, { useState, forwardRef, useRef, useEffect } from 'react';
+import React, { useState, forwardRef, useRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
-import ViewAllDistributorsSalesRefs from './ViewAllDistributorsSalesRefs';
-
+import Spinner from '../../components/loadingSpinner/Spinner';
+import AllCategories from './AllCategories';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -17,8 +17,10 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 
-const DistributorSalesRef = () => {
+const Category = () => {
   const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -29,71 +31,52 @@ const DistributorSalesRef = () => {
 
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
-    distributor: '',
-    sales_ref: '',
+    category_name: '',
+    description: '',
   });
-
-  const [distributors, setDistributors] = useState([]);
-  const [salesrefs, setSalesrefs] = useState([]);
-
-  useEffect(() => {
-    axiosInstance
-      .get('/users/distributors/', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setDistributors(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    axiosInstance
-      .get('/users/salesrefs/', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setSalesrefs(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     axiosInstance
-      .post('/distributor/salesref/create/', data, {
+      .post('/category/create/', data, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setError(false);
         setSuccess(true);
         setTitle('Success');
-        setMsg('Sales ref added under given distributor  successfully');
+        setMsg('Category has been created successfully');
         handleOpen();
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
         setSuccess(false);
         setError(true);
         setTitle('Error');
-        setMsg('Sales ref cannot add right now. Please check your data again');
+        setMsg(
+          'Category cannot create right now. Please check your data again'
+        );
         handleOpen();
       });
   };
-
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <ShowMessage
           ref={inputRef}
@@ -105,48 +88,35 @@ const DistributorSalesRef = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign SalesRef</p>
+        <p>Create Category</p>
       </div>
       <div className="page__pcont">
         <div className="form">
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__label">Category Name</div>
                 <div className="form__row__col__input">
-                  <select
+                  <input
                     type="text"
+                    placeholder="type category name"
                     onChange={(e) =>
-                      setData({ ...data, distributor: e.target.value })
+                      setData({ ...data, category_name: e.target.value })
                     }
-                  >
-                    {' '}
-                    <option selected>Selec distributor</option>
-                    {distributors.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.full_name}
-                      </option>
-                    ))}
-                  </select>
+                    required
+                  />
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Sales ref</div>
+                <div className="form__row__col__label">More Details</div>
                 <div className="form__row__col__input">
-                  <select
+                  <input
                     type="text"
+                    placeholder="type more details"
                     onChange={(e) =>
-                      setData({ ...data, sales_ref: e.target.value })
+                      setData({ ...data, description: e.target.value })
                     }
-                  >
-                    {' '}
-                    <option selected>Selec sales ref</option>
-                    {salesrefs.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.full_name}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
               </div>
             </div>
@@ -162,7 +132,7 @@ const DistributorSalesRef = () => {
         </div>
         <div className="page__pcont__row">
           <div style={{ width: '100%' }}>
-            <ViewAllDistributorsSalesRefs />
+            <AllCategories />
           </div>
         </div>
       </div>
@@ -170,4 +140,4 @@ const DistributorSalesRef = () => {
   );
 };
 
-export default DistributorSalesRef;
+export default Category;

@@ -21,6 +21,7 @@ import DealersTab from './pages/dealer/DealersTab';
 import BillingTab from './pages/bill/BillingTab';
 import PsaTab from './pages/psa/PsaTab';
 import Profile from './pages/profile/Profile';
+import LeaveTab from './pages/leavesheet/LeaveTab';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -51,6 +52,7 @@ function App() {
           <Route path="/purchase" element={<PurchTab />} />
           <Route path="/return" element={<ReturnTab />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/leave" element={<LeaveTab />} />
         </Routes>
       </Layout>
     );

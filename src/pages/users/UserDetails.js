@@ -42,6 +42,8 @@ const UserDetails = () => {
         setError(false);
         setTitle('Success');
         setMsg('User created successfully. Please subimit user details.');
+        sessionStorage.removeItem('new_user_email');
+        setData({ ...data, user: '' });
       })
       .catch((err) => {
         console.log(err);
@@ -51,6 +53,22 @@ const UserDetails = () => {
         setError(true);
         setMsg('Cannot save data. Please check again.');
       });
+  };
+  const hanldeClear = (e) => {
+    e.preventDefault();
+    setData({
+      ...data,
+      full_name: '',
+      address: '',
+      designation: '',
+      dob: '',
+      company_number: '',
+      personal_number: '',
+      home_number: '',
+      immediate_contact_person_name: '',
+      immediate_contact_person_number: '',
+      terriotory: '',
+    });
   };
   return (
     <div className="page">
@@ -79,6 +97,7 @@ const UserDetails = () => {
                     onChange={(e) =>
                       setData({ ...data, full_name: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -99,6 +118,7 @@ const UserDetails = () => {
                     value={data.user}
                     onChange={(e) => setData({ ...data, user: e.target.value })}
                     disabled={data.user ? true : false}
+                    required
                   />
                 </div>
               </div>
@@ -111,9 +131,11 @@ const UserDetails = () => {
                   <input
                     type="text"
                     placeholder="type address here"
+                    value={data.address ? data.address : ''}
                     onChange={(e) =>
                       setData({ ...data, address: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -123,9 +145,11 @@ const UserDetails = () => {
                   <input
                     type="text"
                     placeholder="type designation here"
+                    value={data.designation ? data.designation : ''}
                     onChange={(e) =>
                       setData({ ...data, designation: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -138,7 +162,9 @@ const UserDetails = () => {
                   <input
                     type="date"
                     placeholder="type name here"
+                    value={data.dob ? data.dob : ''}
                     onChange={(e) => setData({ ...data, dob: e.target.value })}
+                    required
                   />
                 </div>
               </div>
@@ -154,9 +180,11 @@ const UserDetails = () => {
                     <input
                       type="tel"
                       placeholder="type company number"
+                      value={data.company_number ? data.company_number : ''}
                       onChange={(e) =>
                         setData({ ...data, company_number: e.target.value })
                       }
+                      required
                     />
                   </div>
 
@@ -164,9 +192,11 @@ const UserDetails = () => {
                     <input
                       type="tel"
                       placeholder="type personal number"
+                      value={data.personal_number ? data.personal_number : ''}
                       onChange={(e) =>
                         setData({ ...data, personal_number: e.target.value })
                       }
+                      required
                     />
                   </div>
 
@@ -174,9 +204,11 @@ const UserDetails = () => {
                     <input
                       type="tel"
                       placeholder="type home number"
+                      value={data.home_number ? data.home_number : ''}
                       onChange={(e) =>
                         setData({ ...data, home_number: e.target.value })
                       }
+                      required
                     />
                   </div>
                 </div>
@@ -192,6 +224,11 @@ const UserDetails = () => {
                   <input
                     type="text"
                     placeholder="type here"
+                    value={
+                      data.immediate_contact_person_name
+                        ? data.immediate_contact_person_name
+                        : ''
+                    }
                     onChange={(e) =>
                       setData({
                         ...data,
@@ -209,6 +246,11 @@ const UserDetails = () => {
                   <input
                     type="tel"
                     placeholder="type here"
+                    value={
+                      data.immediate_contact_person_number
+                        ? data.immediate_contact_person_number
+                        : ''
+                    }
                     onChange={(e) =>
                       setData({
                         ...data,
@@ -227,6 +269,7 @@ const UserDetails = () => {
                   <input
                     type="text"
                     placeholder="type address here"
+                    value={data.terriotory ? data.terriotory : ''}
                     onChange={(e) =>
                       setData({ ...data, terriotory: e.target.value })
                     }
@@ -241,7 +284,9 @@ const UserDetails = () => {
                 <button className="btnEdit" type="submit">
                   save
                 </button>
-                <button className="btnSave">edit</button>
+                <button className="btnSave" onClick={(e) => hanldeClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

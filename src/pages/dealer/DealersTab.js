@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CreateDealer from './CreateDealer';
 import ShowDealers from './ShowDealers';
 const DealersTab = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [selected, setSelected] = useState(0);
   const handleSelect = (i) => {
     setSelected(i);
@@ -10,12 +11,20 @@ const DealersTab = () => {
   return (
     <div className="tab">
       <div className="tab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          Create Dealer
-        </div>
+        {user.is_distributor ||
+        user.is_manager ||
+        user.is_salesref ||
+        user.is_superuser ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            Create Dealer
+          </div>
+        ) : (
+          ''
+        )}
+
         <div
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}

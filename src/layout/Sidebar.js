@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { AiOutlineUserAdd, AiOutlineShop } from 'react-icons/ai';
+import {
+  AiOutlineUserAdd,
+  AiOutlineShop,
+  AiOutlineFieldTime,
+} from 'react-icons/ai';
 import { MdOutlineInventory, MdRoute } from 'react-icons/md';
 import {
   TbFileInvoice,
@@ -16,6 +20,7 @@ import { logout } from '../redux/actions/UserActions';
 import UserData from './UserData';
 
 const Sidebar = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const handleClassname = ({ isActive, isPending }) => {
     // isPending ? "pending" : isActive ? "active" : "";
     const claName = 'container__list__item';
@@ -29,9 +34,12 @@ const Sidebar = () => {
   return (
     <>
       <div className="container">
+        <div className="container__logo">
+          <img src="./images/Bixton_logo.png" alt="" />
+        </div>
         <div className="container__header">
           <div className="container__header__brand">
-            <p>distributor management system</p>
+            <p>BIXTON DISTRIBUTORS</p>
           </div>
         </div>
         <div className="container__list">
@@ -46,17 +54,25 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">Dashboard</div>
           </NavLink>
-          <NavLink
-            to="/user"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <AiOutlineUserAdd />
-            </div>
-            <div className="container__list__item__name">user</div>
-          </NavLink>
+          {user.is_superuser ||
+          user.is_manager ||
+          user.is_distributor ||
+          user.is_companyStaff ? (
+            <NavLink
+              to="/user"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <AiOutlineUserAdd />
+              </div>
+              <div className="container__list__item__name">user</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+
           <NavLink
             to="/inventory"
             className={(isActive, isPending) =>
@@ -68,34 +84,25 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">inventory</div>
           </NavLink>
-          <NavLink
-            to="/distribution"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <TbTruckDelivery />
-            </div>
-            <div className="container__list__item__name">
-              Distribution control
-            </div>
-          </NavLink>
-          {/* <NavLink
-          to="/sales"
-          className={(isActive, isPending) =>
-            handleClassname(isActive, isPending)
-          }
-        >
-          <div className="container__list__item__icon">
-            <SiPurescript />
-          </div>
-          <div
-            className="container__list__item__name"
-          >
-            Sales control
-          </div>
-        </NavLink> */}
+
+          {user.is_companyStaff || user.is_superuser ? (
+            <NavLink
+              to="/distribution"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TbTruckDelivery />
+              </div>
+              <div className="container__list__item__name">
+                Distribution control
+              </div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+
           <NavLink
             to="/psa"
             className={(isActive, isPending) =>
@@ -107,21 +114,7 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">PSA</div>
           </NavLink>
-          {/* <NavLink
-          to="/invoice"
-          className={(isActive, isPending) =>
-            handleClassname(isActive, isPending)
-          }
-        >
-          <div className="container__list__item__icon">
-            <TbFileInvoice />
-          </div>
-          <div
-            className="container__list__item__name"
-          >
-            invoice
-          </div>
-        </NavLink> */}
+
           <NavLink
             to="/dealer"
             className={(isActive, isPending) =>
@@ -144,6 +137,7 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">billing</div>
           </NavLink>
+
           <NavLink
             to="/purchase"
             className={(isActive, isPending) =>
@@ -155,17 +149,36 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">Purchase</div>
           </NavLink>
-          <NavLink
-            to="/return"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <TbTruckReturn />
-            </div>
-            <div className="container__list__item__name">return</div>
-          </NavLink>
+          {user.is_distributor || user.is_manager || user.is_salesref ? (
+            <NavLink
+              to="/return"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TbTruckReturn />
+              </div>
+              <div className="container__list__item__name">return</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+          {user.is_distributor || user.is_manager || user.is_salesref ? (
+            <NavLink
+              to="/leave"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <AiOutlineFieldTime />
+              </div>
+              <div className="container__list__item__name">leave</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
         </div>
         <div className="container__footer">
           <UserData />

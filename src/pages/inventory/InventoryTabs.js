@@ -5,35 +5,39 @@ import DistributorInventory from './DistributorInventory';
 import AddDistributorInventory from './AddDistributorInventory';
 import SalesRefInventory from './SalesRefInventory';
 import { axiosInstance } from '../../axiosInstance';
+import Category from './Category';
 
 const InventoryTabs = () => {
-  const [selected, setSelected] = useState(0);
-  const handleSelect = (i) => {
-    setSelected(i);
-  };
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [inventory, setInventory] = useState();
+  const [loading, setIsLoading] = useState(false);
   useEffect(() => {
-    // if (JSON.parse(sessionStorage.getItem('user')).is_salesref === true) {
-    //   axiosInstance
-    //     .get(
-    //       `/salesref/get/${
-    //         JSON.parse(sessionStorage.getItem('user_details')).id
-    //       }`,
-    //       {
-    //         headers: {
-    //           Authorization:
-    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       setInventory(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // }
-    if (JSON.parse(sessionStorage.getItem('user')).is_distributor === true) {
+    if (user.is_salesref === true) {
+      setIsLoading(true);
+      axiosInstance
+        .get(
+          `/distributor/salesref/inventory/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log('inv', res.data);
+          setIsLoading(false);
+          setInventory(res.data);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          console.log(err);
+        });
+    }
+    if (user.is_distributor === true) {
+      setIsLoading(true);
       axiosInstance
         .get(
           `/distributor/get/${
@@ -48,56 +52,94 @@ const InventoryTabs = () => {
         )
         .then((res) => {
           console.log('dis:', res.data);
+          setIsLoading(false);
           setInventory(res.data);
         })
         .catch((err) => {
+          setIsLoading(false);
           console.log(err);
         });
     }
   }, []);
+
+  const [selected, setSelected] = useState(
+    user.is_companyStaff || user.is_superuser
+      ? 0
+      : user.is_distributor
+      ? 3
+      : user.is_salesref
+      ? 4
+      : 0
+  );
+  const handleSelect = (i) => {
+    setSelected(i);
+  };
+
   return (
     <div className="tab">
       <div className="tab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          Add inventory
-        </div>
-        <div
-          className={`item ${selected === 1 ? 'selected' : ''}`}
-          onClick={() => handleSelect(1)}
-        >
-          View inventory
-        </div>
-        <div
-          className={`item ${selected === 2 ? 'selected' : ''}`}
-          onClick={() => handleSelect(2)}
-        >
-          Add Distributor inventory
-        </div>
-        <div
-          className={`item ${selected === 3 ? 'selected' : ''}`}
-          onClick={() => handleSelect(3)}
-        >
-          Distributor inventory
-        </div>
-        {/* <div
-          className={`item ${selected === 4 ? 'selected' : ''}`}
-          onClick={() => handleSelect(4)}
-        >
-          Sales ref inventory
-        </div> */}
+        {user.is_companyStaff || user.is_superuser ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            Category
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_companyStaff || user.is_superuser ? (
+          <div
+            className={`item ${selected === 1 ? 'selected' : ''}`}
+            onClick={() => handleSelect(1)}
+          >
+            Add inventory
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_companyStaff || user.is_superuser ? (
+          <div
+            className={`item ${selected === 2 ? 'selected' : ''}`}
+            onClick={() => handleSelect(2)}
+          >
+            View inventory
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_distributor ? (
+          <div
+            className={`item ${selected === 3 ? 'selected' : ''}`}
+            onClick={() => handleSelect(3)}
+          >
+            Add Distributor inventory
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_distributor || user.is_salesref ? (
+          <div
+            className={`item ${selected === 4 ? 'selected' : ''}`}
+            onClick={() => handleSelect(4)}
+          >
+            Distributor inventory
+          </div>
+        ) : (
+          ''
+        )}
       </div>
       <div className="tab_page">
         {selected === 0 ? (
-          <AddInventory />
+          <Category />
         ) : selected === 1 ? (
-          <ViewInventory />
+          <AddInventory />
         ) : selected === 2 ? (
+          <ViewInventory />
+        ) : loading === false && selected === 3 && inventory !== undefined ? (
           <AddDistributorInventory inventory={inventory} />
-        ) : selected === 3 ? (
-          <DistributorInventory inventory={inventory} />
+        ) : loading === false && selected === 4 && inventory !== undefined ? (
+          <DistributorInventory inventory={inventory} user={user} />
         ) : (
           ''
         )}

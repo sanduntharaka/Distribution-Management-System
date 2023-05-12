@@ -49,6 +49,7 @@ const tableIcons = {
 };
 
 const CreatedBills = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -102,36 +103,70 @@ const CreatedBills = () => {
   };
 
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/salesref/invoice/all/invoice/by/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!sales_refs.includes(item.sales_ref)) {
-            sales_refs.push(item.sales_ref);
+    if (user.is_salesref) {
+      axiosInstance
+        .get(
+          `/salesref/invoice/all/invoice/by/salesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
           }
+        )
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          res.data.forEach((item) => {
+            if (!sales_refs.includes(item.sales_ref)) {
+              sales_refs.push(item.sales_ref);
+            }
+          });
+          res.data.forEach((item) => {
+            if (!distributors.includes(item.distributor)) {
+              distributors.push(item.distributor);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        res.data.forEach((item) => {
-          if (!distributors.includes(item.distributor)) {
-            distributors.push(item.distributor);
+    }
+    if (user.is_distributor) {
+      axiosInstance
+        .get(
+          `/salesref/invoice/all/invoice/by/distributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
           }
+        )
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          res.data.forEach((item) => {
+            if (!sales_refs.includes(item.sales_ref)) {
+              sales_refs.push(item.sales_ref);
+            }
+          });
+          res.data.forEach((item) => {
+            if (!distributors.includes(item.distributor)) {
+              distributors.push(item.distributor);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
   }, ['']);
   const [invoice, setInvoice] = useState();
   const [items, setItems] = useState();
@@ -371,7 +406,9 @@ const CreatedBills = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : (
+                      ) : user.is_manager ||
+                        (user.is_distributor &&
+                          props.action.icon === DeleteOutline) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -383,6 +420,8 @@ const CreatedBills = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

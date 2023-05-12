@@ -103,6 +103,12 @@
             padding: 10px 15px;
             border-radius: 20px;
             display: grid;
+
+            &.special {
+              @include mobile {
+                width: 400px;
+              }
+            }
           }
         }
       }

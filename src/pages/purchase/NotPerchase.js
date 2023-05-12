@@ -28,18 +28,13 @@ const NotPerchase = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [currentDate, setCurrentDate] = useState(() => {
-    const d = new Date();
-    let year = d.getFullYear();
-    let month = d.getMonth() + 1;
-    let day = d.getDate();
-    return `${year}-${month}-${day}`;
-  });
-
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().substr(0, 10)
+  );
   const [dealers, setDealers] = useState([]);
 
   const [data, setData] = useState({
-    date: currentDate,
+    date: selectedDate,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     dealer: '',
     reason: '',
@@ -172,16 +167,18 @@ const NotPerchase = () => {
       </div>
       <div className="page__pcont">
         <div className="form">
-          <form action="">
+          <form action="" onSubmit={(e) => handleSave(e)}>
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Select dealer</div>
                 <div className="form__row__col__input">
                   <select
                     name="dealer"
+                    value={data.dealer ? data.dealer : ''}
                     onChange={(e) =>
                       setData({ ...data, dealer: e.target.value })
                     }
+                    required
                   >
                     <option selected>Select dealer</option>
                     {dealers.map((item, i) => (
@@ -192,6 +189,23 @@ const NotPerchase = () => {
                   </select>
                 </div>
               </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Date</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="date"
+                    value={data.date ? data.date : ''}
+                    onChange={(e) => setData({ ...data, date: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
             </div>
 
             <div className="form__row">
@@ -235,7 +249,7 @@ const NotPerchase = () => {
 
             <div className="form__btn">
               <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => handleSave(e)}>
+                <button className="btnEdit" type="submit">
                   save
                 </button>
               </div>

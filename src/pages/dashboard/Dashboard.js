@@ -38,32 +38,32 @@ const Dashboard = () => {
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row center">
-          <div className="page__pcont__col">
+          <div className="page__pcont__row__col">
             <div className="widget">
               <ToDaySales date={currentDate} />
             </div>
           </div>
-          <div className="page__pcont__col">
+          <div className="page__pcont__row__col">
             <div className="widget">
               <InventoryStatus date={currentDate} />
             </div>
           </div>
-          <div className="page__pcont__col">
+          <div className="page__pcont__row__col">
             <div className="widget">
               <TotalReturns date={currentDate} />
             </div>
           </div>
-          <div className="page__pcont__col">
+          {/* <div className="page__pcont__row__col">
             <div className="widget"></div>
-          </div>
+          </div> */}
         </div>
         <div className="page__pcont__row">
-          <div className="page__pcont__col f1">
+          <div className="page__pcont__row__col f1">
             <div className="dashdetails">
               <SimplePieChart />
             </div>
           </div>
-          <div className="page__pcont__col f4">
+          <div className="page__pcont__row__col special f4">
             <div className="chart">
               <div className="title">Last moths income</div>
               <MainChart />

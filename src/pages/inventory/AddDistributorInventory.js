@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import Modal from '@mui/material/Modal';
+import FileUpload from '../../components/fileupload/FileUpload';
+
 const MyMessage = React.forwardRef((props, ref) => {
   return (
     <Message
@@ -16,6 +18,9 @@ const MyMessage = React.forwardRef((props, ref) => {
   );
 });
 const AddDistributorInventory = ({ inventory }) => {
+  const [show_message, setShowMsg] = useState(false);
+  const [show_upload, setShowUplod] = useState(false);
+  const [categorys, setCategorys] = useState([]);
   //message modal
   const [loading, setLoading] = useState(false);
 
@@ -30,6 +35,7 @@ const AddDistributorInventory = ({ inventory }) => {
   const [data, setData] = useState({
     inventory: inventory.id,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    category: '',
     item_code: '',
     description: '',
     base: '',
@@ -39,10 +45,28 @@ const AddDistributorInventory = ({ inventory }) => {
     whole_sale_price: '',
     retail_price: '',
   });
+  useEffect(() => {
+    axiosInstance
+      .get('/category/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setCategorys(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setLoading(true);
+    setShowUplod(false);
+    setShowMsg(true);
     axiosInstance
       .post('/distributor/items/add/', data, {
         headers: {
@@ -76,6 +100,7 @@ const AddDistributorInventory = ({ inventory }) => {
 
     setData({
       ...data,
+      category: '',
       item_code: '',
       description: '',
       base: '',
@@ -86,7 +111,12 @@ const AddDistributorInventory = ({ inventory }) => {
       retail_price: '',
     });
   };
-
+  const hanldeFileUpload = (e) => {
+    e.preventDefault();
+    setShowMsg(false);
+    setShowUplod(true);
+    handleOpen();
+  };
   return (
     <div className="page">
       {loading ? (
@@ -98,15 +128,29 @@ const AddDistributorInventory = ({ inventory }) => {
       ) : (
         ''
       )}
-      <Modal open={open} onClose={handleClose}>
-        <MyMessage
-          hide={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
+      {show_message ? (
+        <Modal open={open} onClose={handleClose}>
+          <MyMessage
+            hide={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal>
+      ) : show_upload ? (
+        <Modal open={open} onClose={handleClose}>
+          <FileUpload
+            close={handleClose}
+            ditributor={true}
+            inventory={inventory.id}
+            url={'/distributor/items/add/excel/'}
+          />
+        </Modal>
+      ) : (
+        ''
+      )}
+
       <div className="page__title">
         <p>Add inventory</p>
       </div>
@@ -114,6 +158,26 @@ const AddDistributorInventory = ({ inventory }) => {
         <div className="form">
           <form action="" onSubmit={handleSubmit}>
             <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Category</div>
+                <div className="form__row__col__input">
+                  <select
+                    onChange={(e) =>
+                      setData({ ...data, category: e.target.value })
+                    }
+                    required
+                  >
+                    <option value="" selected>
+                      Select Category
+                    </option>
+                    {categorys.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.category_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">Item Code</div>
                 <div className="form__row__col__input">
@@ -125,6 +189,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, item_code: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -160,6 +225,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, whole_sale_price: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -178,6 +244,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, retail_price: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>
@@ -212,6 +279,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     name="qty"
                     value={data.qty === undefined ? '' : data.qty}
                     onChange={(e) => setData({ ...data, qty: e.target.value })}
+                    required
                   />
                 </div>
               </div>
@@ -254,6 +322,9 @@ const AddDistributorInventory = ({ inventory }) => {
 
             <div className="form__btn">
               <div className="form__btn__container">
+                <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
+                  import
+                </button>
                 <button className="btnEdit" type="submit">
                   save
                 </button>

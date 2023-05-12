@@ -30,6 +30,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import PsaEdit from '../../components/edit/PsaEdit';
+import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -172,43 +174,11 @@ const ViewPsas = () => {
       });
   }, [success]);
 
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    console.log(value);
-    setItemDetails({
-      id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
-    });
-    setMessageOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(true);
-
-    handleModalOpen();
-  };
-
   const handleEditDetails = (e, value) => {
     setItemDetails({
       id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
+      area_name: value.area_name,
+      more_details: value.more_details,
     });
     setMessageOpen(false);
     setDeleteDetailsOpen(false);
@@ -219,16 +189,6 @@ const ViewPsas = () => {
   const handleDeleteDetails = (e, value) => {
     setItemDetails({
       id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
     });
     setMessageOpen(false);
     setDetailsOpen(false);
@@ -250,16 +210,8 @@ const ViewPsas = () => {
   return (
     <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {detailsOpen ? (
-          <ProductDetails
-            data={itemDetails}
-            showDetails={setDetailsOpen}
-            showEdit={setEditDetailsOpen}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-          />
-        ) : editdetailsOpen ? (
-          <ProductEdit
+        {editdetailsOpen ? (
+          <PsaEdit
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -268,10 +220,10 @@ const ViewPsas = () => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/edit'}
+            url={'/psa/edit'}
           />
         ) : deletedetailsOpen ? (
-          <ProductDelete
+          <DeleteNotBuy
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -280,7 +232,7 @@ const ViewPsas = () => {
             msg={setMsg}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/delete'}
+            url={'/psa/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -366,12 +318,6 @@ const ViewPsas = () => {
                 icons={tableIcons}
                 actions={[
                   {
-                    icon: CgDetailsMore,
-                    tooltip: 'View details',
-                    onClick: (event, rowData) =>
-                      handleViewDetails(event, rowData),
-                  },
-                  {
                     icon: EditIcon,
                     tooltip: 'Edit details',
                     onClick: (event, rowData) =>
@@ -387,19 +333,7 @@ const ViewPsas = () => {
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === CgDetailsMore ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'green' }} // customize the icon color
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <CgDetailsMore />
-                        </IconButton>
-                      ) : props.action.icon === EditIcon ? (
+                      {props.action.icon === EditIcon ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

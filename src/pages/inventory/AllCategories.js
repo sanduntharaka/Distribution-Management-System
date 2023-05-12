@@ -2,9 +2,9 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from './componets/ProductDetails';
-import ProductEdit from './componets/ProductEdit';
-import ProductDelete from './componets/ProductDelete';
+import ProductDetails from '../inventory/componets/ProductDetails';
+import ProductEdit from '../inventory/componets/ProductEdit';
+import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -30,6 +30,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import EditCategory from '../../components/edit/EditCategory';
+import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -55,7 +57,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const DistributorInventory = ({ inventory, user }) => {
+const AllCategories = () => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -66,16 +68,10 @@ const DistributorInventory = ({ inventory, user }) => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Item Code', field: 'item_code' },
-    { title: 'Category', field: 'category_name' },
-    { title: 'Description', field: 'description' },
-    { title: 'Pack Size', field: 'pack_size' },
-    { title: 'Whole Sale Price', field: 'whole_sale_price' },
-    { title: 'Retail Price', field: 'retail_price' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Qty', field: 'qty' },
+    { title: 'Category Name', field: 'category_name' },
+    { title: 'Details', field: 'description' },
+    { title: 'Created', field: 'date' },
   ];
-
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -91,15 +87,15 @@ const DistributorInventory = ({ inventory, user }) => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
+  //item_codes
+  const [itemCodes, setItemCodes] = useState([]);
+
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -111,8 +107,9 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   useEffect(() => {
+    console.log('called');
     axiosInstance
-      .get(`/distributor/items/all/${inventory.id}`, {
+      .get(`/category/all/`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -123,53 +120,24 @@ const DistributorInventory = ({ inventory, user }) => {
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
+          if (!itemCodes.includes(item.created_by)) {
+            itemCodes.push(item.created_by);
           }
         });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [messageOpen]);
-
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    setItemDetails({
-      id: value.id,
-      item_code: value.item_code,
-      description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
-    });
-    setMessageOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(true);
-
-    handleModalOpen();
-  };
+  }, [success]);
 
   const handleEditDetails = (e, value) => {
-    console.log(value);
     setItemDetails({
       id: value.id,
-      item_code: value.item_code,
+      added_by: value.added_by,
+      category_name: value.category_name,
       description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
+      date: value.date,
     });
-
     setMessageOpen(false);
     setDeleteDetailsOpen(false);
     setDetailsOpen(false);
@@ -179,15 +147,6 @@ const DistributorInventory = ({ inventory, user }) => {
   const handleDeleteDetails = (e, value) => {
     setItemDetails({
       id: value.id,
-      item_code: value.item_code,
-      description: value.description,
-      base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
-      free_of_charge: value.foc,
     });
     setMessageOpen(false);
     setDetailsOpen(false);
@@ -195,33 +154,22 @@ const DistributorInventory = ({ inventory, user }) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-
   const handleFilter = (i) => {
     handleClose();
     console.log(i);
     if (i === 'all') {
       setTableData(data);
     } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      //
+      let filteredItems = data.filter((item) => item.created_by === i);
       console.log(filteredItems);
       setTableData(filteredItems);
     }
   };
-
   return (
-    <div className="page">
+    <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {detailsOpen ? (
-          <ProductDetails
-            data={itemDetails}
-            showDetails={setDetailsOpen}
-            showEdit={setEditDetailsOpen}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-          />
-        ) : editdetailsOpen ? (
-          <ProductEdit
+        {editdetailsOpen ? (
+          <EditCategory
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -230,10 +178,10 @@ const DistributorInventory = ({ inventory, user }) => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/edit'}
+            url={'/category/edit'}
           />
         ) : deletedetailsOpen ? (
-          <ProductDelete
+          <DeleteNotBuy
             data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
@@ -242,7 +190,7 @@ const DistributorInventory = ({ inventory, user }) => {
             msg={setMsg}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/delete'}
+            url={'/category/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -257,29 +205,9 @@ const DistributorInventory = ({ inventory, user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View distributor inventory</p>
+        <p>View Categories</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div>
-              <select
-                name=""
-                id=""
-                onChange={(e) => handleFilter(e.target.value)}
-              >
-                {itemCodes.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -292,18 +220,17 @@ const DistributorInventory = ({ inventory, user }) => {
                     background: 'red',
                   },
                 }}
+                actionsColumnIndex={-1} // hide the actions column from view
+                actionsCellStyle={{
+                  // customize the actions cell style
+                  background: '#fde',
+                }}
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
                 }}
                 icons={tableIcons}
                 actions={[
-                  {
-                    icon: CgDetailsMore,
-                    tooltip: 'View details',
-                    onClick: (event, rowData) =>
-                      handleViewDetails(event, rowData),
-                  },
                   {
                     icon: EditIcon,
                     tooltip: 'Edit details',
@@ -320,20 +247,7 @@ const DistributorInventory = ({ inventory, user }) => {
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === CgDetailsMore ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'green' }} // customize the icon color
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <CgDetailsMore />
-                        </IconButton>
-                      ) : props.action.icon === EditIcon &&
-                        user.is_distributor ? (
+                      {props.action.icon === EditIcon ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -345,8 +259,7 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : props.action.icon === DeleteOutline &&
-                        user.is_distributor ? (
+                      ) : (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -358,8 +271,6 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <DeleteOutline />
                         </IconButton>
-                      ) : (
-                        ''
                       )}
                     </React.Fragment>
                   ),
@@ -373,4 +284,4 @@ const DistributorInventory = ({ inventory, user }) => {
   );
 };
 
-export default DistributorInventory;
+export default AllCategories;

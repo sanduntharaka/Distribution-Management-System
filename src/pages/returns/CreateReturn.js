@@ -346,7 +346,10 @@ const CreateReturn = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__label">
+                  {' '}
+                  QTY(add qty with foc)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
@@ -356,7 +359,10 @@ const CreateReturn = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">FOC</div>
+                <div className="form__row__col__label">
+                  {' '}
+                  FOC(add foc count only)
+                </div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
@@ -527,7 +533,7 @@ const CreateReturn = ({ inventory }) => {
                 <button className="btnEdit" onClick={(e) => handleSave(e)}>
                   save
                 </button>
-                <button className="btnSave">edit</button>
+                {/* <button className="btnSave">edit</button> */}
               </div>
             </div>
           </form>

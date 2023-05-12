@@ -11,38 +11,72 @@ import DistributorSalesRef from './DistributorSalesRef';
 import AllUsers from './AllUsers';
 
 const UserTabs = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [selected, setSelected] = useState(0);
   const handleSelect = (i) => {
     setSelected(i);
   };
-
+  // is_companyStaff
+  // is_distributor
+  // is_manager
+  // is_salesref
+  // is_superuser
   return (
     <div className="tab">
       <div className="tab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          User creation
-        </div>
-        <div
-          className={`item ${selected === 1 ? 'selected' : ''}`}
-          onClick={() => handleSelect(1)}
-        >
-          Add user details
-        </div>
-        <div
-          className={`item ${selected === 2 ? 'selected' : ''}`}
-          onClick={() => handleSelect(2)}
-        >
-          Assign Sales Ref
-        </div>
-        <div
-          className={`item ${selected === 3 ? 'selected' : ''}`}
-          onClick={() => handleSelect(3)}
-        >
-          View details
-        </div>
+        {user.is_superuser ||
+        user.is_manager ||
+        user.is_distributor ||
+        user.is_companyStaff ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            User creation
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_superuser ||
+        user.is_manager ||
+        user.is_distributor ||
+        user.is_companyStaff ? (
+          <div
+            className={`item ${selected === 1 ? 'selected' : ''}`}
+            onClick={() => handleSelect(1)}
+          >
+            Add user details
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_superuser ||
+        user.is_manager ||
+        user.is_distributor ||
+        user.is_companyStaff ? (
+          <div
+            className={`item ${selected === 2 ? 'selected' : ''}`}
+            onClick={() => handleSelect(2)}
+          >
+            Assign Sales Ref
+          </div>
+        ) : (
+          ''
+        )}
+
+        {user.is_superuser ||
+        user.is_manager ||
+        user.is_distributor ||
+        user.is_companyStaff ? (
+          <div
+            className={`item ${selected === 3 ? 'selected' : ''}`}
+            onClick={() => handleSelect(3)}
+          >
+            View details
+          </div>
+        ) : (
+          ''
+        )}
       </div>
       <div className="tab_page">
         {selected === 0 ? (
