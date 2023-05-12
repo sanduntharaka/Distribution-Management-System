@@ -14,3 +14,13 @@ class CreatePSA(generics.CreateAPIView):
 class AllCreatedPsa(generics.ListAPIView):
     serializer_class = serializers.GetAllPSASerializer
     queryset = PrimarySalesArea.objects.all()
+
+
+class EditPsa(generics.UpdateAPIView):
+    serializer_class = serializers.EditPsaSerializer
+    queryset = PrimarySalesArea.objects.all()
+
+
+class DeletePsa(generics.DestroyAPIView):
+    serializer_class = serializers.CreatePSASerializer
+    queryset = PrimarySalesArea.objects.all()

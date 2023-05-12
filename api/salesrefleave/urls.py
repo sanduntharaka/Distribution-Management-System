@@ -4,5 +4,5 @@ from . import views
 urlpatterns = [
     path('add/', views.AddLeave.as_view()),
     path('all/salesref/<id>', views.AllByIdLeave.as_view()),
-
+    path('delete/<int:pk>', views.DeleteLeave.as_view()),
 ]

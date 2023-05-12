@@ -18,3 +18,8 @@ class AllByIdLeave(generics.ListAPIView):
         item = self.kwargs.get('id')
 
         return get_list_or_404(SalesRefLeave, salesref=item)
+
+
+class DeleteLeave(generics.DestroyAPIView):
+    queryset = SalesRefLeave.objects.all()
+    serializer_class = serializers.CreateLeaveSerializer

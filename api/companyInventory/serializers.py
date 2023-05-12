@@ -8,6 +8,13 @@ class CompanyInventorySerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class CompanyInventoryExcelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyInventory
+        fields = ('category', 'item_code', 'description',
+                  'qty', 'whole_sale_price', 'retail_price')
+
+
 class GetCompanyInventory(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.category_name')
 

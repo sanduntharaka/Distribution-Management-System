@@ -64,6 +64,7 @@ class AddInventoryFromExcel(APIView):
             yield data, i
 
     def post(self, request, *args, **kwargs):
+
         user_account = request.data['user']
         file = request.data['file']
         df = pd.read_excel(file)
@@ -78,6 +79,7 @@ class AddInventoryFromExcel(APIView):
 
         df.rename(columns=rename_coulumns, inplace=True)
         dataset = Dataset().load(df)
+
         erros_reson = []
         erros = []
         success = []

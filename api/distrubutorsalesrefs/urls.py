@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('get/bysalesref/<int:id>', views.GetBySalesRef.as_view()),
+    path('get/bydistributor/<int:id>', views.GetByDistributor.as_view()),
     path('all/', views.GetAlldistributorSalesRef.as_view()),
     path('all/distributor/<id>', views.GetAllByDistributor.as_view()),
     path('create/', views.CreateDisributorSalesRef.as_view()),

@@ -18,10 +18,11 @@ class UserDetailsUpdateSerializer(serializers.ModelSerializer):
 
 class AllDistributorsSerializer(serializers.ModelSerializer):
     user = serializers.CharField(source='user.id')
+    user_name = serializers.CharField(source='user.user_name')
 
     class Meta:
         model = UserDetails
-        fields = ('id', 'user', 'full_name')
+        fields = ('id', 'user', 'full_name', 'user_name')
 
 
 class GetBasicUserDetail(serializers.ModelSerializer):
