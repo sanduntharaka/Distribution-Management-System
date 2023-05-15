@@ -15,14 +15,12 @@ class AddInvoice(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         last_invoice = CompanyInvoice.objects.all().last()
         invoice_data = request.data['data']['inv']
-        print(last_invoice)
         if last_invoice is not None:
             print(last_invoice.invoice_number)
             inv_number = last_invoice.invoice_number+1
             invoice_data['invoice_number'] = inv_number
         else:
             invoice_data['invoice_number'] = 1
-        print(invoice_data)
         try:
             serializer = self.get_serializer(data=invoice_data)
             serializer.is_valid(raise_exception=True)
@@ -36,9 +34,11 @@ class AddInvoice(generics.CreateAPIView):
 
 class AddInvoiceItems(APIView):
     def post(self, request, *args, **kwargs):
+        print(request.data)
         invoice = CompanyInvoice.objects.get(id=self.kwargs.get('id'))
         item_obj = []
         inventory_item = []
+
         try:
             for inv_item in request.data['data']['items']:
                 company_item = {}

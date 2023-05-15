@@ -17,7 +17,7 @@ class GetInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyInvoice
         fields = ('id', 'invoice_code', 'invoice_number', 'issued_by',
-                  'solled_to', 'date', 'invoice_code', 'solled_name', 'isssued_name')
+                  'solled_to', 'date', 'invoice_code', 'solled_name', 'isssued_name', 'total', 'billing_price_method', 'discount_percentage', 'sub_total')
 
 
 class GetAllInvoiceItems(serializers.ModelSerializer):

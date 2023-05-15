@@ -11,6 +11,7 @@ urlpatterns = [
     path('distributor/salesref/', include('api.distrubutorsalesrefs.urls')),
     path('salesref/invoice/', include('api.distrubutorsalesrefinvoices.urls')),
     path('salesref/return/', include('api.return_salesref.urls')),
+    path('dealer-category/', include('api.dealercategory.urls')),
     path('dealer/', include('api.dealers.urls')),
     path('psa/', include('api.psa_api.urls')),
     path('not-buy/', include('api.notbuydetails.urls')),

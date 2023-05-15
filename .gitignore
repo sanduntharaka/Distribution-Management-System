@@ -34,6 +34,13 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0002_alter_category_date.py
 0003_alter_useraccount_user_name.py
 0002_alter_useraccount_user_name.py
+0003_companyinvoice_total.py
+0004_companyinvoice_billing_price_method_and_more.py
+0003_dealer_category.py
+0004_dealer_psa.py
+0005_alter_dealer_category_alter_dealer_psa.py
+0003_salesrefinvoice_billing_price_method_and_more.py
+0004_alter_salesrefinvoice_billing_price_method.py
 # Backup files # 
 *.bak 
 *.vscode

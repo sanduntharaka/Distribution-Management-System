@@ -1,11 +1,14 @@
 from django.db import models
 from distrubutor_salesref.models import SalesRefDistributor
 from dealer_details.models import Dealer
+from primary_sales_area.models import PrimarySalesArea
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
 class SalesRefInvoice(models.Model):
+    psa = models.ForeignKey(
+        PrimarySalesArea, on_delete=models.PROTECT, default=2)
     dis_sales_ref = models.ForeignKey(
         SalesRefDistributor, on_delete=models.CASCADE)
     date = models.DateField()
@@ -16,6 +19,8 @@ class SalesRefInvoice(models.Model):
     discount = models.IntegerField()
     payment_type = models.CharField(max_length=10, default='cash')
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    billing_price_method = models.CharField(default='2', max_length=2)
+    sub_total = models.FloatField(default=0.0)
 
     def get_bill_code_number_combine(self):
         return self.bill_code + str(self.bill_number)

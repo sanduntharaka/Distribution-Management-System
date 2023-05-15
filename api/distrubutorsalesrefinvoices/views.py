@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 class CreateInvoice(generics.CreateAPIView):
     get_serializer = serializers.CreateInvoiceSerializer
-    queryset = SalesRefInvoice.objects.all()
 
     def create(self, request, *args, **kwargs):
         last_bill = SalesRefInvoice.objects.all().first()
@@ -21,11 +20,15 @@ class CreateInvoice(generics.CreateAPIView):
             data['bill_number'] = bill_number+1
         else:
             data['bill_number'] = 1
-        serializer = self.get_serializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        try:
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # Response(status=status.HTTP_200_OK)
 

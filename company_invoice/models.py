@@ -5,11 +5,18 @@ User = settings.AUTH_USER_MODEL
 
 
 class CompanyInvoice(models.Model):
+    # for wholesale billing price method = 1
+    # for unitprice  billing price method = 2
+
     invoice_code = models.CharField(max_length=10)
     invoice_number = models.IntegerField(unique=True)
     issued_by = models.ForeignKey(User, on_delete=models.CASCADE)
     solled_to = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
     date = models.DateField()
+    total = models.FloatField(default=0.0)
+    billing_price_method = models.IntegerField(default=1)
+    discount_percentage = models.FloatField(default=9)
+    sub_total = models.FloatField(default=0.0)
 
     def get_invoice_number(self):
         return self.invoice_code + str(self.invoice_number)

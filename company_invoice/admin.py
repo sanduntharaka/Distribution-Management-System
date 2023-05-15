@@ -3,7 +3,7 @@ from .models import CompanyInvoice, CompanyInvoiceItems
 
 
 class CompanyInvoiceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'invoice_code', 'invoice_number', 'issued_by',
+    list_display = ('id', 'invoice_code', 'invoice_number', 'total', 'issued_by',
                     'solled_to', 'date')
     list_display_links = ('id', 'invoice_number')
     list_filter = ('invoice_code', 'invoice_number',

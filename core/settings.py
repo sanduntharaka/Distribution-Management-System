@@ -59,11 +59,13 @@ INSTALLED_APPS = [
     'sales_ref_leave',
     'sales_return',
     'item_category',
+    'dealer_category',
     'api',
     'api.userdetailsapp',
     'api.companyInventory',
     'api.distributor',
     'api.companyInvoices',
+
     # 'api.salesrefs',
     'api.dashboard',
     'api.distrubutorsalesrefs',
@@ -75,6 +77,7 @@ INSTALLED_APPS = [
     'api.notbuydetails',
     'api.salesrefleave',
     'api.itemcategory',
+    'api.dealercategory',
 ]
 
 MIDDLEWARE = [
