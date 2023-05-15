@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CreateDealer from './CreateDealer';
 import ShowDealers from './ShowDealers';
+import DealerCategory from './DealerCategory';
 const DealersTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const [selected, setSelected] = useState(0);
@@ -15,27 +16,37 @@ const DealersTab = () => {
         user.is_manager ||
         user.is_salesref ||
         user.is_superuser ? (
-          <div
-            className={`item ${selected === 0 ? 'selected' : ''}`}
-            onClick={() => handleSelect(0)}
-          >
-            Create Dealer
-          </div>
+          <>
+            <div
+              className={`item ${selected === 0 ? 'selected' : ''}`}
+              onClick={() => handleSelect(0)}
+            >
+              Dealer Category
+            </div>
+            <div
+              className={`item ${selected === 1 ? 'selected' : ''}`}
+              onClick={() => handleSelect(1)}
+            >
+              Create Dealer
+            </div>
+          </>
         ) : (
           ''
         )}
 
         <div
-          className={`item ${selected === 1 ? 'selected' : ''}`}
-          onClick={() => handleSelect(1)}
+          className={`item ${selected === 2 ? 'selected' : ''}`}
+          onClick={() => handleSelect(2)}
         >
           View Dealers
         </div>
       </div>
       <div className="tab_page">
         {selected === 0 ? (
-          <CreateDealer />
+          <DealerCategory />
         ) : selected === 1 ? (
+          <CreateDealer />
+        ) : selected === 2 ? (
           <ShowDealers inventory={0} />
         ) : (
           ''

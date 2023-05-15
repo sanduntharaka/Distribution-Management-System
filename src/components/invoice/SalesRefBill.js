@@ -34,10 +34,10 @@ const SalesRefBill = (props) => {
           <div className="inv__content__row__col img">
             <img
               className="logo"
-              src="https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGxvZ298ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"
+              src="./images/Bixton_logo.png"
               alt=""
-              width={50}
-              height={50}
+              width={150}
+              height={75}
             />
           </div>
           <div className="inv__content__row__col">
@@ -137,11 +137,21 @@ const SalesRefBill = (props) => {
                   <td>{item.item_code}</td>
                   <td>{item.description}</td>
                   <td>{item.qty}</td>
-                  <td>{item.whole_sale_price}</td>
-                  <td>{item.whole_sale_price * item.qty}</td>
+                  <td>{item.price}</td>
+                  <td>{item.extended_price}</td>
                 </tr>
               ))}
             </table>
+          </div>
+        </div>
+        <div
+          className="inv__content__row"
+          style={{ justifyContent: 'flex-end', fontWeight: 'bold' }}
+        >
+          <div className="inv__content__row__col">
+            <p>
+              Total: Rs {props.invoice.total} {console.log(props)}/-
+            </p>
           </div>
         </div>
         <div className="bottom">

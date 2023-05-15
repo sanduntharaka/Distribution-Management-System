@@ -3,7 +3,7 @@ import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
-import AllCategories from './AllCategories';
+import ViewCategories from './ViewCategories';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -17,7 +17,7 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 
-const Category = () => {
+const DealerCategory = () => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -32,15 +32,16 @@ const Category = () => {
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     category_name: '',
-    description: '',
+    details: 'No details',
   });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError(false);
     setSuccess(false);
     axiosInstance
-      .post('/category/create/', data, {
+      .post('/dealer-category/create/', data, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -52,7 +53,7 @@ const Category = () => {
         setError(false);
         setSuccess(true);
         setTitle('Success');
-        setMsg('Category has been created successfully');
+        setMsg('Dealer category has been created successfully');
         handleOpen();
       })
       .catch((err) => {
@@ -63,7 +64,7 @@ const Category = () => {
         setError(true);
         setTitle('Error');
         setMsg(
-          'Category cannot create right now. Please check your data again'
+          'Delaer category cannot create right now. Please check your data again'
         );
         handleOpen();
       });
@@ -90,34 +91,22 @@ const Category = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>Create Category</p>
+        <p>Create Dealer Category</p>
       </div>
       <div className="page__pcont">
         <div className="form">
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Category Name</div>
+                <div className="form__row__col__label">Category title</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type category name"
+                    placeholder="type category title"
                     onChange={(e) =>
                       setData({ ...data, category_name: e.target.value })
                     }
                     required
-                  />
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">More Details</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type more details"
-                    onChange={(e) =>
-                      setData({ ...data, description: e.target.value })
-                    }
                   />
                 </div>
               </div>
@@ -134,7 +123,7 @@ const Category = () => {
         </div>
         <div className="page__pcont__row">
           <div style={{ width: '100%' }}>
-            <AllCategories success={success} set_success={setSuccess} />
+            <ViewCategories success={success} set_success={setSuccess} />
           </div>
         </div>
       </div>
@@ -142,4 +131,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default DealerCategory;

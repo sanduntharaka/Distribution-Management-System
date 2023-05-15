@@ -147,7 +147,7 @@ const Sidebar = () => {
             <div className="container__list__item__icon">
               <BiPurchaseTagAlt />
             </div>
-            <div className="container__list__item__name">Purchase</div>
+            <div className="container__list__item__name">Non-buying</div>
           </NavLink>
           {user.is_distributor || user.is_manager || user.is_salesref ? (
             <NavLink

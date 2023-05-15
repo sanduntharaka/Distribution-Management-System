@@ -27,6 +27,7 @@
         font-weight: bold;
         text-transform: capitalize;
       }
+
       &__input {
         border-radius: 20px;
         transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -78,7 +79,20 @@
               outline: none;
             }
           }
+
+          &.err {
+            box-sizing: border-box;
+            border: 1px solid $color-danger;
+            &:focus {
+              border-color: $color-danger;
+              box-shadow: 0px 0px 5px $color-danger;
+              outline: none; /* Remove default outline */
+            }
+          }
         }
+      }
+      &__error {
+        color: $color-danger;
       }
     }
   }

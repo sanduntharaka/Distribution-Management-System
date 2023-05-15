@@ -2,8 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import Message from '../../components/message/Message';
 import SearchIcon from '@mui/icons-material/Search';
 
-import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
 import Modal from '@mui/material/Modal';
 import { axiosInstance } from '../../axiosInstance';
 import Invoice from '../../components/invoice/Invoice';
@@ -18,8 +16,15 @@ const AssignDistribution = () => {
   });
 
   const catMenu = useRef();
-  const catMenuItems = useRef();
 
+  const [inpValid, setInputValid] = useState({
+    input_dist: false,
+    show_dist: false,
+  });
+  const [billingPriceMethod, setBillingPriceMethod] = useState('1');
+  const [discount, setDiscount] = useState(9);
+  const [exceed_qty, setExceedQty] = useState(false);
+  const [total, setTotal] = useState(0);
   //message modal
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -108,15 +113,14 @@ const AssignDistribution = () => {
   const filterDistributors = (e) => {
     setShowDistributors(true);
     setValue(e.target.value);
+    setInputValid({ ...inpValid, show_dist: false, input_dist: true });
   };
 
-  const habldtest = () => {
-    console.log('hi');
-  };
+  const habldtest = () => {};
   //set choosed distributor
   const hanldeCatchFilter = (e, item) => {
-    console.log(item);
     setValue(item.full_name);
+
     setDistributor({
       user: item.id,
       full_name: item.full_name,
@@ -127,12 +131,18 @@ const AssignDistribution = () => {
   const handleSubmit = () => {};
 
   //remove selected items
-  const handleRemove = (e, id) => {
+  const handleRemove = (e, i) => {
     e.preventDefault();
     const newItems = [...items];
-    const index = newItems.findIndex((item) => item.id === id);
+    const index = i;
+    const item = newItems[index];
     newItems.splice(index, 1);
     setItems(newItems);
+    if (billingPriceMethod === '1') {
+      setTotal(total - item.qty * item.whole_sale_price);
+    } else if (billingPriceMethod === '2') {
+      setTotal(total - item.qty * item.retail_price);
+    }
   };
   //show products drop down
   const filterProducts = (e) => {
@@ -141,39 +151,73 @@ const AssignDistribution = () => {
   };
   //select product
   const hanldeProductFilter = (e, item) => {
+    console.log(item);
     setValue2(item.item_code);
     setProduct(item);
     setShowProducts(false);
   };
+  const handleClear = (e) => {
+    e.preventDefault();
+    setItems([]);
+    setQty(0);
+    setFoc(0);
+    setTotal(0);
+  };
+  const handleBillingPriceMethod = (e) => {
+    handleClear(e);
 
+    setBillingPriceMethod(e.target.value);
+  };
   //add selected prodcut and qty into items list
   const handleAdd = (e) => {
     e.preventDefault();
-
-    setItems([
-      ...items,
-      {
-        id: product.id,
-        item_code: product.item_code,
-        description: product.description,
-        whole_sale_price: product.whole_sale_price,
-        retail_price: product.retail_price,
-        qty: qty,
-        free_of_charge: foc,
-      },
-    ]);
+    if (product.qty >= qty) {
+      setItems([
+        ...items,
+        {
+          id: product.id,
+          item_code: product.item_code,
+          description: product.description,
+          whole_sale_price: product.whole_sale_price,
+          retail_price: product.retail_price,
+          qty: qty,
+          free_of_charge: foc,
+        },
+      ]);
+      if (billingPriceMethod === '1') {
+        setTotal(total + qty * product.whole_sale_price);
+      } else if (billingPriceMethod === '2') {
+        setTotal(total + qty * product.retail_price);
+      }
+    } else {
+      setExceedQty(true);
+    }
   };
-
+  const handleQty = (e) => {
+    setExceedQty(false);
+    if (e.target.value > product.qty) {
+      setExceedQty(true);
+    }
+    setQty(e.target.value);
+  };
   //submit all selected items to database
   const handleSave = (e) => {
     e.preventDefault();
-    setLoading(true);
-    if (items.length > 0) {
+    if (inpValid.input_dist === false) {
+      setInputValid({ ...inpValid, show_dist: true });
+    }
+    console.log(inpValid);
+    if (items.length > 0 && inpValid.input_dist) {
+      setLoading(true);
       const data = {
         invoice_code: 'IN',
         solled_to: distributor.user,
         issued_by: JSON.parse(sessionStorage.getItem('user')).id,
         date: currentDate,
+        total: total - (total * discount) / 100,
+        billing_price_method: billingPriceMethod,
+        discount_percentage: discount,
+        sub_total: total,
       };
       axiosInstance
         .post(
@@ -257,6 +301,7 @@ const AssignDistribution = () => {
         distributor={props.distributor}
         items={props.items}
         inv={props.inv}
+        oldinv={props.oldinv}
       />
     );
   });
@@ -282,11 +327,30 @@ const AssignDistribution = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign Distribution</p>
+        <p>Invoicing</p>
       </div>
       <div className="page__pcont">
         <div className="form">
           <form action="" onSubmit={handleSubmit}>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">
+                  Select billing price method{' '}
+                </div>
+
+                <div className="form__row__col__input">
+                  <select
+                    value={billingPriceMethod}
+                    onChange={(e) => handleBillingPriceMethod(e)}
+                  >
+                    <option value="1">Wholesale Price</option>
+                    <option value="2">Retail Price</option>
+                  </select>
+                </div>
+              </div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
+            </div>
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
@@ -302,6 +366,7 @@ const AssignDistribution = () => {
                     <input
                       type="text"
                       placeholder="search..."
+                      className={inpValid.show_dist ? 'err' : ''}
                       value={value}
                       onChange={(e) => filterDistributors(e)}
                     />
@@ -335,11 +400,12 @@ const AssignDistribution = () => {
                           fullName !== searchTerm
                         );
                       })
-                      .map((item) => (
+                      .map((item, i) => (
                         <ul
                           className="searchContent__row"
                           onClickCapture={habldtest}
                           onClick={(e) => hanldeCatchFilter(e, item)}
+                          key={i}
                         >
                           <li
                             style={{ cursor: 'pointer' }}
@@ -351,6 +417,13 @@ const AssignDistribution = () => {
                       ))}
                   </div>
                 </div>
+                {inpValid.show_dist ? (
+                  <div className="form__row__col__error">
+                    <p>This field is required</p>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
 
@@ -398,20 +471,25 @@ const AssignDistribution = () => {
                       .filter((item) => {
                         const searchTerm = value2.toLowerCase();
                         const ItemCode = item.item_code.toLowerCase();
-
+                        const description = item.description.toLowerCase();
                         return (
-                          ItemCode.includes(searchTerm) &&
-                          ItemCode !== searchTerm
+                          (ItemCode.includes(searchTerm) &&
+                            ItemCode !== searchTerm) ||
+                          (description.includes(searchTerm) &&
+                            description !== searchTerm)
                         );
                       })
-                      .map((item) => (
+                      .map((item, i) => (
                         <div
                           className="searchContent__row"
                           onClick={(e) => hanldeProductFilter(e, item)}
+                          key={i}
                         >
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
                             <p>{item.qty}</p>
+                            <p>{item.date}</p>
+                            <p>{item.description}</p>
                           </div>
                         </div>
                       ))}
@@ -424,11 +502,19 @@ const AssignDistribution = () => {
                 </div>
                 <div className="form__row__col__input">
                   <input
+                    className={exceed_qty ? 'err' : ''}
                     type="text"
                     value={qty}
-                    onChange={(e) => setQty(e.target.value)}
+                    onChange={(e) => handleQty(e)}
                   />
                 </div>
+                {exceed_qty ? (
+                  <div className="form__row__col__error">
+                    <p>Inventory has not engough quanty</p>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
@@ -468,36 +554,95 @@ const AssignDistribution = () => {
                 <p className="form__row__col__label">Selected Products</p>
                 <div className="showSelected">
                   <table>
-                    <tr className="tableHead">
-                      <th> Item Code</th>
-                      <th>Whole sale</th>
-                      <th>Retail</th>
-                      <th>FOC</th>
-                      <th>Qty</th>
-
-                      <th>Action</th>
-                    </tr>
-                    {items.map((item, i) => (
-                      <tr className="datarow" key={i}>
-                        <td>{item.item_code}</td>
-                        <td>{item.whole_sale_price}</td>
-                        <td>{item.retail_price}</td>
-                        <td>{item.free_of_charge}</td>
-
-                        <td>{item.qty}</td>
-
-                        <td className="action">
-                          <button
-                            className="btnDelete"
-                            onClick={(e) => handleRemove(e, item.id)}
-                          >
-                            remove
-                          </button>
-                        </td>
+                    <thead>
+                      <tr className="tableHead">
+                        <th> Item Code</th>
+                        <th>Whole sale</th>
+                        <th>Retail</th>
+                        <th>FOC</th>
+                        <th>Qty</th>
+                        <th>Sub total</th>
+                        <th>Action</th>
                       </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                      {items.map((item, i) => (
+                        <tr className="datarow" key={i}>
+                          <td>{item.item_code}</td>
+                          <td>{item.whole_sale_price}</td>
+                          <td>{item.retail_price}</td>
+                          <td>{item.qty}</td>
+                          <td>{item.free_of_charge}</td>
+                          <td>
+                            {billingPriceMethod === '1'
+                              ? item.qty * item.whole_sale_price
+                              : billingPriceMethod === '2'
+                              ? item.qty * item.retail_price
+                              : 0}
+                          </td>
+                          <td className="action">
+                            <button
+                              className="btnDelete"
+                              onClick={(e) => handleRemove(e, i)}
+                            >
+                              remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+            <div className="form__row">
+              <div
+                className="form__row__col"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  background: 'white',
+                  gap: 10,
+                  fontWeight: 'bolder',
+                }}
+              >
+                <p>Total:</p>
+                <p>Rs {total}/-</p>
+              </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Discount percentage</div>
+
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    id="percentage"
+                    name="percentage"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
+            </div>
+            <div className="form__row">
+              <div
+                className="form__row__col"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  background: 'white',
+                  gap: 10,
+                  fontWeight: 'bolder',
+                }}
+              >
+                <p>Final Total:</p>
+                <p>Rs {total - (total * discount) / 100}/-</p>
               </div>
             </div>
             <div className="form__btn">
@@ -505,7 +650,9 @@ const AssignDistribution = () => {
                 <button className="btnEdit" onClick={(e) => handleSave(e)}>
                   complete
                 </button>
-                <button className="btnDelete">clear</button>
+                <button className="btnDelete" onClick={(e) => handleClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

@@ -57,7 +57,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const AllCategories = () => {
+const AllCategories = (props) => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -128,9 +128,11 @@ const AllCategories = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [success]);
+  }, [success, props.success]);
 
   const handleEditDetails = (e, value) => {
+    setSuccess(false);
+    setError(false);
     setItemDetails({
       id: value.id,
       added_by: value.added_by,
@@ -145,6 +147,8 @@ const AllCategories = () => {
     handleModalOpen();
   };
   const handleDeleteDetails = (e, value) => {
+    setSuccess(false);
+    setError(false);
     setItemDetails({
       id: value.id,
     });

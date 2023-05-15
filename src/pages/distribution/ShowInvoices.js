@@ -119,6 +119,12 @@ const ShowInvoices = () => {
     invoice_code: '',
     invoice_number: '',
     date: '',
+    issued_by: '',
+    solled_to: '',
+    total: '',
+    billing_price_method: '',
+    discount_percentage: '',
+    sub_total: '',
   });
   const handleViewDetails = (e, value) => {
     e.preventDefault();
@@ -137,6 +143,12 @@ const ShowInvoices = () => {
       invoice_code: value.invoice_code,
       invoice_number: value.invoice_number,
       date: value.date,
+      issued_by: value.issued_by,
+      solled_to: value.solled_to,
+      total: value.total,
+      billing_price_method: value.billing_price_method,
+      discount_percentage: value.discount_percentage,
+      sub_total: value.sub_total,
     });
     setDistributor({
       user: value.solled_to,
@@ -186,6 +198,7 @@ const ShowInvoices = () => {
         distributor={props.distributor}
         items={props.items}
         inv={props.inv}
+        oldinv={props.oldinv}
       />
     );
   });

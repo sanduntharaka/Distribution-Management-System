@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useRef } from 'react';
+import React, { useState, forwardRef, useRef, useEffect } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
@@ -28,6 +28,8 @@ const CreateDealer = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [psas, setPsas] = useState([]);
+  const [dealer_category, setDealerCategory] = useState([]);
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     name: '',
@@ -39,7 +41,57 @@ const CreateDealer = () => {
     owner_home_number: '',
     assistant_name: '',
     assistant_contact_number: '',
+    psa: '',
+    category: '',
   });
+
+  useEffect(() => {
+    setLoading(true);
+    axiosInstance
+      .get('/psa/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setPsas(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg('Cannot fetch psa details. Please refresh the page again.');
+        handleOpen();
+      });
+
+    setLoading(true);
+    axiosInstance
+      .get('/dealer-category/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setDealerCategory(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg(
+          'Cannot fetch dealer category details. Please refresh the page again.'
+        );
+        handleOpen();
+      });
+  }, []);
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -119,7 +171,43 @@ const CreateDealer = () => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Name</div>
+                <div className="form__row__col__label">Psa</div>
+                <div className="form__row__col__input">
+                  <select
+                    name="psa"
+                    onChange={(e) => setData({ ...data, psa: e.target.value })}
+                  >
+                    <option selected>Select psa</option>
+                    {psas.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.area_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Category</div>
+                <div className="form__row__col__input">
+                  <select
+                    name="psa"
+                    onChange={(e) =>
+                      setData({ ...data, category: e.target.value })
+                    }
+                  >
+                    <option selected>Select category</option>
+                    {dealer_category.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.category_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Dealer Name</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"

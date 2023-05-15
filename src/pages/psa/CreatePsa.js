@@ -32,11 +32,13 @@ const CreatePsa = () => {
   const [data, setData] = useState({
     created_by: JSON.parse(sessionStorage.getItem('user')).id,
     area_name: '',
-    more_details: '',
+    more_details: 'No details',
   });
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(false);
+    setSuccess(false);
     axiosInstance
       .post('/psa/create/', data, {
         headers: {
@@ -107,18 +109,6 @@ const CreatePsa = () => {
                   />
                 </div>
               </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">More Details</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type more details"
-                    onChange={(e) =>
-                      setData({ ...data, more_details: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="form__btn">
@@ -132,7 +122,7 @@ const CreatePsa = () => {
         </div>
         <div className="page__pcont__row">
           <div style={{ width: '100%' }}>
-            <ViewPsas />
+            <ViewPsas success={success} set_success={setSuccess} />
           </div>
         </div>
       </div>

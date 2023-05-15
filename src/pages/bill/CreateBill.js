@@ -13,10 +13,12 @@ const CreateBill = ({ inventory }) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
+  const [billingPriceMethod, setBillingPriceMethod] = useState('2');
+  const [discount, setDiscount] = useState(9);
+  const [total, setTotal] = useState(0);
   const [psas, setPsas] = useState([]);
   const [dealers, setDealers] = useState([]);
   const [payment, setPayment] = useState('');
-  const [discount, setDiscount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState({
     psa: '',
@@ -29,6 +31,10 @@ const CreateBill = ({ inventory }) => {
     total: 0,
     discount: discount,
     payment_type: payment,
+    total: 0,
+    billing_price_method: '',
+    discount_percentage: 0,
+    sub_total: 0,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
   });
 
@@ -68,8 +74,10 @@ const CreateBill = ({ inventory }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [exceed_qty, setExceedQty] = useState(false);
+
   useEffect(() => {
-    console.log(inventory);
+    setLoading(true);
     axiosInstance
       .get('/psa/all/', {
         headers: {
@@ -78,12 +86,20 @@ const CreateBill = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
         setPsas(res.data);
       })
       .catch((err) => {
         console.log(err);
+        console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch psa details. Please Try again');
+        setTitle('Error');
+        handleOpen();
       });
-
+    setLoading(true);
     axiosInstance
       .get('/dealer/all/', {
         headers: {
@@ -92,12 +108,20 @@ const CreateBill = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setDealers(res.data);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch dealers details. Please Try again');
+        setTitle('Error');
+        handleOpen();
       });
-
+    setLoading(true);
     axiosInstance
       .get(`/distributor/salesref/inventory/items/${inventory.id}`, {
         headers: {
@@ -106,11 +130,21 @@ const CreateBill = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setProducts(res.data);
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch inventory items. Please Try again');
+        setTitle('Error');
+        handleOpen();
       });
+    setLoading(true);
+
     axiosInstance
       .get(
         `/distributor/salesref/get/bysalesref/${
@@ -124,10 +158,17 @@ const CreateBill = ({ inventory }) => {
         }
       )
       .then((res) => {
+        setLoading(false);
         setData({ ...data, dis_sales_ref: res.data.id });
       })
       .catch((err) => {
         console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch inventory. Please Try again');
+        setTitle('Error');
+        handleOpen();
       });
   }, []);
 
@@ -152,33 +193,81 @@ const CreateBill = ({ inventory }) => {
     setProduct(item);
     setShowProducts(false);
   };
+  const handleClear = (e) => {
+    e.preventDefault();
+    setItems([]);
+    setQty(0);
+    setFoc(0);
+    setTotal(0);
+  };
+  const handleBillingPriceMethod = (e) => {
+    handleClear(e);
 
+    setBillingPriceMethod(e.target.value);
+  };
   const handleAdd = (e) => {
     e.preventDefault();
-    setData({ ...data, total: data.total + product.retail_price * qty });
-    // setTotal(total + product.retail_price * qty);
-    setItems([
-      ...items,
-      {
-        id: product.id,
-        item_code: product.item_code,
-        description: product.description,
-        whole_sale_price: product.whole_sale_price,
-        price: product.retail_price,
-        qty: qty,
-        foc: foc,
-        pack_size: product.pack_size,
-        extended_price: product.retail_price * qty,
-      },
-    ]);
+
+    if (product.qty >= qty) {
+      if (billingPriceMethod === '1') {
+        setData({
+          ...data,
+          sub_total: data.sub_total + product.whole_sale_price * qty,
+        });
+      }
+      if (billingPriceMethod === '2') {
+        setData({
+          ...data,
+          sub_total: data.sub_total + product.retail_price * qty,
+        });
+      }
+
+      setItems([
+        ...items,
+        {
+          id: product.id,
+          item_code: product.item_code,
+          description: product.description,
+          whole_sale_price: product.whole_sale_price,
+          price: product.retail_price,
+          qty: qty,
+          foc: foc,
+          pack_size: product.pack_size,
+          extended_price: product.retail_price * qty,
+        },
+      ]);
+    } else {
+      setExceedQty(true);
+    }
+  };
+  console.log(data.sub_total);
+  const handleQty = (e) => {
+    setExceedQty(false);
+    if (e.target.value > product.qty) {
+      setExceedQty(true);
+    }
+    setQty(e.target.value);
   };
 
-  const handleRemove = (e, id) => {
+  const handleRemove = (e, i) => {
     e.preventDefault();
     const newItems = [...items];
-    const index = newItems.findIndex((item) => item.id === id);
+    const index = i;
+    const item = newItems[index];
     newItems.splice(index, 1);
     setItems(newItems);
+
+    if (billingPriceMethod === '1') {
+      setData({
+        ...data,
+        sub_total: data.sub_total - item.qty * item.whole_sale_price,
+      });
+    } else if (billingPriceMethod === '2') {
+      setData({
+        ...data,
+        sub_total: data.sub_total - item.qty * item.retail_price,
+      });
+    }
   };
 
   const handleCash = (e) => {
@@ -213,6 +302,9 @@ const CreateBill = ({ inventory }) => {
       ...data,
       bill_code: 'IN',
       date: currentDate,
+      total: data.sub_total - (data.sub_total * discount) / 100,
+      billing_price_method: billingPriceMethod,
+      discount_percentage: discount,
     });
     axiosInstance
       .post('/salesref/invoice/create/invoice/', data, {
@@ -329,7 +421,7 @@ const CreateBill = ({ inventory }) => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select pas</div>
+                <div className="form__row__col__label">Select psa</div>
                 <div className="form__row__col__input">
                   <select
                     name="psa"
@@ -354,6 +446,21 @@ const CreateBill = ({ inventory }) => {
                         {item.name}
                       </option>
                     ))}
+                  </select>
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">
+                  Select billing price method{' '}
+                </div>
+
+                <div className="form__row__col__input">
+                  <select
+                    value={billingPriceMethod}
+                    onChange={(e) => handleBillingPriceMethod(e)}
+                  >
+                    <option value="1">Wholesale Price</option>
+                    <option value="2">Retail Price</option>
                   </select>
                 </div>
               </div>
@@ -403,10 +510,12 @@ const CreateBill = ({ inventory }) => {
                       .filter((item) => {
                         const searchTerm = value2.toLowerCase();
                         const ItemCode = item.item_code.toLowerCase();
-
+                        const description = item.description.toLowerCase();
                         return (
-                          ItemCode.includes(searchTerm) &&
-                          ItemCode !== searchTerm
+                          (ItemCode.includes(searchTerm) &&
+                            ItemCode !== searchTerm) ||
+                          (description.includes(searchTerm) &&
+                            description !== searchTerm)
                         );
                       })
                       .map((item) => (
@@ -417,6 +526,8 @@ const CreateBill = ({ inventory }) => {
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
                             <p>{item.qty}</p>
+                            <p>{item.date}</p>
+                            <p>{item.description}</p>
                           </div>
                         </div>
                       ))}
@@ -429,11 +540,19 @@ const CreateBill = ({ inventory }) => {
                 </div>
                 <div className="form__row__col__input">
                   <input
+                    className={exceed_qty ? 'err' : ''}
                     type="text"
                     value={qty}
-                    onChange={(e) => setQty(e.target.value)}
+                    onChange={(e) => handleQty(e)}
                   />
                 </div>
+                {exceed_qty ? (
+                  <div className="form__row__col__error">
+                    <p>Inventory has not engough quanty</p>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
@@ -503,7 +622,7 @@ const CreateBill = ({ inventory }) => {
                         <td className="action">
                           <button
                             className="btnDelete"
-                            onClick={(e) => handleRemove(e, item.id)}
+                            onClick={(e) => handleRemove(e, i)}
                           >
                             remove
                           </button>
@@ -527,7 +646,42 @@ const CreateBill = ({ inventory }) => {
                 }}
               >
                 <p>Total:</p>
-                <p>Rs {data.total}/-</p>
+                <p>Rs {data.sub_total}/-</p>
+              </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Discount percentage</div>
+
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    id="percentage"
+                    name="percentage"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
+            </div>
+            <div className="form__row">
+              <div
+                className="form__row__col"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  background: 'white',
+                  gap: 10,
+                  fontWeight: 'bolder',
+                }}
+              >
+                <p>Final Total:</p>
+                <p>Rs {data.sub_total - (data.sub_total * discount) / 100}/-</p>
               </div>
             </div>
 
@@ -593,7 +747,9 @@ const CreateBill = ({ inventory }) => {
                 <button className="btnEdit" onClick={(e) => hadleCreate(e)}>
                   save
                 </button>
-                <button className="btnSave">clear</button>
+                <button className="btnSave" onClick={(e) => handleClear(e)}>
+                  clear
+                </button>
               </div>
             </div>
           </form>

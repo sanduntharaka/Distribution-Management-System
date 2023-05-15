@@ -28,11 +28,15 @@ const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => (
+    <DeleteOutline {...props} ref={ref} style={{ color: 'red' }} />
+  )),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => (
+    <Edit {...props} ref={ref} style={{ color: 'orange' }} />
+  )),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -47,7 +51,8 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const ViewPsas = (props) => {
+
+const ViewCategories = (props) => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -57,8 +62,9 @@ const ViewPsas = (props) => {
       cellStyle: { width: '10px' },
       width: '10px',
       headerStyle: { width: '10px' },
+      editable: false,
     },
-    { title: 'Area Name', field: 'area_name' },
+    { title: 'Category title', field: 'category_name' },
   ];
   //   created_by
   //   area_name
@@ -99,7 +105,7 @@ const ViewPsas = (props) => {
 
   useEffect(() => {
     axiosInstance
-      .get(`/psa/all/`, {
+      .get(`/dealer-category/all/`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -120,74 +126,80 @@ const ViewPsas = (props) => {
       });
   }, [success, props.success]);
 
-  const handleEditDetails = (e, value) => {
-    props.set_success(false);
-    setSuccess(false);
-    setItemDetails({
-      id: value.id,
-      area_name: value.area_name,
-      more_details: value.more_details,
-    });
-    setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(true);
-    handleModalOpen();
-  };
-  const handleDeleteDetails = (e, value) => {
-    props.set_success(false);
+  const handleRowUpdate = (newData, oldData, resolve) => {
     setSuccess(false);
     setError(false);
-    setItemDetails({
-      id: value.id,
-    });
-    setMessageOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(true);
-    handleModalOpen();
+    axiosInstance
+      .put(`/dealer-category/edit/${newData.id}`, newData, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setError(false);
+        setSuccess(true);
+        setTitle('Success');
+        setMsg('Dealer category has been updated successfully');
+        handleModalOpen();
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg(
+          'Delaer category cannot update right now. Please check your data again'
+        );
+        handleModalOpen();
+        resolve();
+      });
   };
+  const handleRowDelete = (oldData, resolve) => {
+    setSuccess(false);
+    setError(false);
+    axiosInstance
+      .delete(`/dealer-category/delete/${oldData.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setError(false);
+        setSuccess(true);
+        setTitle('Success');
+        setMsg('Dealer category has been deleted successfully');
+        handleModalOpen();
+        resolve();
+      })
+      .catch((err) => {
+        console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg(
+          'Delaer category cannot delete right now. Please check your data again'
+        );
+        handleModalOpen();
+        resolve();
+      });
+  };
+
   return (
     <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {editdetailsOpen ? (
-          <PsaEdit
-            data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showEdit={setEditDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/psa/edit'}
-          />
-        ) : deletedetailsOpen ? (
-          <DeleteNotBuy
-            data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/psa/delete'}
-          />
-        ) : messageOpen ? (
-          <Message
-            hide={handleModalClose}
-            success={success}
-            error={error}
-            title={title}
-            msg={msg}
-          />
-        ) : (
-          <p>No modal</p>
-        )}
+        <Message
+          hide={handleModalClose}
+          success={success}
+          error={error}
+          title={title}
+          msg={msg}
+        />
       </Modal>
       <div className="page__title">
-        <p>View All Primary Sales Areas</p>
+        <p>View Categories</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
@@ -196,66 +208,34 @@ const ViewPsas = (props) => {
               <MaterialTable
                 title={false}
                 columns={columns}
-                data={tblData}
-                sx={{
-                  ['&.MuiTable-root']: {
-                    background: 'red',
-                  },
-                }}
-                actionsColumnIndex={-1} // hide the actions column from view
-                actionsCellStyle={{
-                  // customize the actions cell style
-                  background: '#fde',
-                }}
-                options={{
-                  exportButton: true,
-                  actionsColumnIndex: 0,
-                }}
+                data={data}
                 icons={tableIcons}
-                actions={[
-                  {
-                    icon: EditIcon,
-                    tooltip: 'Edit details',
-                    onClick: (event, rowData) =>
-                      handleEditDetails(event, rowData),
+                options={{
+                  rowStyle: {
+                    '&:hover': {
+                      backgroundColor: '#EEE',
+                    },
                   },
-                  {
-                    icon: DeleteOutline,
-                    tooltip: 'Delete details',
-                    onClick: (event, rowData) =>
-                      handleDeleteDetails(event, rowData),
+                  actionsCellStyle: {
+                    '& .MuiIconButton-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.26)',
+                    },
+                    '& .MuiIconButton-root:hover': {
+                      backgroundColor: '#EEE',
+                      color: 'blue',
+                    },
                   },
-                ]}
-                components={{
-                  Action: (props) => (
-                    <React.Fragment>
-                      {props.action.icon === EditIcon ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'orange' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'red' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <DeleteOutline />
-                        </IconButton>
-                      )}
-                    </React.Fragment>
-                  ),
+                }}
+                editable={{
+                  onRowUpdate: (newData, oldData) =>
+                    new Promise((resolve) => {
+                      handleRowUpdate(newData, oldData, resolve);
+                    }),
+
+                  onRowDelete: (oldData) =>
+                    new Promise((resolve) => {
+                      handleRowDelete(oldData, resolve);
+                    }),
                 }}
               />
             </div>
@@ -266,4 +246,4 @@ const ViewPsas = (props) => {
   );
 };
 
-export default ViewPsas;
+export default ViewCategories;

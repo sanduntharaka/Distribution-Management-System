@@ -65,22 +65,6 @@ const PsaEdit = (props) => {
                   />
                 </td>
               </tr>
-              <tr>
-                <td>More Details</td>
-                <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={editedData.more_details}
-                    onChange={(e) =>
-                      setEditedData({
-                        ...editedData,
-                        more_details: e.target.value,
-                      })
-                    }
-                  />
-                </td>
-              </tr>
             </table>
           </div>
         </div>

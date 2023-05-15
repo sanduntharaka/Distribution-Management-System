@@ -3,8 +3,6 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { axiosInstance } from '../../axiosInstance';
 const Invoice = (props) => {
-  const [invCode, setInvCode] = useState(props.inv.invoice_code);
-  const [invNum, setInvNum] = useState(props.inv.invoice_number);
   const [date, setDate] = useState(props.inv.date);
   const [customer, setCustomer] = useState({
     id: '',
@@ -12,9 +10,15 @@ const Invoice = (props) => {
     address: '',
   });
 
+  const [seller, setSeller] = useState({
+    id: '',
+    full_name: '',
+    address: '',
+  });
+
   // issued_by
   // solled_to
-
+  console.log(props);
   useEffect(() => {
     axiosInstance
       .get(`/users/get/${props.inv.solled_to}`, {
@@ -25,6 +29,24 @@ const Invoice = (props) => {
       })
       .then((res) => {
         setCustomer({
+          id: res.data.id,
+          full_name: res.data.full_name,
+          address: res.data.address,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axiosInstance
+      .get(`/users/get/user/${props.inv.issued_by}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setSeller({
           id: res.data.id,
           full_name: res.data.full_name,
           address: res.data.address,
@@ -67,10 +89,10 @@ const Invoice = (props) => {
           <div className="inv__content__row__col img">
             <img
               className="logo"
-              src="https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGxvZ298ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60"
+              src="./images/Bixton_logo.png"
               alt=""
-              width={50}
-              height={50}
+              width={150}
+              height={75}
             />
           </div>
           <div className="inv__content__row__col">
@@ -97,8 +119,9 @@ const Invoice = (props) => {
                 <td colSpan="2">
                   <p className="title">Invoice Number</p>
                   <p>
-                    {invCode}
-
+                    {props.oldinv
+                      ? props.inv.invoice_code
+                      : props.inv.invoice_code + props.inv.invoice_number}
                   </p>
                 </td>
               </tr>
@@ -120,7 +143,6 @@ const Invoice = (props) => {
           <div className="inv__content__row__col">
             <p>Sold to</p>
             <div className="details">
-              {console.log(customer)}
               <p>Name:{customer.full_name}</p>
               <p>Address:{customer.address}</p>
             </div>
@@ -137,14 +159,12 @@ const Invoice = (props) => {
           <div className="inv__content__row__col">
             <div className="details">
               <p>Customer No:</p>
-              <p>CU12455</p>
+              <p> </p>
             </div>
           </div>
           <div className="inv__content__row__col">
             <div className="details">
-              <p>
-                SalesPerson:{JSON.parse(sessionStorage.getItem('user')).nic}
-              </p>
+              <p>Name:{seller.full_name}</p>
               <p></p>
             </div>
           </div>
@@ -178,6 +198,14 @@ const Invoice = (props) => {
                 </tr>
               ))}
             </table>
+          </div>
+        </div>
+        <div
+          className="inv__content__row"
+          style={{ justifyContent: 'flex-end', fontWeight: 'bold' }}
+        >
+          <div className="inv__content__row__col">
+            <p>Total: Rs {props.inv.total}/-</p>
           </div>
         </div>
         <div className="bottom">

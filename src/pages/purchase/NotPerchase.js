@@ -163,7 +163,7 @@ const NotPerchase = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>None buying details</p>
+        <p>Non-buying details</p>
       </div>
       <div className="page__pcont">
         <div className="form">
