@@ -24,12 +24,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -68,6 +63,7 @@ const DistributorInventory = ({ inventory, user }) => {
     },
     { title: 'Item Code', field: 'item_code' },
     { title: 'Category', field: 'category_name' },
+    { title: 'Invoice', field: 'invoice_number' },
     { title: 'Description', field: 'description' },
     { title: 'Pack Size', field: 'pack_size' },
     { title: 'Whole Sale Price', field: 'whole_sale_price' },

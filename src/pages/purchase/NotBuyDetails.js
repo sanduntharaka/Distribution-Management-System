@@ -112,7 +112,7 @@ const NotBuyDetails = () => {
       headerStyle: { width: '10px' },
     },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Date', field: 'date' },
+    { title: 'Date', field: 'datetime' },
     { title: 'Added by', field: 'added_name' },
     {
       title: 'Reason',

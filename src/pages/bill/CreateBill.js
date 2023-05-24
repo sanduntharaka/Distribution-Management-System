@@ -5,6 +5,7 @@ import SalesRefBill from '../../components/invoice/SalesRefBill';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import ConfimBill from './confim_bill/ConfimBill';
 const CreateBill = ({ inventory }) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
@@ -15,27 +16,32 @@ const CreateBill = ({ inventory }) => {
   });
   const [billingPriceMethod, setBillingPriceMethod] = useState('2');
   const [discount, setDiscount] = useState(9);
-  const [total, setTotal] = useState(0);
-  const [psas, setPsas] = useState([]);
   const [dealers, setDealers] = useState([]);
   const [payment, setPayment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState({
-    psa: '',
     dealer: '',
     dealer_name: '',
     dealer_address: '',
+    dealer_contact: '',
     dis_sales_ref: '',
     date: currentDate,
     bill_code: 'IN',
     total: 0,
     discount: discount,
     payment_type: payment,
-    total: 0,
-    billing_price_method: '',
+    billing_price_method: billingPriceMethod,
     discount_percentage: 0,
     sub_total: 0,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
+  });
+
+  const [chequeDetails, setCequeDetails] = useState({
+    date: currentDate,
+    cheque_number: '',
+    account_number: '',
+    payee_name: '',
+    amount: 0,
   });
 
   //products filter
@@ -77,28 +83,6 @@ const CreateBill = ({ inventory }) => {
   const [exceed_qty, setExceedQty] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axiosInstance
-      .get('/psa/all/', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        setPsas(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log(err);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot fetch psa details. Please Try again');
-        setTitle('Error');
-        handleOpen();
-      });
     setLoading(true);
     axiosInstance
       .get('/dealer/all/', {
@@ -171,7 +155,15 @@ const CreateBill = ({ inventory }) => {
         handleOpen();
       });
   }, []);
-
+  useEffect(() => {
+    if (data.sub_total !== undefined && data.discount !== undefined) {
+      const total = data.sub_total - (data.sub_total * data.discount) / 100;
+      setData((prevData) => ({
+        ...prevData,
+        total: total,
+      }));
+    }
+  }, [data.sub_total, data.discount]);
   const handleSelectDealer = (e) => {
     let itm = e.target.value;
     let deler = dealers.find((item) => item.id == itm);
@@ -180,6 +172,7 @@ const CreateBill = ({ inventory }) => {
       dealer: deler.id,
       dealer_name: deler.name,
       dealer_address: deler.address,
+      dealer_contact: deler.contact_number,
     });
   };
 
@@ -198,7 +191,6 @@ const CreateBill = ({ inventory }) => {
     setItems([]);
     setQty(0);
     setFoc(0);
-    setTotal(0);
   };
   const handleBillingPriceMethod = (e) => {
     handleClear(e);
@@ -230,17 +222,16 @@ const CreateBill = ({ inventory }) => {
           description: product.description,
           whole_sale_price: product.whole_sale_price,
           price: product.retail_price,
-          qty: qty,
-          foc: foc,
+          qty: parseInt(qty),
+          foc: parseInt(foc),
           pack_size: product.pack_size,
-          extended_price: product.retail_price * qty,
+          extended_price: product.retail_price * parseInt(qty),
         },
       ]);
     } else {
       setExceedQty(true);
     }
   };
-  console.log(data.sub_total);
   const handleQty = (e) => {
     setExceedQty(false);
     if (e.target.value > product.qty) {
@@ -297,7 +288,8 @@ const CreateBill = ({ inventory }) => {
 
   const hadleCreate = (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsLoading(false);
+
     setData({
       ...data,
       bill_code: 'IN',
@@ -306,67 +298,9 @@ const CreateBill = ({ inventory }) => {
       billing_price_method: billingPriceMethod,
       discount_percentage: discount,
     });
-    axiosInstance
-      .post('/salesref/invoice/create/invoice/', data, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setInvoice(res.data);
-        const item_data = {
-          bill: res.data.id,
-          items: items,
-        };
-        axiosInstance
-          .post('/salesref/invoice/create/invoice/items/', item_data, {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          })
-          .then((res) => {
-            setIsLoading(false);
-            console.log(res.data);
-            showInvoice();
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsLoading(false);
-            setSuccess(false);
-            setError(true);
-            setMsg(
-              'Your bill cannot create. Please refresh the page and try again.'
-            );
-            setTitle('Error');
-            handleOpen();
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg(
-          'Your bill cannot create. Please refresh the page and try again.'
-        );
-        setTitle('Error');
-        handleOpen();
-      });
+    setIsLoading(false);
+    showInvoice();
   };
-  const MyInvoice = React.forwardRef((props, ref) => {
-    return (
-      <SalesRefBill
-        issued_by={props.issued_by}
-        items={props.items}
-        invoice={props.invoice}
-        data={props.data}
-      />
-    );
-  });
 
   const MyMessage = React.forwardRef((props, ref) => {
     return (
@@ -377,6 +311,24 @@ const CreateBill = ({ inventory }) => {
         title={props.title}
         msg={props.msg}
         ref={ref}
+      />
+    );
+  });
+
+  const ConfirmBillRef = React.forwardRef((props, ref) => {
+    return (
+      <ConfimBill
+        issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
+        items={items}
+        set_items={setItems}
+        set_invoice={setInvoice}
+        invoice={invoice}
+        oldinv={false}
+        data={data}
+        set_data={setData}
+        close={() => props.handleClose()}
+        cheque={cheque}
+        cheque_detail={chequeDetails}
       />
     );
   });
@@ -392,18 +344,6 @@ const CreateBill = ({ inventory }) => {
       ) : (
         ''
       )}
-      <Modal
-        open={showinv && isLoading === false}
-        onClose={() => handleCloseInv()}
-      >
-        <MyInvoice
-          issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
-          items={items}
-          invoice={invoice}
-          oldinv={false}
-          data={data}
-        />
-      </Modal>
       <Modal open={open} onClose={handleClose}>
         <MyMessage
           handleClose={handleClose}
@@ -411,6 +351,19 @@ const CreateBill = ({ inventory }) => {
           error={error}
           title={title}
           msg={msg}
+        />
+      </Modal>
+      <Modal
+        open={showinv && isLoading === false}
+        onClose={() => handleCloseInv()}
+      >
+        <ConfirmBillRef
+          issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
+          items={items}
+          invoice={invoice}
+          oldinv={false}
+          data={data}
+          handleClose={handleCloseInv}
         />
       </Modal>
       <div className="page__title">
@@ -421,25 +374,9 @@ const CreateBill = ({ inventory }) => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select psa</div>
-                <div className="form__row__col__input">
-                  <select
-                    name="psa"
-                    onChange={(e) => setData({ ...data, psa: e.target.value })}
-                  >
-                    <option selected>Select psa</option>
-                    {psas.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.area_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="form__row__col">
                 <div className="form__row__col__label">Select dealer</div>
                 <div className="form__row__col__input">
-                  <select name="psa" onChange={(e) => handleSelectDealer(e)}>
+                  <select name="dealer" onChange={(e) => handleSelectDealer(e)}>
                     <option selected>Select dealer</option>
                     {dealers.map((item, i) => (
                       <option value={item.id} key={i}>
@@ -518,10 +455,11 @@ const CreateBill = ({ inventory }) => {
                             description !== searchTerm)
                         );
                       })
-                      .map((item) => (
+                      .map((item, i) => (
                         <div
                           className="searchContent__row"
                           onClick={(e) => hanldeProductFilter(e, item)}
+                          key={i}
                         >
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
@@ -535,13 +473,11 @@ const CreateBill = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">
-                  QTY(add qty with foc)
-                </div>
+                <div className="form__row__col__label">QTY</div>
                 <div className="form__row__col__input">
                   <input
                     className={exceed_qty ? 'err' : ''}
-                    type="text"
+                    type="number"
                     value={qty}
                     onChange={(e) => handleQty(e)}
                   />
@@ -555,12 +491,10 @@ const CreateBill = ({ inventory }) => {
                 )}
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">
-                  FOC(add foc count only)
-                </div>
+                <div className="form__row__col__label">FOC</div>
                 <div className="form__row__col__input">
                   <input
-                    type="text"
+                    type="number"
                     value={foc}
                     onChange={(e) => setFoc(e.target.value)}
                   />
@@ -601,34 +535,41 @@ const CreateBill = ({ inventory }) => {
                 <p className="form__row__col__label">Selected Products</p>
                 <div className="showSelected">
                   <table>
-                    <tr className="tableHead">
-                      <th> Item Code</th>
-                      <th>Whole sale</th>
-                      <th>Price</th>
-                      <th>FOC</th>
-                      <th>Qty</th>
-                      <th>Sub total</th>
-                      <th>Action</th>
-                    </tr>
-                    {items.map((item, i) => (
-                      <tr className="datarow" key={i}>
-                        <td>{item.item_code}</td>
-                        <td>{item.whole_sale_price}</td>
-                        <td>{item.price}</td>
-                        <td>{item.foc}</td>
-                        <td>{item.qty}</td>
-                        <td>{item.qty * item.price}</td>
-
-                        <td className="action">
-                          <button
-                            className="btnDelete"
-                            onClick={(e) => handleRemove(e, i)}
-                          >
-                            remove
-                          </button>
-                        </td>
+                    <thead>
+                      <tr className="tableHead">
+                        <th> Item Code</th>
+                        <th>Whole sale</th>
+                        <th>Price</th>
+                        <th>FOC</th>
+                        <th>Qty</th>
+                        <th>Total Qty</th>
+                        <th>Sub total</th>
+                        <th>Action</th>
                       </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                      {items.map((item, i) => (
+                        <tr className="datarow" key={i}>
+                          <td>{item.item_code}</td>
+                          <td>{item.whole_sale_price}</td>
+                          <td>{item.price}</td>
+                          <td>{item.foc}</td>
+                          <td>{item.qty}</td>
+                          <td>{item.qty + item.foc}</td>
+
+                          <td>{item.qty * item.price}</td>
+
+                          <td className="action">
+                            <button
+                              className="btnDelete"
+                              onClick={(e) => handleRemove(e, i)}
+                            >
+                              remove
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -742,9 +683,86 @@ const CreateBill = ({ inventory }) => {
               </div>
             </div>
 
+            {cheque ? (
+              <div className="form__row">
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Cheque Number</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          cheque_number: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Account Number</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          account_number: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Payee name</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          payee_name: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Date</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="date"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          date: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Amount</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="number"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          amount: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+
             <div className="form__btn">
               <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => hadleCreate(e)}>
+                <button className="btnEdit " onClick={(e) => hadleCreate(e)}>
                   save
                 </button>
                 <button className="btnSave" onClick={(e) => handleClear(e)}>

@@ -24,6 +24,9 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import SalesRefBill from '../../components/invoice/SalesRefBill';
+import ViewBill from './confim_bill/ViewBill';
+import RecommendIcon from '@mui/icons-material/Recommend';
+import ConfirmStatus from './confim_bill/ConfirmStatus';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -46,6 +49,7 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+  Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
 
 const CreatedBills = () => {
@@ -66,6 +70,7 @@ const CreatedBills = () => {
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Total', field: 'total' },
     { title: 'Method', field: 'payment_type' },
+    { title: 'Status', field: 'status' },
   ];
   //modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -167,7 +172,7 @@ const CreatedBills = () => {
           console.log(err);
         });
     }
-  }, ['']);
+  }, [messageOpen]);
   const [invoice, setInvoice] = useState();
   const [items, setItems] = useState();
   const [dataSingle, setSataSingle] = useState();
@@ -218,24 +223,12 @@ const CreatedBills = () => {
     setEditDetailsOpen(true);
     handleModalOpen();
   };
-  const handleDeleteDetails = (e, value) => {
-    setItemDetails({
-      id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
-    });
+  const handleConfirmDetails = (e, value) => {
+    setInvoice(value);
     setMessageOpen(false);
+    setDeleteDetailsOpen(false);
     setDetailsOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(true);
+    setEditDetailsOpen(true);
     handleModalOpen();
   };
   const handleFilter = (i) => {
@@ -263,11 +256,26 @@ const CreatedBills = () => {
   };
   const MyInvoice = React.forwardRef((props, ref) => {
     return (
-      <SalesRefBill
+      <ViewBill
         issued_by={props.issued_by}
         items={props.items}
         invoice={props.invoice}
         data={props.data}
+        close={() => props.handleClose()}
+      />
+    );
+  });
+  const MyInvoiceConfirm = React.forwardRef((props, ref) => {
+    return (
+      <ConfirmStatus
+        invoice={props.invoice}
+        openMsg={props.openMsg}
+        msgSuccess={props.msgSuccess}
+        msgErr={props.msgErr}
+        msgTitle={props.msgTitle}
+        msg={props.msg}
+        showEdit={props.showEdit}
+        closeModal={props.closeModal}
       />
     );
   });
@@ -281,10 +289,11 @@ const CreatedBills = () => {
             invoice={invoice}
             oldinv={false}
             data={dataSingle}
+            handleClose={handleModalClose}
           />
         ) : editdetailsOpen ? (
-          <ProductEdit
-            data={itemDetails}
+          <MyInvoiceConfirm
+            invoice={invoice}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
             msgErr={setError}
@@ -292,7 +301,6 @@ const CreatedBills = () => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
-            url={'/distributor/items/edit'}
           />
         ) : deletedetailsOpen ? (
           <ProductDelete
@@ -385,10 +393,10 @@ const CreatedBills = () => {
                       handleViewDetails(event, rowData),
                   },
                   {
-                    icon: DeleteOutline,
-                    tooltip: 'Delete details',
+                    icon: RecommendIcon,
+                    tooltip: 'Confirm',
                     onClick: (event, rowData) =>
-                      handleDeleteDetails(event, rowData),
+                      handleConfirmDetails(event, rowData),
                   },
                 ]}
                 components={{
@@ -406,19 +414,17 @@ const CreatedBills = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : user.is_manager ||
-                        (user.is_distributor &&
-                          props.action.icon === DeleteOutline) ? (
+                      ) : props.action.icon === RecommendIcon ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
                           }
                           color="primary"
-                          style={{ color: 'red' }} // customize the button style
+                          style={{ color: 'orange' }} // customize the icon color
                           size="small"
                           aria-label={props.action.tooltip}
                         >
-                          <DeleteOutline />
+                          <RecommendIcon />
                         </IconButton>
                       ) : (
                         ''
@@ -434,5 +440,21 @@ const CreatedBills = () => {
     </div>
   );
 };
+
+// user.is_manager ||
+//                         (user.is_distributor &&
+//                           props.action.icon === DeleteOutline) ? (
+//                         <IconButton
+//                           onClick={(event) =>
+//                             props.action.onClick(event, props.data)
+//                           }
+//                           color="primary"
+//                           style={{ color: 'red' }} // customize the button style
+//                           size="small"
+//                           aria-label={props.action.tooltip}
+//                         >
+//                           <DeleteOutline />
+//                         </IconButton>
+//                       ) :
 
 export default CreatedBills;

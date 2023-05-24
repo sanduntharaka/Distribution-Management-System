@@ -37,6 +37,7 @@ const AddDistributorInventory = ({ inventory }) => {
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     category: '',
     item_code: '',
+    invoice_number: '',
     description: '',
     base: '',
     qty: '',
@@ -202,6 +203,24 @@ const AddDistributorInventory = ({ inventory }) => {
                     name="base"
                     value={data.base === undefined ? '' : data.base}
                     onChange={(e) => setData({ ...data, base: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">invoice</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    placeholder="type here"
+                    name="invoice"
+                    value={
+                      data.invoice_number === undefined
+                        ? ''
+                        : data.invoice_number
+                    }
+                    onChange={(e) =>
+                      setData({ ...data, invoice_number: e.target.value })
+                    }
                   />
                 </div>
               </div>

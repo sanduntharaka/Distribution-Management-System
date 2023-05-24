@@ -28,13 +28,18 @@ const NotPerchase = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().substr(0, 10)
-  );
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    let day = d.getDate();
+    return `${year}-${month}-${day}`;
+  });
+
   const [dealers, setDealers] = useState([]);
 
   const [data, setData] = useState({
-    date: selectedDate,
+    datetime: new Date().toISOString(),
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     dealer: '',
     reason: '',
@@ -115,6 +120,7 @@ const NotPerchase = () => {
 
   const handleSave = (e) => {
     e.preventDefault();
+    console.log(data);
     axiosInstance
       .post(`/not-buy/add/`, data, {
         headers: {
@@ -142,6 +148,7 @@ const NotPerchase = () => {
         handleOpen();
       });
   };
+
   return (
     <div className="page">
       {loading ? (
@@ -183,29 +190,12 @@ const NotPerchase = () => {
                     <option selected>Select dealer</option>
                     {dealers.map((item, i) => (
                       <option value={item.id} key={i}>
-                        {item.name}
+                        {item.name} : {item.psa_name}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
-            </div>
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">Date</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="date"
-                    value={data.date ? data.date : ''}
-                    onChange={(e) => setData({ ...data, date: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form__row__col dontdisp"></div>
-              <div className="form__row__col dontdisp"></div>
-              <div className="form__row__col dontdisp"></div>
-              <div className="form__row__col dontdisp"></div>
             </div>
 
             <div className="form__row">

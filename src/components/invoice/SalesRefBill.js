@@ -127,6 +127,7 @@ const SalesRefBill = (props) => {
                 <th>Item number</th>
                 <th>Description</th>
                 <th>Qty</th>
+                <th>Foc</th>
                 <th>Unit Price</th>
                 <th>Extended Price</th>
               </tr>
@@ -137,6 +138,7 @@ const SalesRefBill = (props) => {
                   <td>{item.item_code}</td>
                   <td>{item.description}</td>
                   <td>{item.qty}</td>
+                  <td>{item.foc}</td>
                   <td>{item.price}</td>
                   <td>{item.extended_price}</td>
                 </tr>
@@ -150,7 +152,7 @@ const SalesRefBill = (props) => {
         >
           <div className="inv__content__row__col">
             <p>
-              Total: Rs {props.invoice.total} {console.log(props)}/-
+              Total: Rs {props.invoice.total} {console.log('p:', props)}/-
             </p>
           </div>
         </div>

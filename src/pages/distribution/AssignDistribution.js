@@ -182,6 +182,9 @@ const AssignDistribution = () => {
           retail_price: product.retail_price,
           qty: qty,
           free_of_charge: foc,
+          category: product.category,
+          base: product.base,
+          pack_size: product.pack_size,
         },
       ]);
       if (billingPriceMethod === '1') {
