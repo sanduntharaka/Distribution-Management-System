@@ -29,4 +29,4 @@ class GetInventoryItems(serializers.ModelSerializer):
     class Meta:
         model = DistributorInventoryItems
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
-                  'base', 'pack_size', 'whole_sale_price', 'retail_price', 'category_name')
+                  'base', 'pack_size', 'whole_sale_price', 'retail_price', 'category_name', 'invoice_number')

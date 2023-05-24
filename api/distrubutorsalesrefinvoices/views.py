@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem
+from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, ChequeDetails
 from distrubutor_salesref_invoice.ReduceDistributorQuantity import ReduceQuantity
 from distrubutor_salesref.models import SalesRefDistributor
 from distributor_inventory.models import DistributorInventoryItems
@@ -13,7 +13,8 @@ class CreateInvoice(generics.CreateAPIView):
     get_serializer = serializers.CreateInvoiceSerializer
 
     def create(self, request, *args, **kwargs):
-        last_bill = SalesRefInvoice.objects.all().first()
+        print(request.data)
+        last_bill = SalesRefInvoice.objects.all().last()
         data = self.request.data
         if last_bill is not None:
             bill_number = last_bill.bill_number
@@ -69,21 +70,25 @@ class CreateInvoiceItems(generics.CreateAPIView):
         try:
             for item in request.data['items']:
                 dist_item = {}
-                item_objs.append(InvoiceIntem(bill=bill, item_code=item['item_code'], description=item['description'], qty=item['qty'],
-                                 foc=item['foc'], pack_size=item['pack_size'], price=item['price'], extended_price=item['extended_price']))
                 dist_item['item'] = DistributorInventoryItems.objects.get(
                     id=item['id'])
+                item_objs.append(InvoiceIntem(bill=bill, item_code=item['item_code'], description=item['description'], qty=item['qty'],
+                                 foc=item['foc'], pack_size=item['pack_size'], price=item['price'], extended_price=item['extended_price'], item=dist_item['item']))
+
                 dist_item['qty'] = item['qty']
+                dist_item['foc'] = item['foc']
                 inventory_items.append(dist_item)
 
             InvoiceIntem.objects.bulk_create(item_objs)
 
             for inv_item in inventory_items:
-                reduceQty = ReduceQuantity(inv_item['item'], inv_item['qty'])
+                reduceQty = ReduceQuantity(
+                    inv_item['item'], inv_item['qty'], inv_item['foc'])
                 reduceQty.reduce_qty()
             return Response(status=status.HTTP_201_CREATED)
-        except:
+        except Exception as e:
             bill.delete()
+            print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -93,3 +98,54 @@ class InvoiceItems(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
         return get_list_or_404(InvoiceIntem, bill=item)
+
+
+class AddChequeDetails(generics.CreateAPIView):
+    queryset = ChequeDetails.objects.all()
+    serializer_class = serializers.AddChequeDetailsSerialzer
+
+
+class GetChequeDetails(generics.RetrieveAPIView):
+    serializer_class = serializers.AddChequeDetailsSerialzer
+
+    def get_object(self, *args, **kwargs):
+
+        item = self.kwargs.get('id')
+        return get_object_or_404(ChequeDetails, bill=item)
+
+
+class ConfirmInvoice(generics.UpdateAPIView):
+    serializer_class = serializers.ChangeStatusInvoiceSerializer
+
+    def update(self, request, *args, **kwargs):
+        cof_status = request.data
+        instance = SalesRefInvoice.objects.get(id=self.kwargs.get('pk'))
+        if (cof_status['status'] == 'rejected'):
+            serializer = serializers.ChangeStatusInvoiceSerializer(instance=instance,
+                                                                   data=cof_status)
+            if serializer.is_valid():
+                serializer.save()
+                invoice_items = InvoiceIntem.objects.filter(bill=instance)
+                for item in invoice_items:
+                    reverce_reduce = ReduceQuantity(
+                        item=item.item, qty=item.qty, foc=item.foc)
+                    reverce_reduce.reverse_reduce_qty()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+
+            serializer = serializers.ChangeStatusInvoiceSerializer(instance=instance,
+                                                                   data=cof_status)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ConfirmCheque(generics.UpdateAPIView):
+    queryset = ChequeDetails.objects.all()
+    serializer_class = serializers.ChangeStatusChequeSerializer

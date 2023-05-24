@@ -41,6 +41,16 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0005_alter_dealer_category_alter_dealer_psa.py
 0003_salesrefinvoice_billing_price_method_and_more.py
 0004_alter_salesrefinvoice_billing_price_method.py
+0006_alter_companyinventory_base.py
+0004_alter_distributorinventoryitems_base.py
+0005_distributorinventoryitems_invoice_number.py
+0005_remove_salesrefinvoice_psa.py
+0006_salesrefinvoice_status_chequedetails.py
+0007_alter_chequedetails_status.py
+0008_chequedetails_account_number_and_more.py
+0009_invoiceintem_item.py
+0003_notbuydetails_time.py
+0004_remove_notbuydetails_date_remove_notbuydetails_time_and_more.py 
 # Backup files # 
 *.bak 
 *.vscode

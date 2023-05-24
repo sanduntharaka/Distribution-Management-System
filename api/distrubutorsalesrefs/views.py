@@ -60,3 +60,10 @@ class GetAllByDistributor(generics.ListAPIView):
 class DeleteDisributorSalesRef(generics.DestroyAPIView):
     queryset = SalesRefDistributor.objects.all()
     serializer_class = serializers.CreateDistributorSalesRefSerializer
+
+
+class GetDistributorBySr(generics.RetrieveAPIView):
+    serializer_class = serializers.GetDistributorDetails
+
+    def get_object(self, *args, **kwargs):
+        return get_object_or_404(SalesRefDistributor, sales_ref=self.kwargs.get('id'))

@@ -30,3 +30,13 @@ class DistributorInventoryItems(serializers.ModelSerializer):
         model = DistributorInventoryItems
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
                   'base', 'pack_size', 'whole_sale_price', 'retail_price')
+
+
+class GetDistributorDetails(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='distributor.full_name')
+    address = serializers.CharField(source='distributor.address')
+    company_number = serializers.CharField(source='distributor.company_number')
+
+    class Meta:
+        model = SalesRefDistributor
+        fields = ('id', 'full_name', 'address', 'company_number')

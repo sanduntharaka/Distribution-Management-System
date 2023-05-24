@@ -14,11 +14,12 @@ class DistributorInventory(models.Model):
 
 class DistributorInventoryItems(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    invoice_number = models.CharField(max_length=15, default='IN000')
     inventory = models.ForeignKey(
         DistributorInventory, on_delete=models.CASCADE)
     item_code = models.CharField(max_length=50, default="0")
     description = models.TextField(null=True, default="aaaaa")
-    base = models.CharField(max_length=250, default="0")
+    base = models.CharField(max_length=250, null=True, blank=True)
     qty = models.IntegerField(blank=False, default="0")
     pack_size = models.IntegerField(default=0)
     foc = models.FloatField(blank=False, default=0)
