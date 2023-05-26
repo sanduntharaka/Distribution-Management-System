@@ -5,6 +5,7 @@ urlpatterns = [
     path('edit/<int:pk>', views.EditUserDetails.as_view()),
     path('delete/<int:pk>', views.DeleteUserDetails.as_view()),
     path("all/", views.AllUserDetails.as_view()),
+    path('managers/', views.AllManagers.as_view()),
     path('distributors/', views.AllDistributors.as_view()),
     path('salesrefs/', views.AllSalesRefs.as_view()),
     path('get/<id>', views.getUsersDetails.as_view()),

@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     # 'rest_framework.authtoken',
     # 'rest_framework_swagger',
     'djoser',
+    # data tables
     'users',
     'userdetails',
     'company_inventory',
     'company_invoice',
     'distributor_inventory',
-    # 'salesref_inventory',
     'distrubutor_salesref',
     'distrubutor_salesref_invoice',
     'distributor_invoice',
@@ -57,16 +57,16 @@ INSTALLED_APPS = [
     'salesref_return',
     'not_buy_details',
     'sales_ref_leave',
-    'sales_return',
     'item_category',
     'dealer_category',
+    'manager_distributor',
+    # 'api',
     'api',
     'api.userdetailsapp',
     'api.companyInventory',
+    'api.managerdistributors',
     'api.distributor',
     'api.companyInvoices',
-
-    # 'api.salesrefs',
     'api.dashboard',
     'api.distrubutorsalesrefs',
     'api.distributor_invoices',
@@ -78,6 +78,13 @@ INSTALLED_APPS = [
     'api.salesrefleave',
     'api.itemcategory',
     'api.dealercategory',
+    'api.reports',
+
+    # reports
+    'api.reports.userreport',
+    'api.reports.stockreport',
+    'api.reports.dealerreport',
+    'api.reports.salesreport',
 ]
 
 MIDDLEWARE = [

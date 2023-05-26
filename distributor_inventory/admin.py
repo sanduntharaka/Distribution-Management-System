@@ -15,7 +15,7 @@ admin.site.register(DistributorInventory, DistributorInventoryAdmin)
 
 class DistributorInventoryItemsAdmin(admin.ModelAdmin):
     list_display = ('inventory', 'item_code', 'qty', 'foc', 'added_by',
-                    'description', 'pack_size', 'whole_sale_price', 'retail_price', 'invoice_number')
+                    'description', 'pack_size', 'whole_sale_price', 'retail_price', 'invoice_number', 'date')
     list_display_links = ('inventory', 'item_code',)
     list_filter = ('inventory', 'added_by')
     search_fields = ('inventory',)

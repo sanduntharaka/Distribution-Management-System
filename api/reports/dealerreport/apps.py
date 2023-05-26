@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class SalesReturnConfig(AppConfig):
+class DealerreportConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'sales_return'
+    name = 'api.reports.dealerreport'

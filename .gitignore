@@ -51,6 +51,8 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0009_invoiceintem_item.py
 0003_notbuydetails_time.py
 0004_remove_notbuydetails_date_remove_notbuydetails_time_and_more.py 
+0006_distributorinventoryitems_date.py
+0007_alter_distributorinventoryitems_date.py
 # Backup files # 
 *.bak 
 *.vscode

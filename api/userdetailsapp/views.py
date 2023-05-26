@@ -58,6 +58,15 @@ class getUsersDetails(generics.RetrieveAPIView):
         return get_object_or_404(UserDetails, id=item)
 
 
+class AllManagers(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        queryset = UserDetails.objects.filter(user__is_manager=True)
+        return get_list_or_404(queryset)
+
+
 class AllDistributors(generics.ListAPIView):
 
     serializer_class = serializers.AllDistributorsSerializer

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.conf import settings
 from userdetails.models import UserDetails
@@ -26,3 +27,4 @@ class DistributorInventoryItems(models.Model):
     whole_sale_price = models.FloatField(blank=False, default="0")
     retail_price = models.FloatField(blank=False, default="0")
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    date = models.DateField(auto_now_add=True)
