@@ -15,3 +15,17 @@ class NotBuyDetails(models.Model):
     is_payment_problem = models.BooleanField(default=False)
     is_dealer_not_in = models.BooleanField(default=False)
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    def get_reson(self):
+        reason = ""
+        if self.is_only_our:
+
+            reason += " Only have our goods."
+        if self.is_competitor:
+            reason += " Only have competitor goods."
+        if self.is_payment_problem:
+            reason += " Payment problems."
+        if self.is_dealer_not_in:
+            reason += " Dealer not in."
+
+        return reason

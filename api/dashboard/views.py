@@ -57,5 +57,26 @@ def allSalesinvoicedataBymonth(request):
 
 
 @api_view(['GET'])
+def allSalesinvoicedataManagerBymonth(request, *args, **kwargs):
+    item = kwargs.get('id')
+    inv = SalesData('manager', item)
+    return Response(data=inv.getData(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def allSalesinvoicedataDistributorBymonth(request, *args, **kwargs):
+    item = kwargs.get('id')
+    inv = SalesData('distributor', item)
+    return Response(data=inv.getData(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def allSalesinvoicedataSalesRefBymonth(request, *args, **kwargs):
+    item = kwargs.get('id')
+    inv = SalesData('salesref', item)
+    return Response(data=inv.getData(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def allLawQtyCompany(request):
     return Response(data=LowQty.getQty(), status=status.HTTP_200_OK)

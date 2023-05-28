@@ -27,9 +27,24 @@ class SalesRefInvoice(models.Model):
     sub_total = models.FloatField(default=0.0)
     status = models.CharField(
         max_length=10, choices=BILL_STATUS, default='pending')
+    paid_amount = models.FloatField(default='0.0')
+    confirmed_date = models.DateField(
+        default="2023-01-01", blank=True, null=True)
 
     def get_bill_code_number_combine(self):
         return self.bill_code + str(self.bill_number)
+
+    def get_payment_is_cash(self):
+        return self.total if self.payment_type == 'cash' else 0
+
+    def get_payment_is_cheque(self):
+        return self.total if self.payment_type == 'cheque' else 0
+
+    def get_payment_is_credit(self):
+        return self.total if self.payment_type == 'credit' else 0
+
+    def get_balance(self):
+        return self.total-self.paid_amount
 
 
 class ChequeDetails(models.Model):
@@ -42,6 +57,7 @@ class ChequeDetails(models.Model):
     cheque_number = models.CharField(max_length=50)
     account_number = models.CharField(max_length=50)
     payee_name = models.CharField(max_length=150)
+    bank = models.CharField(max_length=150, default='boc')
     amount = models.FloatField()
     date = models.DateField()
     deposited_at = models.DateField(default='2020-01-01')

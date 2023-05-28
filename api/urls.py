@@ -12,7 +12,7 @@ urlpatterns = [
     path('distributor/salesref/', include('api.distrubutorsalesrefs.urls')),
     path('salesref/invoice/', include('api.distrubutorsalesrefinvoices.urls')),
     path('salesref/return/', include('api.return_salesref.urls')),
-    # path('salesreturn/return/', include('api.salesreturn.urls')),
+    path('salesreturn/return/', include('api.salesreturn.urls')),
 
 
     path('dealer-category/', include('api.dealercategory.urls')),

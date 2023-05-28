@@ -53,6 +53,11 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0004_remove_notbuydetails_date_remove_notbuydetails_time_and_more.py 
 0006_distributorinventoryitems_date.py
 0007_alter_distributorinventoryitems_date.py
+0008_distributorinventoryitems_from_sales_return.py
+0010_chequedetails_bank.py
+0011_salesrefinvoice_paid_amount.py
+0012_salesrefinvoice_confirmed_date.py
+0004_alter_useraccount_user_name.py
 # Backup files # 
 *.bak 
 *.vscode

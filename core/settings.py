@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'item_category',
     'dealer_category',
     'manager_distributor',
+    'sales_return',
     # 'api',
     'api',
     'api.userdetailsapp',
@@ -78,6 +79,7 @@ INSTALLED_APPS = [
     'api.salesrefleave',
     'api.itemcategory',
     'api.dealercategory',
+    'api.salesreturn',
     'api.reports',
 
     # reports
@@ -85,6 +87,14 @@ INSTALLED_APPS = [
     'api.reports.stockreport',
     'api.reports.dealerreport',
     'api.reports.salesreport',
+    'api.reports.marketreturnreport',
+    'api.reports.salesreturnreport',
+    'api.reports.pendingorderreport',
+    'api.reports.paymentsreport',
+    'api.reports.chequeinhandreport',
+    'api.reports.marketcreditreport',
+    'api.reports.nonbuyingreport',
+
 ]
 
 MIDDLEWARE = [

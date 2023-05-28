@@ -6,7 +6,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-class SalesRefReturn(models.Model):
+class SalesReturn(models.Model):
     dealer = models.ForeignKey(Dealer,
                                on_delete=models.CASCADE)
     psa = models.ForeignKey(PrimarySalesArea,
@@ -24,13 +24,12 @@ class SalesRefReturn(models.Model):
         return str(self.bill_code)+str(self.bill_number)
 
 
-class SalesRefReturnItem(models.Model):
-    salesrefreturn = models.ForeignKey(SalesRefReturn,
-                                       on_delete=models.CASCADE)
+class SalesReturnItem(models.Model):
+    salesreturn = models.ForeignKey(SalesReturn,
+                                    on_delete=models.CASCADE)
     item = models.ForeignKey(DistributorInventoryItems,
                              on_delete=models.CASCADE)
     qty = models.IntegerField()
-    foc = models.IntegerField()
     reason = models.TextField()
 
     def total(self):

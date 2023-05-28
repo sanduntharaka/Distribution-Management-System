@@ -29,7 +29,7 @@ class GetInvoicesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
         fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
-                  'dealer', 'total', 'discount', 'payment_type', 'dealer_address', 'contact_number', 'status', 'added_by', 'code', 'distributor', 'sales_ref', 'dealer_name', 'billing_price_method', 'sub_total')
+                  'dealer', 'total', 'discount', 'payment_type', 'dealer_address', 'paid_amount', 'contact_number', 'status', 'added_by', 'code', 'distributor', 'sales_ref', 'dealer_name', 'billing_price_method', 'sub_total')
 
 
 class AddChequeDetailsSerialzer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class AddChequeDetailsSerialzer(serializers.ModelSerializer):
 class ChangeStatusInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
-        fields = ('status',)
+        fields = ('status', 'paid_amount', 'confirmed_date')
 
 
 class ChangeStatusChequeSerializer(serializers.ModelSerializer):

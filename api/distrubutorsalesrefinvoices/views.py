@@ -51,12 +51,13 @@ class AllInvoiceBySalesRef(generics.ListAPIView):
 
 class AllInvoiceByDistributor(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
-    queryset = SalesRefInvoice.objects.all()
 
     def get_queryset(self, *args, **kwargs):
-        disti_ref = SalesRefDistributor.objects.get(
-            distributor=self.kwargs.get('id'))
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref=disti_ref)
+        disti_refs = SalesRefDistributor.objects.filter(
+            distributor=self.kwargs.get('id')).values('id')
+        distributorsrf_ids = [distributor['id']
+                              for distributor in disti_refs]
+        return get_list_or_404(SalesRefInvoice, dis_sales_ref__in=distributorsrf_ids)
 
 
 class CreateInvoiceItems(generics.CreateAPIView):
