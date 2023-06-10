@@ -3,7 +3,7 @@ from userdetails.models import UserDetails
 
 
 class AllStaffDetailsSerializer(serializers.ModelSerializer):
-    id_number = serializers.CharField(source='user.nic')
+    id_number = serializers.CharField(source='nic')
 
     class Meta:
         model = UserDetails

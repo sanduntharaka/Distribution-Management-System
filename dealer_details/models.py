@@ -7,10 +7,10 @@ User = settings.AUTH_USER_MODEL
 
 class Dealer(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    psa = models.ForeignKey(PrimarySalesArea, default=1,
+    psa = models.ForeignKey(PrimarySalesArea,
                             on_delete=models.PROTECT)
     category = models.ForeignKey(
-        DealerCategory, on_delete=models.PROTECT, default=1)
+        DealerCategory, on_delete=models.PROTECT)
     name = models.CharField(max_length=150, null=False)
     contact_number = models.CharField(max_length=15, null=False)
     address = models.CharField(max_length=255, null=False)

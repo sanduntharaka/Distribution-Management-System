@@ -8,15 +8,22 @@ class AddReturnSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class UpdateReturnStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesRefReturn
+        fields = ('status')
+
+
 class GetReturnsSerializer(serializers.ModelSerializer):
     dealer_name = serializers.CharField(source='dealer.name')
-    added_email = serializers.CharField(source='added_by.email')
+    added_name = serializers.CharField(source='added_by.full_name')
     psa_name = serializers.CharField(source='psa.area_name')
+    code = serializers.CharField(source='getbillnumber')
 
     class Meta:
         model = SalesRefReturn
         fields = ('id', 'dealer', 'psa', 'is_return_goods', 'is_deduct_bill',
-                  'bill_code', 'bill_number', 'amount', 'date', 'added_by', 'dealer_name', 'added_email', 'psa_name')
+                  'bill_code', 'bill_number', 'amount', 'date', 'added_by', 'dealer_name', 'added_name', 'code', 'psa_name')
 
 
 class GetItemsSeraializer(serializers.ModelSerializer):
@@ -26,6 +33,12 @@ class GetItemsSeraializer(serializers.ModelSerializer):
         model = SalesRefReturnItem
         fields = ('id', 'salesrefreturn', 'item',
                   'qty', 'foc', 'reason', 'item_code')
+
+
+class CreateSalesReturnItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesRefReturnItem
+        fields = ('__all__')
 
 
 # class GetAllPSASerializer(serializers.ModelSerializer):

@@ -25,7 +25,7 @@ class CompanyInvoice(models.Model):
 class CompanyInvoiceItems(models.Model):
     invoice = models.ForeignKey(CompanyInvoice, on_delete=models.PROTECT)
     item = models.CharField(max_length=15)
-    description = models.CharField(max_length=255, default="ABC")
+    description = models.CharField(max_length=255)
     qty = models.IntegerField()
     foc = models.IntegerField()
     unit_price = models.FloatField()

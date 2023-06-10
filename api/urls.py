@@ -22,5 +22,9 @@ urlpatterns = [
     path('leave/', include('api.salesrefleave.urls')),
     path('category/', include('api.itemcategory.urls')),
     path('reports/', include('api.reports.urls')),
+    path('settings/', include('api.systemsettings.urls')),
+    path('pastinv/', include('api.pastinvdata.urls')),
+
+
 
 ]

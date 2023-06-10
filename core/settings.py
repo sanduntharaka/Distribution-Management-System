@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'django_cron',
     # 'rest_framework.authtoken',
     # 'rest_framework_swagger',
     'djoser',
@@ -61,6 +62,9 @@ INSTALLED_APPS = [
     'dealer_category',
     'manager_distributor',
     'sales_return',
+    'system_settings',
+    'inventory_history',
+    'past_invoice_data',
     # 'api',
     'api',
     'api.userdetailsapp',
@@ -81,12 +85,15 @@ INSTALLED_APPS = [
     'api.dealercategory',
     'api.salesreturn',
     'api.reports',
+    'api.systemsettings',
+    'api.pastinvdata',
 
     # reports
     'api.reports.userreport',
     'api.reports.stockreport',
     'api.reports.dealerreport',
     'api.reports.salesreport',
+    'api.reports.delevaryreport',
     'api.reports.marketreturnreport',
     'api.reports.salesreturnreport',
     'api.reports.pendingorderreport',
@@ -94,6 +101,13 @@ INSTALLED_APPS = [
     'api.reports.chequeinhandreport',
     'api.reports.marketcreditreport',
     'api.reports.nonbuyingreport',
+    'api.reports.psareport',
+    'api.reports.deleveredsalesreport',
+    'api.reports.creditbillscollectionreport',
+    'api.reports.collectionsheet',
+    'api.reports.normalfocreport',
+    'api.reports.totaloutstanding',
+    'api.reports.dealerpattern',
 
 ]
 
@@ -166,7 +180,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Colombo'
 
 USE_I18N = True
 
@@ -189,6 +203,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.UserAccount'
+
+# cron job
+CRON_CLASSES = [
+    "inventory_history.cron.AutoCreateCronJob",
+]
 
 # Email Settings
 EMAIL_HOST = 'smtp.gmail.com'
@@ -220,9 +239,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
 }
 DOMAIN = 'front.ditributor.codesolusions.online'
-SITE_NAME = 'abcd'
+SITE_NAME = 'Bixton Distribution Management System'
 DJOSER = {
-    'LOGIN_FIELD': 'email',
+    'LOGIN_FIELD': 'user_name',
     'PASSWORD_RESET_CONFIRM_URL': True,
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'reset/{uid}/{token}',

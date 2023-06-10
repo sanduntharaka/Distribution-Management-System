@@ -38,3 +38,19 @@ class FilterByCategoryDistributor(APIView):
         items = InvoiceIntem.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class FilterByProductDistributor(APIView):
+    def post(self, request, *args, **kwargs):
+        item = self.kwargs.get('id')
+        product = int(request.data['product'])
+        invoices = SalesRefInvoice.objects.filter(
+            dis_sales_ref__distributor=item)
+        filters = {
+            'bill__in': invoices
+        }
+        if product != -1:
+            filters['item'] = product
+        items = InvoiceIntem.objects.filter(**filters)
+        serializer = serializers.InvoiceItemSerializer(items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

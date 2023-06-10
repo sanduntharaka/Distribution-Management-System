@@ -1,6 +1,8 @@
+from django.db.models import Sum
 from django.db import models
 from distrubutor_salesref.models import SalesRefDistributor
 from distributor_inventory.models import DistributorInventoryItems
+from userdetails.models import UserDetails
 from dealer_details.models import Dealer
 from primary_sales_area.models import PrimarySalesArea
 from django.conf import settings
@@ -16,35 +18,132 @@ class SalesRefInvoice(models.Model):
     dis_sales_ref = models.ForeignKey(
         SalesRefDistributor, on_delete=models.CASCADE)
     date = models.DateField()
-    bill_code = models.CharField(max_length=10)
+    bill_code = models.CharField(max_length=10, default='INV-')
     bill_number = models.IntegerField()
     dealer = models.ForeignKey(Dealer, on_delete=models.CASCADE)
     total = models.FloatField()
-    discount = models.IntegerField()
-    payment_type = models.CharField(max_length=10, default='cash')
-    added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    total_discount = models.FloatField()
+
+    added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
     billing_price_method = models.CharField(default='2', max_length=2)
     sub_total = models.FloatField(default=0.0)
     status = models.CharField(
         max_length=10, choices=BILL_STATUS, default='pending')
-    paid_amount = models.FloatField(default='0.0')
+    is_settiled = models.BooleanField(default=False)
     confirmed_date = models.DateField(
         default="2023-01-01", blank=True, null=True)
 
     def get_bill_code_number_combine(self):
         return self.bill_code + str(self.bill_number)
 
-    def get_payment_is_cash(self):
-        return self.total if self.payment_type == 'cash' else 0
+    # def get_payment_is_cash(self):
+    #     return self.total if self.payment_type == 'cash' else 0
 
-    def get_payment_is_cheque(self):
-        return self.total if self.payment_type == 'cheque' else 0
+    # def get_payment_is_cheque(self):
+    #     return self.total if self.payment_type == 'cheque' else 0
 
-    def get_payment_is_credit(self):
-        return self.total if self.payment_type == 'credit' else 0
+    # def get_payment_is_credit(self):
+    #     return self.total if self.payment_type == 'credit' else 0
+    def change_total(self, subtotal, discount):
+
+        self.sub_total = self.sub_total+subtotal
+        self.total_discount = self.total_discount+discount
+        self.total = self.total+subtotal+discount
+
+    def get_payed(self):
+        payments = PaymentDetails.objects.filter(
+            bill=self.id).values('paid_amount')
+        amount = [pay['paid_amount'] for pay in payments]
+
+        return sum(amount)
+
+    def get_qty(self):
+        try:
+            return InvoiceIntem.objects.filter(bill=self.id).aggregate(total_qty=Sum('qty'))['total_qty']
+        except:
+            return 0
+
+    def get_foc(self):
+        try:
+            return InvoiceIntem.objects.filter(bill=self.id).aggregate(total_qty=Sum('foc'))['total_foc']
+        except:
+            return 0
 
     def get_balance(self):
-        return self.total-self.paid_amount
+        try:
+            amount = PaymentDetails.objects.filter(bill=self.id).aggregate(
+                total_amount=Sum('paid_amount'))
+            return self.total - amount['total_amount']
+        except:
+            return 0
+
+    def get_due_date(self):
+        try:
+            return PaymentDetails.objects.filter(bill=self.id).last().due_date
+        except:
+            return ' '
+
+
+class PaymentDetails(models.Model):
+    PAYMENT_TYPE = (
+        ('cash', 'cash'),
+        ('credit', 'credit'),
+        ('cheque', 'cheque'),
+        ('cash-credit', 'cash-credit'),
+        ('cash-cheque', 'cash-cheque'),
+        ('cheque-credit', 'cheque-credit'),
+        ('cash-credit-cheque', 'cash-credit-cheque'),
+
+    )
+    bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
+    payment_type = models.CharField(
+        max_length=25, default='cash', choices=PAYMENT_TYPE)
+    paid_amount = models.FloatField(default='0.0')
+    date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
+    added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
+
+    def get_cheque_number(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).cheque_number
+        except:
+            return ' '
+
+    def get_cheque_date(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).cheque_number
+        except:
+            return ' '
+
+    def get_cheque_bank(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).cheque_number
+        except:
+            return ' '
+
+    def get_cheque_amount(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).amount
+        except:
+            return ' '
+
+    def get_cash(self):
+        try:
+            return self.paid_amount if self.payment_type == 'cash' else ''
+        except:
+            return ' '
+
+    def get_credit(self):
+        try:
+            return self.paid_amount if self.payment_type == 'credit' or self.payment_type == 'cash-credit' or self.payment_type == 'cheque-credit' or self.payment_type == 'cash-credit-cheque' else ''
+        except:
+            return ' '
+
+    def get_cheque(self):
+        try:
+            return self.paid_amount if self.payment_type == 'cheque' else ''
+        except:
+            return ' '
 
 
 class ChequeDetails(models.Model):
@@ -53,26 +152,30 @@ class ChequeDetails(models.Model):
         ('pending', 'pending'),
         ('return', 'return'),
     )
-    bill = models.OneToOneField(SalesRefInvoice, on_delete=models.CASCADE)
+    payment_details = models.OneToOneField(
+        PaymentDetails, on_delete=models.CASCADE)
+    number_of_dates = models.IntegerField()
     cheque_number = models.CharField(max_length=50)
     account_number = models.CharField(max_length=50)
     payee_name = models.CharField(max_length=150)
-    bank = models.CharField(max_length=150, default='boc')
+    bank = models.CharField(max_length=150)
     amount = models.FloatField()
     date = models.DateField()
-    deposited_at = models.DateField(default='2020-01-01')
+    deposited_at = models.DateField()
     status = models.CharField(
         max_length=10, choices=CHEQUE_STATUS, default='pending')
+    added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
 
 
 class InvoiceIntem(models.Model):
     bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
     item = models.ForeignKey(DistributorInventoryItems,
-                             default=1, on_delete=models.DO_NOTHING)
+                             on_delete=models.DO_NOTHING)
+    discount = models.FloatField(default=0)
     item_code = models.CharField(max_length=50)
     description = models.TextField(null=True)
     qty = models.IntegerField(blank=False)
     foc = models.FloatField(blank=False, default=0)
     pack_size = models.IntegerField(default=0)
-    price = models.FloatField(blank=False, default="0")
-    extended_price = models.FloatField(blank=False, default="0")
+    price = models.FloatField(blank=False, default=0)
+    extended_price = models.FloatField(blank=False, default=0)

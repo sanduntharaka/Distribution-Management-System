@@ -12,15 +12,15 @@ class CreateUserDetails(generics.CreateAPIView):
     serializer_class = serializers.UserDetailsCreateSerializer
 
     def create(self, request):
-
-        user = UserAccount.objects.get(email=request.data['user'])
+        user = UserAccount.objects.get(id=request.data['user'])
         request.data['user'] = user.id
         serializer = serializers.UserDetailsCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success"}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"status": "error", "errors": serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST)
+            print(serializer.errors)
+            return Response({"status": "error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EditUserDetails(generics.UpdateAPIView):
@@ -36,6 +36,11 @@ class DeleteUserDetails(generics.DestroyAPIView):
 class AllUserDetails(generics.ListAPIView):
     queryset = UserDetails.objects.all()
     serializer_class = serializers.UserDetailsCreateSerializer
+
+
+class AllUsers(generics.ListAPIView):
+    queryset = UserAccount.objects.filter(is_superuser=False)
+    serializer_class = serializers.GetUserSerializer
 
 
 class getUsersDetailsByMainUser(generics.RetrieveAPIView):

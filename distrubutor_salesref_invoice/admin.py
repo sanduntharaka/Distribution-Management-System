@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import SalesRefInvoice, InvoiceIntem, ChequeDetails
+from .models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails
 
 
 class SalesRefInvoiceAdmin(admin.ModelAdmin):
     list_display = ('id', 'bill_code', 'bill_number', 'dealer', 'dis_sales_ref', 'date',
-                    'discount', 'total')
+                    'total_discount', 'total')
     list_display_links = ('id', 'bill_code', 'bill_number')
     list_filter = ('dealer', 'added_by',
                    'dis_sales_ref')
@@ -26,11 +26,22 @@ class SalesRefInvoiceItemAdmin(admin.ModelAdmin):
 admin.site.register(InvoiceIntem, SalesRefInvoiceItemAdmin)
 
 
+class PaymentDetailsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'bill', 'payment_type',  'paid_amount',
+                    'date', 'due_date')
+    list_display_links = ('id', 'bill')
+    search_fields = ('id', 'bill')
+    list_per_page = 25
+
+
+admin.site.register(PaymentDetails, PaymentDetailsAdmin)
+
+
 class ChequeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cheque_number', 'bill',  'account_number',
+    list_display = ('id', 'cheque_number', 'payment_details',  'account_number',
                     'payee_name', 'amount', 'date', 'deposited_at', 'status')
     list_display_links = ('id', 'cheque_number')
-    search_fields = ('id', 'bill')
+    search_fields = ('id', 'payment_details')
     list_per_page = 25
 
 

@@ -9,7 +9,7 @@ class AddDealerSerializer(serializers.ModelSerializer):
 
 
 class GetAllDealersSerializer(serializers.ModelSerializer):
-    added = serializers.CharField(source='added_by.email')
+    added = serializers.CharField(source='added_by.user_name')
     psa_name = serializers.CharField(source='psa.area_name')
 
     class Meta:

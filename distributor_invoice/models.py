@@ -16,7 +16,7 @@ class DistributorInvoiceItems(models.Model):
     invoice = models.ForeignKey(
         DistributorInvoice, on_delete=models.DO_NOTHING)
     item = models.CharField(max_length=15)
-    description = models.CharField(max_length=255, default="ABC")
+    description = models.CharField(max_length=255)
     qty = models.IntegerField()
     foc = models.IntegerField()
     unit_price = models.FloatField()

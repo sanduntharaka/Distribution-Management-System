@@ -58,6 +58,8 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0011_salesrefinvoice_paid_amount.py
 0012_salesrefinvoice_confirmed_date.py
 0004_alter_useraccount_user_name.py
+0003_initial.py
+0003_initial.py
 # Backup files # 
 *.bak 
 *.vscode

@@ -3,6 +3,19 @@ from userdetails.models import UserDetails
 from users.models import UserAccount
 
 
+class GetUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAccount
+        fields = ('user_name', 'id')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Exclude superuser
+        if instance.is_superuser:
+            return None
+        return data
+
+
 class UserDetailsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetails
@@ -26,11 +39,10 @@ class AllDistributorsSerializer(serializers.ModelSerializer):
 
 
 class GetBasicUserDetail(serializers.ModelSerializer):
-    user = serializers.CharField(source='user.email')
 
     class Meta:
         model = UserDetails
-        fields = ('id', 'user', 'photo', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
+        fields = ('id', 'email', 'photo', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
                   'home_number', 'immediate_contact_person_name', 'immediate_contact_person_number', 'terriotory')
 
 

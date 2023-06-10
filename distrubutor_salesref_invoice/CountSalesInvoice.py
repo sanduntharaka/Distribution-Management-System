@@ -18,7 +18,7 @@ class CountSalesInvoiceAll:
         return sum([i.total for i in self.invoices])
 
     def totalDiscont(self):
-        return sum([i.discount for i in self.invoices])
+        return sum([i.total_discount for i in self.invoices])
 
     def getPrevDayStatus(self):
         current = sum([i.total for i in self.invoices])

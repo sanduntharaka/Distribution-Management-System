@@ -24,10 +24,13 @@ class AllDealerDetailsByDistributor(APIView):
                          for salesref in salesrefs]
         salesref_list = UserDetails.objects.filter(
             id__in=salesrefs_ids).values('user')
+        distributoruser = UserDetails.objects.get(
+            id=item)
         salesref_users_id = [sf['user']
                              for sf in salesref_list]
-
-        dealers = Dealer.objects.filter(added_by__in=salesref_users_id)
+        salesref_users_id.append(distributoruser.user.id)
+        dealers = Dealer.objects.filter(
+            added_by__in=salesref_users_id)
         serializer = serializers.DealerDetailsSerializer(dealers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -42,8 +45,12 @@ class AllDealerDetailsByManager(APIView):
                            for distributor in distributors]
         salesrefs = SalesRefDistributor.objects.filter(
             distributor__in=distributors_id).values('sales_ref')
+        distributors = SalesRefDistributor.objects.filter(
+            distributor__in=distributors_id).values('distributor')
         salesrefs_ids = [salesref['sales_ref']
                          for salesref in salesrefs]
+        [salesrefs_ids.append(distributor['distributor'])
+         for distributor in distributors]
         salesref_list = UserDetails.objects.filter(
             id__in=salesrefs_ids).values('user')
         salesref_users_id = [sf['user']

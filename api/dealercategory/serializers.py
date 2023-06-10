@@ -15,7 +15,7 @@ class EditCategorySerializer(serializers.ModelSerializer):
 
 
 class GetAllCategorySerializer(serializers.ModelSerializer):
-    created_by = serializers.CharField(source='added_by.email')
+    created_by = serializers.CharField(source='added_by.user_name')
 
     class Meta:
         model = DealerCategory

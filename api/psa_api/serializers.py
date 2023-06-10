@@ -15,7 +15,7 @@ class EditPsaSerializer(serializers.ModelSerializer):
 
 
 class GetAllPSASerializer(serializers.ModelSerializer):
-    created_by = serializers.CharField(source='created_by.email')
+    created_by = serializers.CharField(source='created_by.user_name')
 
     class Meta:
         model = PrimarySalesArea
