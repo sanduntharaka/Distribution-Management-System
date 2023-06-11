@@ -87,6 +87,7 @@ INSTALLED_APPS = [
     'api.reports',
     'api.systemsettings',
     'api.pastinvdata',
+    'api.user',
 
     # reports
     'api.reports.userreport',
@@ -108,6 +109,8 @@ INSTALLED_APPS = [
     'api.reports.normalfocreport',
     'api.reports.totaloutstanding',
     'api.reports.dealerpattern',
+    'api.reports.focreport',
+
 
 ]
 
@@ -212,8 +215,8 @@ CRON_CLASSES = [
 # Email Settings
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
-EMAIL_HOST_USER = 'sandunsamsung@gmail.com'
-EMAIL_HOST_PASSWORD = 'wgxouauawfyhbinc'
+EMAIL_HOST_USER = 'ebrandinginnovations@gmail.com'
+EMAIL_HOST_PASSWORD = 'mwcbsfjsezgpcguo'
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -238,7 +241,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'front.ditributor.codesolusions.online'
+DOMAIN = 'http://localhost:3000'
 SITE_NAME = 'Bixton Distribution Management System'
 DJOSER = {
     'LOGIN_FIELD': 'user_name',

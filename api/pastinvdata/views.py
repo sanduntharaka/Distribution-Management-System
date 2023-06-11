@@ -72,6 +72,16 @@ class AddInvoice(generics.CreateAPIView):
     queryset = PastInvoice.objects.all()
 
 
+class UpdateInvoice(generics.UpdateAPIView):
+    serializer_class = serializers.UpdateInvSerializer
+    queryset = PastInvoice.objects.all()
+
+
+class DeleteInvoice(generics.DestroyAPIView):
+    serializer_class = serializers.AddInvSerializer
+    queryset = PastInvoice.objects.all()
+
+
 class ViewInvoices(generics.ListAPIView):
     serializer_class = serializers.AddInvSerializer
 
@@ -90,7 +100,7 @@ class AddChequeExcel(APIView):
                 'inv_number': row[1],
                 "cheque_number": row[2],
                 "bank": row[3],
-                "cheque_deposite_date": row[4],
+                "cheque_deposite_date": row[4].strftime('%Y-%m-%d'),
                 'customer_name': row[5],
                 'original_amount': row[6],
                 'paid_amount': row[7],
@@ -124,10 +134,9 @@ class AddChequeExcel(APIView):
         print(df)
         for row, i in self.row_generator(dataset=dataset, user=distributor):
             try:
-                serializer = serializers.AddInvSerializer(data=row)
+                serializer = serializers.AddChequeSerializer(data=row)
                 if serializer.is_valid():
                     serializer.save()
-
                     success.append(i)
                 else:
                     print(serializer.errors)
@@ -144,5 +153,24 @@ class AddChequeExcel(APIView):
 
 
 class AddCheque(generics.CreateAPIView):
+    serializer_class = serializers.AddChequeSerializer
+    queryset = PastCheque.objects.all()
+
+
+class ViewCheque(generics.ListAPIView):
+    serializer_class = serializers.AddChequeSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        print('called')
+        return get_list_or_404(PastCheque, distributor=item)
+
+
+class UpdateCheque(generics.UpdateAPIView):
+    serializer_class = serializers.UpdateChequeSerializer
+    queryset = PastCheque.objects.all()
+
+
+class DeleteCheque(generics.DestroyAPIView):
     serializer_class = serializers.AddChequeSerializer
     queryset = PastCheque.objects.all()

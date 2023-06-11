@@ -52,7 +52,7 @@ class SalesData:
         invoices = []
         for i in self.months:
             invs = SalesRefInvoice.objects.filter(date__month=i['month'])
-            total = sum([i.total - i.discount for i in invs])
+            total = sum([i.total - i.total_discount for i in invs])
             data = {
                 'month': calendar.month_name[i['month']],
                 'total': total

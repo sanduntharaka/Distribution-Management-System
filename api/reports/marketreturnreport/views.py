@@ -17,12 +17,8 @@ class GetByDistributor(APIView):
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        distributors = ManagerDistributor.objects.filter(
-            manager_id=item).values('distributor')
-        distributor_ids = [distributor['distributor']
-                           for distributor in distributors]
         sales_refs = SalesRefDistributor.objects.filter(
-            distributor_id__in=distributor_ids).values('sales_ref')
+            distributor_id=item).values('sales_ref')
         sales_ref_ids = [salesref['sales_ref']
                          for salesref in sales_refs]
         salesref_list = UserDetails.objects.filter(
@@ -34,6 +30,7 @@ class GetByDistributor(APIView):
             'salesrefreturn__added_by_id__in': salesref_users_id,
 
         }
+        print(sales_refs)
         if by_date:
             filters['salesrefreturn__date__range'] = (date_from, date_to)
 

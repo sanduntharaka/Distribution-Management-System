@@ -17,7 +17,7 @@ class SalesRefLeave(models.Model):
     return_to_work = models.DateField()
     approved = models.BooleanField(default=False)
     approved_by = models.ForeignKey(
-        UserDetails, on_delete=models.CASCADE, related_name='approved_by')
+        UserDetails, on_delete=models.CASCADE, related_name='approved_by', null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def get_leave_type(self):

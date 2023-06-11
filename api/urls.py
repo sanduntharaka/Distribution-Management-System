@@ -3,6 +3,7 @@ urlpatterns = [
 
     path('dashboard/', include('api.dashboard.urls')),
     path('users/', include('api.userdetailsapp.urls')),
+    path('user/', include('api.user.urls')),
     path('company/inventory/', include('api.companyInventory.urls')),
     path('company/invoice/', include('api.companyInvoices.urls')),
     path('manager/distributor/', include('api.managerdistributors.urls')),

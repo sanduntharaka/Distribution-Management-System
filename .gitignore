@@ -60,6 +60,8 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0004_alter_useraccount_user_name.py
 0003_initial.py
 0003_initial.py
+0003_alter_distributorinventoryitems_invoice_number.py
+0004_alter_salesrefleave_approved_by.py
 # Backup files # 
 *.bak 
 *.vscode

@@ -13,7 +13,7 @@ class DistributorInventory(models.Model):
 
 class DistributorInventoryItems(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    invoice_number = models.CharField(max_length=15)
+    invoice_number = models.CharField(max_length=15, default='INV-0000')
     from_sales_return = models.BooleanField(default=False)
     inventory = models.ForeignKey(
         DistributorInventory, on_delete=models.CASCADE)

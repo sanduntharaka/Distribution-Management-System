@@ -19,3 +19,12 @@ class AllManagerDistributor(generics.ListAPIView):
 class DeleteManagerDistributor(generics.DestroyAPIView):
     queryset = ManagerDistributor.objects.all()
     serializer_class = serializers.CreateManagerDistributorsSerializer
+
+
+class AllManagerDistributorByManager(generics.ListAPIView):
+    serializer_class = serializers.GetManagerDistributorsSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+
+        return get_list_or_404(ManagerDistributor, added_by=item)

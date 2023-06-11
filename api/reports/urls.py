@@ -15,6 +15,8 @@ urlpatterns = [
     path('collectionsheet/', include('api.reports.collectionsheet.urls')),
     path('credit/', include('api.reports.marketcreditreport.urls')),
     path('outstanding/', include('api.reports.totaloutstanding.urls')),
+    path('focreport/', include('api.reports.focreport.urls')),
+
     path('credit-collection/', include('api.reports.creditbillscollectionreport.urls')),
     path('non-buying/', include('api.reports.nonbuyingreport.urls')),
     path('delevered-sales/', include('api.reports.deleveredsalesreport.urls')),

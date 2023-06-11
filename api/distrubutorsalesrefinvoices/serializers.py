@@ -63,11 +63,13 @@ class GetInvoiceWithPaymentSerializer(serializers.ModelSerializer):
     contact_number = serializers.CharField(source='dealer.contact_number')
     payed = serializers.CharField(
         source='get_payed')
+    due_date = serializers.CharField(
+        source='get_due_date')
 
     class Meta:
         model = SalesRefInvoice
         fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
-                  'dealer', 'total', 'total_discount', 'dealer_address', 'contact_number', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled', 'payed')
+                  'dealer', 'total', 'total_discount', 'dealer_address', 'contact_number', 'due_date', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled', 'payed')
 
 
 class AddChequeDetailsSerialzer(serializers.ModelSerializer):

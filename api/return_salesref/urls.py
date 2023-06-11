@@ -4,6 +4,7 @@ urlpatterns = [
     path('add/', views.AddReturn.as_view()),
     path('add/items/<id>', views.AddReturnItem.as_view()),
     path('get/', views.GetReturns.as_view()),
+    path('get/<id>', views.GetReturnsByDistributor.as_view()),
     path('get/pending/', views.GetPendingReturns.as_view()),
     path('update/status/<int:pk>', views.UpdateStatusPendingReturns.as_view()),
     path('get/pending/distributor/<id>',

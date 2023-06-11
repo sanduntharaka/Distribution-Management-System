@@ -173,6 +173,7 @@ class ConfirmInvoice(generics.UpdateAPIView):
                 bill.save()
                 payment_serializer = serializers.CreateInvoicePaymentSerializer(
                     data=payment_details)
+
                 if payment_serializer.is_valid():
                     p_s = payment_serializer.save()
                     saved_id = p_s.id
@@ -202,7 +203,8 @@ class ConfirmInvoice(generics.UpdateAPIView):
                             return Response(status=status.HTTP_400_BAD_REQUEST)
                     return Response(status=status.HTTP_201_CREATED)
                 else:
-                    print(serializers.errors)
+                    print(payment_serializer.errors)
+
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
             if confirm_status == 'rejected':
@@ -259,6 +261,7 @@ class AddCredit(generics.UpdateAPIView):
             'payment_type': payment_type,
             'paid_amount': float(cof_status['paid_amount']),
             'date': cof_status['date'],
+            'due_date': cof_status['due_date'],
             'added_by': cof_status['added_by'],
         }
         payment_serializer = serializers.CreateInvoicePaymentSerializer(
