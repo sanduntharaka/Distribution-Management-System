@@ -23,16 +23,13 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import Spinner from '../../components/loadingSpinner/Spinner';
 import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import LeaveDetails from '../../components/details/LeaveDetails';
 import EditLeave from '../../components/edit/EditLeave';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
+import ApproveLeave from '../../components/userComfirm/ApproveLeave';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -58,6 +55,8 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 const CreatedLeaves = () => {
+  const [loading, setLoading] = useState(false);
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -90,6 +89,9 @@ const CreatedLeaves = () => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
+  //approve details
+  const [approvedetailsOpen, setApproveDetailsOpen] = useState(false);
+
   //item_codes
   const [itemCodes, setItemCodes] = useState([]);
 
@@ -110,32 +112,101 @@ const CreatedLeaves = () => {
   };
 
   useEffect(() => {
-    console.log('called');
-    axiosInstance
-      .get(
-        `/leave/all/salesref/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.created_by)) {
-            itemCodes.push(item.created_by);
+    if (user.is_salesref) {
+      setLoading(true);
+      axiosInstance
+        .get(
+          `/leave/all/salesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
           }
+        )
+        .then((res) => {
+          console.log(res.data);
+          setLoading(false);
+          setData(res.data);
+          setTableData(res.data);
+          // res.data.forEach((item) => {
+          //   if (!itemCodes.includes(item.created_by)) {
+          //     itemCodes.push(item.created_by);
+          //   }
+          // });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
+
+    if (user.is_distributor) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/leave/all/by/distributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          // res.data.forEach((item) => {
+          //   if (!itemCodes.includes(item.created_by)) {
+          //     itemCodes.push(item.created_by);
+          //   }
+          // });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
+    if (user.is_manager) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/leave/all/by/manager/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          // res.data.forEach((item) => {
+          //   if (!itemCodes.includes(item.created_by)) {
+          //     itemCodes.push(item.created_by);
+          //   }
+          // });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
   }, [success]);
 
   const handleViewDetails = (e, value) => {
@@ -159,6 +230,8 @@ const CreatedLeaves = () => {
     setMessageOpen(false);
     setEditDetailsOpen(false);
     setDeleteDetailsOpen(false);
+    setApproveDetailsOpen(false);
+
     setDetailsOpen(true);
 
     handleModalOpen();
@@ -181,6 +254,8 @@ const CreatedLeaves = () => {
     setMessageOpen(false);
     setDeleteDetailsOpen(false);
     setDetailsOpen(false);
+    setApproveDetailsOpen(false);
+
     setEditDetailsOpen(true);
     handleModalOpen();
   };
@@ -191,9 +266,23 @@ const CreatedLeaves = () => {
     setMessageOpen(false);
     setDetailsOpen(false);
     setEditDetailsOpen(false);
+    setApproveDetailsOpen(false);
+
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
+  const handleApproveDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+    });
+    setMessageOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(false);
+    setApproveDetailsOpen(true);
+    handleModalOpen();
+  };
+
   const handleFilter = (i) => {
     handleClose();
     console.log(i);
@@ -207,6 +296,15 @@ const CreatedLeaves = () => {
   };
   return (
     <div>
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
           <LeaveDetails
@@ -215,6 +313,7 @@ const CreatedLeaves = () => {
             showEdit={setEditDetailsOpen}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : editdetailsOpen ? (
           <EditLeave
@@ -240,6 +339,18 @@ const CreatedLeaves = () => {
             closeModal={handleModalClose}
             url={'/leave/delete'}
           />
+        ) : approvedetailsOpen ? (
+          <ApproveLeave
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showConfirm={setApproveDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/leave/approve/by/manager'}
+          />
         ) : messageOpen ? (
           <Message
             hide={handleModalClose}
@@ -256,7 +367,7 @@ const CreatedLeaves = () => {
         <p>View All Leaves</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
+        {/* <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div>
               <select name="" id="">
@@ -271,7 +382,7 @@ const CreatedLeaves = () => {
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
-        </div>
+        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -313,6 +424,12 @@ const CreatedLeaves = () => {
                     onClick: (event, rowData) =>
                       handleDeleteDetails(event, rowData),
                   },
+                  {
+                    icon: CheckCircleOutlineIcon,
+                    tooltip: 'Approve details',
+                    onClick: (event, rowData) =>
+                      handleApproveDetails(event, rowData),
+                  },
                 ]}
                 components={{
                   Action: (props) => (
@@ -329,7 +446,9 @@ const CreatedLeaves = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon ? (
+                      ) : props.action.icon === EditIcon &&
+                        user.is_salesref &&
+                        props.data.leave_status !== 'Yes' ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -341,7 +460,9 @@ const CreatedLeaves = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : (
+                      ) : props.action.icon === DeleteOutline &&
+                        user.is_salesref &&
+                        props.data.leave_status !== 'Yes' ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -353,6 +474,21 @@ const CreatedLeaves = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : props.action.icon === CheckCircleOutlineIcon &&
+                        user.is_manager ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'blue' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <CheckCircleOutlineIcon />
+                        </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

@@ -27,7 +27,7 @@
       margin-top: 25px;
       display: flex;
       justify-content: flex-end;
-
+      align-items: center;
       gap: 5px;
       @include mobile {
         justify-content: center;
@@ -42,10 +42,12 @@
         border-radius: 25px;
         padding: 10px 25px;
         color: white;
+        display: flex;
       }
       .addBtn {
         display: flex;
         justify-content: center;
+        align-items: center;
         width: 150px;
         text-align: center;
         text-transform: uppercase;
@@ -53,6 +55,13 @@
         border-radius: 25px;
         padding: 10px 25px;
         color: white;
+        display: flex;
+      }
+      .btnEdit {
+        display: flex;
+        width: 150px;
+        align-items: center;
+        gap: 5px;
       }
     }
   }

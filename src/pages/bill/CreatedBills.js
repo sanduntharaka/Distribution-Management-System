@@ -2,8 +2,6 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from '../inventory/componets/ProductDetails';
-import ProductEdit from '../inventory/componets/ProductEdit';
 import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
@@ -64,12 +62,12 @@ const CreatedBills = () => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Sales Ref', field: 'sales_ref' },
+    { title: 'Added_by', field: 'added_by' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Total', field: 'total' },
-    { title: 'Method', field: 'payment_type' },
+
     { title: 'Status', field: 'status' },
   ];
   //modal
@@ -261,6 +259,7 @@ const CreatedBills = () => {
         items={props.items}
         invoice={props.invoice}
         data={props.data}
+        user={props.user}
         close={() => props.handleClose()}
       />
     );
@@ -289,6 +288,7 @@ const CreatedBills = () => {
             invoice={invoice}
             oldinv={false}
             data={dataSingle}
+            user={user}
             handleClose={handleModalClose}
           />
         ) : editdetailsOpen ? (
@@ -330,7 +330,7 @@ const CreatedBills = () => {
         <p>View All Issued Bills</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
+        {/* <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div>
               <select name="" id="">
@@ -362,7 +362,7 @@ const CreatedBills = () => {
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
-        </div>
+        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -392,12 +392,6 @@ const CreatedBills = () => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
-                  {
-                    icon: RecommendIcon,
-                    tooltip: 'Confirm',
-                    onClick: (event, rowData) =>
-                      handleConfirmDetails(event, rowData),
-                  },
                 ]}
                 components={{
                   Action: (props) => (
@@ -414,18 +408,6 @@ const CreatedBills = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === RecommendIcon ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'orange' }} // customize the icon color
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <RecommendIcon />
-                        </IconButton>
                       ) : (
                         ''
                       )}
@@ -440,21 +422,5 @@ const CreatedBills = () => {
     </div>
   );
 };
-
-// user.is_manager ||
-//                         (user.is_distributor &&
-//                           props.action.icon === DeleteOutline) ? (
-//                         <IconButton
-//                           onClick={(event) =>
-//                             props.action.onClick(event, props.data)
-//                           }
-//                           color="primary"
-//                           style={{ color: 'red' }} // customize the button style
-//                           size="small"
-//                           aria-label={props.action.tooltip}
-//                         >
-//                           <DeleteOutline />
-//                         </IconButton>
-//                       ) :
 
 export default CreatedBills;

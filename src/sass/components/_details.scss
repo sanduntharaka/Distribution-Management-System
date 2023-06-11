@@ -32,7 +32,7 @@
       height: 50px;
     }
     @include mobile {
-      width: 450px;
+      width: 300px;
       padding: 25px;
     }
     &__title {
@@ -50,12 +50,21 @@
       &.buttons {
         margin-top: 15px;
         justify-content: space-around;
+        @include mobile {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          justify-content: center;
+          align-items: center;
+        }
       }
       &__col {
         .btnEdit,
         .btnDelete,
         .addBtn {
-          text-align: center;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           width: 100px;
           height: 35px;
           font-size: medium;

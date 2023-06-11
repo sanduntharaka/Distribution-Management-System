@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import { axiosInstance } from '../../axiosInstance';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import ConfimReceipt from './bill/ConfimReceipt';
 const MyMessage = React.forwardRef((props, ref) => {
   return (
     <Message
@@ -17,8 +18,23 @@ const MyMessage = React.forwardRef((props, ref) => {
   );
 });
 
+const ConfirmRecieptRef = React.forwardRef((props, ref) => {
+  return (
+    <ConfimReceipt
+      issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
+      items={props.items}
+      set_items={props.set_items}
+      set_invoice={props.set_invoice}
+      data={props.data}
+      set_data={props.set_data}
+      close={() => props.handleClose()}
+    />
+  );
+});
 const CreateReturn = ({ inventory }) => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   //message modal
+  const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -60,9 +76,19 @@ const CreateReturn = ({ inventory }) => {
 
     is_return_goods: is_return_goods,
     is_deduct_bill: is_deduct_bill,
-    added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    added_by: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
+
+  const [showinv, setShowInv] = useState(false);
+  const [invoice, setInvoice] = useState();
+  const handleCloseInv = () => {
+    setShowInv(false);
+  };
+  const showInvoice = () => {
+    setShowInv(true);
+  };
   useEffect(() => {
+    setLoading(true);
     axiosInstance
       .get('/psa/all/', {
         headers: {
@@ -71,11 +97,15 @@ const CreateReturn = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
         setPsas(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
+    setLoading(true);
 
     axiosInstance
       .get('/dealer/all/', {
@@ -85,11 +115,17 @@ const CreateReturn = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setDealers(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
+    setLoading(true);
+
     axiosInstance
       .get(`/distributor/salesref/inventory/items/${inventory.id}`, {
         headers: {
@@ -98,11 +134,73 @@ const CreateReturn = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setProducts(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
+    if (user.is_salesref) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/bysalesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setData({ ...data, dis_sales_ref: res.data.id });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot fetch inventory. Please try again');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
+    if (user.is_distributor) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/bydistributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setData({ ...data, dis_sales_ref: res.data.id });
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot fetch inventory. Please Try again');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
   }, []);
 
   const handleSelectDealer = (e) => {
@@ -113,6 +211,7 @@ const CreateReturn = ({ inventory }) => {
       dealer: deler.id,
       dealer_name: deler.name,
       dealer_address: deler.address,
+      dealer_contact: deler.contact_number,
     });
   };
 
@@ -166,61 +265,10 @@ const CreateReturn = ({ inventory }) => {
 
   const handleSave = (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    axiosInstance
-      .post('/salesref/return/add/', data, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        axiosInstance
-          .post(
-            `/salesref/return/add/items/${res.data.id}`,
-            {
-              items: items,
-            },
-            {
-              headers: {
-                Authorization:
-                  'JWT ' +
-                  JSON.parse(sessionStorage.getItem('userInfo')).access,
-              },
-            }
-          )
-          .then((res) => {
-            setLoading(false);
-            setError(false);
-            setSuccess(true);
-            setTitle('Success');
-            setMsg('Your data added successfully');
-            handleOpen();
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-            setSuccess(false);
-            setError(true);
-            setTitle('Error');
-            setMsg(
-              'Your data cannot saved. Please refresh your page and try again.'
-            );
-            handleOpen();
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setTitle('Error');
-        setMsg(
-          'Your data cannot saved. Please refresh your page and try again.'
-        );
-        handleOpen();
-      });
+    setLoading(false);
+    showInvoice(true);
+    console.log(data);
+    console.log(items);
   };
 
   return (
@@ -243,8 +291,25 @@ const CreateReturn = ({ inventory }) => {
           msg={msg}
         />
       </Modal>
+      <Modal
+        open={showinv && loading === false}
+        onClose={() => handleCloseInv()}
+      >
+        <ConfirmRecieptRef
+          issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
+          items={items}
+          set_items={setItems}
+          invoice={invoice}
+          set_invoice={setInvoice}
+          oldinv={false}
+          data={data}
+          set_data={setData}
+          handleClose={handleCloseInv}
+          ref={inputRef}
+        />
+      </Modal>
       <div className="page__title">
-        <p>Add Dealer Returns</p>
+        <p>Add Market Returns</p>
       </div>
       <div className="page__pcont">
         <div className="form">

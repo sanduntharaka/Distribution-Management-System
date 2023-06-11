@@ -1,0 +1,37 @@
+.vtab {
+  width: 100%;
+  display: flex;
+  height: 100vh;
+
+  .vtab_contaner {
+    width: 200px;
+    min-width: 200px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+
+    .item {
+      margin-top: auto;
+      margin-bottom: auto;
+      padding: 5px;
+      box-sizing: border-box;
+      height: 30px;
+      background-color: $color-colum-background;
+      margin-bottom: 5px;
+
+      &:hover {
+        background-color: $color-blue-sidebar-title;
+        cursor: pointer;
+      }
+
+      &.selected {
+        color: $color-colum-background;
+        background-color: $color-blue-sidebar-title-light;
+      }
+    }
+  }
+  .vtab_page {
+    flex: 8;
+    margin-left: 5px;
+    background-color: $color-white-grey;
+  }
+}

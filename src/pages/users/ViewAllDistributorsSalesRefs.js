@@ -2,11 +2,7 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from '../inventory/componets/ProductDetails';
-import ProductEdit from '../inventory/componets/ProductEdit';
-import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
-import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -23,57 +19,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DistributorSalesrefConfirm from '../../components/userComfirm/DistributorSalesrefConfirm';
-
-const StyledMenu = styled((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === 'light'
-        ? 'rgb(55, 65, 81)'
-        : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 0',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
-        ),
-      },
-    },
-  },
-}));
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -98,7 +44,7 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const ViewAllDistributorsSalesRefs = () => {
+const ViewAllDistributorsSalesRefs = (props) => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -153,12 +99,15 @@ const ViewAllDistributorsSalesRefs = () => {
 
   useEffect(() => {
     axiosInstance
-      .get(`/distributor/salesref/all/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
+      .get(
+        `/distributor/salesref/all/by/distributor/${props.user_details.id}`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setData(res.data);
@@ -172,9 +121,10 @@ const ViewAllDistributorsSalesRefs = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [success]);
+  }, [success, props.success]);
 
   const handleDeleteDetails = (e, value) => {
+    props.set_success(false);
     setItemDetails({
       id: value.id,
     });
@@ -223,7 +173,7 @@ const ViewAllDistributorsSalesRefs = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Primary Sales Areas</p>
+        <p>View All Distributor and their Salesrefs</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

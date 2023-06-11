@@ -3,7 +3,7 @@ import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import ViewAllDistributorsSalesRefs from './ViewAllDistributorsSalesRefs';
-
+import Spinner from '../../components/loadingSpinner/Spinner';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -19,6 +19,7 @@ const ShowMessage = forwardRef((props, ref) => {
 
 const DistributorSalesRef = () => {
   const inputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -26,10 +27,12 @@ const DistributorSalesRef = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const user_detail = JSON.parse(sessionStorage.getItem('user_details'));
 
   const [data, setData] = useState({
-    added_by: JSON.parse(sessionStorage.getItem('user')).id,
-    distributor: '',
+    added_by: user.id,
+    distributor: user.is_distributor ? user_detail.id : '',
     sales_ref: '',
   });
 
@@ -37,37 +40,52 @@ const DistributorSalesRef = () => {
   const [salesrefs, setSalesrefs] = useState([]);
 
   useEffect(() => {
-    axiosInstance
-      .get('/users/distributors/', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setDistributors(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
+    setLoading(true);
 
     axiosInstance
-      .get('/users/salesrefs/', {
+      .get('/users/salesrefs/new/', {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setSalesrefs(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(false);
+    setSuccess(false);
     axiosInstance
       .post('/distributor/salesref/create/', data, {
         headers: {
@@ -76,6 +94,7 @@ const DistributorSalesRef = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
         setError(false);
         setSuccess(true);
         setTitle('Success');
@@ -84,6 +103,7 @@ const DistributorSalesRef = () => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
         setSuccess(false);
         setError(true);
         setTitle('Error');
@@ -94,6 +114,15 @@ const DistributorSalesRef = () => {
 
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
         <ShowMessage
           ref={inputRef}
@@ -116,12 +145,18 @@ const DistributorSalesRef = () => {
                 <div className="form__row__col__input">
                   <select
                     type="text"
+                    defaultValue={user.is_distributor ? user_detail.id : 0}
                     onChange={(e) =>
                       setData({ ...data, distributor: e.target.value })
                     }
+                    disabled={user.is_distributor}
                   >
-                    {' '}
-                    <option selected>Selec distributor</option>
+                    <option value={user.is_distributor ? user_detail.id : 0}>
+                      {' '}
+                      {user.is_distributor
+                        ? user_detail.full_name
+                        : 'Select distributor'}
+                    </option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -135,12 +170,12 @@ const DistributorSalesRef = () => {
                 <div className="form__row__col__input">
                   <select
                     type="text"
+                    defaultValue="0"
                     onChange={(e) =>
                       setData({ ...data, sales_ref: e.target.value })
                     }
                   >
-                    {' '}
-                    <option selected>Selec sales ref</option>
+                    <option value="0">Select sales ref</option>
                     {salesrefs.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -162,7 +197,11 @@ const DistributorSalesRef = () => {
         </div>
         <div className="page__pcont__row">
           <div style={{ width: '100%' }}>
-            <ViewAllDistributorsSalesRefs />
+            <ViewAllDistributorsSalesRefs
+              success={success}
+              set_success={setSuccess}
+              user_details={user_detail}
+            />
           </div>
         </div>
       </div>

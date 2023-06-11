@@ -3,7 +3,6 @@ import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
 
-import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -62,7 +61,7 @@ const AllReturns = () => {
     { title: 'Psa', field: 'psa_name' },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Date', field: 'date' },
-    { title: 'Added by', field: 'added_email' },
+    { title: 'Added by', field: 'added_name' },
   ];
 
   //modal
@@ -102,12 +101,17 @@ const AllReturns = () => {
 
   useEffect(() => {
     axiosInstance
-      .get(`/salesref/return/get/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
+      .get(
+        `/salesref/return/get/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setData(res.data);
@@ -239,10 +243,10 @@ const AllReturns = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View All Issued Market Returns</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
+        {/* <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div>
               <select name="" id="">
@@ -274,7 +278,7 @@ const AllReturns = () => {
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>
-        </div>
+        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Spinner from '../../components/loadingSpinner/Spinner';
@@ -17,7 +17,9 @@ const MyMessage = React.forwardRef((props, ref) => {
     />
   );
 });
+
 const AddDistributorInventory = ({ inventory }) => {
+  const inputRef = useRef(null);
   const [show_message, setShowMsg] = useState(false);
   const [show_upload, setShowUplod] = useState(false);
   const [categorys, setCategorys] = useState([]);
@@ -45,8 +47,11 @@ const AddDistributorInventory = ({ inventory }) => {
     free_of_charge: '',
     whole_sale_price: '',
     retail_price: '',
+    from_sales_return: false,
   });
   useEffect(() => {
+    setLoading(true);
+
     axiosInstance
       .get('/category/all/', {
         headers: {
@@ -55,9 +60,13 @@ const AddDistributorInventory = ({ inventory }) => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setCategorys(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
   }, []);
@@ -103,6 +112,7 @@ const AddDistributorInventory = ({ inventory }) => {
       ...data,
       category: '',
       item_code: '',
+      invoice_number: '',
       description: '',
       base: '',
       qty: '',
@@ -118,6 +128,22 @@ const AddDistributorInventory = ({ inventory }) => {
     setShowUplod(true);
     handleOpen();
   };
+
+  const handleFromSalesReturn = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        from_sales_return: true,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        from_sales_return: false,
+      });
+    }
+  };
+
   return (
     <div className="page">
       {loading ? (
@@ -137,6 +163,7 @@ const AddDistributorInventory = ({ inventory }) => {
             error={error}
             title={title}
             msg={msg}
+            ref={inputRef}
           />
         </Modal>
       ) : show_upload ? (
@@ -166,11 +193,10 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, category: e.target.value })
                     }
+                    defaultValue={''}
                     required
                   >
-                    <option value="" selected>
-                      Select Category
-                    </option>
+                    <option value="">Select Category</option>
                     {categorys.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.category_name}
@@ -337,6 +363,25 @@ const AddDistributorInventory = ({ inventory }) => {
                   ></textarea>
                 </div>
               </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">
+                  <p>Choose if from sales return</p>
+                </div>
+                <div className="specialColumn" style={{ display: 'grid' }}>
+                  <div className="form__row__col__input aligned">
+                    <input
+                      type="checkbox"
+                      checked={data.from_sales_return}
+                      onChange={(e) => handleFromSalesReturn(e)}
+                    />
+                    <label htmlFor="">From Sales Return</label>
+                  </div>
+                </div>
+              </div>
+              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col dontdisp"></div>
             </div>
 
             <div className="form__btn">

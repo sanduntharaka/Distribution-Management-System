@@ -18,7 +18,13 @@ const ShowMessage = forwardRef((props, ref) => {
 });
 
 const ShowFileUpload = forwardRef((props, ref) => {
-  return <ProfilePictureUpload user_id={props.user_id} ref={ref} />;
+  return (
+    <ProfilePictureUpload
+      user_id={props.user_id}
+      ref={ref}
+      close={props.close}
+    />
+  );
 });
 
 const Profile = () => {
@@ -36,7 +42,10 @@ const Profile = () => {
   const [title, setTitle] = useState('');
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    window.location.reload();
+  };
 
   useEffect(() => {
     axiosInstance
@@ -47,9 +56,10 @@ const Profile = () => {
         },
       })
       .then((res) => {
+        console.log(res.data);
         setData({
           id: res.data.id,
-          user: res.data.user,
+          email: res.data.email,
           full_name: res.data.full_name,
           address: res.data.address,
           designation: res.data.designation,
@@ -129,7 +139,11 @@ const Profile = () => {
         </Modal>
       ) : pic ? (
         <Modal open={open} onClose={handleClose}>
-          <ShowFileUpload ref={inputRef} user_id={data.id} />
+          <ShowFileUpload
+            ref={inputRef}
+            user_id={data.id}
+            close={handleClose}
+          />
         </Modal>
       ) : (
         ''
@@ -170,7 +184,7 @@ const Profile = () => {
                       <input
                         type="text"
                         placeholder="type email here"
-                        value={data.user !== undefined ? data.user : ''}
+                        value={data.email !== undefined ? data.email : ''}
                         disabled
                       />
                     </div>

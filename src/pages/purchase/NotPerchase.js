@@ -66,6 +66,9 @@ const NotPerchase = () => {
       setData({
         ...data,
         is_only_our: true,
+        is_competitor: false,
+        is_dealer_not_in: false,
+        is_payment_problem: false,
       });
     }
     if (e.target.checked === false) {
@@ -80,6 +83,9 @@ const NotPerchase = () => {
       setData({
         ...data,
         is_competitor: true,
+        is_only_our: false,
+        is_dealer_not_in: false,
+        is_payment_problem: false,
       });
     }
     if (e.target.checked === false) {
@@ -94,6 +100,9 @@ const NotPerchase = () => {
       setData({
         ...data,
         is_payment_problem: true,
+        is_competitor: false,
+        is_only_our: false,
+        is_dealer_not_in: false,
       });
     }
     if (e.target.checked === false) {
@@ -108,6 +117,9 @@ const NotPerchase = () => {
       setData({
         ...data,
         is_dealer_not_in: true,
+        is_payment_problem: false,
+        is_competitor: false,
+        is_only_our: false,
       });
     }
     if (e.target.checked === false) {
@@ -201,34 +213,38 @@ const NotPerchase = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Reason</div>
-                <div className="form__row__col__input">
+                <div className="form__row__col__input aligned">
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="onlyour"
+                    checked={data.is_only_our ? true : false}
                     onChange={(e) => handleCheckedOnlyOur(e)}
                   />
                   <label htmlFor="">Have only our goods </label>
                 </div>
-                <div className="form__row__col__input">
+                <div className="form__row__col__input aligned">
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="competitor"
+                    checked={data.is_competitor ? true : false}
                     onChange={(e) => handleCheckedCompetitor(e)}
                   />
                   <label htmlFor="">Have competitor goods </label>
                 </div>
-                <div className="form__row__col__input">
+                <div className="form__row__col__input aligned">
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="payproblem"
+                    checked={data.is_payment_problem ? true : false}
                     onChange={(e) => handleCheckeProblem(e)}
                   />
                   <label htmlFor="">payment problem </label>
                 </div>
-                <div className="form__row__col__input">
+                <div className="form__row__col__input aligned">
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="notin"
+                    checked={data.is_dealer_not_in ? true : false}
                     onChange={(e) => handleCheckedNotIn(e)}
                   />
                   <label htmlFor="">Dealer not in </label>

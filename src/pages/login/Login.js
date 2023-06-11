@@ -32,7 +32,7 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    dispatch(login(data.get('email'), data.get('password')));
+    dispatch(login(data.get('user_name'), data.get('password')));
     navigate('/');
 
     if (error) {
@@ -75,10 +75,10 @@ const Login = () => {
                   margin="normal"
                   required
                   fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
+                  id="user_name"
+                  label="User name"
+                  name="user_name"
+                  autoComplete="user_name"
                   autoFocus
                 />
                 <TextField

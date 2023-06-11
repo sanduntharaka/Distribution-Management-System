@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useRef } from 'react';
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -11,20 +11,47 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-import { axiosLoginInstance } from '../../axiosInstance';
-import { useParams } from 'react-router-dom';
+import Message from '../../components/message/Message';
+import Modal from '@mui/material/Modal';
+import { axiosInstance } from '../../axiosInstance';
+import { useNavigate, useParams } from 'react-router-dom';
 import Spinner from '../../components/loadingSpinner/Spinner';
 const theme = createTheme({});
+const ShowMessage = forwardRef((props, ref) => {
+  return (
+    <Message
+      hide={props.handleClose}
+      success={props.success}
+      error={props.error}
+      title={props.title}
+      msg={props.msg}
+      ref={ref}
+    />
+  );
+});
 const CreateNewPassword = () => {
+  const navigate = useNavigate();
   const { uuid, token } = useParams();
   const [loading, setloading] = useState(false);
+
+  const inputRef = useRef(null);
+
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [title, setTitle] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    navigate('/');
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     setloading(true);
-    axiosLoginInstance
-      .post('/users/reset_password/', {
+    axiosInstance
+      .post('/user/reset_password/', {
         uid: uuid,
         token: token,
         new_password: data.get('password1'),
@@ -32,16 +59,35 @@ const CreateNewPassword = () => {
       })
       .then((res) => {
         setloading(false);
-        console.log(res);
+        setError(false);
+        setSuccess(true);
+        setTitle('Success');
+        setMsg('Your password has been updated. Please log in');
+        handleOpen();
       })
       .catch((err) => {
         setloading(false);
         console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg('Your email has been expired. Try again.');
+        handleOpen();
       });
   };
   return (
     <div className="login">
       <div className="logContent">
+        <Modal open={open} onClose={handleClose}>
+          <ShowMessage
+            ref={inputRef}
+            handleClose={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal>
         <div
           style={{
             background: 'white',
@@ -102,7 +148,7 @@ const CreateNewPassword = () => {
                     sx={{ mt: 3, mb: 2 }}
                   >
                     Submit
-                    {loading ? <Spinner /> : ''}
+                    {loading ? <Spinner login={true} /> : ''}
                   </Button>
                   <Grid container>
                     <Grid item xs>

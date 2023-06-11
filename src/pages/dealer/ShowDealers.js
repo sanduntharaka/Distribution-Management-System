@@ -218,6 +218,7 @@ const ShowDealers = () => {
             showEdit={setEditDetailsOpen}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : editdetailsOpen ? (
           <EditDealerDetails
@@ -334,7 +335,7 @@ const ShowDealers = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : props.action.icon === EditIcon &&
+                      ) : props.action.icon === DeleteOutline &&
                         (user.is_distributor || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>

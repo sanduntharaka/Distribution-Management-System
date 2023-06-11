@@ -16,7 +16,7 @@ const InventoryTabs = () => {
       setIsLoading(true);
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/${
+          `/distributor/salesref/inventory/bysalesref/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
@@ -63,7 +63,7 @@ const InventoryTabs = () => {
   }, []);
 
   const [selected, setSelected] = useState(
-    user.is_companyStaff || user.is_superuser
+    user.is_manager || user.is_superuser
       ? 0
       : user.is_distributor
       ? 3
@@ -78,7 +78,7 @@ const InventoryTabs = () => {
   return (
     <div className="tab">
       <div className="tab_contaner">
-        {user.is_companyStaff || user.is_superuser ? (
+        {user.is_manager || user.is_superuser ? (
           <div
             className={`item ${selected === 0 ? 'selected' : ''}`}
             onClick={() => handleSelect(0)}
@@ -88,7 +88,7 @@ const InventoryTabs = () => {
         ) : (
           ''
         )}
-        {user.is_companyStaff || user.is_superuser ? (
+        {/* {user.is_manager || user.is_superuser ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
             onClick={() => handleSelect(1)}
@@ -98,7 +98,7 @@ const InventoryTabs = () => {
         ) : (
           ''
         )}
-        {user.is_companyStaff || user.is_superuser ? (
+        {user.is_manager || user.is_superuser ? (
           <div
             className={`item ${selected === 2 ? 'selected' : ''}`}
             onClick={() => handleSelect(2)}
@@ -107,7 +107,7 @@ const InventoryTabs = () => {
           </div>
         ) : (
           ''
-        )}
+        )} */}
         {user.is_distributor ? (
           <div
             className={`item ${selected === 3 ? 'selected' : ''}`}

@@ -6,13 +6,13 @@ import {
   USER_LOGOUT,
 } from '../constant/UserCostants';
 
-export const login = (email, password) => async (dispatch) => {
+export const login = (user_name, password) => async (dispatch) => {
   try {
     dispatch({
       type: USER_LOGIN_REQUEST,
     });
     const { data } = await axiosLoginInstance.post('/jwt/create/', {
-      email: email,
+      user_name: user_name,
       password: password,
     });
 

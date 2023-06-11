@@ -2,11 +2,9 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDetails from '../inventory/componets/ProductDetails';
-import ProductEdit from '../inventory/componets/ProductEdit';
-import ProductDelete from '../inventory/componets/ProductDelete';
+
 import Message from '../../components/message/Message';
-import { CgDetailsMore } from 'react-icons/cg';
+
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -24,12 +22,8 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+
 import EditCategory from '../../components/edit/EditCategory';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
@@ -170,7 +164,7 @@ const AllCategories = (props) => {
     }
   };
   return (
-    <div>
+    <>
       <Modal open={modalOpen} onClose={handleModalClose}>
         {editdetailsOpen ? (
           <EditCategory
@@ -284,7 +278,7 @@ const AllCategories = (props) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

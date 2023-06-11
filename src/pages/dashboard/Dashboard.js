@@ -14,6 +14,9 @@ const Dashboard = () => {
     let day = d.getDate() - 1;
     return `${year}-${month}-${day}`;
   });
+  const user = JSON.parse(sessionStorage.getItem('user'));
+  const userDelails = JSON.parse(sessionStorage.getItem('user_details'));
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
   const navigate = useNavigate();
@@ -40,17 +43,17 @@ const Dashboard = () => {
         <div className="page__pcont__row center">
           <div className="page__pcont__row__col">
             <div className="widget">
-              <ToDaySales date={currentDate} />
+              <ToDaySales date={currentDate} user={user} />
             </div>
           </div>
           <div className="page__pcont__row__col">
             <div className="widget">
-              <InventoryStatus date={currentDate} />
+              <InventoryStatus date={currentDate} user={user} />
             </div>
           </div>
           <div className="page__pcont__row__col">
             <div className="widget">
-              <TotalReturns date={currentDate} />
+              <TotalReturns date={currentDate} user={user} />
             </div>
           </div>
           {/* <div className="page__pcont__row__col">
@@ -60,13 +63,13 @@ const Dashboard = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col f1">
             <div className="dashdetails">
-              <SimplePieChart />
+              <SimplePieChart user={user} info={userInfo} />
             </div>
           </div>
           <div className="page__pcont__row__col special f4">
             <div className="chart">
-              <div className="title">Last moths income</div>
-              <MainChart />
+              <div className="title">Last months income</div>
+              <MainChart user={user} info={userDelails} />
             </div>
           </div>
         </div>

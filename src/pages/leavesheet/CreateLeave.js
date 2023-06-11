@@ -46,6 +46,8 @@ const CreateLeave = () => {
       setData({
         ...data,
         is_annual: true,
+        is_casual: false,
+        is_sick: false,
       });
     }
     if (e.target.checked === false) {
@@ -60,6 +62,8 @@ const CreateLeave = () => {
       setData({
         ...data,
         is_casual: true,
+        is_annual: false,
+        is_sick: false,
       });
     }
     if (e.target.checked === false) {
@@ -74,6 +78,8 @@ const CreateLeave = () => {
       setData({
         ...data,
         is_sick: true,
+        is_casual: false,
+        is_annual: false,
       });
     }
     if (e.target.checked === false) {

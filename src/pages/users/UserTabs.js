@@ -9,6 +9,7 @@ import UserCreation from './UserCreation';
 import UserDetails from './UserDetails';
 import DistributorSalesRef from './DistributorSalesRef';
 import AllUsers from './AllUsers';
+import ManagerDistributors from './ManagerDistributors';
 
 const UserTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -50,6 +51,16 @@ const UserTabs = () => {
         ) : (
           ''
         )}
+        {user.is_superuser || user.is_manager ? (
+          <div
+            className={`item ${selected === 3 ? 'selected' : ''}`}
+            onClick={() => handleSelect(3)}
+          >
+            Assign Distributor
+          </div>
+        ) : (
+          ''
+        )}
         {user.is_superuser ||
         user.is_manager ||
         user.is_distributor ||
@@ -64,13 +75,10 @@ const UserTabs = () => {
           ''
         )}
 
-        {user.is_superuser ||
-        user.is_manager ||
-        user.is_distributor ||
-        user.is_companyStaff ? (
+        {user.is_superuser || user.is_manager ? (
           <div
-            className={`item ${selected === 3 ? 'selected' : ''}`}
-            onClick={() => handleSelect(3)}
+            className={`item ${selected === 4 ? 'selected' : ''}`}
+            onClick={() => handleSelect(4)}
           >
             View details
           </div>
@@ -86,6 +94,8 @@ const UserTabs = () => {
         ) : selected === 2 ? (
           <DistributorSalesRef />
         ) : selected === 3 ? (
+          <ManagerDistributors />
+        ) : selected === 4 ? (
           <AllUsers />
         ) : (
           ''

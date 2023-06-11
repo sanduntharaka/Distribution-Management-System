@@ -5,7 +5,13 @@ const Spinner = (props) => {
     <div className="spinner-container">
       <div
         className={`loading-spinner  ${
-          props.login ? 'login' : props.detail ? 'detail' : ''
+          props.login
+            ? 'login'
+            : props.detail
+            ? 'detail'
+            : props.page
+            ? 'page'
+            : ''
         } `}
       ></div>
     </div>

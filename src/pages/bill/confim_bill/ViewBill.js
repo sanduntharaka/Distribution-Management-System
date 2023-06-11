@@ -11,26 +11,52 @@ const ViewBill = (props) => {
     company_number: '',
   });
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setDistributor({
-          full_name: res.data.full_name,
-          address: res.data.address,
-          company_number: res.data.company_number,
+    if (props.user.is_salesref) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
+    if (props.user.is_distributor) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/distributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
 
   const handleCancle = (e) => {
@@ -50,9 +76,14 @@ const ViewBill = (props) => {
         <div ref={compoenentRef} style={{ fontSize: '12px' }}>
           <div className={styles.row}>
             <div className={styles.heading}>
-              <h2>{distributor.full_name}</h2>
-              <p>{distributor.address}</p>
-              <p>{distributor.company_number}</p>
+              <div className={styles.hcol1}>
+                <img src="./images/Bixton_logo.png" alt="" />
+              </div>
+              <div className={styles.hcol2}>
+                <h2>{distributor.full_name}</h2>
+                <p>{distributor.address}</p>
+                <p>{distributor.company_number}</p>
+              </div>
             </div>
           </div>
           <div className={styles.row}>
@@ -83,6 +114,7 @@ const ViewBill = (props) => {
                   <th>Unit Qty</th>
                   <th>Free Qty</th>
                   <th>Price</th>
+                  <th>Discount</th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -94,6 +126,7 @@ const ViewBill = (props) => {
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
                     <td>{item.price}</td>
+                    <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
@@ -101,13 +134,19 @@ const ViewBill = (props) => {
               <tfoot>
                 <tr>
                   <td className={styles.total} colSpan={5}>
-                    Total value:
+                    Total amount:
                   </td>
                   <td>{props.data.sub_total}</td>
                 </tr>
                 <tr>
                   <td className={styles.total} colSpan={5}>
-                    Invoice value:
+                    Total dicsount amount:
+                  </td>
+                  <td>{props.data.total_discount}</td>
+                </tr>
+                <tr>
+                  <td className={styles.total} colSpan={5}>
+                    Final amount:
                   </td>
                   <td>{props.data.total}</td>
                 </tr>
@@ -115,20 +154,30 @@ const ViewBill = (props) => {
             </table>
           </div>
           <div className={styles.row}>
-            <p>Accepted above items in order</p>
+            <div className={styles.two_sides}>
+              <div className="col">
+                <p>...................................</p>
+                <p>Invoice by name and date</p>
+              </div>
+              <div className="col">
+                <p>...................................</p>
+                <p>Signature and rubber stamp</p>
+              </div>
+            </div>
           </div>
           <div className={styles.row}>
-            <p>Customer: ............</p>
+            <p>Accepted above items in order</p>
           </div>
+
           <div className={styles.row}>
             <div className={styles.two_sides}>
               <div className="col">
                 <p>...................................</p>
-                <p>Invoice by</p>
+                <p>Customer name and date</p>
               </div>
               <div className="col">
                 <p>...................................</p>
-                <p>Recieved by</p>
+                <p>Signature and rubber stamp</p>
               </div>
             </div>
           </div>

@@ -68,7 +68,9 @@
         align-items: center;
         margin-top: 10px;
         text-transform: capitalize;
-        width: 300px;
+        padding: 0px 20px 0px 20px;
+        box-sizing: border-box;
+        width: max-content;
         font-size: 20px;
         height: 40px;
         border-radius: 50px;
@@ -109,6 +111,13 @@
                 width: 400px;
               }
             }
+            &.total {
+              display: flex;
+              justify-content: flex-end;
+              gap: 25px;
+              border-radius: 5px;
+              background-color: $color-colum-background;
+            }
           }
         }
       }
@@ -128,6 +137,7 @@
   @include mobile {
     margin-left: auto;
     margin-right: auto;
+    width: 300px;
   }
   .testTbl {
     background-color: $color-blue-sidebar-title-light;

@@ -302,7 +302,7 @@ const NotBuyDetails = () => {
       <div className="page__pcont">
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
-            <div>
+            {/* <div>
               <Button
                 id="demo-customized-button"
                 aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -337,8 +337,8 @@ const NotBuyDetails = () => {
                     {item}
                   </MenuItem>
                 ))}
-              </StyledMenu>
-            </div>
+              </StyledMenu> 
+            </div>*/}
           </div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>

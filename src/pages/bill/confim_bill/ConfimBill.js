@@ -3,6 +3,7 @@ import styles from './confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
 const ConfimBill = (props) => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const compoenentRef = useRef();
   const [distributor, setDistributor] = useState({
     full_name: '',
@@ -10,30 +11,53 @@ const ConfimBill = (props) => {
     company_number: '',
   });
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setDistributor({
-          full_name: res.data.full_name,
-          address: res.data.address,
-          company_number: res.data.company_number,
+    if (user.is_salesref) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
+    if (user.is_distributor) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/distributor/${props.issued_by.id}`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
   const handleEdit = (e) => {
     e.preventDefault();
-    console.log('called');
     props.close();
   };
   const handleCancle = (e) => {
@@ -84,7 +108,7 @@ const ConfimBill = (props) => {
           payee_name: props.cheque_detail.payee_name,
           amount: props.cheque_detail.amount,
         };
-
+        console.log(item_data);
         axiosInstance
           .post('/salesref/invoice/create/invoice/items/', item_data, {
             headers: {
@@ -132,9 +156,14 @@ const ConfimBill = (props) => {
         <div ref={compoenentRef} style={{ fontSize: '12px' }}>
           <div className={styles.row}>
             <div className={styles.heading}>
-              <h2>{distributor.full_name}</h2>
-              <p>{distributor.address}</p>
-              <p>{distributor.company_number}</p>
+              <div className={styles.hcol1}>
+                <img src="./images/Bixton_logo.png" alt="" />
+              </div>
+              <div className={styles.hcol2}>
+                <h2>{distributor.full_name}</h2>
+                <p>{distributor.address}</p>
+                <p>{distributor.company_number}</p>
+              </div>
             </div>
           </div>
           <div className={styles.row}>
@@ -144,7 +173,7 @@ const ConfimBill = (props) => {
           </div>
           <div className={styles.row}>
             <div className={styles.col}>
-              <p>method: {props.data.payment_type}</p>
+              {/* <p>method: {props.data.payment_type}</p> */}
               <p>Customer: {props.data.dealer_name}</p>
               <p>Customer Id: {props.data.dealer}</p>
               <p>Address: {props.data.dealer_address}</p>
@@ -169,6 +198,7 @@ const ConfimBill = (props) => {
                   <th>Unit Qty</th>
                   <th>Free Qty</th>
                   <th>Price</th>
+                  <th>Discount</th>
                   <th>Value</th>
                 </tr>
               </thead>
@@ -180,20 +210,27 @@ const ConfimBill = (props) => {
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
                     <td>{item.price}</td>
+                    <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr>
-                  <td className={styles.total} colSpan={5}>
-                    Total value:
+                  <td className={styles.total} colSpan={6}>
+                    Total amount:
                   </td>
                   <td>{props.data.sub_total}</td>
                 </tr>
                 <tr>
-                  <td className={styles.total} colSpan={5}>
-                    Invoice value:
+                  <td className={styles.total} colSpan={6}>
+                    Total dicsount amount:
+                  </td>
+                  <td>{props.data.total_discount}</td>
+                </tr>
+                <tr>
+                  <td className={styles.total} colSpan={6}>
+                    Final amount:
                   </td>
                   <td>{props.data.total}</td>
                 </tr>
@@ -201,20 +238,29 @@ const ConfimBill = (props) => {
             </table>
           </div>
           <div className={styles.row}>
-            <p>Accepted above items in order</p>
+            <div className={styles.two_sides}>
+              <div className="col">
+                <p>...................................</p>
+                <p>Invoice by name and date</p>
+              </div>
+              <div className="col">
+                <p>...................................</p>
+                <p>Signature and rubber stamp</p>
+              </div>
+            </div>
           </div>
           <div className={styles.row}>
-            <p>Customer: ............</p>
+            <p>Accepted above items in order</p>
           </div>
           <div className={styles.row}>
             <div className={styles.two_sides}>
               <div className="col">
                 <p>...................................</p>
-                <p>Invoice by</p>
+                <p>Customer name and date</p>
               </div>
               <div className="col">
                 <p>...................................</p>
-                <p>Recieved by</p>
+                <p>Signature and rubber stamp</p>
               </div>
             </div>
           </div>

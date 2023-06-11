@@ -41,7 +41,9 @@ const ProfilePictureUpload = (props) => {
         console.log(error);
       });
   };
-  const handleCancel = () => {};
+  const handleCancel = () => {
+    props.close();
+  };
   return (
     <div className="edit">
       <div className="edit__content">

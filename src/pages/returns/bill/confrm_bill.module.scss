@@ -1,0 +1,77 @@
+.confirmBill {
+  height: 100vh;
+  width: 90%;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transform: translateY(-50%);
+}
+.container {
+  width: 100%;
+  height: 95vh;
+  background-color: white;
+  display: block;
+  color: black;
+  font-size: 12px;
+}
+.row {
+  margin-bottom: 10px;
+  width: 100%;
+
+  padding: 0px 10px 0px 10px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 50px;
+}
+.heading {
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
+}
+.right {
+  width: 100%;
+  text-align: right;
+}
+table {
+  width: 100%;
+  th {
+    text-align: left;
+  }
+  .total {
+    text-align: right;
+  }
+}
+.button_bar {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.buttons {
+  display: flex;
+  gap: 25px;
+}
+button {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-radius: 25px;
+  width: max-content;
+  padding: 10px 25px;
+  color: white;
+}
+.two_sides {
+  width: 100%;
+  margin-top: 25px;
+  margin-left: 25px;
+  margin-right: 25px;
+  box-sizing: border-box;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}

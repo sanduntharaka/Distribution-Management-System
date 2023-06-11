@@ -3,6 +3,18 @@ import './confirmstatus.scss';
 import { axiosInstance } from '../../../axiosInstance';
 
 const ConfirmStatus = (props) => {
+  const [currentDate, setCurrentDate] = useState(() => {
+    const d = new Date();
+    let year = d.getFullYear();
+    let month = d.getMonth() + 1;
+    let day = d.getDate();
+    return `${year}-${month}-${day}`;
+  });
+  const [invoice, setInvoice] = useState({
+    status: 'confirmed',
+    paid_amount: 0,
+    confirmed_date: currentDate,
+  });
   const [cheque, setCheque] = useState({
     deposited_at: '',
     status: '',
@@ -36,7 +48,7 @@ const ConfirmStatus = (props) => {
     axiosInstance
       .put(
         `/salesref/invoice/create/invoice/confirm/${props.invoice.id}`,
-        { status: 'confirmed' },
+        invoice,
         {
           headers: {
             Authorization:
@@ -188,6 +200,17 @@ const ConfirmStatus = (props) => {
                 <div className="col">
                   <p>Total</p>
                   <p>{props.invoice.total}</p>
+                </div>
+              </div>
+              <div className="row">
+                <div className="row">
+                  <label htmlFor="">Payed</label>
+                  <input
+                    type="number"
+                    onChange={(e) =>
+                      setInvoice({ ...invoice, paid_amount: e.target.value })
+                    }
+                  />
                 </div>
               </div>
               {props.invoice.payment_type === 'cheque' ? (

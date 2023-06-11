@@ -32,7 +32,7 @@
       height: 50px;
     }
     @include mobile {
-      width: 450px;
+      width: 300px;
       padding: 25px;
     }
     &__title {
@@ -92,6 +92,12 @@
       display: flex;
       justify-content: center;
       gap: 5px;
+      @include mobile {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
       .remBtn {
         display: flex;
         justify-content: center;

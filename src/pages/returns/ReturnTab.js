@@ -44,7 +44,7 @@ const ReturnTab = () => {
     if (user.is_salesref) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/${
+          `/distributor/salesref/inventory/bysalesref/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {

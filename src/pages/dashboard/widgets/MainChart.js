@@ -13,17 +13,46 @@ import {
 const MainChart = (props) => {
   const [data, setData] = useState([]);
   useEffect(() => {
-    axiosInstance
-      .get('/dashboard/get/allsales/company/months', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-      });
+    console.log('lgd', props.info);
+    if (props.user.is_salesref) {
+      axiosInstance
+        .get(`/dashboard/get/allsales/salesref/months/${props.info.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+        });
+    }
+    if (props.user.is_manager) {
+      axiosInstance
+        .get(`/dashboard/get/allsales/manager/months/${props.info.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+        });
+    }
+    if (props.user.is_distributor) {
+      axiosInstance
+        .get(`/dashboard/get/allsales/distributor/months/${props.info.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+        });
+    }
   }, []);
   console.log(data);
   return (

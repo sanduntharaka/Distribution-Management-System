@@ -1,9 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useEffect } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 
 import Modal from '@mui/material/Modal';
+import Spinner from '../../components/loadingSpinner/Spinner';
+const ShowMessage = forwardRef((props, ref) => {
+  return (
+    <Message
+      hide={() => props.handleClose()}
+      success={props.success}
+      error={props.error}
+      title={props.title}
+      msg={props.msg}
+      ref={ref}
+    />
+  );
+});
 const UserDetails = () => {
+  const [loading, setLoading] = useState(false);
+
   //message modal
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -14,9 +29,15 @@ const UserDetails = () => {
   const handleClose = () => setOpen(false);
 
   const [data, setData] = useState({
-    user: sessionStorage.getItem('new_user_email'),
+    user:
+      sessionStorage.getItem('new_user') !== undefined &&
+      sessionStorage.getItem('new_user')
+        ? sessionStorage.getItem('new_user')
+        : '',
     full_name: '',
     address: '',
+    nic: '',
+    email: '',
     designation: '',
     dob: '',
     company_number: '',
@@ -26,8 +47,31 @@ const UserDetails = () => {
     immediate_contact_person_number: '',
     terriotory: '',
   });
+  const [users, setUsers] = useState([]);
+  useEffect(() => {
+    setLoading(true);
+    axiosInstance
+      .get('/users/all/users/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+
+        setUsers(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+
+        console.log(err);
+      });
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     axiosInstance
       .post('/users/create/', data, {
@@ -37,6 +81,8 @@ const UserDetails = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         handleOpen();
         setSuccess(true);
         setError(false);
@@ -46,6 +92,8 @@ const UserDetails = () => {
         setData({ ...data, user: '' });
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
         handleOpen();
         setTitle('Error');
@@ -60,6 +108,8 @@ const UserDetails = () => {
       ...data,
       full_name: '',
       address: '',
+      email: '',
+      nic: '',
       designation: '',
       dob: '',
       company_number: '',
@@ -72,9 +122,18 @@ const UserDetails = () => {
   };
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={open} onClose={handleClose}>
-        <Message
-          hide={handleClose}
+        <ShowMessage
+          handleClose={handleClose}
           success={success}
           error={error}
           title={title}
@@ -89,11 +148,40 @@ const UserDetails = () => {
           <form action="" onSubmit={handleSubmit}>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Full Name</div>
+                <div className="form__row__col__label">Select user account</div>
+                <div className="form__row__col__input">
+                  {/* <input
+                    type="text"
+                    placeholder="type name here"
+                    value={data.full_name ? data.full_name : ''}
+                    onChange={(e) =>
+                      setData({ ...data, full_name: e.target.value })
+                    }
+                    required
+                  /> */}
+                  <select
+                    defaultValue={'null'}
+                    name=""
+                    id=""
+                    value={data.user ? data.user : ''}
+                    onChange={(e) => setData({ ...data, user: e.target.value })}
+                  >
+                    <option value="null">Select user</option>
+                    {users.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.user_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Name with initials</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
                     placeholder="type name here"
+                    value={data.full_name ? data.full_name : ''}
                     onChange={(e) =>
                       setData({ ...data, full_name: e.target.value })
                     }
@@ -107,17 +195,15 @@ const UserDetails = () => {
                   style={{ display: 'flex', gap: 5 }}
                 >
                   Email
-                  <p style={{ textTransform: 'lowercase' }}>
-                    (please enter email that used to create user)
-                  </p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
                     placeholder="type email here"
-                    value={data.user}
-                    onChange={(e) => setData({ ...data, user: e.target.value })}
-                    disabled={data.user ? true : false}
+                    value={data.email ? data.email : ''}
+                    onChange={(e) =>
+                      setData({ ...data, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -140,15 +226,13 @@ const UserDetails = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Designation</div>
+                <div className="form__row__col__label">NIC</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
                     placeholder="type designation here"
-                    value={data.designation ? data.designation : ''}
-                    onChange={(e) =>
-                      setData({ ...data, designation: e.target.value })
-                    }
+                    value={data.nic ? data.nic : ''}
+                    onChange={(e) => setData({ ...data, nic: e.target.value })}
                     required
                   />
                 </div>
@@ -168,7 +252,20 @@ const UserDetails = () => {
                   />
                 </div>
               </div>
-              <div className="form__row__col dontdisp"></div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Designation</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    placeholder="type designation here"
+                    value={data.designation ? data.designation : ''}
+                    onChange={(e) =>
+                      setData({ ...data, designation: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="form__row">

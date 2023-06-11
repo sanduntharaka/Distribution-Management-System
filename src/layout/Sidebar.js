@@ -6,14 +6,17 @@ import {
 } from 'react-icons/ai';
 import { MdOutlineInventory, MdRoute } from 'react-icons/md';
 import {
-  TbFileInvoice,
   TbLayoutDashboard,
   TbReportMoney,
   TbTruckReturn,
   TbTruckDelivery,
+  TbReportSearch,
 } from 'react-icons/tb';
-import { BiPurchaseTagAlt, BiMenu } from 'react-icons/bi';
-import { SiPurescript } from 'react-icons/si';
+import { TiArrowBackOutline } from 'react-icons/ti';
+import { FiSettings } from 'react-icons/fi';
+
+import { BiPurchaseTagAlt, BiHistory } from 'react-icons/bi';
+import { GiCheckedShield } from 'react-icons/gi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/actions/UserActions';
@@ -85,7 +88,7 @@ const Sidebar = () => {
             <div className="container__list__item__name">inventory</div>
           </NavLink>
 
-          {user.is_companyStaff || user.is_superuser ? (
+          {user.is_manager || user.is_superuser ? (
             <NavLink
               to="/distribution"
               className={(isActive, isPending) =>
@@ -137,7 +140,35 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">billing</div>
           </NavLink>
+          {user.is_distributor ? (
+            <>
+              <NavLink
+                to="/past"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <BiHistory />
+                </div>
+                <div className="container__list__item__name">Old details</div>
+              </NavLink>
 
+              <NavLink
+                to="/confirm"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <GiCheckedShield />
+                </div>
+                <div className="container__list__item__name">Approvals</div>
+              </NavLink>
+            </>
+          ) : (
+            ''
+          )}
           <NavLink
             to="/purchase"
             className={(isActive, isPending) =>
@@ -151,7 +182,7 @@ const Sidebar = () => {
           </NavLink>
           {user.is_distributor || user.is_manager || user.is_salesref ? (
             <NavLink
-              to="/return"
+              to="/mreturn"
               className={(isActive, isPending) =>
                 handleClassname(isActive, isPending)
               }
@@ -159,7 +190,22 @@ const Sidebar = () => {
               <div className="container__list__item__icon">
                 <TbTruckReturn />
               </div>
-              <div className="container__list__item__name">return</div>
+              <div className="container__list__item__name">market return</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+          {user.is_distributor || user.is_manager || user.is_salesref ? (
+            <NavLink
+              to="/sreturn"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TiArrowBackOutline />
+              </div>
+              <div className="container__list__item__name">sales return</div>
             </NavLink>
           ) : (
             ''
@@ -175,6 +221,36 @@ const Sidebar = () => {
                 <AiOutlineFieldTime />
               </div>
               <div className="container__list__item__name">leave</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+          {user.is_superuser || user.is_distributor || user.is_manager ? (
+            <NavLink
+              to="/report"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TbReportSearch />
+              </div>
+              <div className="container__list__item__name">reports</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
+          {user.is_superuser || user.is_manager ? (
+            <NavLink
+              to="/settings"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <FiSettings />
+              </div>
+              <div className="container__list__item__name">settings</div>
             </NavLink>
           ) : (
             ''

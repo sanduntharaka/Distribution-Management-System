@@ -26,9 +26,16 @@
 
   &.login {
     border-top: 10px solid #ff0000;
+    width: 25px;
+    height: 25px;
   }
   &.detail {
     border-top: 10px solid $color-sidebar;
+  }
+  &.page {
+    border-top: 10px solid $color-details;
+    width: 10px;
+    height: 10px;
   }
 }
 @keyframes spinner {

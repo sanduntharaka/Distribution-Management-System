@@ -22,6 +22,11 @@ import BillingTab from './pages/bill/BillingTab';
 import PsaTab from './pages/psa/PsaTab';
 import Profile from './pages/profile/Profile';
 import LeaveTab from './pages/leavesheet/LeaveTab';
+import ReportsTab from './pages/reports/ReportsTab';
+import SalseReturnTab from './pages/salesreturn/SalseReturnTab';
+import MainSettings from './pages/settings/MainSettings';
+import ConfirmTab from './pages/confirm/ConfirmTab';
+import PastTab from './pages/past/PastTab';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -49,10 +54,17 @@ function App() {
           <Route path="/invoice" element={<InvoiceTab />} />
           <Route path="/dealer" element={<DealersTab />} />
           <Route path="/bill" element={<BillingTab />} />
+          <Route path="/past" element={<PastTab />} />
+
+          <Route path="/confirm" element={<ConfirmTab />} />
+
           <Route path="/purchase" element={<PurchTab />} />
-          <Route path="/return" element={<ReturnTab />} />
+          <Route path="/mreturn" element={<ReturnTab />} />
+          <Route path="/sreturn" element={<SalseReturnTab />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/leave" element={<LeaveTab />} />
+          <Route path="/report" element={<ReportsTab />} />
+          <Route path="/settings" element={<MainSettings />} />
         </Routes>
       </Layout>
     );

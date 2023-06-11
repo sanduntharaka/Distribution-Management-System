@@ -215,6 +215,7 @@ const DistributorInventory = ({ inventory, user }) => {
             showEdit={setEditDetailsOpen}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : editdetailsOpen ? (
           <ProductEdit
@@ -258,7 +259,7 @@ const DistributorInventory = ({ inventory, user }) => {
       <div className="page__pcont">
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
-            <div>
+            {/* <div>
               <select
                 name=""
                 id=""
@@ -270,7 +271,7 @@ const DistributorInventory = ({ inventory, user }) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
           </div>
           <div className="page__pcont__row__col dontdisp"></div>
           <div className="page__pcont__row__col dontdisp"></div>

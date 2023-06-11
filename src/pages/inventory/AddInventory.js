@@ -32,6 +32,8 @@ const AddInventory = () => {
   });
 
   useEffect(() => {
+    setLoading(true);
+
     axiosInstance
       .get('/category/all/', {
         headers: {
@@ -40,9 +42,13 @@ const AddInventory = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         setCategorys(res.data);
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
       });
   }, []);

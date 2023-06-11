@@ -7,6 +7,7 @@ import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ConfimBill from './confim_bill/ConfimBill';
 const CreateBill = ({ inventory }) => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
     let year = d.getFullYear();
@@ -15,10 +16,11 @@ const CreateBill = ({ inventory }) => {
     return `${year}-${month}-${day}`;
   });
   const [billingPriceMethod, setBillingPriceMethod] = useState('2');
-  const [discount, setDiscount] = useState(9);
+  // const [discount, setDiscount] = useState(9);
   const [dealers, setDealers] = useState([]);
   const [payment, setPayment] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [discount, setDiscount] = useState(0);
   const [data, setData] = useState({
     dealer: '',
     dealer_name: '',
@@ -26,19 +28,21 @@ const CreateBill = ({ inventory }) => {
     dealer_contact: '',
     dis_sales_ref: '',
     date: currentDate,
-    bill_code: 'IN',
+    bill_code: 'INV-',
     total: 0,
-    discount: discount,
+    total_discount: 0,
     payment_type: payment,
     billing_price_method: billingPriceMethod,
     discount_percentage: 0,
     sub_total: 0,
+
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
   });
 
   const [chequeDetails, setCequeDetails] = useState({
     date: currentDate,
     cheque_number: '',
+    bank: '',
     account_number: '',
     payee_name: '',
     amount: 0,
@@ -101,7 +105,7 @@ const CreateBill = ({ inventory }) => {
         setIsLoading(false);
         setSuccess(false);
         setError(true);
-        setMsg('Cannot fetch dealers details. Please Try again');
+        setMsg('Cannot fetch dealers details. Please try again');
         setTitle('Error');
         handleOpen();
       });
@@ -123,37 +127,68 @@ const CreateBill = ({ inventory }) => {
         setIsLoading(false);
         setSuccess(false);
         setError(true);
-        setMsg('Cannot fetch inventory items. Please Try again');
+        setMsg('Cannot fetch inventory items. Please try again');
         setTitle('Error');
         handleOpen();
       });
-    setLoading(true);
+    if (user.is_salesref) {
+      setLoading(true);
 
-    axiosInstance
-      .get(
-        `/distributor/salesref/get/bysalesref/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setLoading(false);
-        setData({ ...data, dis_sales_ref: res.data.id });
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot fetch inventory. Please Try again');
-        setTitle('Error');
-        handleOpen();
-      });
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/bysalesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setData({ ...data, dis_sales_ref: res.data.id });
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot fetch inventory. Please try again');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
+    if (user.is_distributor) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/bydistributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setData({ ...data, dis_sales_ref: res.data.id });
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot fetch inventory. Please Try again');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
   }, []);
   useEffect(() => {
     if (data.sub_total !== undefined && data.discount !== undefined) {
@@ -191,6 +226,7 @@ const CreateBill = ({ inventory }) => {
     setItems([]);
     setQty(0);
     setFoc(0);
+    setDiscount(0);
   };
   const handleBillingPriceMethod = (e) => {
     handleClear(e);
@@ -205,12 +241,14 @@ const CreateBill = ({ inventory }) => {
         setData({
           ...data,
           sub_total: data.sub_total + product.whole_sale_price * qty,
+          total_discount: data.total_discount + parseFloat(discount),
         });
       }
       if (billingPriceMethod === '2') {
         setData({
           ...data,
           sub_total: data.sub_total + product.retail_price * qty,
+          total_discount: data.total_discount + parseFloat(discount),
         });
       }
 
@@ -224,8 +262,10 @@ const CreateBill = ({ inventory }) => {
           price: product.retail_price,
           qty: parseInt(qty),
           foc: parseInt(foc),
+          discount: parseFloat(discount),
           pack_size: product.pack_size,
-          extended_price: product.retail_price * parseInt(qty),
+          extended_price:
+            product.retail_price * parseInt(qty) - parseFloat(discount),
         },
       ]);
     } else {
@@ -294,9 +334,8 @@ const CreateBill = ({ inventory }) => {
       ...data,
       bill_code: 'IN',
       date: currentDate,
-      total: data.sub_total - (data.sub_total * discount) / 100,
+      total: data.sub_total - data.total_discount,
       billing_price_method: billingPriceMethod,
-      discount_percentage: discount,
     });
     setIsLoading(false);
     showInvoice();
@@ -441,6 +480,9 @@ const CreateBill = ({ inventory }) => {
                       <div className="searchContent__row__details">
                         <p>Item Code</p>
                         <p>Qty</p>
+                        <p>Whole sale price</p>
+                        <p>Retail price</p>
+                        <p>Description</p>
                       </div>
                     </div>
                     {products
@@ -464,7 +506,8 @@ const CreateBill = ({ inventory }) => {
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
                             <p>{item.qty}</p>
-                            <p>{item.date}</p>
+                            <p>{item.whole_sale_price}</p>
+                            <p>{item.retail_price}</p>
                             <p>{item.description}</p>
                           </div>
                         </div>
@@ -497,6 +540,16 @@ const CreateBill = ({ inventory }) => {
                     type="number"
                     value={foc}
                     onChange={(e) => setFoc(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Discount</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
                   />
                 </div>
               </div>
@@ -544,6 +597,7 @@ const CreateBill = ({ inventory }) => {
                         <th>Qty</th>
                         <th>Total Qty</th>
                         <th>Sub total</th>
+                        <th>Discount</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -558,6 +612,7 @@ const CreateBill = ({ inventory }) => {
                           <td>{item.qty + item.foc}</td>
 
                           <td>{item.qty * item.price}</td>
+                          <td>{item.discount}</td>
 
                           <td className="action">
                             <button
@@ -590,7 +645,7 @@ const CreateBill = ({ inventory }) => {
                 <p>Rs {data.sub_total}/-</p>
               </div>
             </div>
-            <div className="form__row">
+            {/* <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Discount percentage</div>
 
@@ -609,7 +664,7 @@ const CreateBill = ({ inventory }) => {
               </div>
               <div className="form__row__col dontdisp"></div>
               <div className="form__row__col dontdisp"></div>
-            </div>
+            </div> */}
             <div className="form__row">
               <div
                 className="form__row__col"
@@ -622,11 +677,11 @@ const CreateBill = ({ inventory }) => {
                 }}
               >
                 <p>Final Total:</p>
-                <p>Rs {data.sub_total - (data.sub_total * discount) / 100}/-</p>
+                <p>Rs {data.sub_total - data.total_discount}/-</p>
               </div>
             </div>
 
-            <div className="form__row">
+            {/* <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Payment Method</div>
                 <div className="form__row__col__input">
@@ -681,9 +736,9 @@ const CreateBill = ({ inventory }) => {
                 <div className="form__row__col__input"></div>
                 <div className="form__row__col__input"></div>
               </div>
-            </div>
+            </div> */}
 
-            {cheque ? (
+            {/* {cheque ? (
               <div className="form__row">
                 <div className="form__row__col">
                   <div className="form__row__col__label">Cheque Number</div>
@@ -708,6 +763,20 @@ const CreateBill = ({ inventory }) => {
                         setCequeDetails({
                           ...chequeDetails,
                           account_number: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Bank</div>
+                  <div className="form__row__col__input">
+                    <input
+                      type="text"
+                      onChange={(e) =>
+                        setCequeDetails({
+                          ...chequeDetails,
+                          bank: e.target.value,
                         })
                       }
                     />
@@ -758,7 +827,7 @@ const CreateBill = ({ inventory }) => {
               </div>
             ) : (
               ''
-            )}
+            )} */}
 
             <div className="form__btn">
               <div className="form__btn__container">
