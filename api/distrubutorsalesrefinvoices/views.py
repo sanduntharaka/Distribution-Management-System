@@ -384,3 +384,12 @@ class AllInvoiceByDealer(APIView):
         serializer = serializers.GetDealerInvoiceSerializer(
             invoices, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class AllInvoicePayments(generics.ListAPIView):
+    serializer_class = serializers.GetPaymentDetailsSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+
+        return get_list_or_404(PaymentDetails, bill=item)

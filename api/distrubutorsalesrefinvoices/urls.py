@@ -10,6 +10,7 @@ urlpatterns = [
          views.AddCredit.as_view()),
     path('get/invoice/cheque/<id>', views.GetChequeDetails.as_view()),
     path('all/invoice/', views.AllInvoice.as_view()),
+    path('all/invoice/payments/<id>', views.AllInvoicePayments.as_view()),
     path('all/pending/invoices/<id>', views.AllPendingInvoice.as_view()),
     path('all/credit/invoices/<id>', views.AllCreditInvoice.as_view()),
     path('all/invoice/by/salesref/<id>', views.AllInvoiceBySalesRef.as_view()),

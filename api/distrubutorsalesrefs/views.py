@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
+from manager_distributor.models import ManagerDistributor
 from distrubutor_salesref.models import SalesRefDistributor
 from distributor_inventory.models import DistributorInventory, DistributorInventoryItems
 from . import serializers
@@ -91,5 +92,17 @@ class GetAllSalesrefsByDistributor(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
         # all_salesrefs = SalesRefDistributor.objects.filter(distributor=item)
-        print('called')
         return get_list_or_404(SalesRefDistributor, distributor=item)
+
+
+class GetAllSalesrefsByManager(generics.ListAPIView):
+    serializer_class = serializers.GetDistributorSalesRefSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        all_distributors = ManagerDistributor.objects.filter(
+            manager=item).values('distributor')
+        distributor_ids = [i['distributor'] for i in all_distributors]
+        # all_salesrefs = SalesRefDistributor.objects.filter(distributor=item)
+        print('called')
+        return get_list_or_404(SalesRefDistributor, distributor__in=distributor_ids)

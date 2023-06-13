@@ -97,3 +97,15 @@ class GetDealerInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
         fields = ('id', 'code')
+
+
+class GetPaymentDetailsSerializer(serializers.ModelSerializer):
+    code = serializers.CharField(
+        source='bill.get_bill_code_number_combine')
+    added_by = serializers.CharField(
+        source='added_by.full_name')
+
+    class Meta:
+        model = PaymentDetails
+        fields = ('id', 'code', 'payment_type', 'paid_amount',
+                  'date', 'due_date', 'added_by')
