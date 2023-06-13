@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './confirmstatus.scss';
 import { axiosInstance } from '../../../axiosInstance';
-
+import Modal from '@mui/material/Modal';
 import Spinner from '../../../components/loadingSpinner/Spinner';
+import EditBill from './EditBill';
 const ConfirmStatus = (props) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
@@ -11,8 +12,12 @@ const ConfirmStatus = (props) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
   const [loading, setLoading] = useState(false);
-
+  const [exceed, setExceed] = useState(false);
   const [invoice, setInvoice] = useState({
     payment_type: '',
     paid_amount: 0,
@@ -67,12 +72,33 @@ const ConfirmStatus = (props) => {
       });
   };
 
+  const handlePayed = (e) => {
+    if (e.target.value > props.invoice.total) {
+      setExceed(true);
+    } else {
+      setExceed(false);
+      setInvoice({ ...invoice, paid_amount: e.target.value });
+    }
+  };
   const handleCloseConfirm = (e) => {
     e.preventDefault();
     props.closeModal();
     console.log(props);
   };
-  console.log(props);
+  const handlePaymentHistory = (e) => {
+    e.preventDefault();
+    setEditDetailsOpen(true);
+    handleModalOpen();
+  };
+  const MyInvoiceConfirm = React.forwardRef((props, ref) => {
+    return (
+      <EditBill
+        invoice={props.invoice}
+        showEdit={props.showEdit}
+        closeModal={props.closeModal}
+      />
+    );
+  });
   return (
     <div className="confirm_details">
       {loading ? (
@@ -84,6 +110,13 @@ const ConfirmStatus = (props) => {
       ) : (
         ''
       )}
+      <Modal open={modalOpen} onClose={handleModalClose}>
+        <MyInvoiceConfirm
+          invoice={props.invoice}
+          showEdit={setEditDetailsOpen}
+          closeModal={handleModalClose}
+        />
+      </Modal>
       <div className="container">
         <div className="title">
           <h1>Add Credit details</h1>
@@ -139,7 +172,12 @@ const ConfirmStatus = (props) => {
                   <p>{props.invoice.payed}</p>
                 </div>
                 <div className="col">
-                  <button className="addBtn">Payment history</button>
+                  <button
+                    className="addBtn"
+                    onClick={(e) => handlePaymentHistory(e)}
+                  >
+                    Payment history
+                  </button>
                 </div>
               </div>
               <div className="row">
@@ -162,16 +200,22 @@ const ConfirmStatus = (props) => {
                   <option value="cash-credit-cheque">cash-credit-cheque</option>
                 </select>
               </div>
-
+              {exceed ? (
+                <div
+                  className="row"
+                  style={{ color: 'red', fontWeight: 'bold' }}
+                >
+                  <div className="row">
+                    <p>You entered amount exceeded the total amount.</p>
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
               <div className="row">
                 <div className="row">
                   <label htmlFor="">Payed</label>
-                  <input
-                    type="number"
-                    onChange={(e) =>
-                      setInvoice({ ...invoice, paid_amount: e.target.value })
-                    }
-                  />
+                  <input type="number" onChange={(e) => handlePayed(e)} />
                 </div>
               </div>
               {invoice.payment_type === 'credit' ||

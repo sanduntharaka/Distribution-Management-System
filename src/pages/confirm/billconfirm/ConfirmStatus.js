@@ -13,6 +13,7 @@ const ConfirmStatus = (props) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
+  const [exceed, setExceed] = useState(false);
   const [invoice, setInvoice] = useState({
     status: '',
     confirmed_date: currentDate,
@@ -100,6 +101,15 @@ const ConfirmStatus = (props) => {
         props.msg('Cannot confirm the details. Please Try again');
         props.openMsg(true);
       });
+  };
+
+  const handlePayed = (e) => {
+    if (e.target.value > props.invoice.total) {
+      setExceed(true);
+    } else {
+      setExceed(false);
+      setInvoice({ ...invoice, paid_amount: e.target.value });
+    }
   };
 
   const handleCloseConfirm = (e) => {
@@ -250,16 +260,23 @@ const ConfirmStatus = (props) => {
                   <option value="cash-credit-cheque">cash-credit-cheque</option>
                 </select>
               </div>
+              {exceed ? (
+                <div
+                  className="row"
+                  style={{ color: 'red', fontWeight: 'bold' }}
+                >
+                  <div className="row">
+                    <p>You entered amount exceeded the total amount.</p>
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
 
               <div className="row">
                 <div className="row">
                   <label htmlFor="">Payed</label>
-                  <input
-                    type="number"
-                    onChange={(e) =>
-                      setInvoice({ ...invoice, paid_amount: e.target.value })
-                    }
-                  />
+                  <input type="number" onChange={(e) => handlePayed(e)} />
                 </div>
               </div>
 

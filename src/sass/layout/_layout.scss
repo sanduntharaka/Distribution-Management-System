@@ -72,7 +72,8 @@
         box-sizing: border-box;
         width: max-content;
         font-size: 20px;
-        height: 40px;
+        height: max-content;
+        min-height: 40px;
         border-radius: 50px;
         font-weight: bolder;
         color: $color-white;

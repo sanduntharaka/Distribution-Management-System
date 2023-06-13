@@ -30,7 +30,7 @@ const ManagerDistributors = () => {
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
-    manager: '',
+    manager: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [distributors, setDistributors] = useState([]);
   const [managers, setManagers] = useState([]);
@@ -139,9 +139,7 @@ const ManagerDistributors = () => {
                 <div className="form__row__col__input">
                   <select
                     type="text"
-                    defaultValue={
-                      JSON.parse(sessionStorage.getItem('user_details')).id
-                    }
+                    value={data.manager}
                     onChange={(e) =>
                       setData({ ...data, manager: e.target.value })
                     }

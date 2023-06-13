@@ -1,10 +1,6 @@
-// import React, { useEffect, useState } from 'react';
-// import { AiFillEdit, AiFillSave, AiFillDelete } from 'react-icons/ai';
 import { axiosInstance } from '../../../axiosInstance';
 import React, { useEffect, useState, forwardRef, use } from 'react';
-import { IconButton } from '@mui/material';
-import Modal from '@mui/material/Modal';
-// import Message from '../../components/message/Message';
+
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -75,18 +71,17 @@ const EditBill = (props) => {
       headerStyle: { width: '10px' },
       editable: false,
     },
-    { title: 'Bill ', field: 'bill', editable: false },
-    { title: 'Item code', field: 'item_code', editable: false },
-    { title: 'Description', field: 'description', editable: false },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Discount', field: 'discount' },
-    { title: 'Sub Total', field: 'extended_price' },
+    { title: 'Bill ', field: 'code', editable: false },
+    { title: 'Date', field: 'date', editable: false },
+    { title: 'Due date', field: 'due_date', editable: false },
+    { title: 'Payment type', field: 'payment_type' },
+    { title: 'Amount', field: 'paid_amount' },
+    { title: 'Added by', field: 'added_by' },
   ];
 
   useEffect(() => {
     axiosInstance
-      .get(`/salesref/invoice/items/${props.invoice.id}`, {
+      .get(`/salesref/invoice/all/invoice/payments/${props.invoice.id}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -100,77 +95,17 @@ const EditBill = (props) => {
         console.log(err);
       });
   }, [success, setSuccess]);
-  const handleEdit = (newData, oldData, resolve) => {
-    setLoading(true);
-    setError(false);
-    setSuccess(false);
-    axiosInstance
-      .put(`/salesref/invoice/item/update/${newData.id}`, newData, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setError(false);
-        setSuccess(true);
-        setLoading(false);
-        setTimeout(true);
-        setSuccessMsg('Data updated successfully');
-        resolve();
-      })
-      .catch((error) => {
-        setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setTimeout(true);
-        setErrorMsg('Server error!, Please try again');
-
-        resolve();
-      });
-  };
-
-  const handleDelete = (oldData, resolve) => {
-    setLoading(true);
-    setError(false);
-    setSuccess(false);
-    axiosInstance
-      .delete(`/salesref/invoice/item/delete/${oldData.id}`, oldData, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setError(false);
-        setSuccess(true);
-        setLoading(false);
-        setTimeout(true);
-        setSuccessMsg('Data deleted successfully');
-        resolve();
-      })
-      .catch((error) => {
-        setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setTimeout(true);
-        setErrorMsg('Server error!, Please try again');
-
-        resolve();
-      });
-  };
-
+  console.log(props);
   const handleClose = (e) => {
     e.preventDefault();
     props.showEdit(false);
     props.closeModal();
-    window.location.reload();
   };
   return (
     <div className="edit_details">
       <div className="container">
         <div className="title">
-          <h1>Edit bill</h1>
+          <h1>Payment history</h1>
         </div>
         <div className="details">
           <section className="twosides">
@@ -206,21 +141,10 @@ const EditBill = (props) => {
 
           <section>
             <MaterialTable
-              title="All items that included in related bill"
+              title="All payments that included in related bill"
               columns={columns}
               data={items}
               icons={tableIcons}
-              editable={{
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve) => {
-                    handleEdit(newData, oldData, resolve);
-                  }),
-
-                onRowDelete: (oldData) =>
-                  new Promise((resolve) => {
-                    handleDelete(oldData, resolve);
-                  }),
-              }}
             />
           </section>
         </div>

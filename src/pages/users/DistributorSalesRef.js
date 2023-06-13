@@ -201,6 +201,7 @@ const DistributorSalesRef = () => {
               success={success}
               set_success={setSuccess}
               user_details={user_detail}
+              user={user}
             />
           </div>
         </div>
