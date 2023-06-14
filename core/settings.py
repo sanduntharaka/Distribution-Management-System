@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
 
 
 # Application definition
@@ -243,7 +243,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'http://localhost:3000'
+DOMAIN = 'https://bixtonlighting.com'
 SITE_NAME = 'Bixton Distribution Management System'
 DJOSER = {
     'LOGIN_FIELD': 'user_name',
@@ -262,6 +262,8 @@ DJOSER = {
 }
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://front.ditributor.codesolusions.online",
-    "https://front.ditributor.codesolusions.online",
+    "http://bixtonlighting.com:3000",
+    "https://bixtonlighting.com:3000",
+    "https://bixtonlighting.com",
+    "http://bixtonlighting.com",
 ]
