@@ -7,4 +7,4 @@ urlpatterns = [
     path('delete/<int:pk>', views.DeleteCategory.as_view()),
     path('all/', views.AllCategory.as_view()),
 ]
-# category/all/
+# category/update/

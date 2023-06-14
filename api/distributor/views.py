@@ -24,7 +24,6 @@ class GetDistributorInventory(generics.RetrieveAPIView):
     def get_object(self, **kwargs):
         item = self.kwargs.get('id')
         dis_obj = UserDetails.objects.get(id=item)
-        print("obj:", dis_obj)
         return get_object_or_404(DistributorInventory, distributor=dis_obj)
 
 

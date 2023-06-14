@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from distributor_inventory.models import DistributorInventory, DistributorInventoryItems
+from distrubutor_salesref_invoice.models import InvoiceIntem
 
 
 class FocSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class FocSerializer(serializers.ModelSerializer):
         source='bill.get_bill_code_number_combine')
 
     class Meta:
-        model = DistributorInventoryItems
+        model = InvoiceIntem
         fields = ('foc', 'qty',
                   'date', 'invoice_number')
 

@@ -9,3 +9,4 @@ urlpatterns = [
     path('items/delete/<int:pk>', views.DeleteDistributorItem.as_view())
 
 ]
+# distributor/get

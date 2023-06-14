@@ -109,7 +109,9 @@ INSTALLED_APPS = [
     'api.reports.normalfocreport',
     'api.reports.totaloutstanding',
     'api.reports.dealerpattern',
-    'api.reports.focreport',
+
+    'api.reports.oldcreditbillsreport',
+    'api.reports.inventorystatus'
 
 
 ]

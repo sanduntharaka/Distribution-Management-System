@@ -36,14 +36,6 @@ class SalesRefInvoice(models.Model):
     def get_bill_code_number_combine(self):
         return self.bill_code + str(self.bill_number)
 
-    # def get_payment_is_cash(self):
-    #     return self.total if self.payment_type == 'cash' else 0
-
-    # def get_payment_is_cheque(self):
-    #     return self.total if self.payment_type == 'cheque' else 0
-
-    # def get_payment_is_credit(self):
-    #     return self.total if self.payment_type == 'credit' else 0
     def change_total(self, subtotal, discount):
 
         self.sub_total = self.sub_total+subtotal
@@ -179,3 +171,13 @@ class InvoiceIntem(models.Model):
     pack_size = models.IntegerField(default=0)
     price = models.FloatField(blank=False, default=0)
     extended_price = models.FloatField(blank=False, default=0)
+
+    def get_addtional_foc(self):
+        count = 0
+        if self.qty > 100:
+            count = self.foc - \
+                int(self.qty*self.item.category.foc_percentage/100)
+        return count
+
+    def get_value(self):
+        return self.qty+self.foc

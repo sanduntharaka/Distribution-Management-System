@@ -11,10 +11,13 @@ from users.models import UserAccount
 from userdetails.models import UserDetails
 from tablib import Dataset
 
+from dealer_details.models import Dealer
+
 
 class AddInvoiceExcel(APIView):
     def row_generator(self, dataset, user):
         i = 1
+
         for row in dataset:
             data = {
                 'distributor': user,
@@ -94,6 +97,7 @@ class AddChequeExcel(APIView):
     def row_generator(self, dataset, user):
         i = 1
         for row in dataset:
+
             data = {
                 'distributor': user,
                 'inv_date': row[0].strftime('%Y-%m-%d'),

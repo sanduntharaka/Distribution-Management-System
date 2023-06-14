@@ -11,6 +11,7 @@ class AddDealerSerializer(serializers.ModelSerializer):
 class GetAllDealersSerializer(serializers.ModelSerializer):
     added = serializers.CharField(source='added_by.user_name')
     psa_name = serializers.CharField(source='psa.area_name')
+    category = serializers.CharField(source='category.category_name')
 
     class Meta:
         model = Dealer
