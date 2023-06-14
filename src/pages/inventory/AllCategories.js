@@ -31,11 +31,15 @@ const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => (
+    <DeleteOutline {...props} ref={ref} style={{ color: 'red' }} />
+  )),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => (
+    <Edit {...props} ref={ref} style={{ color: 'orange' }} />
+  )),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -61,47 +65,36 @@ const AllCategories = (props) => {
       cellStyle: { width: '10px' },
       width: '10px',
       headerStyle: { width: '10px' },
+      editable: false,
     },
     { title: 'Category Name', field: 'category_name' },
     { title: 'Details', field: 'description' },
-    { title: 'Created', field: 'date' },
+    { title: 'Foc(%)', field: 'foc_percentage' },
+    { title: 'Created', field: 'date', editable: false },
   ];
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [itemDetails, setItemDetails] = useState();
-
-  //edit-details
-  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
-
-  //delete-details
-  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
-
   //item_codes
   const [itemCodes, setItemCodes] = useState([]);
 
   //mesage show
+
+  const [loading, setLoading] = useState(false);
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   useEffect(() => {
-    console.log('called');
+    setLoading(true);
     axiosInstance
       .get(`/category/all/`, {
         headers: {
@@ -110,6 +103,7 @@ const AllCategories = (props) => {
         },
       })
       .then((res) => {
+        setLoading(false);
         console.log(res.data);
         setData(res.data);
         setTableData(res.data);
@@ -120,37 +114,69 @@ const AllCategories = (props) => {
         });
       })
       .catch((err) => {
+        setLoading(false);
         console.log(err);
       });
   }, [success, props.success]);
 
-  const handleEditDetails = (e, value) => {
-    setSuccess(false);
+  const handleEdit = (newData, oldData, resolve) => {
+    setLoading(true);
     setError(false);
-    setItemDetails({
-      id: value.id,
-      added_by: value.added_by,
-      category_name: value.category_name,
-      description: value.description,
-      date: value.date,
-    });
-    setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(true);
-    handleModalOpen();
+    setSuccess(false);
+    axiosInstance
+      .put(`/category/update/${newData.id}`, newData, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setError(false);
+        setSuccess(true);
+        setTitle('Success');
+        setMsg('Category has been updated successfully');
+        handleModalOpen();
+        resolve();
+      })
+      .catch((error) => {
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Server error!, Please try again');
+        handleModalOpen();
+        resolve();
+      });
   };
-  const handleDeleteDetails = (e, value) => {
-    setSuccess(false);
+  const handleDelete = (oldData, resolve) => {
+    setLoading(true);
     setError(false);
-    setItemDetails({
-      id: value.id,
-    });
-    setMessageOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(true);
-    handleModalOpen();
+    setSuccess(false);
+    axiosInstance
+      .delete(`/category/delete/${oldData.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+
+        setError(false);
+        setSuccess(true);
+        setTitle('Success');
+        setMsg('Category has been deleted successfully');
+        handleModalOpen();
+        resolve();
+      })
+      .catch((error) => {
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Server error!, Please try again');
+        handleModalOpen();
+        resolve();
+      });
   };
   const handleFilter = (i) => {
     handleClose();
@@ -166,41 +192,13 @@ const AllCategories = (props) => {
   return (
     <>
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {editdetailsOpen ? (
-          <EditCategory
-            data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showEdit={setEditDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/category/edit'}
-          />
-        ) : deletedetailsOpen ? (
-          <DeleteNotBuy
-            data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/category/delete'}
-          />
-        ) : messageOpen ? (
-          <Message
-            hide={handleModalClose}
-            success={success}
-            error={error}
-            title={title}
-            msg={msg}
-          />
-        ) : (
-          <p>No modal</p>
-        )}
+        <Message
+          hide={handleModalClose}
+          success={success}
+          error={error}
+          title={title}
+          msg={msg}
+        />
       </Modal>
       <div className="page__title">
         <p>View Categories</p>
@@ -210,70 +208,24 @@ const AllCategories = (props) => {
           <div className="page__pcont__row__col">
             <div className="dataTable">
               <MaterialTable
+                isLoading={loading}
                 title={false}
                 columns={columns}
                 data={tblData}
-                sx={{
-                  ['&.MuiTable-root']: {
-                    background: 'red',
-                  },
-                }}
-                actionsColumnIndex={-1} // hide the actions column from view
-                actionsCellStyle={{
-                  // customize the actions cell style
-                  background: '#fde',
-                }}
-                options={{
-                  exportButton: true,
-                  actionsColumnIndex: 0,
-                }}
                 icons={tableIcons}
-                actions={[
-                  {
-                    icon: EditIcon,
-                    tooltip: 'Edit details',
-                    onClick: (event, rowData) =>
-                      handleEditDetails(event, rowData),
-                  },
-                  {
-                    icon: DeleteOutline,
-                    tooltip: 'Delete details',
-                    onClick: (event, rowData) =>
-                      handleDeleteDetails(event, rowData),
-                  },
-                ]}
-                components={{
-                  Action: (props) => (
-                    <React.Fragment>
-                      {props.action.icon === EditIcon ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'orange' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'red' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <DeleteOutline />
-                        </IconButton>
-                      )}
-                    </React.Fragment>
-                  ),
+                editable={{
+                  onRowUpdate: (newData, oldData) =>
+                    new Promise((resolve) => {
+                      handleEdit(newData, oldData, resolve);
+                    }),
+
+                  onRowDelete: (oldData) =>
+                    new Promise((resolve) => {
+                      handleDelete(oldData, resolve);
+                    }),
                 }}
               />
+              {/* </section> */}
             </div>
           </div>
         </div>

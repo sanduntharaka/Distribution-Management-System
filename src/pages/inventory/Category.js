@@ -33,6 +33,7 @@ const Category = () => {
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     category_name: '',
     description: '',
+    foc_percentage: 0,
   });
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -68,6 +69,15 @@ const Category = () => {
         handleOpen();
       });
   };
+  const handleClear = (e) => {
+    e.preventDefault();
+    setData({
+      ...data,
+      category_name: '',
+      description: '',
+      foc_percentage: 0,
+    });
+  };
   return (
     <div className="page">
       {loading ? (
@@ -102,6 +112,7 @@ const Category = () => {
                   <input
                     type="text"
                     placeholder="type category name"
+                    value={data.category_name ? data.category_name : ''}
                     onChange={(e) =>
                       setData({ ...data, category_name: e.target.value })
                     }
@@ -115,8 +126,26 @@ const Category = () => {
                   <input
                     type="text"
                     placeholder="type more details"
+                    value={data.description ? data.description : ''}
                     onChange={(e) =>
                       setData({ ...data, description: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Foc percentage(%)</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    id="percentageInput"
+                    name="percentage"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value={data.foc_percentage ? data.foc_percentage : ''}
+                    onChange={(e) =>
+                      setData({ ...data, foc_percentage: e.target.value })
                     }
                   />
                 </div>
@@ -127,6 +156,9 @@ const Category = () => {
               <div className="form__btn__container">
                 <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
                   save
+                </button>
+                <button className="btnSave" onClick={(e) => handleClear(e)}>
+                  clear
                 </button>
               </div>
             </div>

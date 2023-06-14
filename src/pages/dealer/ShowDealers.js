@@ -110,7 +110,6 @@ const ShowDealers = () => {
   };
 
   useEffect(() => {
-    console.log('called');
     axiosInstance
       .get(`/dealer/all/`, {
         headers: {

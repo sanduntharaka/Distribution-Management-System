@@ -53,6 +53,23 @@ const AddCheque = () => {
     bank: '',
     cheque_deposite_date: '',
   });
+  const [delaers, setDealers] = useState([]);
+  useEffect(() => {
+    axiosInstance
+      .get(`/dealer/all/`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setDealers(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -158,13 +175,9 @@ const AddCheque = () => {
                     type="text"
                     placeholder="type here"
                     name="invoice_number"
-                    value={
-                      data.invoice_number === undefined
-                        ? ''
-                        : data.invoice_number
-                    }
+                    value={data.inv_number === undefined ? '' : data.inv_number}
                     onChange={(e) =>
-                      setData({ ...data, invoice_number: e.target.value })
+                      setData({ ...data, inv_number: e.target.value })
                     }
                     required
                   />
@@ -184,19 +197,21 @@ const AddCheque = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Customer name</div>
+                <div className="form__row__col__label">Dealer name</div>
                 <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type here"
-                    name="customer_name"
-                    value={
-                      data.customer_name === undefined ? '' : data.customer_name
-                    }
+                  <select
+                    defaultValue={''}
                     onChange={(e) =>
                       setData({ ...data, customer_name: e.target.value })
                     }
-                  />
+                  >
+                    <option value="">Select dealer</option>
+                    {delaers.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.name} : {item.psa_name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>

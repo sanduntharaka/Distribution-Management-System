@@ -165,7 +165,7 @@ const CreateBill = ({ inventory }) => {
 
       axiosInstance
         .get(
-          `/distributor/salesref/get/bydistributor/${
+          `/distributor/get/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
@@ -272,12 +272,20 @@ const CreateBill = ({ inventory }) => {
       setExceedQty(true);
     }
   };
+  const [subTotal, setSubTotal] = useState(0);
   const handleQty = (e) => {
     setExceedQty(false);
     if (e.target.value > product.qty) {
       setExceedQty(true);
     }
+
     setQty(e.target.value);
+    if (billingPriceMethod === '1') {
+      setSubTotal(product.whole_sale_price * e.target.value);
+    }
+    if (billingPriceMethod === '2') {
+      setSubTotal(product.retail_price * e.target.value);
+    }
   };
 
   const handleRemove = (e, i) => {
@@ -332,7 +340,7 @@ const CreateBill = ({ inventory }) => {
 
     setData({
       ...data,
-      bill_code: 'IN',
+      bill_code: 'IN-',
       date: currentDate,
       total: data.sub_total - data.total_discount,
       billing_price_method: billingPriceMethod,
@@ -419,7 +427,7 @@ const CreateBill = ({ inventory }) => {
                     <option selected>Select dealer</option>
                     {dealers.map((item, i) => (
                       <option value={item.id} key={i}>
-                        {item.name}
+                        {item.name} : {item.psa_name}
                       </option>
                     ))}
                   </select>
@@ -543,6 +551,12 @@ const CreateBill = ({ inventory }) => {
                   />
                 </div>
               </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Sub total</div>
+                <div className="form__row__col__label">{subTotal}</div>
+              </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">Discount</div>
                 <div className="form__row__col__input">
@@ -582,7 +596,6 @@ const CreateBill = ({ inventory }) => {
                 </button>
               </div>
             </div>
-
             <div className="form__row">
               <div className="form__row__col">
                 <p className="form__row__col__label">Selected Products</p>

@@ -23,6 +23,9 @@ import DealerPurchasePattern from './dealerpurchasepattern/DealerPurchasePattern
 import DealerPaymentPattern from './dealerpaymentpattern/DealerPaymentPattern';
 import { axiosInstance } from '../../axiosInstance';
 import FocReport from './focreport/FocReport';
+import OldCreditBillsCollection from './oldbillsreport/OldCreditBillsCollection';
+import AddtionalFocReport from './additionalfoc/AddtionalFocReport';
+import DaylyInventoryPeriod from './dailyInventoryreport/DaylyInventoryPeriod';
 const ReportsTab = () => {
   const [selected, setSelected] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -159,6 +162,12 @@ const ReportsTab = () => {
           Credit bills collection
         </div>
         <div
+          className={`item ${selected === 23 ? 'selected' : ''}`}
+          onClick={() => handleSelect(23)}
+        >
+          Old Credit bills collection
+        </div>
+        <div
           className={`item ${selected === 17 ? 'selected' : ''}`}
           onClick={() => handleSelect(17)}
         >
@@ -193,6 +202,18 @@ const ReportsTab = () => {
           onClick={() => handleSelect(22)}
         >
           Foc report
+        </div>
+        <div
+          className={`item ${selected === 24 ? 'selected' : ''}`}
+          onClick={() => handleSelect(24)}
+        >
+          Addtional Foc report
+        </div>
+        <div
+          className={`item ${selected === 25 ? 'selected' : ''}`}
+          onClick={() => handleSelect(25)}
+        >
+          Inventory status
         </div>
       </div>
       <div className="vtab_page">
@@ -242,6 +263,12 @@ const ReportsTab = () => {
           <DealerPaymentPattern />
         ) : selected === 22 ? (
           <FocReport />
+        ) : selected === 23 ? (
+          <OldCreditBillsCollection />
+        ) : selected === 24 ? (
+          <AddtionalFocReport />
+        ) : selected === 25 ? (
+          <DaylyInventoryPeriod />
         ) : (
           ''
         )}
