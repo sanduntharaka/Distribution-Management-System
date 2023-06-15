@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -111,7 +111,6 @@ INSTALLED_APPS = [
     'api.reports.dealerpattern',
 
     'api.reports.oldcreditbillsreport',
-    'api.reports.inventorystatus'
 
 
 ]
@@ -243,7 +242,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'https://bixtonlighting.com'
+DOMAIN = 'http://localhost:3000'
 SITE_NAME = 'Bixton Distribution Management System'
 DJOSER = {
     'LOGIN_FIELD': 'user_name',
@@ -262,8 +261,6 @@ DJOSER = {
 }
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://bixtonlighting.com:3000",
-    "https://bixtonlighting.com:3000",
-    "https://bixtonlighting.com",
-    "http://bixtonlighting.com",
+    "http://front.ditributor.codesolusions.online",
+    "https://front.ditributor.codesolusions.online",
 ]

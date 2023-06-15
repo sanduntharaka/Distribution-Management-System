@@ -1,3 +1,5 @@
+from distrubutor_salesref.models import SalesRefDistributor
+from sales_return.TotalSalesReturn import TotalSalesReturn
 from rest_framework import status
 from rest_framework.response import Response
 from . import serializers
@@ -12,7 +14,7 @@ from distrubutor_salesref_invoice.models import SalesRefInvoice
 from company_inventory.CountCompanyInventory import CountCompanyInventory
 from salesref_return.TotalMarketReturn import TotalMarketReturn
 from distrubutor_salesref_invoice.SalesData import SalesData
-from company_inventory.LowQty import LowQty
+from distributor_inventory.LowQty import LowQty
 
 
 @api_view(['GET'])
@@ -23,9 +25,108 @@ def currentUserCount(request):
 
 
 @api_view(['POST'])
-def today_total_sales_invoices_as_company(request):
-    total = CountSalesInvoiceAll(date=request.data['date'])
-    return Response(data={'count': total.getCount(), 'total': total.totalSale(), 'discount': total.totalDiscont(), 'status': total.getPrevDayStatus()}, status=status.HTTP_200_OK)
+def today_as_distributor(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='distributor')
+    mreturn_total = TotalMarketReturn(
+        date=request.data['date'], user=item, user_type='distributor')
+    sreturn_total = TotalSalesReturn(
+        date=request.data['date'], user=item, user_type='distributor')
+    total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
+    total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+
+    data = {
+        'sales': {
+            'count': total.getCount(),
+            'total': total.totalSale(),
+            'discount': total.totalDiscont(),
+            'status': total.getPrevDayStatus()
+        },
+        'market_returns': mreturn_total.getCount(),
+        'sales_returns': sreturn_total.getCount(),
+        'this_month': {
+            'count': total_count_month,
+            'total_sales': total_sales_month,
+            'total_balance': total_balance_month
+        },
+        'this_year': {
+            'count': total_count_year,
+            'total_sales': total_sales_year,
+            'total_balance': total_balance_year
+        }
+
+
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def today_as_saleref(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='salesref')
+    mreturn_total = TotalMarketReturn(
+        date=request.data['date'], user=item, user_type='salesref')
+    sreturn_total = TotalSalesReturn(
+        date=request.data['date'], user=item, user_type='salesref')
+    total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
+    total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+
+    data = {
+        'sales': {
+            'count': total.getCount(),
+            'total': total.totalSale(),
+            'discount': total.totalDiscont(),
+            'status': total.getPrevDayStatus()
+        },
+        'market_returns': mreturn_total.getCount(),
+        'sales_returns': sreturn_total.getCount(),
+        'this_month': {
+            'count': total_count_month,
+            'total_sales': total_sales_month,
+            'total_balance': total_balance_month
+        },
+        'this_year': {
+            'count': total_count_year,
+            'total_sales': total_sales_year,
+            'total_balance': total_balance_year
+        }
+
+
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def today_as_manager(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='manager')
+    total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
+    total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+
+    data = {
+        'sales': {
+            'count': total.getCount(),
+            'total': total.totalSale(),
+            'discount': total.totalDiscont(),
+            'status': total.getPrevDayStatus()
+        },
+        'this_month': {
+            'count': total_count_month,
+            'total_sales': total_sales_month,
+            'total_balance': total_balance_month
+        },
+        'this_year': {
+            'count': total_count_year,
+            'total_sales': total_sales_year,
+            'total_balance': total_balance_year
+        }
+
+
+    }
+    return Response(data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -34,19 +135,19 @@ def today_company_inventory_status(request):
     return Response(data={'count': total.getCountWthoutZero()}, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def today_market_return(request):
-    total = TotalMarketReturn(date=request.data['date'])
-    deduct_count, deduct_total = total.getCountDeductBill()
-    data = {
-        'count_return_good': total.getCountReturnGoods(),
-        'count_return_good_items': total.totalReturnGoodsItems(),
-        'count_deduct_good': deduct_count,
-        'total_deduct_good': deduct_total,
-        'count_deduct_good_items': total.totalDeductBillItems(),
+# @api_view(['POST'])
+# def today_market_return(request):
+#     total = TotalMarketReturn(date=request.data['date'])
+#     deduct_count, deduct_total = total.getCountDeductBill()
+#     data = {
+#         'count_return_good': total.getCountReturnGoods(),
+#         'count_return_good_items': total.totalReturnGoodsItems(),
+#         'count_deduct_good': deduct_count,
+#         'total_deduct_good': deduct_total,
+#         'count_deduct_good_items': total.totalDeductBillItems(),
 
-    }
-    return Response(data=data, status=status.HTTP_200_OK)
+#     }
+#     return Response(data=data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -77,6 +178,41 @@ def allSalesinvoicedataSalesRefBymonth(request, *args, **kwargs):
     return Response(data=inv.getData(), status=status.HTTP_200_OK)
 
 
+@api_view(['POST'])
+def allDistributorSalesByManager(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='manager')
+    distributors, codes = total.getAllDistributorsSales()
+    data = {
+        'distributors': distributors,
+        'color': codes
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
 @api_view(['GET'])
-def allLawQtyCompany(request):
-    return Response(data=LowQty.getQty(), status=status.HTTP_200_OK)
+def allLawQtyByDistributor(request, *args, **kwargs):
+    item = kwargs.get('id')
+    low_qty_class = LowQty(user=item, user_type='distributor')
+    return Response(data=low_qty_class.getQty(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def allLawQtyBySalesref(request, *args, **kwargs):
+    item = kwargs.get('id')
+    low_qty_class = LowQty(user=item, user_type='salesref')
+    return Response(data=low_qty_class.getQty(), status=status.HTTP_200_OK)
+
+# date eka ain kranna payement karana
+# participate wena ayage recode ekak thiyaganna
+# qr scan krana eka regisration number eka
+# regsitration number ekak wenama hadenna one
+# google login
+
+# const data = [
+#   { name: 'Group A', value: 400 },
+#   { name: 'Group B', value: 300 },
+#   { name: 'Group C', value: 300 },
+#   { name: 'Group D', value: 200 },
+# ];

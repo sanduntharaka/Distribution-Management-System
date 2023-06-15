@@ -1,15 +1,14 @@
-from salesref_return.models import SalesRefReturn, SalesRefReturnItem
+from sales_return.models import SalesReturn
 from django.db.models import Prefetch, Sum
 
 
-class TotalMarketReturn:
+class TotalSalesReturn:
     def __init__(self, date, user, user_type) -> None:
         if user_type == 'distributor':
-            self.market_return = SalesRefReturn.objects.filter(
+            self.market_return = SalesReturn.objects.filter(
                 date=date, dis_sales_ref__distributor=user)
-
         if user_type == 'salesref':
-            self.market_return = SalesRefReturn.objects.filter(
+            self.market_return = SalesReturn.objects.filter(
                 date=date, dis_sales_ref__sales_ref=user)
 
     def getCountReturnGoods(self):
@@ -18,8 +17,8 @@ class TotalMarketReturn:
         return len(goods_returns)
 
     def totalReturnGoodsItems(self):
-        sales_ref_returns = SalesRefReturn.objects.filter(is_return_goods=True).prefetch_related(
-            Prefetch('salesrefreturnitem_set', queryset=SalesRefReturnItem.objects.all(
+        sales_ref_returns = SalesReturn.objects.filter(is_return_goods=True).prefetch_related(
+            Prefetch('salesrefreturnitem_set', queryset=SalesReturn.objects.all(
             ), to_attr='return_items')
         )
 
@@ -33,8 +32,8 @@ class TotalMarketReturn:
 
     def totalDeductBillItems(self):
 
-        sales_ref_returns = SalesRefReturn.objects.filter(is_deduct_bill=True).prefetch_related(
-            Prefetch('salesrefreturnitem_set', queryset=SalesRefReturnItem.objects.all(
+        sales_ref_returns = SalesReturn.objects.filter(is_deduct_bill=True).prefetch_related(
+            Prefetch('salesrefreturnitem_set', queryset=SalesReturn.objects.all(
             ), to_attr='return_items')
         )
 
