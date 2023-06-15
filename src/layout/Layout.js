@@ -28,7 +28,7 @@ const Layout = (props) => {
           <Sidebar />
         </div>
 
-        <main className="page__content">
+        <main className="page__content ">
           <ThemeProvider theme={defaultMaterialTheme}>
             <React.Fragment>{props.children}</React.Fragment>
           </ThemeProvider>

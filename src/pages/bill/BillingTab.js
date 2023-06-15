@@ -68,7 +68,7 @@ const BillingTab = () => {
     if (user.is_distributor) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bydistributor/${
+          `/distributor/get/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {

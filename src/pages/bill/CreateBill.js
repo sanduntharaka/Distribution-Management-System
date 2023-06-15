@@ -133,7 +133,6 @@ const CreateBill = ({ inventory }) => {
       });
     if (user.is_salesref) {
       setLoading(true);
-
       axiosInstance
         .get(
           `/distributor/salesref/get/bysalesref/${

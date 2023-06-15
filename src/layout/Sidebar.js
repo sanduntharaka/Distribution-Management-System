@@ -88,7 +88,7 @@ const Sidebar = () => {
             <div className="container__list__item__name">inventory</div>
           </NavLink>
 
-          {user.is_manager || user.is_superuser ? (
+          {/* {user.is_manager || user.is_superuser ? (
             <NavLink
               to="/distribution"
               className={(isActive, isPending) =>
@@ -104,20 +104,22 @@ const Sidebar = () => {
             </NavLink>
           ) : (
             ''
+          )} */}
+          {user.is_manager || user.is_distributor ? (
+            <NavLink
+              to="/psa"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <MdRoute />
+              </div>
+              <div className="container__list__item__name">PSA</div>
+            </NavLink>
+          ) : (
+            ''
           )}
-
-          <NavLink
-            to="/psa"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <MdRoute />
-            </div>
-            <div className="container__list__item__name">PSA</div>
-          </NavLink>
-
           <NavLink
             to="/dealer"
             className={(isActive, isPending) =>
@@ -129,17 +131,21 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">Dealer</div>
           </NavLink>
-          <NavLink
-            to="/bill"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <TbReportMoney />
-            </div>
-            <div className="container__list__item__name">billing</div>
-          </NavLink>
+          {user.is_distributor || user.is_salesref ? (
+            <NavLink
+              to="/bill"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TbReportMoney />
+              </div>
+              <div className="container__list__item__name">billing</div>
+            </NavLink>
+          ) : (
+            ''
+          )}
           {user.is_distributor ? (
             <>
               <NavLink
@@ -169,44 +175,44 @@ const Sidebar = () => {
           ) : (
             ''
           )}
-          <NavLink
-            to="/purchase"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <BiPurchaseTagAlt />
-            </div>
-            <div className="container__list__item__name">Non-buying</div>
-          </NavLink>
-          {user.is_distributor || user.is_manager || user.is_salesref ? (
-            <NavLink
-              to="/mreturn"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <TbTruckReturn />
-              </div>
-              <div className="container__list__item__name">market return</div>
-            </NavLink>
-          ) : (
-            ''
-          )}
-          {user.is_distributor || user.is_manager || user.is_salesref ? (
-            <NavLink
-              to="/sreturn"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <TiArrowBackOutline />
-              </div>
-              <div className="container__list__item__name">sales return</div>
-            </NavLink>
+
+          {user.is_salesref ? (
+            <>
+              <NavLink
+                to="/purchase"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <BiPurchaseTagAlt />
+                </div>
+                <div className="container__list__item__name">Non-buying</div>
+              </NavLink>
+              <NavLink
+                to="/mreturn"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <TbTruckReturn />
+                </div>
+                <div className="container__list__item__name">market return</div>
+              </NavLink>
+
+              <NavLink
+                to="/sreturn"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <TiArrowBackOutline />
+                </div>
+                <div className="container__list__item__name">sales return</div>
+              </NavLink>
+            </>
           ) : (
             ''
           )}

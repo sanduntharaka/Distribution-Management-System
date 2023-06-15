@@ -56,12 +56,14 @@
     .page {
       display: flex;
       flex-direction: column;
+
       @include mobile {
         display: grid;
         width: 100%;
         margin-left: auto;
         margin-right: auto;
       }
+
       &__title {
         display: flex;
         justify-content: center;
@@ -86,12 +88,13 @@
         @include mobile {
           width: 100%;
         }
+
         margin-top: 10px;
         &__row {
           margin-top: 25px;
           display: flex;
           flex-direction: row;
-          justify-content: space-evenly;
+          // justify-content: space-evenly;
           gap: 25px;
           color: #000;
           @include mobile {
