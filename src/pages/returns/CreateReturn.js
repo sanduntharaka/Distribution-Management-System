@@ -383,6 +383,7 @@ const CreateReturn = ({ inventory }) => {
                     <div className="searchContent__row">
                       <div className="searchContent__row__details">
                         <p>Item Code</p>
+                        <p>Description</p>
                         <p>Qty</p>
                       </div>
                     </div>
@@ -390,10 +391,12 @@ const CreateReturn = ({ inventory }) => {
                       .filter((item) => {
                         const searchTerm = value2.toLowerCase();
                         const ItemCode = item.item_code.toLowerCase();
-
+                        const description = item.description.toLowerCase();
                         return (
-                          ItemCode.includes(searchTerm) &&
-                          ItemCode !== searchTerm
+                          (ItemCode.includes(searchTerm) &&
+                            ItemCode !== searchTerm) ||
+                          (description.includes(searchTerm) &&
+                            description !== searchTerm)
                         );
                       })
                       .map((item) => (
@@ -403,6 +406,7 @@ const CreateReturn = ({ inventory }) => {
                         >
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
+                            <p>{item.description}</p>
                             <p>{item.qty}</p>
                           </div>
                         </div>

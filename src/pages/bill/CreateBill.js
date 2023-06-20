@@ -59,7 +59,7 @@ const CreateBill = ({ inventory }) => {
 
   const [qty, setQty] = useState(0);
   const [foc, setFoc] = useState(0);
-
+  const [subTotal, setSubTotal] = useState(0);
   const [cash, setCash] = useState(false);
   const [cheque, setCheque] = useState(false);
   const [credit, setCredit] = useState(false);
@@ -263,15 +263,22 @@ const CreateBill = ({ inventory }) => {
           foc: parseInt(foc),
           discount: parseFloat(discount),
           pack_size: product.pack_size,
-          extended_price:
+          extended_price: billingPriceMethod === '1' ?product.whole_sale_price * parseInt(qty) - parseFloat(discount) :
             product.retail_price * parseInt(qty) - parseFloat(discount),
         },
       ]);
+
+      setQty(0)
+      setFoc(0)
+      setSubTotal(0)
+      setDiscount(0)
+      setValue2('')
+
     } else {
       setExceedQty(true);
     }
   };
-  const [subTotal, setSubTotal] = useState(0);
+
   const handleQty = (e) => {
     setExceedQty(false);
     if (e.target.value > product.qty) {
@@ -294,18 +301,15 @@ const CreateBill = ({ inventory }) => {
     const item = newItems[index];
     newItems.splice(index, 1);
     setItems(newItems);
-
-    if (billingPriceMethod === '1') {
+    console.log('i',item)
+   
       setData({
         ...data,
-        sub_total: data.sub_total - item.qty * item.whole_sale_price,
+        sub_total: data.sub_total - (item.extended_price+item.discount),
+        total_discount:data.total_discount - item.discount,
       });
-    } else if (billingPriceMethod === '2') {
-      setData({
-        ...data,
-        sub_total: data.sub_total - item.qty * item.retail_price,
-      });
-    }
+   
+    setSubTotal(0)
   };
 
   const handleCash = (e) => {
@@ -623,7 +627,7 @@ const CreateBill = ({ inventory }) => {
                           <td>{item.qty}</td>
                           <td>{item.qty + item.foc}</td>
 
-                          <td>{item.qty * item.price}</td>
+                          <td>{item.extended_price}</td>
                           <td>{item.discount}</td>
 
                           <td className="action">
@@ -654,6 +658,7 @@ const CreateBill = ({ inventory }) => {
                 }}
               >
                 <p>Total:</p>
+   
                 <p>Rs {data.sub_total}/-</p>
               </div>
             </div>

@@ -57,6 +57,7 @@ const ViewBill = (props) => {
           console.log(err);
         });
     }
+    console.log('inv v:', props.invoice.billing_price_method)
   }, []);
 
   const handleCancle = (e) => {
@@ -118,6 +119,7 @@ const ViewBill = (props) => {
                   <th>Value</th>
                 </tr>
               </thead>
+
               <tbody>
                 {props.items.map((item, i) => (
                   <tr key={i}>
@@ -125,7 +127,7 @@ const ViewBill = (props) => {
                     <td>{item.description}</td>
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
-                    <td>{item.price}</td>
+                    <td>{props.invoice.billing_price_method==="1"? item.wholesale_price:props.invoice.billing_price_method==="2"? item.retail_price:0}</td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>

@@ -71,7 +71,7 @@ const DistributorInventory = ({ inventory, user }) => {
     { title: 'Foc', field: 'foc' },
     { title: 'Qty', field: 'qty' },
   ];
-
+  const [loading, setLoading] = useState(false)
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -107,6 +107,7 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   useEffect(() => {
+    setLoading(true)
     axiosInstance
       .get(`/distributor/items/all/${inventory.id}`, {
         headers: {
@@ -123,9 +124,11 @@ const DistributorInventory = ({ inventory, user }) => {
             itemCodes.push(item.item_code);
           }
         });
+        setLoading(false)
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false)
       });
   }, [messageOpen]);
 
@@ -284,6 +287,7 @@ const DistributorInventory = ({ inventory, user }) => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',

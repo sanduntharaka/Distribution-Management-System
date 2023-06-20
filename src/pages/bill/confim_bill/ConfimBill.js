@@ -11,6 +11,7 @@ const ConfimBill = (props) => {
     company_number: '',
   });
   useEffect(() => {
+    
     if (user.is_salesref) {
       axiosInstance
         .get(
@@ -204,12 +205,14 @@ const ConfimBill = (props) => {
               </thead>
               <tbody>
                 {props.items.map((item, i) => (
+
                   <tr key={i}>
+                    
                     <td>{item.item_code}</td>
                     <td>{item.description}</td>
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
-                    <td>{item.price}</td>
+                    <td>{props.data.billing_price_method==="1"? item.whole_sale_price:props.data.billing_price_method==="2"? item.price:0}</td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>

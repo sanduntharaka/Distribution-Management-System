@@ -2,7 +2,6 @@ import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -21,10 +20,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import SalesRefBill from '../../components/invoice/SalesRefBill';
 import ViewBill from './confim_bill/ViewBill';
 import RecommendIcon from '@mui/icons-material/Recommend';
-import ConfirmStatus from './confim_bill/ConfirmStatus';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -70,6 +67,7 @@ const CreatedBills = () => {
 
     { title: 'Status', field: 'status' },
   ];
+  const [loading, setLoading] = useState(false)
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -104,9 +102,10 @@ const CreatedBills = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  
   useEffect(() => {
     if (user.is_salesref) {
+      setLoading(true)
       axiosInstance
         .get(
           `/salesref/invoice/all/invoice/by/salesref/${
@@ -121,6 +120,7 @@ const CreatedBills = () => {
         )
         .then((res) => {
           console.log(res.data);
+          
           setData(res.data);
           setTableData(res.data);
           res.data.forEach((item) => {
@@ -133,12 +133,15 @@ const CreatedBills = () => {
               distributors.push(item.distributor);
             }
           });
+          setLoading(false)
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false)
         });
     }
     if (user.is_distributor) {
+      setLoading(true)
       axiosInstance
         .get(
           `/salesref/invoice/all/invoice/by/distributor/${
@@ -165,9 +168,11 @@ const CreatedBills = () => {
               distributors.push(item.distributor);
             }
           });
+           setLoading(false)
         })
         .catch((err) => {
           console.log(err);
+           setLoading(false)
         });
     }
   }, [messageOpen]);
@@ -200,35 +205,6 @@ const CreatedBills = () => {
       });
   };
 
-  const handleEditDetails = (e, value) => {
-    setInvoice({
-      id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
-    });
-
-    setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(true);
-    handleModalOpen();
-  };
-  const handleConfirmDetails = (e, value) => {
-    setInvoice(value);
-    setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(true);
-    handleModalOpen();
-  };
   const handleFilter = (i) => {
     handleClose();
     console.log(i);
@@ -264,20 +240,7 @@ const CreatedBills = () => {
       />
     );
   });
-  const MyInvoiceConfirm = React.forwardRef((props, ref) => {
-    return (
-      <ConfirmStatus
-        invoice={props.invoice}
-        openMsg={props.openMsg}
-        msgSuccess={props.msgSuccess}
-        msgErr={props.msgErr}
-        msgTitle={props.msgTitle}
-        msg={props.msg}
-        showEdit={props.showEdit}
-        closeModal={props.closeModal}
-      />
-    );
-  });
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
@@ -291,30 +254,7 @@ const CreatedBills = () => {
             user={user}
             handleClose={handleModalClose}
           />
-        ) : editdetailsOpen ? (
-          <MyInvoiceConfirm
-            invoice={invoice}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showEdit={setEditDetailsOpen}
-            closeModal={handleModalClose}
-          />
-        ) : deletedetailsOpen ? (
-          <ProductDelete
-            data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/distributor/items/delete'}
-          />
-        ) : messageOpen ? (
+       ) : messageOpen ? (
           <Message
             hide={handleModalClose}
             success={success}
@@ -370,6 +310,7 @@ const CreatedBills = () => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',
