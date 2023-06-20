@@ -82,8 +82,14 @@ class GetDistributorBySr(generics.RetrieveAPIView):
 class GetDistributorByDistributor(generics.RetrieveAPIView):
     serializer_class = serializers.GetDistributorDetails
 
-    def get_object(self, *args, **kwargs):
-        return get_object_or_404(SalesRefDistributor, distributor=self.kwargs.get('id'))
+    def get(self, *args, **kwargs):
+        salesref_distributor = SalesRefDistributor.objects.filter(distributor=self.kwargs.get('id')).first()
+        data = {
+            "full_name":salesref_distributor.distributor.full_name,
+            "address":salesref_distributor.distributor.address,
+            "company_number":salesref_distributor.distributor.company_number,
+        }
+        return Response(data=data,status=status.HTTP_200_OK)
 
 
 class GetAllSalesrefsByDistributor(generics.ListAPIView):
