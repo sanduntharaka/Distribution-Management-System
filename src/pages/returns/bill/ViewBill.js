@@ -2,31 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
-import Message from '../../../components/message/Message';
-import Modal from '@mui/material/Modal';
-const MyMessage = React.forwardRef((props, ref) => {
-  return (
-    <Message
-      hide={() => props.handleClose()}
-      success={props.success}
-      error={props.error}
-      title={props.title}
-      msg={props.msg}
-      ref={ref}
-    />
-  );
-});
-const ConfimReceipt = (props) => {
-  //message modal
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(false);
-  const [msg, setMsg] = useState('');
-  const [title, setTitle] = useState('');
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
+const ViewBill = (props) => {
+  console.log(props);
   const compoenentRef = useRef();
   const [distributor, setDistributor] = useState({
     full_name: '',
@@ -34,117 +12,68 @@ const ConfimReceipt = (props) => {
     company_number: '',
   });
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setDistributor({
-          full_name: res.data.full_name,
-          address: res.data.address,
-          company_number: res.data.company_number,
+    if (props.user.is_salesref) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
+    if (props.user.is_distributor) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/distributor/by/distributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setDistributor({
+            full_name: res.data.full_name,
+            address: res.data.address,
+            company_number: res.data.company_number,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    console.log('inv v:', props.invoice.billing_price_method);
   }, []);
-  const handleEdit = (e) => {
-    e.preventDefault();
-    console.log('called');
-    props.close();
-  };
+
   const handleCancle = (e) => {
     e.preventDefault();
-    props.set_items([]);
-    props.set_invoice('');
-    props.set_data({
-      psa: '',
-      dealer: '',
-    });
     props.close();
   };
-  const [invno, setInvNo] = useState({
-    code: '',
-    number: '',
-  });
   const handlePrintFile = useReactToPrint({
     content: () => compoenentRef.current,
   });
 
   const handlePrint = () => {
-    axiosInstance
-      .post('/salesref/return/add/', props.data, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setInvNo({
-          ...invno,
-          code: res.data.bill_code,
-          number: res.data.bill_number,
-        });
-        axiosInstance
-          .post(
-            `/salesref/return/add/items/${res.data.id}`,
-            {
-              items: props.items,
-            },
-            {
-              headers: {
-                Authorization:
-                  'JWT ' +
-                  JSON.parse(sessionStorage.getItem('userInfo')).access,
-              },
-            }
-          )
-          .then((res) => {
-            setLoading(false);
-            handlePrintFile();
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-            setSuccess(false);
-            setError(true);
-            setTitle('Error');
-            setMsg(
-              'Your data cannot saved. Please refresh your page and try again.'
-            );
-            handleOpen();
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setTitle('Error');
-        setMsg(
-          'Your data cannot saved. Please refresh your page and try again.'
-        );
-        handleOpen();
-      });
+    handlePrintFile();
   };
   return (
     <div className={styles.confirmBill}>
-      <Modal open={open} onClose={handleClose}>
-        <MyMessage
-          handleClose={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
       <div className={styles.container}>
         <div ref={compoenentRef} style={{ fontSize: '12px' }}>
           <div className={styles.row}>
@@ -167,41 +96,18 @@ const ConfimReceipt = (props) => {
           </div>
           <div className={styles.row}>
             <div className={styles.col}>
-              <p>
-                method:{' '}
-                {props.data.is_return_goods
-                  ? 'Return form goods'
-                  : props.data.is_deduct_bill
-                  ? 'Deduct from bill'
-                  : ''}
-              </p>
-
               <p>Customer: {props.data.dealer_name}</p>
               <p>Customer Id: {props.data.dealer}</p>
               <p>Address: {props.data.dealer_address}</p>
-              <p>Telephone: {props.data.dealer_contact}</p>
+              <p>Telephone: {props.data.contact_number}</p>
             </div>
             <div className={styles.col}>
-              <p>
-                Invoice No: {invno.code}
-                {invno.number}
-              </p>
+              <p>Invoice No: {props.invoice.code}</p>
               <p>Invoice Date: {props.data.date}</p>
               <p>Salesperson: {props.issued_by.full_name}</p>
               <p>Telephone: {props.issued_by.company_number}</p>
             </div>
           </div>
-          {props.data.is_deduct_bill ? (
-            <div className={styles.row}>
-              <p>
-                Bill:{props.data.bill_code}
-                {props.data.bill_number}
-              </p>{' '}
-              <p>amount:{props.data.amount}</p>
-            </div>
-          ) : (
-            ''
-          )}
           <div className={styles.row}>
             <table>
               <thead>
@@ -212,6 +118,7 @@ const ConfimReceipt = (props) => {
                   <th>Foc</th>
                 </tr>
               </thead>
+
               <tbody>
                 {props.items.map((item, i) => (
                   <tr key={i}>
@@ -247,6 +154,7 @@ const ConfimReceipt = (props) => {
           <div className={styles.row}>
             <p>Accepted above items in order</p>
           </div>
+
           <div className={styles.row}>
             <div className={styles.two_sides}>
               <div className="col">
@@ -266,9 +174,6 @@ const ConfimReceipt = (props) => {
               <button className="btnEdit" onClick={handlePrint}>
                 Print
               </button>
-              {/* <button className="addBtn" onClick={(e) => handleEdit(e)}>
-                Edit
-              </button> */}
               <button className="btnSave" onClick={(e) => handleCancle(e)}>
                 Cancel
               </button>
@@ -280,4 +185,4 @@ const ConfimReceipt = (props) => {
   );
 };
 
-export default ConfimReceipt;
+export default ViewBill;

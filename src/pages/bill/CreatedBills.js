@@ -67,7 +67,7 @@ const CreatedBills = () => {
 
     { title: 'Status', field: 'status' },
   ];
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -102,10 +102,10 @@ const CreatedBills = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
   useEffect(() => {
     if (user.is_salesref) {
-      setLoading(true)
+      setLoading(true);
       axiosInstance
         .get(
           `/salesref/invoice/all/invoice/by/salesref/${
@@ -120,7 +120,7 @@ const CreatedBills = () => {
         )
         .then((res) => {
           console.log(res.data);
-          
+
           setData(res.data);
           setTableData(res.data);
           res.data.forEach((item) => {
@@ -133,15 +133,15 @@ const CreatedBills = () => {
               distributors.push(item.distributor);
             }
           });
-          setLoading(false)
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
-          setLoading(false)
+          setLoading(false);
         });
     }
     if (user.is_distributor) {
-      setLoading(true)
+      setLoading(true);
       axiosInstance
         .get(
           `/salesref/invoice/all/invoice/by/distributor/${
@@ -168,11 +168,11 @@ const CreatedBills = () => {
               distributors.push(item.distributor);
             }
           });
-           setLoading(false)
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
-           setLoading(false)
+          setLoading(false);
         });
     }
   }, [messageOpen]);
@@ -181,7 +181,7 @@ const CreatedBills = () => {
   const [dataSingle, setSataSingle] = useState();
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    console.log(value);
+    console.log('val:', value);
     setInvoice(value);
     setSataSingle(value);
     axiosInstance
@@ -254,7 +254,7 @@ const CreatedBills = () => {
             user={user}
             handleClose={handleModalClose}
           />
-       ) : messageOpen ? (
+        ) : messageOpen ? (
           <Message
             hide={handleModalClose}
             success={success}

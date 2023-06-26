@@ -1,7 +1,7 @@
 import axios from 'axios';
 //back.ditributor.codesolusions.online
-//localhost:8000
-// main.bixtonlighting.com
+//http://localhost:8000
+// https://main.bixtonlighting.com
 const baseURL = 'http://localhost:8000/';
 
 export const axiosInstance = axios.create({

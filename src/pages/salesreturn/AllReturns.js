@@ -23,6 +23,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import DetailsReturn from '../../components/details/DetailsReturn';
 import ReturnDelete from '../../components/userComfirm/ReturnDelete';
+import ViewBill from './bill/ViewBill';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -48,6 +49,8 @@ const tableIcons = {
 };
 
 const AllReturns = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
+
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -102,7 +105,7 @@ const AllReturns = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `/salesreturn/return/get/${
+        `/salesreturn/return/get/salesref/${
           JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
@@ -137,18 +140,7 @@ const AllReturns = () => {
         },
       })
       .then((res) => {
-        setItemDetails({
-          added_email: value.added_email,
-          id: value.id,
-          date: value.date,
-          psa_name: value.psa_name,
-          dealer_name: value.dealer_name,
-          is_return_goods: value.is_return_goods,
-          is_deduct_bill: value.is_deduct_bill,
-          bill_code: value.bill_code,
-          bill_number: value.bill_number,
-          amount: value.amount,
-        });
+        setItemDetails(value);
         setReturnItems(res.data);
         setMessageOpen(false);
         setEditDetailsOpen(false);
@@ -160,26 +152,6 @@ const AllReturns = () => {
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const handleDeleteDetails = (e, value) => {
-    setItemDetails({
-      added_email: value.added_email,
-      id: value.id,
-      date: value.date,
-      psa_name: value.psa_name,
-      dealer_name: value.dealer_name,
-      is_return_goods: value.is_return_goods,
-      is_deduct_bill: value.is_deduct_bill,
-      bill_code: value.bill_code,
-      bill_number: value.bill_number,
-      amount: value.amount,
-    });
-    setMessageOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(false);
-    setDeleteDetailsOpen(true);
-    handleModalOpen();
   };
 
   const handleFilter = (i) => {
@@ -206,29 +178,31 @@ const AllReturns = () => {
     }
   };
 
+  const MyInvoice = React.forwardRef((props, ref) => {
+    return (
+      <ViewBill
+        issued_by={props.issued_by}
+        items={props.items}
+        invoice={props.invoice}
+        data={props.data}
+        user={props.user}
+        close={() => props.handleClose()}
+      />
+    );
+  });
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
-          <DetailsReturn
-            data={itemDetails}
+          <MyInvoice
+            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
             items={returnItems}
-            showDetails={setDetailsOpen}
-            showEdit={setEditDetailsOpen}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-          />
-        ) : deletedetailsOpen ? (
-          <ReturnDelete
+            invoice={itemDetails}
+            oldinv={false}
             data={itemDetails}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showConfirm={setDeleteDetailsOpen}
-            closeModal={handleModalClose}
-            url={'/salesreturn/return/delete'}
+            user={user}
+            handleClose={handleModalClose}
           />
         ) : messageOpen ? (
           <Message
@@ -308,13 +282,6 @@ const AllReturns = () => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
-
-                  {
-                    icon: DeleteOutline,
-                    tooltip: 'Delete details',
-                    onClick: (event, rowData) =>
-                      handleDeleteDetails(event, rowData),
-                  },
                 ]}
                 components={{
                   Action: (props) => (
@@ -332,17 +299,7 @@ const AllReturns = () => {
                           <CgDetailsMore />
                         </IconButton>
                       ) : (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'red' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <DeleteOutline />
-                        </IconButton>
+                        ''
                       )}
                     </React.Fragment>
                   ),

@@ -237,20 +237,29 @@ const ConfimReceipt = (props) => {
             </table>
           </div>
           <div className={styles.row}>
-            <p>Accepted above items in order</p>
+            <div className={styles.two_sides}>
+              <div className="col">
+                <p>...................................</p>
+                <p>Invoice by name and date</p>
+              </div>
+              <div className="col">
+                <p>...................................</p>
+                <p>Signature and rubber stamp</p>
+              </div>
+            </div>
           </div>
           <div className={styles.row}>
-            <p>Customer: ............</p>
+            <p>Accepted above items in order</p>
           </div>
           <div className={styles.row}>
             <div className={styles.two_sides}>
               <div className="col">
                 <p>...................................</p>
-                <p>Invoice by</p>
+                <p>Customer name and date</p>
               </div>
               <div className="col">
                 <p>...................................</p>
-                <p>Recieved by</p>
+                <p>Signature and rubber stamp</p>
               </div>
             </div>
           </div>
