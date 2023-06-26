@@ -16,14 +16,18 @@ class UpdateReturnStatusSerializer(serializers.ModelSerializer):
 
 class GetReturnsSerializer(serializers.ModelSerializer):
     dealer_name = serializers.CharField(source='dealer.name')
+    dealer_address = serializers.CharField(source='dealer.address')
+    contact_number = serializers.CharField(source='dealer.contact_number')
     added_name = serializers.CharField(source='added_by.full_name')
     psa_name = serializers.CharField(source='psa.area_name')
     code = serializers.CharField(source='getbillnumber')
+    distributor = serializers.CharField(
+        source='dis_sales_ref.distributor.full_name')
 
     class Meta:
         model = SalesReturn
         fields = ('id', 'dealer', 'psa', 'is_return_goods', 'is_deduct_bill',
-                  'bill_code', 'bill_number', 'amount', 'date', 'code', 'added_by', 'added_name', 'dealer_name', 'psa_name')
+                  'bill_code', 'bill_number', 'amount', 'date', 'code', 'added_by', 'added_name', 'dealer_name', 'psa_name', 'dealer_address', 'contact_number', 'distributor')
 
 
 class GetItemsSeraializer(serializers.ModelSerializer):
