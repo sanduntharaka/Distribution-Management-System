@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 
 const ProductEdit = (props) => {
@@ -6,13 +6,26 @@ const ProductEdit = (props) => {
     id: props.data.id,
     item_code: props.data.item_code,
     description: props.data.description,
+    category: props.data.category,
     base: props.data.base,
-    qty: props.data.qty,
-    pack_size: props.data.pack_size,
-    free_of_charge: props.data.free_of_charge,
-    whole_sale_price: props.data.whole_sale_price,
-    retail_price: props.data.retail_price,
   });
+  const [categorys, setCategorys] = useState([]);
+  useEffect(() => {
+    axiosInstance
+      .get('/category/all/', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setCategorys(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   const handleSave = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -44,7 +57,9 @@ const ProductEdit = (props) => {
         props.openMsg(true);
       });
   };
-
+  const handleClose = () => {
+    props.closeModal();
+  };
   return (
     <div className="edit">
       <div className="edit__content">
@@ -79,31 +94,23 @@ const ProductEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Wholesale price</td>
+                <td>Category</td>
                 <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={data.whole_sale_price}
+                  <select
+                    value={data.category}
                     onChange={(e) =>
-                      setData({ ...data, whole_sale_price: e.target.value })
+                      setData({ ...data, category: e.target.value })
                     }
-                  />
+                  >
+                    {categorys.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.category_name}
+                      </option>
+                    ))}
+                  </select>
                 </td>
               </tr>
-              <tr>
-                <td>Retail Price</td>
-                <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={data.retail_price}
-                    onChange={(e) =>
-                      setData({ ...data, retail_price: e.target.value })
-                    }
-                  />
-                </td>
-              </tr>
+
               <tr>
                 <td>Base</td>
                 <td>
@@ -115,43 +122,7 @@ const ProductEdit = (props) => {
                   />
                 </td>
               </tr>
-              <tr>
-                <td>Pack size</td>
-                <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={data.pack_size}
-                    onChange={(e) =>
-                      setData({ ...data, pack_size: e.target.value })
-                    }
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>Qty</td>
-                <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={data.qty}
-                    onChange={(e) => setData({ ...data, qty: e.target.value })}
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>Free of charge</td>
-                <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={data.free_of_charge}
-                    onChange={(e) =>
-                      setData({ ...data, free_of_charge: e.target.value })
-                    }
-                  />
-                </td>
-              </tr>
+
               <tr>
                 <td>description</td>
                 <td>
@@ -174,7 +145,7 @@ const ProductEdit = (props) => {
           <button className="remBtn" onClick={handleSave}>
             <p>Save</p>
           </button>
-          <button className="addBtn">
+          <button className="addBtn" onClick={handleClose}>
             <p>Cancel</p>
           </button>
         </div>

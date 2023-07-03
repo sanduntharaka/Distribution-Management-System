@@ -66,7 +66,7 @@ const SalesReport = (props) => {
 
     setLoading(true);
     axiosInstance
-      .get(`/distributor/items/all/${props.inventory}`, {
+      .get(`/distributor/salesref/inventory/items/${props.inventory}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -74,7 +74,7 @@ const SalesReport = (props) => {
       })
       .then((res) => {
         setLoading(false);
-        console.log(res.data);
+        console.log('ite', res.data);
         setProducts(res.data);
       })
       .catch((err) => {
@@ -341,7 +341,7 @@ const SalesReport = (props) => {
                   <option value="-1">All</option>
                   {products.map((item, i) => (
                     <option value={item.id} key={i}>
-                      {item.item_code}
+                      {item.item_code} | {item.description} | {item.date}
                     </option>
                   ))}
                 </select>

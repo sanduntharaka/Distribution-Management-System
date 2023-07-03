@@ -11,7 +11,6 @@ const ConfimBill = (props) => {
     company_number: '',
   });
   useEffect(() => {
-    
     if (user.is_salesref) {
       axiosInstance
         .get(
@@ -164,6 +163,7 @@ const ConfimBill = (props) => {
                 <h2>{distributor.full_name}</h2>
                 <p>{distributor.address}</p>
                 <p>{distributor.company_number}</p>
+                <h3>Invoice</h3>
               </div>
             </div>
           </div>
@@ -185,7 +185,9 @@ const ConfimBill = (props) => {
                 Invoice No: {invoice.bill_code}
                 {invoice.bill_number}
               </p>
-              <p>Invoice Date: {props.data.date}</p>
+              <p>
+                Invoice Date: {props.data.date} &{props.data.time}
+              </p>
               <p>Salesperson: {props.issued_by.full_name}</p>
               <p>Telephone: {props.issued_by.company_number}</p>
             </div>
@@ -205,20 +207,25 @@ const ConfimBill = (props) => {
               </thead>
               <tbody>
                 {props.items.map((item, i) => (
-
                   <tr key={i}>
-                    
                     <td>{item.item_code}</td>
                     <td>{item.description}</td>
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
-                    <td>{props.data.billing_price_method==="1"? item.whole_sale_price:props.data.billing_price_method==="2"? item.price:0}</td>
+                    <td>
+                      {props.data.billing_price_method === '1'
+                        ? item.whole_sale_price
+                        : props.data.billing_price_method === '2'
+                        ? item.price
+                        : 0}
+                    </td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
+                <tr className={styles.final}>...</tr>
                 <tr>
                   <td className={styles.total} colSpan={6}>
                     Total amount:

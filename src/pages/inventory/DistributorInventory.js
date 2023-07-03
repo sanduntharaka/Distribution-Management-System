@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef } from 'react';
+import React, { useEffect, useState, forwardRef, useMemo } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
@@ -53,25 +53,23 @@ const tableIcons = {
 const DistributorInventory = ({ inventory, user }) => {
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
-  const columns = [
-    {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
-    },
-    { title: 'Item Code', field: 'item_code' },
-    { title: 'Category', field: 'category_name' },
-    { title: 'Invoice', field: 'invoice_number' },
-    { title: 'Description', field: 'description' },
-    { title: 'Pack Size', field: 'pack_size' },
-    { title: 'Whole Sale Price', field: 'whole_sale_price' },
-    { title: 'Retail Price', field: 'retail_price' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Qty', field: 'qty' },
-  ];
-  const [loading, setLoading] = useState(false)
+  const columns = useMemo(
+    () => [
+      {
+        title: '#',
+        field: 'rowIndex',
+        render: (rowData) => rowData?.tableData?.id + 1,
+      },
+      { title: 'Item Code', field: 'item_code' },
+      { title: 'Category', field: 'category_name' },
+      { title: 'Description', field: 'description' },
+      { title: 'Base', field: 'base' },
+      { title: 'Foc', field: 'foc' },
+      { title: 'Qty', field: 'qty' },
+    ],
+    []
+  );
+  const [loading, setLoading] = useState(false);
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -107,9 +105,9 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     axiosInstance
-      .get(`/distributor/items/all/${inventory.id}`, {
+      .get(`/distributor/all/${inventory.id}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -124,13 +122,13 @@ const DistributorInventory = ({ inventory, user }) => {
             itemCodes.push(item.item_code);
           }
         });
-        setLoading(false)
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setLoading(false)
+        setLoading(false);
       });
-  }, [messageOpen]);
+  }, [messageOpen, success]);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
@@ -140,10 +138,7 @@ const DistributorInventory = ({ inventory, user }) => {
       description: value.description,
       base: value.base,
       qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
-      employee: value.added_by,
+      // employee: value.added_by,
       free_of_charge: value.foc,
     });
     setMessageOpen(false);
@@ -155,18 +150,14 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   const handleEditDetails = (e, value) => {
-    console.log(value);
+    console.log('v', value);
     setItemDetails({
       id: value.id,
       item_code: value.item_code,
       description: value.description,
       base: value.base,
-      qty: value.qty,
-      pack_size: value.pack_size,
-      whole_sale_price: value.whole_sale_price,
-      retail_price: value.retail_price,
+      category: value.category,
       employee: value.added_by,
-      free_of_charge: value.foc,
     });
 
     setMessageOpen(false);
@@ -218,6 +209,7 @@ const DistributorInventory = ({ inventory, user }) => {
             showEdit={setEditDetailsOpen}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
+            success={setSuccess}
             user={user}
           />
         ) : editdetailsOpen ? (
@@ -308,6 +300,7 @@ const DistributorInventory = ({ inventory, user }) => {
                   {
                     icon: EditIcon,
                     tooltip: 'Edit details',
+
                     onClick: (event, rowData) =>
                       handleEditDetails(event, rowData),
                   },

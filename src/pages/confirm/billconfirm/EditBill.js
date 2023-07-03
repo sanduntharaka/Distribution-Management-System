@@ -29,11 +29,15 @@ const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => (
+    <DeleteOutline {...props} ref={ref} style={{ color: 'red' }} />
+  )),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => (
+    <Edit {...props} ref={ref} style={{ color: 'orange' }} />
+  )),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -75,7 +79,7 @@ const EditBill = (props) => {
       headerStyle: { width: '10px' },
       editable: false,
     },
-    { title: 'Bill ', field: 'bill', editable: false },
+    { title: 'Bill ', field: 'bill_code', editable: false },
     { title: 'Item code', field: 'item_code', editable: false },
     { title: 'Description', field: 'description', editable: false },
     { title: 'Qty', field: 'qty' },

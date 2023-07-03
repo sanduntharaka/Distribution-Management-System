@@ -32,9 +32,9 @@ const FocReport = () => {
         console.log(err);
       });
   }, []);
-
   const handleFilter = (e) => {
     e.preventDefault();
+    setLoading(true);
     axiosInstance
       .post(
         `/reports/focreport/get/${
@@ -156,7 +156,7 @@ const FocReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <FocReportTable data={data} />
+              <FocReportTable data={data} loading={loading} />
             </div>
           </div>
         </div>

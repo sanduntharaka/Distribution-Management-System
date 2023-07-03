@@ -16,6 +16,9 @@ const EditNotBuy = (props) => {
       setData({
         ...data,
         is_only_our: true,
+        is_competitor: false,
+        is_payment_problem: false,
+        is_dealer_not_in: false,
       });
     }
     if (e.target.checked === false) {
@@ -26,10 +29,14 @@ const EditNotBuy = (props) => {
     }
   };
   const handleCheckedCompetitor = (e) => {
+    console.log('yes');
     if (e.target.checked) {
       setData({
         ...data,
         is_competitor: true,
+        is_only_our: false,
+        is_payment_problem: false,
+        is_dealer_not_in: false,
       });
     }
     if (e.target.checked === false) {
@@ -44,6 +51,9 @@ const EditNotBuy = (props) => {
       setData({
         ...data,
         is_payment_problem: true,
+        is_competitor: false,
+        is_only_our: false,
+        is_dealer_not_in: false,
       });
     }
     if (e.target.checked === false) {
@@ -58,6 +68,9 @@ const EditNotBuy = (props) => {
       setData({
         ...data,
         is_dealer_not_in: true,
+        is_payment_problem: false,
+        is_competitor: false,
+        is_only_our: false,
       });
     }
     if (e.target.checked === false) {
@@ -111,13 +124,13 @@ const EditNotBuy = (props) => {
               <tr>
                 <td>Id</td>
                 <td>
-                  <input type="text" value={editedData.id} disabled />
+                  <input type="text" value={data.id} disabled />
                 </td>
               </tr>
               <tr>
                 <td>Dealer</td>
                 <td>
-                  <input type="text" value={editedData.dealer_name} disabled />
+                  <input type="text" value={data.dealer_name} disabled />
                 </td>
               </tr>
               <tr>
@@ -129,7 +142,7 @@ const EditNotBuy = (props) => {
                     type="checkbox"
                     name="onlyour"
                     onChange={(e) => handleCheckedOnlyOur(e)}
-                    checked={editedData.is_only_our}
+                    checked={data.is_only_our}
                   />
                 </td>
                 <td>
@@ -142,7 +155,7 @@ const EditNotBuy = (props) => {
                     type="checkbox"
                     name="competitor"
                     onChange={(e) => handleCheckedCompetitor(e)}
-                    checked={editedData.is_competitor}
+                    checked={data.is_competitor}
                   />
                 </td>
                 <td>
@@ -155,7 +168,7 @@ const EditNotBuy = (props) => {
                     type="checkbox"
                     name="payproblem"
                     onChange={(e) => handleCheckeProblem(e)}
-                    checked={editedData.is_payment_problem}
+                    checked={data.is_payment_problem}
                   />
                 </td>
                 <td>
@@ -168,7 +181,7 @@ const EditNotBuy = (props) => {
                     type="checkbox"
                     name="notin"
                     onChange={(e) => handleCheckedNotIn(e)}
-                    checked={editedData.is_dealer_not_in}
+                    checked={data.is_dealer_not_in}
                   />
                 </td>
                 <td>

@@ -17,7 +17,7 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 
-const Category = () => {
+const Category = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -99,75 +99,92 @@ const Category = () => {
           msg={msg}
         />
       </Modal>
-      <div className="page__title">
-        <p>Create Category</p>
-      </div>
-      <div className="page__pcont">
-        <div className="form">
-          <form action="">
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">Category Name</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type category name"
-                    value={data.category_name ? data.category_name : ''}
-                    onChange={(e) =>
-                      setData({ ...data, category_name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">More Details</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type more details"
-                    value={data.description ? data.description : ''}
-                    onChange={(e) =>
-                      setData({ ...data, description: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">Foc percentage(%)</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="number"
-                    id="percentageInput"
-                    name="percentage"
-                    min="0"
-                    max="100"
-                    step="1"
-                    value={data.foc_percentage ? data.foc_percentage : ''}
-                    onChange={(e) =>
-                      setData({ ...data, foc_percentage: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="form__btn">
-              <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
-                  save
-                </button>
-                <button className="btnSave" onClick={(e) => handleClear(e)}>
-                  clear
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div className="page__pcont__row">
-          <div style={{ width: '100%' }}>
-            <AllCategories success={success} set_success={setSuccess} />
+      {props.user.is_company || props.user.is_manager ? (
+        <>
+          <div className="page__title">
+            <p>Create Category</p>
           </div>
+          <div className="page__pcont">
+            <div className="form">
+              <form action="">
+                <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Category Name</div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="type category name"
+                        value={data.category_name ? data.category_name : ''}
+                        onChange={(e) =>
+                          setData({ ...data, category_name: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">More Details</div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="type more details"
+                        value={data.description ? data.description : ''}
+                        onChange={(e) =>
+                          setData({ ...data, description: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">
+                      Foc percentage(%)
+                    </div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="number"
+                        id="percentageInput"
+                        name="percentage"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={data.foc_percentage ? data.foc_percentage : ''}
+                        onChange={(e) =>
+                          setData({ ...data, foc_percentage: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form__btn">
+                  <div className="form__btn__container">
+                    <button
+                      className="btnEdit"
+                      onClick={(e) => handleSubmit(e)}
+                    >
+                      save
+                    </button>
+                    <button className="btnSave" onClick={(e) => handleClear(e)}>
+                      clear
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      ) : (
+        ''
+      )}
+
+      <div className="page__pcont__row">
+        <div style={{ width: '100%' }}>
+          <AllCategories
+            success={success}
+            set_success={setSuccess}
+            user={props.user}
+          />
         </div>
       </div>
     </div>

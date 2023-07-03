@@ -24,6 +24,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import DetailsReturn from '../../components/details/DetailsReturn';
 import ReturnDelete from '../../components/userComfirm/ReturnDelete';
 import ViewBill from './bill/ViewBill';
+import Spinner from '../../components/loadingSpinner/Spinner';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -85,6 +86,7 @@ const AllReturns = () => {
   //filter_lists
   const [sales_refs, setSales_refs] = useState([]);
   const [distributors, setDistributors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -103,35 +105,78 @@ const AllReturns = () => {
   };
 
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/salesref/return/get/salesref/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!sales_refs.includes(item.added_email)) {
-            sales_refs.push(item.added_email);
+    if (user.is_salesref) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/salesref/return/get/salesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
           }
+        )
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          res.data.forEach((item) => {
+            if (!sales_refs.includes(item.added_email)) {
+              sales_refs.push(item.added_email);
+            }
+          });
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
+    if (user.is_distributor) {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/salesref/return/get/distributor/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          res.data.forEach((item) => {
+            if (!sales_refs.includes(item.added_email)) {
+              sales_refs.push(item.added_email);
+            }
+          });
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
   }, ['']);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
+    setLoading(true);
+
     axiosInstance
       .get(`/salesref/return/get/items/${value.id}`, {
         headers: {
@@ -140,18 +185,30 @@ const AllReturns = () => {
         },
       })
       .then((res) => {
+        setLoading(false);
+
         console.log(value);
         setItemDetails(value);
         setReturnItems(res.data);
         setMessageOpen(false);
-        setEditDetailsOpen(false);
-        setDeleteDetailsOpen(false);
         setDetailsOpen(true);
 
         handleModalOpen();
       })
       .catch((err) => {
+        setLoading(false);
+
         console.log(err);
+        setSuccess(false);
+        setError(true);
+        setTitle('Error');
+        setMsg(
+          'Cannot view bill. Beacause you did not added items. Please delete the bill.'
+        );
+        setDetailsOpen(false);
+
+        setMessageOpen(true);
+        handleModalOpen();
       });
   };
 
@@ -190,9 +247,30 @@ const AllReturns = () => {
       />
     );
   });
+  const ShowMessage = forwardRef((props, ref) => {
+    return (
+      <Message
+        hide={() => props.handleClose()}
+        success={props.success}
+        error={props.error}
+        title={props.title}
+        msg={props.msg}
+        ref={ref}
+      />
+    );
+  });
 
   return (
     <div className="page">
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
           <MyInvoice
@@ -205,8 +283,8 @@ const AllReturns = () => {
             handleClose={handleModalClose}
           />
         ) : messageOpen ? (
-          <Message
-            hide={handleModalClose}
+          <ShowMessage
+            handleClose={handleModalClose}
             success={success}
             error={error}
             title={title}

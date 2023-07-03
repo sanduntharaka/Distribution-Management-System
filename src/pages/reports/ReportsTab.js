@@ -105,7 +105,7 @@ const ReportsTab = () => {
           className={`item ${selected === 7 ? 'selected' : ''}`}
           onClick={() => handleSelect(7)}
         >
-          Pending orders report
+          Payments report
         </div>
         <div
           className={`item ${selected === 8 ? 'selected' : ''}`}

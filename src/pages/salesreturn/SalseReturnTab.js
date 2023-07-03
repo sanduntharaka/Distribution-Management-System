@@ -4,6 +4,7 @@ import CreateReturn from './CreateReturn';
 import AllReturns from './AllReturns';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import SalesReturnConfirm from './salesreturnconfirm/SalesReturnConfirm';
 const MyMessage = React.forwardRef((props, ref) => {
   return (
     <Message
@@ -20,7 +21,7 @@ const SalseReturnTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const [inventory, setInventory] = useState();
   const [selected, setSelected] = useState(
-    user.is_distributor || user.is_distributor ? 1 : 0
+    user.is_manager || user.is_distributor ? 1 : 0
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -124,12 +125,24 @@ const SalseReturnTab = () => {
         >
           All returns
         </div>
+        {user.is_distributor ? (
+          <div
+            className={`item ${selected === 2 ? 'selected' : ''}`}
+            onClick={() => handleSelect(2)}
+          >
+            Approve sales returns
+          </div>
+        ) : (
+          ''
+        )}
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
           <CreateReturn inventory={inventory} />
         ) : selected === 1 && isLoading === false && inventory !== undefined ? (
           <AllReturns inventory={inventory} />
+        ) : selected === 2 && isLoading === false && inventory !== undefined ? (
+          <SalesReturnConfirm />
         ) : (
           ''
         )}

@@ -32,13 +32,14 @@ const UserCreation = () => {
     email: '',
     user_name: '',
     nic: '',
-    is_companyStaff: false,
+    is_company: false,
     is_manager: false,
     password: '',
     re_password: '',
     is_distributor: false,
     is_salesref: false,
     is_superuser: false,
+    is_excecutive: false,
   });
 
   const handleCheckSuperuser = (e) => {
@@ -62,7 +63,8 @@ const UserCreation = () => {
         is_manager: true,
         is_distributor: false,
         is_salesref: false,
-        is_companyStaff: false,
+        is_company: false,
+        is_excecutive: false,
       });
     }
     if (e.target.checked === false) {
@@ -79,13 +81,32 @@ const UserCreation = () => {
         is_distributor: true,
         is_manager: false,
         is_salesref: false,
-        is_companyStaff: false,
+        is_company: false,
+        is_excecutive: false,
       });
     }
     if (e.target.checked === false) {
       setData({
         ...data,
         is_distributor: false,
+      });
+    }
+  };
+  const handleCheckExecutive = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_excecutive: true,
+        is_distributor: false,
+        is_manager: false,
+        is_salesref: false,
+        is_company: false,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_excecutive: false,
       });
     }
   };
@@ -97,7 +118,8 @@ const UserCreation = () => {
         is_salesref: true,
         is_distributor: false,
         is_manager: false,
-        is_companyStaff: false,
+        is_company: false,
+        is_excecutive: false,
       });
     }
     if (e.target.checked === false) {
@@ -111,16 +133,17 @@ const UserCreation = () => {
     if (e.target.checked) {
       setData({
         ...data,
-        is_companyStaff: true,
+        is_company: true,
         is_salesref: false,
         is_distributor: false,
         is_manager: false,
+        is_excecutive: false,
       });
     }
     if (e.target.checked === false) {
       setData({
         ...data,
-        is_companyStaff: false,
+        is_company: false,
       });
     }
   };
@@ -138,6 +161,17 @@ const UserCreation = () => {
         setTitle('Success');
         setMsg('User created successfully. Please subimit user details.');
         sessionStorage.setItem('new_user', res.data.id);
+        if (data.is_company) {
+          sessionStorage.setItem('new_user_designation', 'company');
+        } else if (data.is_excecutive) {
+          sessionStorage.setItem('new_user_designation', 'excecutive');
+        } else if (data.is_distributor) {
+          sessionStorage.setItem('new_user_designation', 'distributor');
+        } else if (data.is_manager) {
+          sessionStorage.setItem('new_user_designation', 'manager');
+        } else if (data.is_salesref) {
+          sessionStorage.setItem('new_user_designation', 'sales_rep');
+        }
       })
       .catch((err) => {
         setLoading(false);
@@ -158,7 +192,7 @@ const UserCreation = () => {
       email: '',
       user_name: '',
       nic: '',
-      is_companyStaff: false,
+      is_company: false,
       is_manager: false,
       password: '',
       re_password: '',
@@ -273,7 +307,9 @@ const UserCreation = () => {
                   ) : (
                     ''
                   )} */}
-                  {user.is_superuser || user.is_companyStaff ? (
+                  {user.is_superuser ||
+                  user.is_company ||
+                  user.is_excecutive ? (
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"
@@ -285,9 +321,22 @@ const UserCreation = () => {
                   ) : (
                     ''
                   )}
-                  {user.is_companyStaff ||
+                  {user.is_company ? (
+                    <div className="form__row__col__input aligned">
+                      <input
+                        type="radio"
+                        checked={data.is_excecutive}
+                        onChange={(e) => handleCheckExecutive(e)}
+                      />
+                      <label htmlFor="">Executive</label>
+                    </div>
+                  ) : (
+                    ''
+                  )}
+                  {user.is_company ||
                   user.is_manager ||
-                  user.is_superuser ? (
+                  user.is_superuser ||
+                  user.is_excecutive ? (
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"
@@ -299,7 +348,8 @@ const UserCreation = () => {
                   ) : (
                     ''
                   )}
-                  {user.is_companyStaff ||
+                  {user.is_company ||
+                  user.is_excecutive ||
                   user.is_manager ||
                   user.is_superuser ||
                   user.is_distributor ? (
@@ -309,7 +359,7 @@ const UserCreation = () => {
                         checked={data.is_salesref}
                         onChange={(e) => handleCheckSalesRef(e)}
                       />
-                      <label htmlFor="">Sales ref</label>
+                      <label htmlFor="">Sales rep</label>
                     </div>
                   ) : (
                     ''
@@ -318,10 +368,10 @@ const UserCreation = () => {
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"
-                        checked={data.is_companyStaff}
+                        checked={data.is_company}
                         onChange={(e) => handleCheckStaff(e)}
                       />
-                      <label htmlFor="">Company staff</label>
+                      <label htmlFor="">Company</label>
                     </div>
                   ) : (
                     ''

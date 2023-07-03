@@ -3,6 +3,7 @@ import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import FileUpload from '../../components/fileupload/FileUpload';
 
 const ShowMessage = React.forwardRef((props, ref) => {
   return (
@@ -19,6 +20,8 @@ const ShowMessage = React.forwardRef((props, ref) => {
 
 const CreateDealer = () => {
   const inputRef = useRef(null);
+  const [show_message, setShowMsg] = useState(false);
+  const [show_upload, setShowUplod] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
@@ -47,6 +50,7 @@ const CreateDealer = () => {
 
   useEffect(() => {
     setLoading(true);
+    setShowMsg(false);
     axiosInstance
       .get('/psa/all/', {
         headers: {
@@ -65,6 +69,7 @@ const CreateDealer = () => {
         setError(true);
         setTitle('Error');
         setMsg('Cannot fetch psa details. Please refresh the page again.');
+        setShowMsg(true);
         handleOpen();
       });
 
@@ -89,6 +94,8 @@ const CreateDealer = () => {
         setMsg(
           'Cannot fetch dealer category details. Please refresh the page again.'
         );
+        setShowMsg(true);
+
         handleOpen();
       });
   }, []);
@@ -96,6 +103,8 @@ const CreateDealer = () => {
   const handleSave = (e) => {
     e.preventDefault();
     setLoading(true);
+    setShowMsg(false);
+
     axiosInstance
       .post('/dealer/add/', data, {
         headers: {
@@ -110,6 +119,8 @@ const CreateDealer = () => {
         setSuccess(true);
         setTitle('Success');
         setMsg('Dealer has been created successfully');
+        setShowMsg(true);
+
         handleOpen();
         console.log(res.data);
       })
@@ -120,6 +131,8 @@ const CreateDealer = () => {
         setError(true);
         setTitle('Error');
         setMsg('Dealer cannot create right now. Please check your data again');
+        setShowMsg(true);
+
         handleOpen();
         console.log(err.data);
       });
@@ -141,6 +154,12 @@ const CreateDealer = () => {
       assistant_contact_number: '',
     });
   };
+  const hanldeFileUpload = (e) => {
+    e.preventDefault();
+    setShowMsg(false);
+    setShowUplod(true);
+    handleOpen();
+  };
   return (
     <div className="page">
       {loading ? (
@@ -152,16 +171,30 @@ const CreateDealer = () => {
       ) : (
         ''
       )}
-      <Modal open={open} onClose={handleClose}>
-        <ShowMessage
-          ref={inputRef}
-          handleClose={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
+
+      {show_message ? (
+        <Modal open={open} onClose={handleClose}>
+          <ShowMessage
+            ref={inputRef}
+            handleClose={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal>
+      ) : show_upload ? (
+        <Modal open={open} onClose={handleClose}>
+          <FileUpload
+            close={handleClose}
+            ditributor={false}
+            inventory={null}
+            url={'/dealer/add/excel/'}
+          />
+        </Modal>
+      ) : (
+        ''
+      )}
 
       <div className="page__title">
         <p>Dealer Details</p>
@@ -364,6 +397,9 @@ const CreateDealer = () => {
 
             <div className="form__btn">
               <div className="form__btn__container">
+                <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
+                  import
+                </button>
                 <button className="btnEdit" onClick={(e) => handleSave(e)}>
                   save
                 </button>

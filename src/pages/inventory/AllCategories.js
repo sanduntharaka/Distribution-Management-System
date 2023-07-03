@@ -213,17 +213,21 @@ const AllCategories = (props) => {
                 columns={columns}
                 data={tblData}
                 icons={tableIcons}
-                editable={{
-                  onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve) => {
-                      handleEdit(newData, oldData, resolve);
-                    }),
+                editable={
+                  props.user.is_manager || props.user.is_superuser
+                    ? {
+                        onRowUpdate: (newData, oldData) =>
+                          new Promise((resolve) => {
+                            handleEdit(newData, oldData, resolve);
+                          }),
 
-                  onRowDelete: (oldData) =>
-                    new Promise((resolve) => {
-                      handleDelete(oldData, resolve);
-                    }),
-                }}
+                        onRowDelete: (oldData) =>
+                          new Promise((resolve) => {
+                            handleDelete(oldData, resolve);
+                          }),
+                      }
+                    : ''
+                }
               />
               {/* </section> */}
             </div>

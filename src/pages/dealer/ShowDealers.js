@@ -75,6 +75,8 @@ const ShowDealers = () => {
     { title: 'Owner contact', field: 'owner_personal_number' },
   ];
 
+  const [loading, setLoading] = useState(false);
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -110,6 +112,7 @@ const ShowDealers = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     axiosInstance
       .get(`/dealer/all/`, {
         headers: {
@@ -119,6 +122,7 @@ const ShowDealers = () => {
       })
       .then((res) => {
         console.log(res.data);
+        setLoading(false);
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
@@ -129,8 +133,9 @@ const ShowDealers = () => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
-  }, [success]);
+  }, [success, setSuccess]);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
@@ -270,6 +275,7 @@ const ShowDealers = () => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',

@@ -70,11 +70,37 @@ const ConfirmStatus = (props) => {
     console.log(props);
   };
 
-  const handleOpenEditBill = (e) => {
+  const handleDelete = (e) => {
     e.preventDefault();
-    setEditDetailsOpen(true);
-    setMessageOpen(false);
-    handleModalOpen();
+    axiosInstance
+      .delete(`/salesreturn/return/delete/${props.invoice.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+
+        console.log(res);
+        props.showEdit(false);
+        props.msgErr(false);
+        props.msgSuccess(true);
+        props.msgTitle('Success');
+        props.msg('Bill deleted successfully');
+        props.openMsg(true);
+      })
+      .catch((err) => {
+        setLoading(false);
+
+        console.log(err);
+        props.showEdit(false);
+        props.msgSuccess(false);
+        props.msgErr(true);
+        props.msgTitle('Error');
+        props.msg('Cannot delete the details. Please Try again');
+        props.openMsg(true);
+      });
   };
 
   return (
@@ -161,10 +187,13 @@ const ConfirmStatus = (props) => {
           <EditBill invoice={props.invoice} />
         </div>
         <div className="buttoncontainer">
+          <button className="btnDelete" onClick={(e) => handleDelete(e)}>
+            delete
+          </button>
           <button className="btnSave" onClick={(e) => handleConfirm(e)}>
             submit
           </button>
-          <button className="btnDelete" onClick={(e) => handleCloseConfirm(e)}>
+          <button className="addBtn" onClick={(e) => handleCloseConfirm(e)}>
             close
           </button>
         </div>

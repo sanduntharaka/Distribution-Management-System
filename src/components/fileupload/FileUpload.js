@@ -45,6 +45,7 @@ const FileUpload = (props) => {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
+        timeout: 50000,
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
             (progressEvent.loaded * 100) / progressEvent.total
@@ -64,13 +65,16 @@ const FileUpload = (props) => {
         fileDownload(response.data);
       })
       .catch((error) => {
-        setResponse(error.response.data);
+        setResponse(error);
         setRes(true);
         setLoading(false);
         setProssesing(false);
         setSuccess(false);
         setError(true);
-        fileDownload(error.response.data);
+        if (error.response.data) {
+          fileDownload(error.response.data);
+        }
+
         console.log(error);
       });
   };

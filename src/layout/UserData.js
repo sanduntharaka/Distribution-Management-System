@@ -28,7 +28,6 @@ const UserData = () => {
   const handleLogOut = () => {
     dispatch(logout());
     navigate('/');
-    window.location.reload(true);
   };
 
   const handleProfile = () => {

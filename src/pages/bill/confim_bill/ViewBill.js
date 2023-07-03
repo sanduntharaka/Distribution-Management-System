@@ -57,7 +57,7 @@ const ViewBill = (props) => {
           console.log(err);
         });
     }
-    console.log('inv v:', props.invoice.billing_price_method)
+    console.log('inv v:', props.invoice.billing_price_method);
   }, []);
 
   const handleCancle = (e) => {
@@ -84,6 +84,7 @@ const ViewBill = (props) => {
                 <h2>{distributor.full_name}</h2>
                 <p>{distributor.address}</p>
                 <p>{distributor.company_number}</p>
+                <h3>Invoice</h3>
               </div>
             </div>
           </div>
@@ -127,27 +128,34 @@ const ViewBill = (props) => {
                     <td>{item.description}</td>
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
-                    <td>{props.invoice.billing_price_method==="1"? item.wholesale_price:props.invoice.billing_price_method==="2"? item.retail_price:0}</td>
+                    <td>
+                      {props.invoice.billing_price_method === '1'
+                        ? item.wholesale_price
+                        : props.invoice.billing_price_method === '2'
+                        ? item.retail_price
+                        : 0}
+                    </td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
+                <tr className={styles.final}>...</tr>
                 <tr>
-                  <td className={styles.total} colSpan={5}>
+                  <td className={styles.total} colSpan={6}>
                     Total amount:
                   </td>
                   <td>{props.data.sub_total}</td>
                 </tr>
                 <tr>
-                  <td className={styles.total} colSpan={5}>
+                  <td className={styles.total} colSpan={6}>
                     Total dicsount amount:
                   </td>
                   <td>{props.data.total_discount}</td>
                 </tr>
                 <tr>
-                  <td className={styles.total} colSpan={5}>
+                  <td className={styles.total} colSpan={6}>
                     Final amount:
                   </td>
                   <td>{props.data.total}</td>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, forwardRef } from 'react';
-import './confirmstatus.scss';
+// import './confirmstatus.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../../components/loadingSpinner/Spinner';
@@ -450,7 +450,7 @@ const ConfirmStatus = (props) => {
             edit
           </button>
 
-          <button className="btnDelete" onClick={(e) => handleCloseConfirm(e)}>
+          <button className="addBtn" onClick={(e) => handleCloseConfirm(e)}>
             close
           </button>
         </div>

@@ -117,7 +117,7 @@ const DaylyInventoryPeriod = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <InventoryStatusTable data={dateByData} />
+              <InventoryStatusTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>

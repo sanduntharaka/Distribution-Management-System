@@ -58,9 +58,10 @@ const Sidebar = () => {
             <div className="container__list__item__name">Dashboard</div>
           </NavLink>
           {user.is_superuser ||
+          user.is_excecutive ||
           user.is_manager ||
           user.is_distributor ||
-          user.is_companyStaff ? (
+          user.is_company ? (
             <NavLink
               to="/user"
               className={(isActive, isPending) =>
@@ -160,7 +161,7 @@ const Sidebar = () => {
                 <div className="container__list__item__name">Old details</div>
               </NavLink>
 
-              <NavLink
+              {/* <NavLink
                 to="/confirm"
                 className={(isActive, isPending) =>
                   handleClassname(isActive, isPending)
@@ -170,13 +171,13 @@ const Sidebar = () => {
                   <GiCheckedShield />
                 </div>
                 <div className="container__list__item__name">Approvals</div>
-              </NavLink>
+              </NavLink> */}
             </>
           ) : (
             ''
           )}
 
-          {user.is_salesref ? (
+          {user.is_salesref || user.is_distributor ? (
             <>
               <NavLink
                 to="/purchase"
@@ -246,7 +247,7 @@ const Sidebar = () => {
           ) : (
             ''
           )}
-          {user.is_superuser || user.is_manager ? (
+          {user.is_company ? (
             <NavLink
               to="/settings"
               className={(isActive, isPending) =>

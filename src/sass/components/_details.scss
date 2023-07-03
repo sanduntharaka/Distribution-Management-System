@@ -1,9 +1,9 @@
 .details {
   &__content {
-    width: 40%;
+    width: 50%;
     overflow-y: scroll;
     scrollbar-gutter: stable;
-    height: 350px;
+    height: 75vh;
     background-color: white;
     border-radius: 25px;
     padding: 50px;
@@ -44,9 +44,24 @@
         border-radius: 20px;
       }
     }
+    &__body {
+      margin-top: 25px;
+    }
+
     &__row {
       display: flex;
-      justify-content: space-between;
+      gap: 5px;
+
+      &.detailtablel {
+        margin-top: 25px;
+        display: grid;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        overflow: auto;
+        padding: 10px;
+        box-sizing: border-box;
+      }
       &.buttons {
         margin-top: 15px;
         justify-content: space-around;

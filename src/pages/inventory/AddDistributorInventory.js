@@ -180,7 +180,7 @@ const AddDistributorInventory = ({ inventory }) => {
       )}
 
       <div className="page__title">
-        <p>Add inventory</p>
+        <p>Add new product</p>
       </div>
       <div className="page__pcont">
         <div className="form">

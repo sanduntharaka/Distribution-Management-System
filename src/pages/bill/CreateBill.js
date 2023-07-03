@@ -15,6 +15,10 @@ const CreateBill = ({ inventory }) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
+  const [currentTime, setCurrentTime] = useState(() => {
+    const d = new Date();
+    return d.toLocaleTimeString();
+  });
   const [billingPriceMethod, setBillingPriceMethod] = useState('2');
   // const [discount, setDiscount] = useState(9);
   const [dealers, setDealers] = useState([]);
@@ -28,6 +32,7 @@ const CreateBill = ({ inventory }) => {
     dealer_contact: '',
     dis_sales_ref: '',
     date: currentDate,
+    time: currentTime,
     bill_code: 'INV-',
     total: 0,
     total_discount: 0,
@@ -85,7 +90,7 @@ const CreateBill = ({ inventory }) => {
   const handleClose = () => setOpen(false);
 
   const [exceed_qty, setExceedQty] = useState(false);
-
+  console.log('T:', currentTime);
   useEffect(() => {
     setLoading(true);
     axiosInstance
@@ -263,17 +268,18 @@ const CreateBill = ({ inventory }) => {
           foc: parseInt(foc),
           discount: parseFloat(discount),
           pack_size: product.pack_size,
-          extended_price: billingPriceMethod === '1' ?product.whole_sale_price * parseInt(qty) - parseFloat(discount) :
-            product.retail_price * parseInt(qty) - parseFloat(discount),
+          extended_price:
+            billingPriceMethod === '1'
+              ? product.whole_sale_price * parseInt(qty) - parseFloat(discount)
+              : product.retail_price * parseInt(qty) - parseFloat(discount),
         },
       ]);
 
-      setQty(0)
-      setFoc(0)
-      setSubTotal(0)
-      setDiscount(0)
-      setValue2('')
-
+      setQty(0);
+      setFoc(0);
+      setSubTotal(0);
+      setDiscount(0);
+      setValue2('');
     } else {
       setExceedQty(true);
     }
@@ -301,15 +307,15 @@ const CreateBill = ({ inventory }) => {
     const item = newItems[index];
     newItems.splice(index, 1);
     setItems(newItems);
-    console.log('i',item)
-   
-      setData({
-        ...data,
-        sub_total: data.sub_total - (item.extended_price+item.discount),
-        total_discount:data.total_discount - item.discount,
-      });
-   
-    setSubTotal(0)
+    console.log('i', item);
+
+    setData({
+      ...data,
+      sub_total: data.sub_total - (item.extended_price + item.discount),
+      total_discount: data.total_discount - item.discount,
+    });
+
+    setSubTotal(0);
   };
 
   const handleCash = (e) => {
@@ -658,7 +664,7 @@ const CreateBill = ({ inventory }) => {
                 }}
               >
                 <p>Total:</p>
-   
+
                 <p>Rs {data.sub_total}/-</p>
               </div>
             </div>

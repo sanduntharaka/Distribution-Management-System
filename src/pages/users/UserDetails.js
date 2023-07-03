@@ -17,6 +17,7 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 const UserDetails = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [loading, setLoading] = useState(false);
 
   //message modal
@@ -38,7 +39,11 @@ const UserDetails = () => {
     address: '',
     nic: '',
     email: '',
-    designation: '',
+    designation:
+      sessionStorage.getItem('new_user_designation') !== undefined &&
+      sessionStorage.getItem('new_user_designation')
+        ? sessionStorage.getItem('new_user_designation')
+        : '',
     dob: '',
     company_number: '',
     personal_number: '',
@@ -255,15 +260,40 @@ const UserDetails = () => {
               <div className="form__row__col">
                 <div className="form__row__col__label">Designation</div>
                 <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type designation here"
+                  <select
                     value={data.designation ? data.designation : ''}
                     onChange={(e) =>
                       setData({ ...data, designation: e.target.value })
                     }
                     required
-                  />
+                  >
+                    <option value="">Select designation</option>
+
+                    {user.is_company ? (
+                      <>
+                        <option value="Company">Company</option>
+                        <option value="Executive">Excecutive</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+                    {user.is_excutive || user.is_company ? (
+                      <>
+                        <option value="Manager">Manager</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+                    {user.is_excutive || user.is_company || user.is_manager ? (
+                      <>
+                        <option value="Distributor">Distributor</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+
+                    <option value="Sales Rep">Sales Rep</option>
+                  </select>
                 </div>
               </div>
             </div>

@@ -143,7 +143,7 @@ const ChqueReturnsReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ChequeRetuernsTable data={dateByData} />
+              <ChequeRetuernsTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import AddDistributorInventory from './AddDistributorInventory';
 import SalesRefInventory from './SalesRefInventory';
 import { axiosInstance } from '../../axiosInstance';
 import Category from './Category';
+import AddDistributorInventoryStocks from './AddDistributorInventoryStocks';
 
 const InventoryTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -66,7 +67,7 @@ const InventoryTabs = () => {
     user.is_manager || user.is_superuser
       ? 0
       : user.is_distributor
-      ? 3
+      ? 5
       : user.is_salesref
       ? 4
       : 0
@@ -78,16 +79,13 @@ const InventoryTabs = () => {
   return (
     <div className="tab">
       <div className="tab_contaner">
-        {user.is_manager || user.is_superuser ? (
-          <div
-            className={`item ${selected === 0 ? 'selected' : ''}`}
-            onClick={() => handleSelect(0)}
-          >
-            Category
-          </div>
-        ) : (
-          ''
-        )}
+        <div
+          className={`item ${selected === 0 ? 'selected' : ''}`}
+          onClick={() => handleSelect(0)}
+        >
+          Category
+        </div>
+
         {/* {user.is_manager || user.is_superuser ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
@@ -110,10 +108,20 @@ const InventoryTabs = () => {
         )} */}
         {user.is_distributor ? (
           <div
+            className={`item ${selected === 5 ? 'selected' : ''}`}
+            onClick={() => handleSelect(5)}
+          >
+            Add stocks
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_distributor ? (
+          <div
             className={`item ${selected === 3 ? 'selected' : ''}`}
             onClick={() => handleSelect(3)}
           >
-            Add Distributor inventory
+            Add new products
           </div>
         ) : (
           ''
@@ -131,7 +139,7 @@ const InventoryTabs = () => {
       </div>
       <div className="tab_page">
         {selected === 0 ? (
-          <Category />
+          <Category user={user} />
         ) : selected === 1 ? (
           <AddInventory />
         ) : selected === 2 ? (
@@ -140,6 +148,8 @@ const InventoryTabs = () => {
           <AddDistributorInventory inventory={inventory} />
         ) : loading === false && selected === 4 && inventory !== undefined ? (
           <DistributorInventory inventory={inventory} user={user} />
+        ) : loading === false && selected === 5 && inventory !== undefined ? (
+          <AddDistributorInventoryStocks inventory={inventory} />
         ) : (
           ''
         )}

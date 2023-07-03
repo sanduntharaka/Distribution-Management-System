@@ -14,7 +14,7 @@ const PastTab = () => {
           className={`item ${selected === 0 ? 'selected' : ''}`}
           onClick={() => handleSelect(0)}
         >
-          Add Invoices
+          Market credit
         </div>
         <div
           className={`item ${selected === 1 ? 'selected' : ''}`}

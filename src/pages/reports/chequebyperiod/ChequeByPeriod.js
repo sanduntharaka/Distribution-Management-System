@@ -138,7 +138,7 @@ const ChequeByPeriod = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ChequeByPeriodTable data={dateByData} />
+              <ChequeByPeriodTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>

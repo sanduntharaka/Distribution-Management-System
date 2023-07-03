@@ -43,6 +43,11 @@
         color: $color-white;
         border-radius: 20px;
       }
+      &.danger {
+        h4 {
+          background-color: $color-danger;
+        }
+      }
     }
     &__table {
       margin-top: 10px;
@@ -51,7 +56,8 @@
       border-radius: 20px;
       padding: 10px;
       .form {
-        input {
+        input,
+        select {
           border: 1px solid $color-btn-warning;
           width: 100%;
           max-width: 100%;

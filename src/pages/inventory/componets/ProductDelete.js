@@ -32,6 +32,9 @@ const ProductDelete = (props) => {
         props.openMsg(true);
       });
   };
+  const handleClose = () => {
+    props.closeModal();
+  };
   return (
     <div className="confirm">
       <div className="confirm__content">
@@ -48,7 +51,7 @@ const ProductDelete = (props) => {
           <button className="remBtn" onClick={handleClickDelete}>
             <p>Delete</p>
           </button>
-          <button className="addBtn">
+          <button className="addBtn" onClick={handleClose}>
             <p>Cancel</p>
           </button>
         </div>

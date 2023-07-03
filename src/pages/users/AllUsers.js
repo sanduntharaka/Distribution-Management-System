@@ -99,7 +99,8 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const AllUsers = () => {
+const AllUsers = (props) => {
+  const user = props.user;
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -259,6 +260,7 @@ const AllUsers = () => {
             showEdit={setEditDetailsOpen}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : editdetailsOpen ? (
           <UserDetailsEdit
@@ -401,7 +403,7 @@ const AllUsers = () => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon ? (
+                      ) : props.action.icon === EditIcon && user.is_manager ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -413,7 +415,8 @@ const AllUsers = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : (
+                      ) : props.action.icon === DeleteOutline &&
+                        user.is_manager ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -425,6 +428,8 @@ const AllUsers = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

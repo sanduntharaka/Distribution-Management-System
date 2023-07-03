@@ -156,7 +156,7 @@ const AddInvoice = () => {
       )}
 
       <div className="page__title">
-        <p>Add old invoice</p>
+        <p>Add Market credit</p>
       </div>
       <div className="page__pcont">
         <div className="form">

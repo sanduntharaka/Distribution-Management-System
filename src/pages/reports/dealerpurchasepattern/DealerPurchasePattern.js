@@ -249,7 +249,7 @@ const DealerPurchasePattern = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeTable data={dateByData} />
+              <ByDateRangeTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>

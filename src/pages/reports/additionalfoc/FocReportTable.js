@@ -57,6 +57,7 @@ const FocReportTable = (props) => {
     <MaterialTable
       title={false}
       columns={columns}
+      isLoading={props.loading}
       data={props.data}
       sx={{
         ['&.MuiTable-root']: {

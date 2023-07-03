@@ -214,7 +214,7 @@ const ViewOldInvoice = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Old invoices</p>
+        <p>View All Market credits</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

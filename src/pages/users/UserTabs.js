@@ -10,6 +10,7 @@ import UserDetails from './UserDetails';
 import DistributorSalesRef from './DistributorSalesRef';
 import AllUsers from './AllUsers';
 import ManagerDistributors from './ManagerDistributors';
+import ExecutiveManagers from './ExecutiveManagers';
 
 const UserTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -26,9 +27,10 @@ const UserTabs = () => {
     <div className="tab">
       <div className="tab_contaner">
         {user.is_superuser ||
+        user.is_excecutive ||
         user.is_manager ||
         user.is_distributor ||
-        user.is_companyStaff ? (
+        user.is_company ? (
           <div
             className={`item ${selected === 0 ? 'selected' : ''}`}
             onClick={() => handleSelect(0)}
@@ -40,8 +42,9 @@ const UserTabs = () => {
         )}
         {user.is_superuser ||
         user.is_manager ||
+        user.is_excecutive ||
         user.is_distributor ||
-        user.is_companyStaff ? (
+        user.is_company ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
             onClick={() => handleSelect(1)}
@@ -61,10 +64,7 @@ const UserTabs = () => {
         ) : (
           ''
         )}
-        {user.is_superuser ||
-        user.is_manager ||
-        user.is_distributor ||
-        user.is_companyStaff ? (
+        {user.is_superuser || user.is_manager || user.is_distributor ? (
           <div
             className={`item ${selected === 2 ? 'selected' : ''}`}
             onClick={() => handleSelect(2)}
@@ -74,8 +74,21 @@ const UserTabs = () => {
         ) : (
           ''
         )}
+        {user.is_excecutive || user.is_company ? (
+          <div
+            className={`item ${selected === 5 ? 'selected' : ''}`}
+            onClick={() => handleSelect(5)}
+          >
+            Assign Executives
+          </div>
+        ) : (
+          ''
+        )}
 
-        {user.is_superuser || user.is_manager ? (
+        {user.is_superuser ||
+        user.is_manager ||
+        user.is_excecutive ||
+        user.is_company ? (
           <div
             className={`item ${selected === 4 ? 'selected' : ''}`}
             onClick={() => handleSelect(4)}
@@ -96,7 +109,9 @@ const UserTabs = () => {
         ) : selected === 3 ? (
           <ManagerDistributors />
         ) : selected === 4 ? (
-          <AllUsers />
+          <AllUsers user={user} />
+        ) : selected === 5 ? (
+          <ExecutiveManagers user={user} />
         ) : (
           ''
         )}

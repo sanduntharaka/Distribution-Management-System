@@ -4,6 +4,9 @@ import { axiosInstance } from '../../axiosInstance';
 import CreatedBills from './CreatedBills';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import BillConfirm from './approvebill/BillConfirm';
+import ConfirmStatus from './creaditpayments/ConfirmStatus';
+import AddCreditDetails from './creaditpayments/AddCreditDetails';
 
 const MyMessage = React.forwardRef((props, ref) => {
   return (
@@ -119,12 +122,34 @@ const BillingTab = () => {
         >
           All Bills
         </div>
+        {user.is_distributor ? (
+          <>
+            <div
+              className={`item ${selected === 2 ? 'selected' : ''}`}
+              onClick={() => handleSelect(2)}
+            >
+              Approve Bills
+            </div>
+            <div
+              className={`item ${selected === 3 ? 'selected' : ''}`}
+              onClick={() => handleSelect(3)}
+            >
+              Credit bills
+            </div>
+          </>
+        ) : (
+          ''
+        )}
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
           <CreateBill inventory={inventory} />
         ) : selected === 1 ? (
           <CreatedBills />
+        ) : selected === 2 ? (
+          <BillConfirm />
+        ) : selected === 3 ? (
+          <AddCreditDetails />
         ) : (
           ''
         )}

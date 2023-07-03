@@ -3,8 +3,6 @@ import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import ProductDetails from '../inventory/componets/ProductDetails';
-import ProductEdit from '../inventory/componets/ProductEdit';
-import ProductDelete from '../inventory/componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -25,11 +23,8 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import EditNotBuy from '../../components/edit/EditNotBuy';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
@@ -297,7 +292,7 @@ const NotBuyDetails = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Primary Sales Areas</p>
+        <p>View All none-buy details</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

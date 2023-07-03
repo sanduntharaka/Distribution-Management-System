@@ -104,16 +104,23 @@ const UserDetails = (props) => {
           </div>
         </div>
         <div className="details__content__row buttons">
-          <div className="details__content__row__col">
-            <button className="btnEdit" onClick={handleEdit}>
-              Edit
-            </button>
-          </div>
-          <div className="details__content__row__col">
-            <button className="btnDelete" onClick={handleDelete}>
-              Delete
-            </button>
-          </div>
+          {props.user.is_manager ? (
+            <>
+              <div className="details__content__row__col">
+                <button className="btnEdit" onClick={handleEdit}>
+                  Edit
+                </button>
+              </div>
+              <div className="details__content__row__col">
+                <button className="btnDelete" onClick={handleDelete}>
+                  Delete
+                </button>
+              </div>
+            </>
+          ) : (
+            ''
+          )}
+
           <div className="details__content__row__col">
             <button className="addBtn" onClick={handleCancel}>
               Cancel

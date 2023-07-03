@@ -51,9 +51,10 @@ const DealerReport = () => {
     { title: 'Category', field: 'category' },
     { title: 'PSA', field: 'psa' },
   ];
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (JSON.parse(sessionStorage.getItem('user')).is_superuser) {
+      setLoading(true);
       axiosInstance
         .get('/reports/delaerdetails/all/', {
           headers: {
@@ -63,13 +64,18 @@ const DealerReport = () => {
         })
         .then((res) => {
           setData(res.data);
+          setLoading(false);
         })
         .catch((err) => {
+          setLoading(false);
+
           console.log(err);
         });
     }
 
     if (JSON.parse(sessionStorage.getItem('user')).is_manager) {
+      setLoading(true);
+
       axiosInstance
         .get(
           `/reports/delaerdetails/by/manager/${
@@ -84,12 +90,16 @@ const DealerReport = () => {
         )
         .then((res) => {
           setData(res.data);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
     }
     if (JSON.parse(sessionStorage.getItem('user')).is_distributor) {
+      setLoading(true);
+
       axiosInstance
         .get(
           `/reports/delaerdetails/by/distributor/${
@@ -105,9 +115,11 @@ const DealerReport = () => {
         .then((res) => {
           console.log(res.data);
           setData(res.data);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
         });
     }
   }, []);
@@ -124,6 +136,7 @@ const DealerReport = () => {
                 title={false}
                 columns={columns}
                 data={data}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',

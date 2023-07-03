@@ -146,7 +146,7 @@ const ChequeInHand = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ChequeTable data={dateByData} />
+              <ChequeTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>

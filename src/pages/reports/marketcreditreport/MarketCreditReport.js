@@ -93,7 +93,7 @@ const MarketCreditReport = () => {
   return (
     <div className="page">
       <div className="page__title">
-        <p>Distributor cheque by period report</p>
+        <p>Market credit bills report</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row ">
