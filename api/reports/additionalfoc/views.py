@@ -32,7 +32,6 @@ class GetFocReport(APIView):
             'distributor': invoices.first().dis_sales_ref.distributor.full_name,
         }
         items = InvoiceIntem.objects.filter(**items_filter)
-        print(items)
         data['details'] = serializers.AddtionalFocSerializer(
             items, many=True).data
         return Response(data, status=status.HTTP_200_OK)

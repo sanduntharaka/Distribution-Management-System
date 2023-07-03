@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from django.db import models
 from distrubutor_salesref.models import SalesRefDistributor
-from distributor_inventory.models import DistributorInventoryItems
+from distributor_inventory.models import DistributorInventoryItems, ItemStock
 from userdetails.models import UserDetails
 from dealer_details.models import Dealer
 from primary_sales_area.models import PrimarySalesArea
@@ -23,13 +23,14 @@ class SalesRefInvoice(models.Model):
     dealer = models.ForeignKey(Dealer, on_delete=models.CASCADE)
     total = models.FloatField()
     total_discount = models.FloatField()
-
+    time = models.TimeField(null=True, blank=True)
     added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
     billing_price_method = models.CharField(default='2', max_length=2)
     sub_total = models.FloatField(default=0.0)
     status = models.CharField(
         max_length=10, choices=BILL_STATUS, default='pending')
     is_settiled = models.BooleanField(default=False)
+    rejected_reason = models.CharField(max_length=150, blank=True, null=True)
     confirmed_date = models.DateField(
         default="2023-01-01", blank=True, null=True)
 
@@ -95,6 +96,18 @@ class PaymentDetails(models.Model):
     due_date = models.DateField(null=True, blank=True)
     added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
 
+    def get_cheque_id(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).id
+        except:
+            return None
+
+    def get_cheque_status(self):
+        try:
+            return ChequeDetails.objects.get(payment_details=self.id).status
+        except:
+            return ' '
+
     def get_cheque_number(self):
         try:
             return ChequeDetails.objects.get(payment_details=self.id).cheque_number
@@ -117,25 +130,25 @@ class PaymentDetails(models.Model):
         try:
             return ChequeDetails.objects.get(payment_details=self.id).amount
         except:
-            return ' '
+            return 0
 
     def get_cash(self):
         try:
-            return self.paid_amount if self.payment_type == 'cash' else ''
+            return self.paid_amount if self.payment_type == 'cash' else 0
         except:
-            return ' '
+            return 0
 
     def get_credit(self):
         try:
-            return self.paid_amount if self.payment_type == 'credit' or self.payment_type == 'cash-credit' or self.payment_type == 'cheque-credit' or self.payment_type == 'cash-credit-cheque' else ''
+            return self.paid_amount if self.payment_type == 'credit' or self.payment_type == 'cash-credit' or self.payment_type == 'cheque-credit' or self.payment_type == 'cash-credit-cheque' else 0
         except:
-            return ' '
+            return 0
 
     def get_cheque(self):
         try:
-            return self.paid_amount if self.payment_type == 'cheque' else ''
+            return self.paid_amount if self.payment_type == 'cheque' else 0
         except:
-            return ' '
+            return 0
 
 
 class ChequeDetails(models.Model):
@@ -148,7 +161,7 @@ class ChequeDetails(models.Model):
         PaymentDetails, on_delete=models.CASCADE)
     number_of_dates = models.IntegerField()
     cheque_number = models.CharField(max_length=50)
-    account_number = models.CharField(max_length=50)
+    branch = models.CharField(max_length=50)
     payee_name = models.CharField(max_length=150)
     bank = models.CharField(max_length=150)
     amount = models.FloatField()
@@ -161,7 +174,7 @@ class ChequeDetails(models.Model):
 
 class InvoiceIntem(models.Model):
     bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
-    item = models.ForeignKey(DistributorInventoryItems,
+    item = models.ForeignKey(ItemStock,
                              on_delete=models.DO_NOTHING)
     discount = models.FloatField(default=0)
     item_code = models.CharField(max_length=50)
@@ -176,7 +189,7 @@ class InvoiceIntem(models.Model):
         count = 0
         if self.qty > 100:
             count = self.foc - \
-                int(self.qty*self.item.category.foc_percentage/100)
+                int(self.qty*self.item.item.category.foc_percentage/100)
         return count
 
     def get_value(self):

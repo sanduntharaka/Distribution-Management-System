@@ -1,8 +1,9 @@
+from distrubutor_salesref_invoice.ReduceDistributorQuantity import ReduceQuantity
 from distrubutor_salesref.models import SalesRefDistributor
 from rest_framework import status
 from rest_framework.response import Response
 from salesref_return.models import SalesRefReturn, SalesRefReturnItem
-from distributor_inventory.models import DistributorInventoryItems
+from distributor_inventory.models import DistributorInventoryItems, ItemStock
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
@@ -84,12 +85,24 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         item = self.kwargs.get('pk')
-        print(request.data)
         return_bill = SalesRefReturn.objects.get(id=item)
+        return_items = SalesRefReturnItem.objects.filter(
+            salesrefreturn=return_bill)
         return_bill.status = request.data['status']
         try:
-            return_bill.save()
-            return Response(status=status.HTTP_200_OK)
+            items_status = []
+            for return_item in return_items:
+                if return_item.qty > return_item.item.qty or return_item.foc > return_item.item.foc:
+                    items_status.append(return_item.item.item.item_code)
+            if len(items_status) > 0:
+                return Response(data={"title": f"Not enough stock for {items_status}", "items": items_status}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return_bill.save()
+                for return_item in return_items:
+                    reduceQty = ReduceQuantity(
+                        return_item.item, return_item.qty, return_item.foc)
+                    reduceQty.reduce_qty()
+                return Response(status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
@@ -117,7 +130,7 @@ class AddReturnItem(APIView):
         try:
             for item in request.data['items']:
                 print(item)
-                return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return, item=DistributorInventoryItems.objects.get(
+                return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return, item=ItemStock.objects.get(
                     id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason']))
             print(return_items)
 

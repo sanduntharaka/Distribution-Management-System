@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from distributor_inventory.models import DistributorInventory, DistributorInventoryItems
+from distributor_inventory.models import DistributorInventory, DistributorInventoryItems, ItemStock
 from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -18,7 +18,7 @@ class GetInventoryReport(APIView):
         inventory = DistributorInventory.objects.get(distributor=item)
 
         filters = {
-            'inventory': inventory,
+            'item__inventory': inventory,
             'qty__gte': 0,
         }
         if stock_type == 0:
@@ -28,8 +28,8 @@ class GetInventoryReport(APIView):
             filters['date__range'] = (date_from, date_to)
 
         if category != -1:
-            filters['category'] = category
+            filters['item__category'] = category
 
-        items = DistributorInventoryItems.objects.filter(**filters)
+        items = ItemStock.objects.filter(**filters)
         serializer = serializers.InventoryItemsSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

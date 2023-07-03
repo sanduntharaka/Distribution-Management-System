@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 from userdetails.models import UserDetails
-from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails
+from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, PaymentDetails
 from distrubutor_salesref.models import SalesRefDistributor
 from manager_distributor.models import ManagerDistributor
 from . import serializers
@@ -67,12 +67,12 @@ class GetByDistributorPeriod(APIView):
         range_end = today - timedelta(days=days_mapping[period][1])
 
         filters = {
-            'dis_sales_ref__in': salesrefs_distributor,
+            'bill__dis_sales_ref__in': salesrefs_distributor,
             'date__range': (range_start, range_end),
             'payment_type': 'credit'
         }
 
-        invoices = SalesRefInvoice.objects.filter(**filters)
+        invoices = PaymentDetails.objects.filter(**filters)
         serializer = serializers.InvoiceSerializer(
             invoices, many=True)
 

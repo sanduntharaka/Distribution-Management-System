@@ -10,7 +10,7 @@ class AddtionalFocSerializer(serializers.ModelSerializer):
     dealer_address = serializers.CharField(source='bill.dealer.address')
     dealer_contact_number = serializers.CharField(
         source='bill.dealer.contact_number')
-    category = serializers.CharField(source='item.category.category_name')
+    category = serializers.CharField(source='item.item.category.category_name')
     addtional_foc_qty = serializers.IntegerField(source='get_addtional_foc')
     value = serializers.IntegerField(source='get_value')
 

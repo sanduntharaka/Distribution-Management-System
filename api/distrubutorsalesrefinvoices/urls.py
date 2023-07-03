@@ -9,6 +9,12 @@ urlpatterns = [
     path('create/invoice/credit/<int:pk>',
          views.AddCredit.as_view()),
     path('get/invoice/cheque/<id>', views.GetChequeDetails.as_view()),
+    path('get/invoice/payment/<pk>', views.GetInvoicePaymentDetail.as_view()),
+    path('get/payment/cheque/<pk>', views.GetInvoicePaymentCheque.as_view()),
+
+    path('delete/invoice/payment/<pk>', views.DeleteInvoicePayment.as_view()),
+
+
     path('all/invoice/', views.AllInvoice.as_view()),
     path('all/invoice/payments/<id>', views.AllInvoicePayments.as_view()),
     path('all/pending/invoices/<id>', views.AllPendingInvoice.as_view()),
@@ -23,4 +29,9 @@ urlpatterns = [
     path('item/delete/<id>', views.InvoiceItemDelete.as_view()),
 
     path('create/invoice/items/', views.CreateInvoiceItems.as_view()),
+    path('confirm/cheque/<pk>', views.ConfirmCheque.as_view()),
+    path('edit/cheque/<pk>', views.EditCheque.as_view()),
+
+
+
 ]

@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 class GetFocReport(APIView):
     def post(self, request, *args, **kwargs):
+        print(request.user.id)
         item = self.kwargs.get('id')
         category = int(request.data['category'])
         date_from = request.data['date_from']
@@ -28,7 +29,7 @@ class GetFocReport(APIView):
             'bill__in': invoice_ids,
         }
         if category != -1:
-            items_filter['category'] = category
+            items_filter['item__item__category'] = category
 
         items = InvoiceIntem.objects.filter(**items_filter)
 

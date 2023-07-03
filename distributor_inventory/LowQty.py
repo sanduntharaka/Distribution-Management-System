@@ -1,4 +1,4 @@
-from .models import DistributorInventory, DistributorInventoryItems
+from .models import DistributorInventory, DistributorInventoryItems, ItemStock
 from distrubutor_salesref.models import SalesRefDistributor
 
 
@@ -13,8 +13,8 @@ class LowQty:
                 distributor=distributor)
 
     def getQty(self):
-        low_qty_items = DistributorInventoryItems.objects.filter(
-            qty__lt=25, inventory=self.inventory)
-        items = [{'item_code': i.item_code, 'id': i.id, 'qty': i.qty}
+        low_qty_items = ItemStock.objects.filter(
+            qty__lt=25, qty__gt=0, item__inventory=self.inventory)
+        items = [{'item_code': i.item.item_code, 'id': i.id, 'qty': i.qty}
                  for i in low_qty_items]
         return items

@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from manager_distributor.models import ManagerDistributor
 from distrubutor_salesref.models import SalesRefDistributor
-from distributor_inventory.models import DistributorInventory, DistributorInventoryItems
+from distributor_inventory.models import DistributorInventory, DistributorInventoryItems, ItemStock
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -35,7 +35,7 @@ class GetinventoryItems (generics.ListAPIView):
     serializer_class = serializers.DistributorInventoryItems
 
     def get_queryset(self, *args, **kwargs):
-        return get_list_or_404(DistributorInventoryItems, inventory=self.kwargs.get('pk'))
+        return get_list_or_404(ItemStock, item__inventory=self.kwargs.get('pk'), qty__gt=0)
 
 #
 
@@ -83,13 +83,14 @@ class GetDistributorByDistributor(generics.RetrieveAPIView):
     serializer_class = serializers.GetDistributorDetails
 
     def get(self, *args, **kwargs):
-        salesref_distributor = SalesRefDistributor.objects.filter(distributor=self.kwargs.get('id')).first()
+        salesref_distributor = SalesRefDistributor.objects.filter(
+            distributor=self.kwargs.get('id')).first()
         data = {
-            "full_name":salesref_distributor.distributor.full_name,
-            "address":salesref_distributor.distributor.address,
-            "company_number":salesref_distributor.distributor.company_number,
+            "full_name": salesref_distributor.distributor.full_name,
+            "address": salesref_distributor.distributor.address,
+            "company_number": salesref_distributor.distributor.company_number,
         }
-        return Response(data=data,status=status.HTTP_200_OK)
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class GetAllSalesrefsByDistributor(generics.ListAPIView):

@@ -4,7 +4,7 @@ from distrubutor_salesref.models import SalesRefDistributor
 from rest_framework import status
 from rest_framework.response import Response
 from sales_return.models import SalesReturn, SalesReturnItem
-from distributor_inventory.models import DistributorInventoryItems, DistributorInventory
+from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
@@ -89,37 +89,17 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
         print(request.data)
         return_bill = SalesReturn.objects.get(id=item)
         if request.data['status'] == 'approved':
-            added_by = UserAccount.objects.get(id=request.data['added_by'])
             return_items = SalesReturnItem.objects.filter(
                 salesreturn=return_bill)
-            distributor = return_bill.dis_sales_ref.distributor
-            inventory = DistributorInventory.objects.get(
-                distributor=distributor)
-            return_items_list = []
-            for i in return_items:
-                return_items_list.append(DistributorInventoryItems(category=i.item.category,
-                                                                   invoice_number=return_bill.getbillnumber(),
-                                                                   from_sales_return=True,
-                                                                   inventory=inventory,
-                                                                   item_code=i.item.item_code,
-                                                                   description=i.item.description,
-                                                                   base=i.item.base,
-                                                                   qty=i.qty+i.foc,
-                                                                   pack_size=i.item.pack_size,
-                                                                   foc=i.item.foc,
-                                                                   whole_sale_price=i.item.whole_sale_price,
-                                                                   retail_price=i.item.retail_price,
-                                                                   added_by=added_by, ))
 
-            try:
-                DistributorInventoryItems.objects.bulk_create(
-                    return_items_list)
-                return_bill.status = request.data['status']
-                return_bill.save()
-                return Response(status=status.HTTP_200_OK)
-            except Exception as e:
-                print(e)
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            for i in return_items:
+                i.item.qty = i.item.qty+(i.qty+i.foc)
+                i.item.foc = i.item.foc+i.foc
+                i.item.save()
+
+            return_bill.status = request.data['status']
+            return_bill.save()
+            return Response(status=status.HTTP_200_OK)
         else:
             try:
                 return_bill.status = request.data['status']
@@ -151,7 +131,7 @@ class AddReturnItem(APIView):
         try:
             for item in request.data['items']:
                 print(item)
-                return_items.append(SalesReturnItem(salesreturn=sales_return, item=DistributorInventoryItems.objects.get(
+                return_items.append(SalesReturnItem(salesreturn=sales_return, item=ItemStock.objects.get(
                     id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason']))
             print(return_items)
 

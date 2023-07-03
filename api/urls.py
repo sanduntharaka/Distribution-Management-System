@@ -6,6 +6,7 @@ urlpatterns = [
     path('user/', include('api.user.urls')),
     path('company/inventory/', include('api.companyInventory.urls')),
     path('company/invoice/', include('api.companyInvoices.urls')),
+    path('executive/manager/', include('api.excutivemanager.urls')),
     path('manager/distributor/', include('api.managerdistributors.urls')),
     path('distributor/', include('api.distributor.urls')),
     path('distributor/invoice/', include('api.distributor_invoices.urls')),
@@ -25,7 +26,4 @@ urlpatterns = [
     path('reports/', include('api.reports.urls')),
     path('settings/', include('api.systemsettings.urls')),
     path('pastinv/', include('api.pastinvdata.urls')),
-
-
-
 ]

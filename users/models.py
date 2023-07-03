@@ -22,17 +22,18 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     user_name = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
-    is_companyStaff = models.BooleanField(default=False)
+    is_company = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
     is_distributor = models.BooleanField(default=False)
     is_salesref = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_excecutive = models.BooleanField(default=False)
     last_login = models.DateTimeField(auto_now=True)
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'user_name'
-    REQUIRED_FIELDS = ['is_companyStaff',
-                       'is_manager', 'is_distributor', 'is_salesref', 'is_superuser']
+    REQUIRED_FIELDS = ['is_company',
+                       'is_manager', 'is_distributor', 'is_salesref', 'is_superuser', 'is_excecutive']
 
     def __str__(self) -> str:
         return self.user_name

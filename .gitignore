@@ -64,6 +64,12 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0004_alter_salesrefleave_approved_by.py
 0003_category_foc_percentage.py
 0002_pastcheque_date_pastinvoice_date.py
+0003_alter_userdetails_designation.py
+0004_alter_userdetails_designation.py
+0005_alter_userdetails_designation.py
+0006_alter_userdetails_designation.py
+0002_rename_is_companystaff_useraccount_is_company.py
+0003_useraccount_is_excecutive.py
 # Backup files # 
 *.bak 
 *.vscode

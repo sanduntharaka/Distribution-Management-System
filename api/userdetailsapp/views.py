@@ -1,3 +1,4 @@
+from exceutive_manager.models import ExecutiveManager
 from distrubutor_salesref.models import SalesRefDistributor
 from django.db.models import Exists, OuterRef
 from django.db.models import Subquery
@@ -67,6 +68,15 @@ class getUsersDetails(generics.RetrieveAPIView):
         return get_object_or_404(UserDetails, id=item)
 
 
+class AllExecutives(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        queryset = UserDetails.objects.filter(user__is_excecutive=True)
+        return get_list_or_404(queryset)
+
+
 class AllManagers(generics.ListAPIView):
 
     serializer_class = serializers.AllDistributorsSerializer
@@ -74,6 +84,19 @@ class AllManagers(generics.ListAPIView):
     def get_queryset(self):
         queryset = UserDetails.objects.filter(user__is_manager=True)
         return get_list_or_404(queryset)
+
+
+class AllNewManagers(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        linked_managers = ExecutiveManager.objects.filter(
+            manager=OuterRef('pk'))
+
+        new_details = UserDetails.objects.filter(
+            user__is_manager=True).exclude(Exists(linked_managers))
+        return get_list_or_404(new_details)
 
 
 class AllDistributors(generics.ListAPIView):

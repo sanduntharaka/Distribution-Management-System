@@ -1,6 +1,6 @@
 from distrubutor_salesref.models import SalesRefDistributor
 from django.db import models
-from distributor_inventory.models import DistributorInventoryItems
+from distributor_inventory.models import DistributorInventoryItems, ItemStock
 from primary_sales_area.models import PrimarySalesArea
 from dealer_details.models import Dealer
 from userdetails.models import UserDetails
@@ -35,7 +35,7 @@ class SalesRefReturn(models.Model):
 class SalesRefReturnItem(models.Model):
     salesrefreturn = models.ForeignKey(SalesRefReturn,
                                        on_delete=models.CASCADE)
-    item = models.ForeignKey(DistributorInventoryItems,
+    item = models.ForeignKey(ItemStock,
                              on_delete=models.CASCADE)
     qty = models.IntegerField()
     foc = models.IntegerField()

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from distrubutor_salesref.models import SalesRefDistributor
-from distributor_inventory.models import DistributorInventory, DistributorInventoryItems
+from distributor_inventory.models import DistributorInventory, DistributorInventoryItems, ItemStock
 
 
 class CreateDistributorSalesRefSerializer(serializers.ModelSerializer):
@@ -26,10 +26,14 @@ class DistributorInventory(serializers.ModelSerializer):
 
 
 class DistributorInventoryItems(serializers.ModelSerializer):
+    item_code = serializers.CharField(source='item.item_code')
+    description = serializers.CharField(source='item.description')
+    base = serializers.CharField(source='item.base')
+
     class Meta:
-        model = DistributorInventoryItems
+        model = ItemStock
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
-                  'base', 'pack_size', 'whole_sale_price', 'retail_price')
+                  'base', 'pack_size', 'whole_sale_price', 'retail_price', 'date')
 
 
 class GetDistributorDetails(serializers.ModelSerializer):

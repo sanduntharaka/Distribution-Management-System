@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'system_settings',
     'inventory_history',
     'past_invoice_data',
+    'exceutive_manager',
     # 'api',
     'api',
     'api.userdetailsapp',
@@ -88,6 +89,7 @@ INSTALLED_APPS = [
     'api.systemsettings',
     'api.pastinvdata',
     'api.user',
+    'api.excutivemanager',
 
     # reports
     'api.reports.userreport',

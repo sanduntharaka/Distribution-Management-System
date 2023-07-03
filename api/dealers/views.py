@@ -7,11 +7,30 @@ from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_list_or_404
+import pandas as pd
+import json
 
 
 class AddDealer(generics.CreateAPIView):
     serializer_class = serializers.AddDealerSerializer
     queryset = Dealer.objects.all()
+
+
+class AddDealerExcel(APIView):
+    def post(self, request):
+        data_file = request.data['file']
+        user = request.data['user']
+        df = pd.read_excel(data_file)
+        thisisjson = json.loads(df.to_json(orient='records'))
+        for i in thisisjson:
+            i['added_by'] = user
+
+        serializer = serializers.AddDealerSerializer(
+            data=thisisjson, many=True)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 class GetAll(generics.ListAPIView):

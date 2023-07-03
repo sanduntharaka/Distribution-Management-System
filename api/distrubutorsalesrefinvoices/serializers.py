@@ -6,7 +6,7 @@ class CreateInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
         fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
-                  'dealer', 'total', 'total_discount',  'added_by', 'billing_price_method', 'sub_total')
+                  'dealer', 'total', 'total_discount',  'added_by', 'billing_price_method', 'sub_total', 'time')
 
 
 class CreateInvoicePaymentSerializer(serializers.ModelSerializer):
@@ -22,16 +22,25 @@ class CreateInvoiceItemsSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class UpdateInvoiceItemsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InvoiceIntem
+        fields = ('discount', 'qty', 'foc', 'extended_price')
+
+
 class GetInvoiceItemsSerializer(serializers.ModelSerializer):
     wholesale_price = serializers.CharField(source='item.whole_sale_price')
     retail_price = serializers.CharField(source='item.retail_price')
     bill_code = serializers.CharField(
         source='bill.get_bill_code_number_combine')
+    billing_price_method = serializers.CharField(
+        source='bill.billing_price_method')
 
     class Meta:
         model = InvoiceIntem
         fields = ('id', 'bill', 'item', 'discount', 'item_code', 'description', 'qty',
-                  'foc', 'pack_size', 'price', 'extended_price', 'wholesale_price', 'retail_price', 'bill_code')
+                  'foc', 'pack_size', 'price', 'extended_price', 'wholesale_price', 'retail_price', 'bill_code', 'billing_price_method')
 
 
 class GetInvoicesSerializer(serializers.ModelSerializer):
@@ -78,6 +87,19 @@ class AddChequeDetailsSerialzer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
+class EditChequeDetailsSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = ChequeDetails
+        fields = ('number_of_dates', 'cheque_number',
+                  'branch', 'bank', 'deposited_at', 'status')
+
+
+class ConfirmChequeDetailsSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = ChequeDetails
+        fields = ('status',)
+
+
 class ChangeStatusInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
@@ -104,8 +126,15 @@ class GetPaymentDetailsSerializer(serializers.ModelSerializer):
         source='bill.get_bill_code_number_combine')
     added_by = serializers.CharField(
         source='added_by.full_name')
+    cheque_amount = serializers.CharField(
+        source='get_cheque_amount')
+    cheque_status = serializers.CharField(
+        source='get_cheque_status')
+    cheque_id = serializers.CharField(
+        source='get_cheque_id')
 
     class Meta:
         model = PaymentDetails
         fields = ('id', 'code', 'payment_type', 'paid_amount',
-                  'date', 'due_date', 'added_by')
+                  'date', 'due_date', 'added_by', 'cheque_amount',
+                  'cheque_status', 'cheque_id')

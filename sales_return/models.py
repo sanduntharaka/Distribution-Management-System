@@ -1,5 +1,5 @@
 from django.db import models
-from distributor_inventory.models import DistributorInventoryItems
+from distributor_inventory.models import DistributorInventoryItems, ItemStock
 from distrubutor_salesref.models import SalesRefDistributor
 from primary_sales_area.models import PrimarySalesArea
 from dealer_details.models import Dealer
@@ -35,7 +35,7 @@ class SalesReturn(models.Model):
 class SalesReturnItem(models.Model):
     salesreturn = models.ForeignKey(SalesReturn,
                                     on_delete=models.CASCADE)
-    item = models.ForeignKey(DistributorInventoryItems,
+    item = models.ForeignKey(ItemStock,
                              on_delete=models.CASCADE)
     qty = models.IntegerField()
     reason = models.TextField()

@@ -2,7 +2,7 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 from userdetails.models import UserDetails
-from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails
+from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, PaymentDetails
 from distrubutor_salesref.models import SalesRefDistributor
 from manager_distributor.models import ManagerDistributor
 from . import serializers
@@ -24,14 +24,14 @@ class GetByDistributor(APIView):
             distributor=item)
 
         filters = {
-            'dis_sales_ref__in': salesrefs_distributor,
+            'bill__dis_sales_ref__in': salesrefs_distributor,
             'payment_type': 'cheque'
         }
         if by_date:
             filters['date__range'] = (date_from, date_to)
-        invoices = SalesRefInvoice.objects.filter(**filters)
+        invoices = PaymentDetails.objects.filter(**filters)
         cheque_details = ChequeDetails.objects.filter(
-            bill__in=invoices, status='pending')
+            payment_details__in=invoices, status='pending')
         serializer = serializers.ChequeDetailsSerializer(
             cheque_details, many=True)
         #
@@ -69,14 +69,14 @@ class GetByDistributorPeriod(APIView):
         range_end = today - timedelta(days=days_mapping[period][1])
 
         filters = {
-            'dis_sales_ref__in': salesrefs_distributor,
+            'bill__dis_sales_ref__in': salesrefs_distributor,
             'date__range': (range_start, range_end),
             'payment_type': 'cheque'
         }
 
-        invoices = SalesRefInvoice.objects.filter(**filters)
+        invoices = PaymentDetails.objects.filter(**filters)
         cheque_details = ChequeDetails.objects.filter(
-            bill__in=invoices, status='pending')
+            payment_details__in=invoices, status='pending')
         serializer = serializers.ChequeDetailsSerializer(
             cheque_details, many=True)
 
@@ -95,7 +95,7 @@ class ReturnsGetByDistributorPeriod(APIView):
             invoices = SalesRefInvoice.objects.filter(
                 date__lt=range_end, dis_sales_ref__in=salesrefs_distributor)
             cheque_details = ChequeDetails.objects.filter(
-                bill__in=invoices, status='return')
+                payment_details__bill__in=invoices, status='return')
             serializer = serializers.ReturnChequeDetailsSerializer(
                 cheque_details, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -114,20 +114,21 @@ class ReturnsGetByDistributorPeriod(APIView):
         range_end = today - timedelta(days=days_mapping[period][1])
 
         filters = {
-            'dis_sales_ref__in': salesrefs_distributor,
+            'bill__dis_sales_ref__in': salesrefs_distributor,
             'date__range': (range_start, range_end),
             'payment_type': 'cheque'
         }
 
-        invoices = SalesRefInvoice.objects.filter(**filters)
+        invoices = PaymentDetails.objects.filter(**filters)
+
         cheque_details = ChequeDetails.objects.filter(
-            bill__in=invoices, status='return')
+            payment_details__in=invoices, status='return')
         serializer = serializers.ReturnChequeDetailsSerializer(
             cheque_details, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+#
 # class GetByManager(APIView):
 #     def post(self, request, *args, **kwargs):
 #         item = self.kwargs.get('id')

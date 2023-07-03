@@ -38,7 +38,7 @@ admin.site.register(PaymentDetails, PaymentDetailsAdmin)
 
 
 class ChequeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cheque_number', 'payment_details',  'account_number',
+    list_display = ('id', 'cheque_number', 'payment_details',
                     'payee_name', 'amount', 'date', 'deposited_at', 'status')
     list_display_links = ('id', 'cheque_number')
     search_fields = ('id', 'payment_details')

@@ -36,7 +36,7 @@ class FilterByCategoryDistributor(APIView):
 
         }
         if category != -1:
-            filters['item__category'] = category
+            filters['item__item__category'] = category
         items = InvoiceIntem.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

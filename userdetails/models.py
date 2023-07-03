@@ -3,6 +3,15 @@ from django.db import models
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
+DESIGNATIONS = (
+    ('Company', 'Company'),
+    ('Executive', 'Executive'),
+    ('Manager', 'Manager'),
+    ('Distributor', 'Distributor'),
+    ('Sales Rep', 'Sales Rep'),
+
+)
+
 
 class UserDetails(models.Model):
     def user_photo_upload_path(instance, filename):
@@ -13,7 +22,8 @@ class UserDetails(models.Model):
     nic = models.CharField(max_length=20, unique=True)
     full_name = models.CharField(max_length=255, null=False)
     address = models.CharField(max_length=255, null=False)
-    designation = models.CharField(max_length=50, null=False)
+    designation = models.CharField(
+        choices=DESIGNATIONS, max_length=50, null=False)
     dob = models.DateField(null=True)
     company_number = models.CharField(max_length=15, null=True)
     personal_number = models.CharField(max_length=15, null=True)

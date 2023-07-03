@@ -31,7 +31,7 @@ class GetReturnsSerializer(serializers.ModelSerializer):
 
 
 class GetItemsSeraializer(serializers.ModelSerializer):
-    item_code = serializers.CharField(source='item.item_code')
+    item_code = serializers.CharField(source='item.item.item_code')
 
     class Meta:
         model = SalesRefReturnItem
