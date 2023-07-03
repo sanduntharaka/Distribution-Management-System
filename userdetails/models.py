@@ -4,6 +4,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 DESIGNATIONS = (
+    ('Superuser', 'Superuser'),
     ('Company', 'Company'),
     ('Executive', 'Executive'),
     ('Manager', 'Manager'),
