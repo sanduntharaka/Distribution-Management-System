@@ -18,19 +18,23 @@ class AddDealer(generics.CreateAPIView):
 
 class AddDealerExcel(APIView):
     def post(self, request):
-        data_file = request.data['file']
-        user = request.data['user']
-        df = pd.read_excel(data_file)
-        thisisjson = json.loads(df.to_json(orient='records'))
-        for i in thisisjson:
-            i['added_by'] = user
+        try:
+            data_file = request.data['file']
+            user = request.data['user']
+            df = pd.read_excel(data_file)
+            thisisjson = json.loads(df.to_json(orient='records'))
+            for i in thisisjson:
+                i['added_by'] = user
 
-        serializer = serializers.AddDealerSerializer(
-            data=thisisjson, many=True)
+            serializer = serializers.AddDealerSerializer(
+                data=thisisjson, many=True)
 
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_200_OK)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetAll(generics.ListAPIView):
