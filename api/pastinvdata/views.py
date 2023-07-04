@@ -35,15 +35,6 @@ class AddInvoiceExcel(APIView):
         distributor = self.kwargs.get('id')
         file = request.data['file']
         df = pd.read_excel(file)
-        rename_coulumns = {
-            "date": "inv_date",
-            "invoice number": "inv_number",
-            "customer name": "customer_name",
-            "original amount": "original_amount",
-            "paid amount": "paid_amount",
-            "balance amount": "balance_amount",
-        }
-        df.rename(columns=rename_coulumns, inplace=True)
         dataset = Dataset().load(df)
         erros_reson = []
         erros = []
@@ -118,19 +109,6 @@ class AddChequeExcel(APIView):
         distributor = self.kwargs.get('id')
         file = request.data['file']
         df = pd.read_excel(file)
-        rename_coulumns = {
-            "invoice date": "inv_date",
-            "invoice number": "inv_number",
-            "cheque number": "cheque_number",
-            "bank": "bank",
-            "cheque deposit date": "cheque_deposite_date",
-            "customer name": "customer_name",
-            "original amount": "original_amount",
-            "paid amount": "paid_amount",
-            "balance amount": "balance_amount",
-
-        }
-        df.rename(columns=rename_coulumns, inplace=True)
         dataset = Dataset().load(df)
         erros_reson = []
         erros = []

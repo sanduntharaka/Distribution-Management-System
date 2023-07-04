@@ -70,6 +70,7 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0006_alter_userdetails_designation.py
 0002_rename_is_companystaff_useraccount_is_company.py
 0003_useraccount_is_excecutive.py
+sersettings.py
 # Backup files # 
 *.bak 
 *.vscode
