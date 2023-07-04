@@ -155,23 +155,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'bixtonlightingdb',
-#         'USER': 'bixtonlightinguser',
-#         'PASSWORD': 'AVNS_qZvei7W6FX92Jr_4qx4',
-#         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
-#         'PORT': '25060',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bixtonlightingdb',
+        'USER': 'bixtonlightinguser',
+        'PASSWORD': 'AVNS_qZvei7W6FX92Jr_4qx4',
+        'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+        'PORT': '25060',
+    }
+}
 
 
 # Password validation
