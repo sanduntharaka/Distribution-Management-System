@@ -12,6 +12,7 @@ from userdetails.models import UserDetails
 from tablib import Dataset
 
 from dealer_details.models import Dealer
+from datetime import datetime
 
 
 class AddInvoiceExcel(APIView):
@@ -19,9 +20,10 @@ class AddInvoiceExcel(APIView):
         i = 1
 
         for row in dataset:
+
             data = {
                 'distributor': user,
-                'inv_date': row[0].strftime('%Y-%m-%d'),
+                'inv_date':  pd.to_datetime(row[0], format="%d/%m/%Y").date(),
                 'inv_number': row[1],
                 'customer_name': row[2],
                 'original_amount': row[3],
@@ -32,6 +34,7 @@ class AddInvoiceExcel(APIView):
             yield data, i
 
     def post(self, request, *args, **kwargs):
+
         distributor = self.kwargs.get('id')
         file = request.data['file']
         df = pd.read_excel(file)
@@ -88,14 +91,13 @@ class AddChequeExcel(APIView):
     def row_generator(self, dataset, user):
         i = 1
         for row in dataset:
-
             data = {
                 'distributor': user,
-                'inv_date': row[0].strftime('%Y-%m-%d'),
+                'inv_date': pd.to_datetime(row[0], format="%d/%m/%Y").date(),
                 'inv_number': row[1],
                 "cheque_number": row[2],
                 "bank": row[3],
-                "cheque_deposite_date": row[4].strftime('%Y-%m-%d'),
+                "cheque_deposite_date": pd.to_datetime(row[4], format="%d/%m/%Y").date(),
                 'customer_name': row[5],
                 'original_amount': row[6],
                 'paid_amount': row[7],
@@ -113,7 +115,6 @@ class AddChequeExcel(APIView):
         erros_reson = []
         erros = []
         success = []
-        print(df)
         for row, i in self.row_generator(dataset=dataset, user=distributor):
             try:
                 serializer = serializers.AddChequeSerializer(data=row)
