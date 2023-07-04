@@ -1,453 +1,282 @@
-from rest_framework import status
-from rest_framework.response import Response
-from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails
-from distrubutor_salesref_invoice.ReduceDistributorQuantity import ReduceQuantity
-from distrubutor_salesref.models import SalesRefDistributor
-from distributor_inventory.models import DistributorInventoryItems, ItemStock
-from . import serializers
-from rest_framework import generics
-from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404, get_list_or_404
-
-
-class CreateInvoice(generics.CreateAPIView):
-    get_serializer = serializers.CreateInvoiceSerializer
-
-    def create(self, request, *args, **kwargs):
-
-        last_bill = SalesRefInvoice.objects.all().last()
-        data = self.request.data
-        if last_bill is not None:
-            bill_number = last_bill.bill_number
-            data['bill_number'] = bill_number+1
-        else:
-            data['bill_number'] = 1
-        try:
-            serializer = self.get_serializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # Response(status=status.HTTP_200_OK)
-
-
-class AllInvoice(generics.ListAPIView):
-    serializer_class = serializers.GetInvoicesSerializer
-    queryset = SalesRefInvoice.objects.all()
-
-
-class AllInvoiceBySalesRef(generics.ListAPIView):
-    serializer_class = serializers.GetInvoicesSerializer
-    queryset = SalesRefInvoice.objects.all()
-
-    def get_queryset(self, *args, **kwargs):
-        disti_ref = SalesRefDistributor.objects.get(
-            sales_ref=self.kwargs.get('id'))
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref=disti_ref)
-
-
-class AllInvoiceByDistributor(generics.ListAPIView):
-    serializer_class = serializers.GetInvoicesSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
-
-
-class AllPendingInvoice(generics.ListAPIView):
-    serializer_class = serializers.GetInvoicesSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        disti_refs = SalesRefDistributor.objects.filter(
-            distributor=self.kwargs.get('id')).values('id')
-
-        distributorsrf_ids = [distributor['id']
-                              for distributor in disti_refs]
-        return get_list_or_404(SalesRefInvoice, status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
-
-
-class AllCreditInvoice(generics.ListAPIView):
-    serializer_class = serializers.GetInvoiceWithPaymentSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        disti_refs = SalesRefDistributor.objects.filter(
-            distributor=self.kwargs.get('id')).values('id')
-
-        distributorsrf_ids = [distributor['id']
-                              for distributor in disti_refs]
-        return get_list_or_404(SalesRefInvoice, status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
-
-
-class CreateInvoicePayment(generics.CreateAPIView):
-    serializer_class = serializers.CreateInvoicePaymentSerializer
-    queryset = PaymentDetails.objects.all()
-
-
-class CreateInvoiceItems(generics.CreateAPIView):
-    get_serializer = serializers.CreateInvoiceItemsSerializer
-    queryset = InvoiceIntem.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        bill = SalesRefInvoice.objects.get(id=request.data['bill'])
-        item_objs = []
-        inventory_items = []
-        try:
-            for item in request.data['items']:
-                dist_item = {}
-                dist_item['item'] = ItemStock.objects.get(
-                    id=item['id'])
-                item_objs.append(InvoiceIntem(bill=bill, item_code=item['item_code'], description=item['description'], qty=item['qty'],
-                                 foc=item['foc'], pack_size=item['pack_size'], price=item['price'], extended_price=item['extended_price'], discount=item['discount'], item=dist_item['item']))
-
-                dist_item['qty'] = item['qty']
-                dist_item['foc'] = item['foc']
-                inventory_items.append(dist_item)
-            InvoiceIntem.objects.bulk_create(item_objs)
-
-            for inv_item in inventory_items:
-                reduceQty = ReduceQuantity(
-                    inv_item['item'], inv_item['qty'], inv_item['foc'])
-                reduceQty.reduce_qty()
-            return Response(status=status.HTTP_201_CREATED)
-        except Exception as e:
-            bill.delete()
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class InvoiceItems(generics.ListAPIView):
-    serializer_class = serializers.GetInvoiceItemsSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        item = self.kwargs.get('id')
-        return get_list_or_404(InvoiceIntem, bill=item)
-
-
-class AddChequeDetails(generics.CreateAPIView):
-    queryset = ChequeDetails.objects.all()
-    serializer_class = serializers.AddChequeDetailsSerialzer
-
-
-class GetChequeDetails(generics.RetrieveAPIView):
-    serializer_class = serializers.AddChequeDetailsSerialzer
-
-    def get_object(self, *args, **kwargs):
-
-        item = self.kwargs.get('id')
-        return get_object_or_404(ChequeDetails, bill=item)
-
-
-class ConfirmInvoice(generics.UpdateAPIView):
-    serializer_class = serializers.ChangeStatusInvoiceSerializer
-
-    def update(self, request, *args, **kwargs):
-        try:
-            cof_status = request.data
-            bill = SalesRefInvoice.objects.get(id=self.kwargs.get('pk'))
-            confirm_status = cof_status['status']
-            if confirm_status == 'confirmed':
-                payment_type = cof_status['payment_type']
-
-                payment_details = {
-                    'bill': self.kwargs.get('pk'),
-                    'payment_type': payment_type,
-                    'paid_amount': float(cof_status['paid_amount']),
-                    'date': cof_status['date'],
-                    'added_by': cof_status['added_by'],
-                    'due_date': cof_status['due_date']
-                }
-
-                bill.status = 'confirmed'
-                bill.confirmed_date = cof_status['confirmed_date']
-                if bill.total - float(cof_status['paid_amount'])+float(cof_status['amount']) == 0:
-                    bill.is_settiled = True
-                else:
-                    bill.is_settiled = False
-                print(1)
-
-                payment_serializer = serializers.CreateInvoicePaymentSerializer(
-                    data=payment_details)
-
-                if payment_serializer.is_valid():
-
-                    p_s = payment_serializer.save()
-                    saved_id = p_s.id
-                    if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque':
-
-                        cheque_details = {
-                            'payment_details': saved_id,
-                            'number_of_dates': cof_status['number_of_dates'],
-                            'cheque_number': cof_status['cheque_number'],
-                            'branch': cof_status['branch'],
-                            'payee_name': cof_status['payee_name'],
-                            'bank': cof_status['bank'],
-                            'amount': cof_status['amount'],
-                            'date': cof_status['date'],
-                            'deposited_at': cof_status['deposited_at'],
-                            'status': cof_status['cheque_status'],
-                            'added_by': cof_status['added_by'],
-                        }
-
-                        cheque_serializer = serializers.AddChequeDetailsSerialzer(
-                            data=cheque_details)
-                        if cheque_serializer.is_valid():
-
-                            bill.save()
-                            cheque_serializer.save()
-                            return Response(status=status.HTTP_201_CREATED)
-
-                        else:
-
-                            PaymentDetails.objects.get(id=saved_id).delete()
-
-                            print('c:', cheque_serializer.errors)
-                            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-                    bill.save()
-                    return Response(status=status.HTTP_201_CREATED)
-                else:
-                    print(2)
-                    print('ps:', payment_serializer.errors)
-
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-            if confirm_status == 'rejected':
-                bill.status = 'rejected'
-                bill.confirmed_date = cof_status['confirmed_date']
-                bill.rejected_reason = cof_status['rejected_reason']
-                bill.is_settiled = False
-                bill.save()
-                invoice_items = InvoiceIntem.objects.filter(bill=bill.id)
-                for item in invoice_items:
-                    reduce_qty = ReduceQuantity(
-                        item=item.item, qty=item.qty, foc=item.foc)
-                    reduce_qty.deleted_details()
-
-                # payment_serializer = serializers.CreateInvoicePaymentSerializer(
-                #     data=payment_details)
-                # if payment_serializer.is_valid():
-                #     p_s = payment_serializer.save()
-                #     saved_id = p_s.id
-                #     if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque':
-                #         cheque_details = {
-                #             'payment_details': saved_id,
-                #             'number_of_dates': cof_status['number_of_dates'],
-                #             'cheque_number': cof_status['cheque_number'],
-                #             'account_number': cof_status['account_number'],
-                #             'payee_name': cof_status['payee_name'],
-                #             'bank': cof_status['bank'],
-                #             'amount': cof_status['amount'],
-                #             'date': cof_status['date'],
-                #             'deposited_at': cof_status['deposited_at'],
-                #             'status': cof_status['cheque_status'],
-                #             'added_by': cof_status['added_by'],
-                #         }
-                #         cheque_serializer = serializers.AddChequeDetailsSerialzer(
-                #             data=cheque_details)
-                #         if cheque_serializer.is_valid():
-                #             cheque_serializer.save()
-                #             return Response(status=status.HTTP_201_CREATED)
-
-                #         else:
-                #             print(cheque_serializer.errors)
-                #             return Response(status=status.HTTP_400_BAD_REQUEST)
-                #     return Response(status=status.HTTP_201_CREATED)
-
-                # else:
-                #     print(payment_serializer.errors)
-                return Response(status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class AddCredit(generics.UpdateAPIView):
-    serializer_class = serializers.CreateInvoicePaymentSerializer
-
-    def update(self, request, *args, **kwargs):
-        cof_status = request.data
-        payment_type = cof_status['payment_type']
-        payment_details = {
-            'bill': self.kwargs.get('pk'),
-            'payment_type': payment_type,
-            'paid_amount': float(cof_status['paid_amount']),
-            'date': cof_status['date'],
-            'due_date': cof_status['due_date'],
-            'added_by': cof_status['added_by'],
-        }
-        payment_serializer = serializers.CreateInvoicePaymentSerializer(
-            data=payment_details)
-        if payment_serializer.is_valid():
-            p_s = payment_serializer.save()
-            saved_id = p_s.id
-            if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque':
-                cheque_details = {
-                    'payment_details': saved_id,
-                    'number_of_dates': cof_status['number_of_dates'],
-                    'cheque_number': cof_status['cheque_number'],
-                    'branch': cof_status['branch'],
-                    'payee_name': cof_status['payee_name'],
-                    'bank': cof_status['bank'],
-                    'amount': cof_status['amount'],
-                    'date': cof_status['date'],
-                    'deposited_at': cof_status['deposited_at'],
-                    'status': cof_status['cheque_status'],
-                    'added_by': cof_status['added_by'],
-                }
-                cheque_serializer = serializers.AddChequeDetailsSerialzer(
-                    data=cheque_details)
-                if cheque_serializer.is_valid():
-                    cheque_serializer.save()
-                    return Response(status=status.HTTP_201_CREATED)
-
-                else:
-                    print(cheque_serializer.errors)
-                    PaymentDetails.objects.get(id=saved_id).delete()
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
-            return Response(status=status.HTTP_201_CREATED)
-        else:
-            print(payment_serializer.errors)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class ConfirmCheque(generics.UpdateAPIView):
-    queryset = ChequeDetails.objects.all()
-    serializer_class = serializers.ChangeStatusChequeSerializer
-
-
-class InvoiceItemUpdate(APIView):
-    def put(self, request, *args, **kwargs):
-        print(request.data)
-        item = {
-            'discount': float(request.data['discount']),
-            'qty': float(request.data['qty']),
-            'foc': float(request.data['foc']),
-            'extended_price': float(request.data['extended_price']),
-
-        }
-
-        bill = SalesRefInvoice.objects.get(id=request.data['bill'])
-        invoice_item = InvoiceIntem.objects.get(id=request.data['id'])
-        prev_qty = invoice_item.qty
-        prev_foc = invoice_item.foc
-
-        if invoice_item.qty > item['qty']:
-            print('over')
-            dis = 0
-            if invoice_item.discount > item['discount']:
-                dis = item['discount'] - invoice_item.discount
-                print('od')
-            elif invoice_item.discount < item['discount']:
-                dis = item['qty'] * item['discount'] - invoice_item.discount
-            sub_tot = item['extended_price'] - invoice_item.extended_price
-            bill.change_total(sub_tot, dis)
-
-        else:
-            print('less')
-            dis = 0
-            if invoice_item.discount > item['discount']:
-                dis = item['discount'] - invoice_item.discount
-                print('od')
-            elif invoice_item.discount < item['discount']:
-                dis = item['qty'] * item['discount'] - invoice_item.discount
-            sub_tot = item['extended_price'] - invoice_item.extended_price
-            bill.change_total(sub_tot, dis)
-
-        serializer = serializers.UpdateInvoiceItemsSerializer(
-            data=item, instance=invoice_item)
-        if serializer.is_valid():
-            serializer.save()
-            bill.save()
-
-            reduce_qty = ReduceQuantity(
-                item=invoice_item.item, qty=item['qty'], foc=item['foc'])
-            reduce_qty.edited_details(
-                prev_qty=prev_qty, prev_foc=prev_foc)
-            return Response(status=status.HTTP_200_OK)
-        else:
-            print('invalid')
-            print(serializer.errors)
-
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class InvoiceItemDelete(APIView):
-    def delete(self, request, *args, **kwargs):
-        bill = SalesRefInvoice.objects.get(id=request.data['bill'])
-        invoice_item = InvoiceIntem.objects.get(id=request.data['id'])
-        dis = invoice_item.discount
-        sub_tot = -(invoice_item.extended_price)
-
-        bill.change_total(sub_tot, dis)
-        reduce_qty = ReduceQuantity(
-            item=invoice_item.item, qty=invoice_item.qty, foc=invoice_item.foc)
-        try:
-            invoice_item.delete()
-            bill.save()
-            reduce_qty.deleted_details()
-            return Response(status=status.HTTP_200_OK)
-
-        except:
-
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class AllInvoiceByDealer(APIView):
-    def get(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
-
-        invoices = SalesRefInvoice.objects.filter(dealer=item)
-        serializer = serializers.GetDealerInvoiceSerializer(
-            invoices, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-class AllInvoicePayments(generics.ListAPIView):
-    serializer_class = serializers.GetPaymentDetailsSerializer
-
-    def get_queryset(self, *args, **kwargs):
-        item = self.kwargs.get('id')
-
-        return get_list_or_404(PaymentDetails, bill=item)
-
-
-class GetInvoicePaymentDetail(generics.RetrieveAPIView):
-    serializer_class = serializers.GetPaymentDetailsSerializer
-    queryset = PaymentDetails.objects.all()
-
-
-class GetInvoicePaymentCheque(generics.RetrieveAPIView):
-    serializer_class = serializers.AddChequeDetailsSerialzer
-    queryset = ChequeDetails.objects.all()
-
-
-class ConfirmCheque(generics.UpdateAPIView):
-    serializer_class = serializers.ConfirmChequeDetailsSerialzer
-    queryset = ChequeDetails.objects.all()
-
-
-class EditCheque(generics.UpdateAPIView):
-    serializer_class = serializers.EditChequeDetailsSerialzer
-    queryset = ChequeDetails.objects.all()
-
-
-class DeleteInvoicePayment(generics.DestroyAPIView):
-    serializer_class = serializers.CreateInvoicePaymentSerializer
-
-    def delete(self, request, *args, **kwargs):
-        item = self.kwargs.get('pk')
-
-        payment_details = PaymentDetails.objects.get(id=item)
-        try:
-            cheque_details = ChequeDetails.objects.get(
-                payment_details=payment_details)
-            cheque_details.delete()
-
-        except ChequeDetails.DoesNotExist:
-            pass
-        payment_details.delete()
-
-        return Response(status=status.HTTP_200_OK)
+"""
+Django settings for core project.
+
+Generated by 'django-admin startproject' using Django 4.2.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/4.2/topics/settings/
+
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/4.2/ref/settings/
+"""
+
+from pathlib import Path
+import os
+from datetime import timedelta
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+# 'bixtonlighting.com', 'main.bixtonlighting.com'
+ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'django_cron',
+    # 'rest_framework.authtoken',
+    # 'rest_framework_swagger',
+    'djoser',
+    # data tables
+    'users',
+    'userdetails',
+    'company_inventory',
+    'company_invoice',
+    'distributor_inventory',
+    'distrubutor_salesref',
+    'distrubutor_salesref_invoice',
+    'distributor_invoice',
+    'dealer_details',
+    'primary_sales_area',
+    'salesref_return',
+    'not_buy_details',
+    'sales_ref_leave',
+    'item_category',
+    'dealer_category',
+    'manager_distributor',
+    'sales_return',
+    'system_settings',
+    'inventory_history',
+    'past_invoice_data',
+    'exceutive_manager',
+    # 'api',
+    'api',
+    'api.userdetailsapp',
+    'api.companyInventory',
+    'api.managerdistributors',
+    'api.distributor',
+    'api.companyInvoices',
+    'api.dashboard',
+    'api.distrubutorsalesrefs',
+    'api.distributor_invoices',
+    'api.dealers',
+    'api.psa_api',
+    'api.distrubutorsalesrefinvoices',
+    'api.return_salesref',
+    'api.notbuydetails',
+    'api.salesrefleave',
+    'api.itemcategory',
+    'api.dealercategory',
+    'api.salesreturn',
+    'api.reports',
+    'api.systemsettings',
+    'api.pastinvdata',
+    'api.user',
+    'api.excutivemanager',
+
+    # reports
+    'api.reports.userreport',
+    'api.reports.stockreport',
+    'api.reports.dealerreport',
+    'api.reports.salesreport',
+    'api.reports.delevaryreport',
+    'api.reports.marketreturnreport',
+    'api.reports.salesreturnreport',
+    'api.reports.pendingorderreport',
+    'api.reports.paymentsreport',
+    'api.reports.chequeinhandreport',
+    'api.reports.marketcreditreport',
+    'api.reports.nonbuyingreport',
+    'api.reports.psareport',
+    'api.reports.deleveredsalesreport',
+    'api.reports.creditbillscollectionreport',
+    'api.reports.collectionsheet',
+    'api.reports.normalfocreport',
+    'api.reports.totaloutstanding',
+    'api.reports.dealerpattern',
+
+    'api.reports.oldcreditbillsreport',
+
+
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+ROOT_URLCONF = 'core.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'core.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bixtonlightingdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
+        'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+        'PORT': '25060',
+    }
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'Asia/Colombo'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_URL = 'static/'
+STATICFIELS_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'users.UserAccount'
+
+# cron job
+CRON_CLASSES = [
+    "inventory_history.cron.AutoCreateCronJob",
+]
+
+# Email Settings
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'ebrandinginnovations@gmail.com'
+EMAIL_HOST_PASSWORD = 'mwcbsfjsezgpcguo'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.BasicAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',
+    # ]
+
+
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'UPDATE_LAST_LOGIN': True,
+    'AUTH_HEADER_TYPES': ('JWT',),
+}
+DOMAIN = 'https://bixtonlighting.com'
+SITE_NAME = 'Bixton Distribution Management System'
+DJOSER = {
+    'LOGIN_FIELD': 'user_name',
+    'PASSWORD_RESET_CONFIRM_URL': True,
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'reset/{uid}/{token}',
+    # 'ACTIVATION_URL': 'activate/{uid}/{token}',
+    # 'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',
+        'user': 'users.serializers.UserCreateSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+
+
+    }
+}
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://bixtonlighting.com:3000",
+    "https://bixtonlighting.com:3000",
+    "https://bixtonlighting.com",
+    "http://bixtonlighting.com",
+]

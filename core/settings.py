@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u
 DEBUG = False
 
 # 'bixtonlighting.com', 'main.bixtonlighting.com'
-ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -155,23 +155,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bixtonlightingdb',
-        'USER': 'doadmin',
-        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
-        'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
-        'PORT': '25060',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'bixtonlightingdb',
+#         'USER': 'doadmin',
+#         'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
+#         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+#         'PORT': '25060',
+#     }
+# }
 
 
 # Password validation
