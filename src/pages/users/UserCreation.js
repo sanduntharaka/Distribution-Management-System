@@ -180,8 +180,15 @@ const UserCreation = () => {
         setTitle('Error');
         setSuccess(false);
         setError(true);
-        if (err.response.data.password) {
-          setMsg(err.response.data.password);
+        console.log('e:', err.response.request.response);
+        if (err.response.request.response) {
+          let msg = JSON.parse(err.response.request.response);
+          if (msg.user_name) {
+            setMsg(msg.user_name);
+          }
+          if (msg.password) {
+            setMsg(msg.password);
+          }
         }
       });
   };

@@ -29,8 +29,12 @@ import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => (
+    <Check {...props} ref={ref} style={{ color: 'blue' }} />
+  )),
+  Clear: forwardRef((props, ref) => (
+    <Clear {...props} ref={ref} style={{ color: 'red' }} />
+  )),
   Delete: forwardRef((props, ref) => (
     <DeleteOutline {...props} ref={ref} style={{ color: 'red' }} />
   )),

@@ -277,14 +277,16 @@ const UserDetails = () => {
                     ) : (
                       ''
                     )}
-                    {user.is_excutive || user.is_company ? (
+                    {user.is_excecutive || user.is_company ? (
                       <>
                         <option value="Manager">Manager</option>
                       </>
                     ) : (
                       ''
                     )}
-                    {user.is_excutive || user.is_company || user.is_manager ? (
+                    {user.is_excecutive ||
+                    user.is_company ||
+                    user.is_manager ? (
                       <>
                         <option value="Distributor">Distributor</option>
                       </>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
+import Spinner from '../../../components/loadingSpinner/Spinner';
 const ConfimBill = (props) => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const compoenentRef = useRef();
@@ -10,6 +11,8 @@ const ConfimBill = (props) => {
     address: '',
     company_number: '',
   });
+
+  const [loading, isLoading] = useState(false);
   useEffect(() => {
     if (user.is_salesref) {
       axiosInstance
@@ -84,6 +87,7 @@ const ConfimBill = (props) => {
     bill_number: '',
   });
   const handlePrint = () => {
+    isLoading(true);
     axiosInstance
       .post('/salesref/invoice/create/invoice/', props.data, {
         headers: {
@@ -131,18 +135,26 @@ const ConfimBill = (props) => {
                   }
                 )
                 .then((res) => {
+                  isLoading(false);
+
                   console.log(res);
 
                   handlePrintFile();
                 })
                 .catch((err) => {
+                  isLoading(false);
+
                   console.log(err);
                 });
             } else {
+              isLoading(false);
+
               handlePrintFile();
             }
           })
           .catch((err) => {
+            isLoading(false);
+
             console.log(err);
           });
       })
@@ -278,8 +290,13 @@ const ConfimBill = (props) => {
         <div className={styles.row}>
           <div className={styles.button_bar}>
             <div className={styles.buttons}>
-              <button className="btnEdit" onClick={handlePrint}>
-                Print
+              <button
+                className="btnEdit"
+                onClick={handlePrint}
+                style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+              >
+                Save
+                {loading ? <Spinner page={true} /> : ''}
               </button>
               <button className="addBtn" onClick={(e) => handleEdit(e)}>
                 Edit

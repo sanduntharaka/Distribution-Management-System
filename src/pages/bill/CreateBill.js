@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { axiosInstance } from '../../axiosInstance';
 import SalesRefBill from '../../components/invoice/SalesRefBill';
+import { DateTime } from 'luxon';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
@@ -15,10 +16,10 @@ const CreateBill = ({ inventory }) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
-  const [currentTime, setCurrentTime] = useState(() => {
-    const d = new Date();
-    return d.toLocaleTimeString();
-  });
+  const [currentTime, setCurrentTime] = useState(
+    DateTime.local().toFormat('HH:mm:ss')
+  );
+
   const [billingPriceMethod, setBillingPriceMethod] = useState('2');
   // const [discount, setDiscount] = useState(9);
   const [dealers, setDealers] = useState([]);
@@ -90,7 +91,6 @@ const CreateBill = ({ inventory }) => {
   const handleClose = () => setOpen(false);
 
   const [exceed_qty, setExceedQty] = useState(false);
-  console.log('T:', currentTime);
   useEffect(() => {
     setLoading(true);
     axiosInstance

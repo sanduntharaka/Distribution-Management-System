@@ -157,7 +157,7 @@ const ConfirmStatus = (props) => {
             delete
           </button>
           <button className="btnSave" onClick={(e) => handleConfirm(e)}>
-            submit
+            save
           </button>
           <button className="addBtn" onClick={(e) => handleCloseConfirm(e)}>
             close
