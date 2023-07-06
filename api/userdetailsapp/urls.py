@@ -14,6 +14,8 @@ urlpatterns = [
     path('distributors/new/', views.AllNewDistributors.as_view()),
     path('distributors/by/manager/<id>',
          views.AllDistributorsByManager.as_view()),
+    path('distributors/by/executive/<id>',
+         views.AllDistributorsByExcecutive.as_view()),
     path('salesrefs/', views.AllSalesRefs.as_view()),
     path('salesrefs/new/', views.AllNewSalesrefs.as_view()),
 

@@ -33,6 +33,7 @@ def today_as_distributor(request, *args, **kwargs):
         date=request.data['date'], user=item, user_type='distributor')
     sreturn_total = TotalSalesReturn(
         date=request.data['date'], user=item, user_type='distributor')
+    total_count_days, total_sales_days = total.getThreeDays()
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
 
@@ -45,6 +46,10 @@ def today_as_distributor(request, *args, **kwargs):
         },
         'market_returns': mreturn_total.getCount(),
         'sales_returns': sreturn_total.getCount(),
+        'three_days': {
+            'count': total_count_days,
+            'total_sales': total_sales_days,
+        },
         'this_month': {
             'count': total_count_month,
             'total_sales': total_sales_month,
@@ -72,7 +77,7 @@ def today_as_saleref(request, *args, **kwargs):
         date=request.data['date'], user=item, user_type='salesref')
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
-
+    total_count_days, total_sales_days = total.getThreeDays()
     data = {
         'sales': {
             'count': total.getCount(),
@@ -82,6 +87,10 @@ def today_as_saleref(request, *args, **kwargs):
         },
         'market_returns': mreturn_total.getCount(),
         'sales_returns': sreturn_total.getCount(),
+        'three_days': {
+            'count': total_count_days,
+            'total_sales': total_sales_days,
+        },
         'this_month': {
             'count': total_count_month,
             'total_sales': total_sales_month,

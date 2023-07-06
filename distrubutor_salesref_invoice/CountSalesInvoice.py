@@ -10,11 +10,12 @@ class CountSalesInvoiceAll:
     def __init__(self, date, user_details, user_type) -> None:
         self.user_details = user_details
         self.user_type = user_type
-        date_obj = datetime.strptime(date, '%Y-%m-%d')
-        self.month = date_obj.month
-        self.year = date_obj.year
+        self.date_obj = datetime.strptime(date, '%Y-%m-%d')
+        self.month = self.date_obj.month
+        self.year = self.date_obj.year
+        self.date = date
 
-        previous_date = date_obj - timedelta(days=1)
+        previous_date = self.date_obj - timedelta(days=1)
         previous_date_str = previous_date.strftime('%Y-%m-%d')
         if user_type == 'distributor':
             salesre_distributors = SalesRefDistributor.objects.filter(
@@ -61,6 +62,46 @@ class CountSalesInvoiceAll:
     def getallpending(self):
         return SalesRefInvoice.objects.filter(
             status='pending', dis_sales_ref__distributor__in=self.salesre_distributors_ids).all().count()
+
+    def getThreeDays(self):
+        invoice_count = 0
+        total_sales = 0
+        total_balance = 0
+
+        three_days_ago = self.date_obj - timedelta(days=3)
+        print('d:', three_days_ago)
+        if self.user_type == 'manager':
+            invoices = SalesRefInvoice.objects.filter(
+                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date__gte=three_days_ago).all()
+            invoice_count = invoices.count()
+            total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
+                total=Sum('total'))['total'] is not None else 0
+
+            # total_balance = total_sales - \
+            #     sum([invoice.get_payed() for invoice in invoices])
+        if self.user_type == 'distributor':
+            invoices = SalesRefInvoice.objects.filter(
+                status='pending', dis_sales_ref__distributor__in=self.salesre_distributors_ids, date__gte=three_days_ago).all()
+            invoice_count = invoices.count()
+            total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
+                total=Sum('total'))['total'] is not None else 0
+
+            # total_balance = total_sales - \
+            #     sum([invoice.get_payed() for invoice in invoices])
+
+        if self.user_type == 'salesref':
+            invoices = SalesRefInvoice.objects.filter(
+                status='pending', dis_sales_ref__sales_ref=self.user_details, date__gte=three_days_ago, added_by=self.user_details).all()
+            invoice_count = invoices.count()
+            total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
+                total=Sum('total'))['total'] is not None else 0
+            # if total_sales == None:
+            #     total_balance = 0
+            # else:
+            #     total_balance = total_sales - \
+            #         sum([invoice.get_payed() for invoice in invoices])
+
+        return invoice_count, total_sales
 
     def getThisMonth(self):
         invoice_count = 0
