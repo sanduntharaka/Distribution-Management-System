@@ -1,3 +1,4 @@
+from exceutive_manager.models import ExecutiveManager
 from rest_framework import status
 from rest_framework.response import Response
 from manager_distributor.models import ManagerDistributor
@@ -98,7 +99,6 @@ class GetAllSalesrefsByDistributor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        # all_salesrefs = SalesRefDistributor.objects.filter(distributor=item)
         return get_list_or_404(SalesRefDistributor, distributor=item)
 
 
@@ -107,9 +107,20 @@ class GetAllSalesrefsByManager(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        all_distributors = ManagerDistributor.objects.filter(
-            manager=item).values('distributor')
-        distributor_ids = [i['distributor'] for i in all_distributors]
-        # all_salesrefs = SalesRefDistributor.objects.filter(distributor=item)
-        print('called')
+        distributor_ids = ManagerDistributor.objects.filter(
+            manager=item).values_list('distributor', flat=True)
+
+        return get_list_or_404(SalesRefDistributor, distributor__in=distributor_ids)
+
+
+class GetAllSalesrefsByDistributor(generics.ListAPIView):
+    serializer_class = serializers.GetDistributorSalesRefSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        distributor_ids = ManagerDistributor.objects.filter(
+            manager__in=ExecutiveManager.objects.filter(
+                executive=item).values('manager')
+        ).values_list('distributor', flat=True)
+
         return get_list_or_404(SalesRefDistributor, distributor__in=distributor_ids)

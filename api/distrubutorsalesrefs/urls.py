@@ -11,6 +11,8 @@ urlpatterns = [
     path('all/distributor/<id>', views.GetAllByDistributor.as_view()),
     path('all/by/distributor/<id>', views.GetAllSalesrefsByDistributor.as_view()),
     path('all/by/manager/<id>', views.GetAllSalesrefsByManager.as_view()),
+    path('all/by/executive/<id>', views.GetAllSalesrefsByDistributor.as_view()),
+
     path('create/', views.CreateDisributorSalesRef.as_view()),
     path('delete/<int:pk>', views.DeleteDisributorSalesRef.as_view()),
     path('inventory/bysalesref/<int:id>',

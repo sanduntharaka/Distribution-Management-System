@@ -35,12 +35,11 @@ class AllManagerDistributorByManager(generics.ListAPIView):
 class AllManagerDistributorByExecutive(generics.ListAPIView):
     serializer_class = serializers.GetManagerDistributorsSerializer
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self):
         item = self.kwargs.get('id')
-        managers = ExecutiveManager.objects.filter(
-            executive=item).values('manager')
-        manager_ids = [i['manager'] for i in managers]
-        manager_users = UserDetails.objects.filter(
-            id__in=manager_ids).values('user')
-        manager_users_ids = [i['user'] for i in manager_users]
+        manager_users_ids = UserDetails.objects.filter(
+            id__in=ExecutiveManager.objects.filter(
+                executive=item).values('manager')
+        ).values_list('user', flat=True)
+
         return get_list_or_404(ManagerDistributor, added_by__in=manager_users_ids)

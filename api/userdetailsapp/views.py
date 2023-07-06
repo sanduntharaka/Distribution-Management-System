@@ -5,6 +5,7 @@ from django.db.models import Subquery
 from manager_distributor.models import ManagerDistributor
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
 from userdetails.models import UserDetails
 from users.models import UserAccount
@@ -38,9 +39,35 @@ class DeleteUserDetails(generics.DestroyAPIView):
     serializer_class = serializers.UserDetailsUpdateSerializer
 
 
-class AllUserDetails(generics.ListAPIView):
-    queryset = UserDetails.objects.all()
-    serializer_class = serializers.UserDetailsCreateSerializer
+class AllUserDetails(APIView):
+
+    def get(self, request):
+        if request.user.is_excecutive:
+            manager_ids = ExecutiveManager.objects.filter(
+                executive__user=request.user.id).values_list('manager', flat=True)
+            distributors_ids = ManagerDistributor.objects.filter(
+                manager__in=manager_ids).values_list('distributor', flat=True)
+            salesrefs_ids = SalesRefDistributor.objects.filter(
+                distributor__in=distributors_ids).values_list('sales_ref', flat=True)
+            employees = list(manager_ids) + \
+                list(distributors_ids) + list(salesrefs_ids)
+        elif request.user.is_manager:
+            distributors_ids = ManagerDistributor.objects.filter(
+                manager__user=request.user.id).values_list('distributor', flat=True)
+            salesrefs_ids = SalesRefDistributor.objects.filter(
+                distributor__in=distributors_ids).values_list('sales_ref', flat=True)
+            employees = list(distributors_ids) + list(salesrefs_ids)
+        elif request.user.is_distributor:
+            salesrefs_ids = SalesRefDistributor.objects.filter(
+                distributor__user=request.user.id).values_list('sales_ref', flat=True)
+            employees = list(salesrefs_ids)
+        else:
+            employees = UserDetails.objects.values_list('id', flat=True)
+
+        user_details = UserDetails.objects.filter(id__in=employees)
+        serializer = serializers.UserDetailsCreateSerializer(
+            user_details, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class AllUsers(generics.ListAPIView):
