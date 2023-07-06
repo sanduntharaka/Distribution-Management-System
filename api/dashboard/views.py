@@ -114,13 +114,17 @@ def today_as_manager(request, *args, **kwargs):
         date=request.data['date'], user_details=item, user_type='manager')
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
-
+    total_count_days, total_sales_days = total.getThreeDays()
     data = {
         'sales': {
             'count': total.getCount(),
             'total': total.totalSale(),
             'discount': total.totalDiscont(),
             'status': total.getPrevDayStatus()
+        },
+        'three_days': {
+            'count': total_count_days,
+            'total_sales': total_sales_days,
         },
         'this_month': {
             'count': total_count_month,

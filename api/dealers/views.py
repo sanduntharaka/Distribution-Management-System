@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework import filters
 from userdetails.models import UserDetails
 from dealer_details.models import Dealer
 from distrubutor_salesref.models import SalesRefDistributor
@@ -40,6 +41,13 @@ class AddDealerExcel(APIView):
 class GetAll(generics.ListAPIView):
     serializer_class = serializers.GetAllDealersSerializer
     queryset = Dealer.objects.all()
+
+
+class GetAllSearch(generics.ListAPIView):
+    serializer_class = serializers.GetAllDealersSerializer
+    queryset = Dealer.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('name', 'address')
 
 
 class DeleteDealer(generics.DestroyAPIView):
