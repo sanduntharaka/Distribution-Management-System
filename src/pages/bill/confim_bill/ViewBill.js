@@ -10,55 +10,6 @@ const ViewBill = (props) => {
     address: '',
     company_number: '',
   });
-  useEffect(() => {
-    if (props.user.is_salesref) {
-      axiosInstance
-        .get(
-          `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setDistributor({
-            full_name: res.data.full_name,
-            address: res.data.address,
-            company_number: res.data.company_number,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    if (props.user.is_distributor) {
-      axiosInstance
-        .get(
-          `/distributor/salesref/get/distributor/by/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setDistributor({
-            full_name: res.data.full_name,
-            address: res.data.address,
-            company_number: res.data.company_number,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    console.log('inv v:', props.invoice.billing_price_method);
-  }, []);
 
   const handleCancle = (e) => {
     e.preventDefault();
@@ -81,9 +32,9 @@ const ViewBill = (props) => {
                 <img src="./images/Bixton_logo.png" alt="" />
               </div>
               <div className={styles.hcol2}>
-                <h2>{distributor.full_name}</h2>
-                <p>{distributor.address}</p>
-                <p>{distributor.company_number}</p>
+                <h2>{props.invoice.full_name}</h2>
+                <p>{props.invoice.address}</p>
+                <p>{props.invoice.company_number}</p>
                 <h3>Invoice</h3>
               </div>
             </div>
@@ -102,7 +53,9 @@ const ViewBill = (props) => {
             </div>
             <div className={styles.col}>
               <p>Invoice No: {props.invoice.code}</p>
-              <p>Invoice Date: {props.data.date}</p>
+              <p>
+                Invoice Date: {props.data.date} & {props.invoice.time}{' '}
+              </p>
               <p>Salesperson: {props.issued_by.full_name}</p>
               <p>Telephone: {props.issued_by.company_number}</p>
             </div>

@@ -14,7 +14,9 @@ import ExecutiveManagers from './ExecutiveManagers';
 
 const UserTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(
+    user.is_superuser || user.is_manager || user.is_company ? 0 : 4
+  );
   const handleSelect = (i) => {
     setSelected(i);
   };
@@ -26,11 +28,7 @@ const UserTabs = () => {
   return (
     <div className="tab">
       <div className="tab_contaner">
-        {user.is_superuser ||
-        user.is_excecutive ||
-        user.is_manager ||
-        user.is_distributor ||
-        user.is_company ? (
+        {user.is_superuser || user.is_manager || user.is_company ? (
           <div
             className={`item ${selected === 0 ? 'selected' : ''}`}
             onClick={() => handleSelect(0)}
@@ -40,11 +38,7 @@ const UserTabs = () => {
         ) : (
           ''
         )}
-        {user.is_superuser ||
-        user.is_manager ||
-        user.is_excecutive ||
-        user.is_distributor ||
-        user.is_company ? (
+        {user.is_superuser || user.is_manager || user.is_company ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
             onClick={() => handleSelect(1)}
@@ -54,27 +48,7 @@ const UserTabs = () => {
         ) : (
           ''
         )}
-        {user.is_superuser || user.is_manager ? (
-          <div
-            className={`item ${selected === 3 ? 'selected' : ''}`}
-            onClick={() => handleSelect(3)}
-          >
-            Assign Distributor
-          </div>
-        ) : (
-          ''
-        )}
-        {user.is_superuser || user.is_manager || user.is_distributor ? (
-          <div
-            className={`item ${selected === 2 ? 'selected' : ''}`}
-            onClick={() => handleSelect(2)}
-          >
-            Assign Sales Ref
-          </div>
-        ) : (
-          ''
-        )}
-        {user.is_excecutive || user.is_company ? (
+        {user.is_superuser || user.is_company ? (
           <div
             className={`item ${selected === 5 ? 'selected' : ''}`}
             onClick={() => handleSelect(5)}
@@ -84,11 +58,32 @@ const UserTabs = () => {
         ) : (
           ''
         )}
+        {user.is_superuser || user.is_company || user.is_manager ? (
+          <div
+            className={`item ${selected === 3 ? 'selected' : ''}`}
+            onClick={() => handleSelect(3)}
+          >
+            Assign Distributor
+          </div>
+        ) : (
+          ''
+        )}
+        {user.is_superuser || user.is_company || user.is_manager ? (
+          <div
+            className={`item ${selected === 2 ? 'selected' : ''}`}
+            onClick={() => handleSelect(2)}
+          >
+            Assign Sales Ref
+          </div>
+        ) : (
+          ''
+        )}
 
         {user.is_superuser ||
         user.is_manager ||
         user.is_excecutive ||
-        user.is_company ? (
+        user.is_company ||
+        user.is_distributor ? (
           <div
             className={`item ${selected === 4 ? 'selected' : ''}`}
             onClick={() => handleSelect(4)}
@@ -105,9 +100,9 @@ const UserTabs = () => {
         ) : selected === 1 ? (
           <UserDetails />
         ) : selected === 2 ? (
-          <DistributorSalesRef />
+          <DistributorSalesRef user={user} />
         ) : selected === 3 ? (
-          <ManagerDistributors />
+          <ManagerDistributors user={user} />
         ) : selected === 4 ? (
           <AllUsers user={user} />
         ) : selected === 5 ? (

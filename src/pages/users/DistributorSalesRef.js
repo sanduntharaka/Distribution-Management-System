@@ -61,6 +61,27 @@ const DistributorSalesRef = () => {
           console.log(err);
         });
     }
+    if (user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log('d:', res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
     setLoading(true);
 
     axiosInstance
@@ -113,100 +134,103 @@ const DistributorSalesRef = () => {
   };
 
   return (
-    <div className="page">
-      {loading ? (
-        <div className="page-spinner">
-          <div className="page-spinner__back">
-            <Spinner detail={true} />
-          </div>
-        </div>
-      ) : (
-        ''
-      )}
-      <Modal open={open} onClose={handleClose}>
-        <ShowMessage
-          ref={inputRef}
-          handleClose={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
-      <div className="page__title">
-        <p>Assign SalesRef</p>
-      </div>
-      <div className="page__pcont">
-        <div className="form">
-          <form action="">
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">Distributor</div>
-                <div className="form__row__col__input">
-                  <select
-                    type="text"
-                    defaultValue={user.is_distributor ? user_detail.id : 0}
-                    onChange={(e) =>
-                      setData({ ...data, distributor: e.target.value })
-                    }
-                    disabled={user.is_distributor}
-                  >
-                    <option value={user.is_distributor ? user_detail.id : 0}>
-                      {' '}
-                      {user.is_distributor
-                        ? user_detail.full_name
-                        : 'Select distributor'}
-                    </option>
-                    {distributors.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.full_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">Sales ref</div>
-                <div className="form__row__col__input">
-                  <select
-                    type="text"
-                    defaultValue="0"
-                    onChange={(e) =>
-                      setData({ ...data, sales_ref: e.target.value })
-                    }
-                  >
-                    <option value="0">Select sales ref</option>
-                    {salesrefs.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.full_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+    <>
+      <div className="page">
+        {loading ? (
+          <div className="page-spinner">
+            <div className="page-spinner__back">
+              <Spinner detail={true} />
             </div>
+          </div>
+        ) : (
+          ''
+        )}
+        <Modal open={open} onClose={handleClose}>
+          <ShowMessage
+            ref={inputRef}
+            handleClose={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal>
+        <div className="page__title">
+          <p>Assign SalesRef</p>
+        </div>
 
-            <div className="form__btn">
-              <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
-                  save
-                </button>
+        <div className="page__pcont">
+          <div className="form">
+            <form action="">
+              <div className="form__row">
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Distributor</div>
+                  <div className="form__row__col__input">
+                    <select
+                      type="text"
+                      defaultValue={user.is_distributor ? user_detail.id : 0}
+                      onChange={(e) =>
+                        setData({ ...data, distributor: e.target.value })
+                      }
+                      disabled={user.is_distributor}
+                    >
+                      <option value={user.is_distributor ? user_detail.id : 0}>
+                        {' '}
+                        {user.is_distributor
+                          ? user_detail.full_name
+                          : 'Select distributor'}
+                      </option>
+                      {distributors.map((item, i) => (
+                        <option value={item.id} key={i}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__input">
+                    <select
+                      type="text"
+                      defaultValue="0"
+                      onChange={(e) =>
+                        setData({ ...data, sales_ref: e.target.value })
+                      }
+                    >
+                      <option value="0">Select sales ref</option>
+                      {salesrefs.map((item, i) => (
+                        <option value={item.id} key={i}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
+
+              <div className="form__btn">
+                <div className="form__btn__container">
+                  <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
+                    save
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div className="page__pcont__row">
+            <div style={{ width: '100%' }}>
+              <ViewAllDistributorsSalesRefs
+                success={success}
+                set_success={setSuccess}
+                user_details={user_detail}
+                user={user}
+              />
             </div>
-          </form>
-        </div>
-        <div className="page__pcont__row">
-          <div style={{ width: '100%' }}>
-            <ViewAllDistributorsSalesRefs
-              success={success}
-              set_success={setSuccess}
-              user_details={user_detail}
-              user={user}
-            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

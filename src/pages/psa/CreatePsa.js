@@ -17,7 +17,7 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 
-const CreatePsa = () => {
+const CreatePsa = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -89,41 +89,54 @@ const CreatePsa = () => {
           msg={msg}
         />
       </Modal>
-      <div className="page__title">
-        <p>Create Primary Sales Area</p>
-      </div>
-      <div className="page__pcont">
-        <div className="form">
-          <form action="">
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">area name</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type psa name"
-                    onChange={(e) =>
-                      setData({ ...data, area_name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="form__btn">
-              <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
-                  save
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div className="page__pcont__row">
-          <div style={{ width: '100%' }}>
-            <ViewPsas success={success} set_success={setSuccess} />
+      {props.user.is_manager || props.user.is_company ? (
+        <>
+          <div className="page__title">
+            <p>Create Primary Sales Area</p>
           </div>
+          <div className="page__pcont">
+            <div className="form">
+              <form action="">
+                <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">area name</div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="type psa name"
+                        onChange={(e) =>
+                          setData({ ...data, area_name: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form__btn">
+                  <div className="form__btn__container">
+                    <button
+                      className="btnEdit"
+                      onClick={(e) => handleSubmit(e)}
+                    >
+                      save
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      ) : (
+        ''
+      )}
+      <div className="page__pcont__row">
+        <div style={{ width: '100%' }}>
+          <ViewPsas
+            success={success}
+            set_success={setSuccess}
+            user={props.user}
+          />
         </div>
       </div>
     </div>

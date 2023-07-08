@@ -14,17 +14,18 @@ const DealersTab = () => {
   return (
     <div className="tab">
       <div className="tab_contaner">
-        {user.is_manager || user.is_superuser ? (
-          <div
-            className={`item ${selected === 0 ? 'selected' : ''}`}
-            onClick={() => handleSelect(0)}
-          >
-            Dealer Category
-          </div>
-        ) : (
-          ''
-        )}
-        {user.is_distributor || user.is_salesref || user.is_superuser ? (
+        <div
+          className={`item ${selected === 0 ? 'selected' : ''}`}
+          onClick={() => handleSelect(0)}
+        >
+          Dealer Category
+        </div>
+
+        {user.is_distributor ||
+        user.is_salesref ||
+        user.is_excecutive ||
+        user.is_manager ||
+        user.is_superuser ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
             onClick={() => handleSelect(1)}
@@ -44,7 +45,7 @@ const DealersTab = () => {
       </div>
       <div className="tab_page">
         {selected === 0 ? (
-          <DealerCategory />
+          <DealerCategory user={user} />
         ) : selected === 1 ? (
           <CreateDealer />
         ) : selected === 2 ? (

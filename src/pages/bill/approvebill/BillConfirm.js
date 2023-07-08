@@ -55,11 +55,9 @@ const BillConfirm = () => {
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Added by', field: 'added_by' },
     { title: 'Bill No', field: 'code' },

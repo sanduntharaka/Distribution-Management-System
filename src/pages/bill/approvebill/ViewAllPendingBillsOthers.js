@@ -1,9 +1,7 @@
 import React, { useEffect, useState, forwardRef } from 'react';
-import { axiosInstance } from '../../axiosInstance';
-import { IconButton } from '@mui/material';
+import { axiosInstance } from '../../../axiosInstance';
 import Modal from '@mui/material/Modal';
-import Message from '../../components/message/Message';
-import { CgDetailsMore } from 'react-icons/cg';
+import Message from '../../../components/message/Message';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -20,10 +18,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import ViewBill from './confim_bill/ViewBill';
-import RecommendIcon from '@mui/icons-material/Recommend';
-import Spinner from '../../components/loadingSpinner/Spinner';
 
+import RecommendIcon from '@mui/icons-material/Recommend';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -49,9 +45,7 @@ const tableIcons = {
   Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
 
-const CreatedBills = () => {
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const [data, setData] = useState([]);
+const ViewAllPendingBillsOthers = ({ user }) => {
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
@@ -59,7 +53,7 @@ const CreatedBills = () => {
       field: 'rowIndex',
       render: (rowData) => rowData?.tableData?.id + 1,
     },
-    { title: 'Added_by', field: 'added_by' },
+    { title: 'Added by', field: 'added_by' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
@@ -67,14 +61,17 @@ const CreatedBills = () => {
 
     { title: 'Status', field: 'status' },
   ];
-  const [loading, setLoading] = useState(false);
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => setModalOpen(false);
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  //filter_lists
+  const [distributors, setDistributors] = useState([]);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -84,113 +81,139 @@ const CreatedBills = () => {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
+    setLoading(true);
+    if (user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('You have not any distributor assigned');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
+        });
+    }
+    if (user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          setSuccess(false);
+          setError(true);
+          setMsg('You have not any distributor assigned');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
+        });
+    }
+    if (user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot find any istributor');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
+        });
+    }
     if (user.is_salesref) {
       setLoading(true);
       axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/salesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
+        .get(`distributor/salesref/get/distributor/by/salesref/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
         .then((res) => {
-          console.log(res.data);
-          setTableData(res.data);
           setLoading(false);
+          console.log('res:', res.data);
+          handleFilterInventory(res.data.distributor_id);
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
+
+          setSuccess(false);
+          setError(true);
+          setMsg('You have not any distributor assigned');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
         });
     }
-    if (user.is_distributor) {
+  }, [messageOpen, success]);
+
+  const handleFilterInventory = (value) => {
+    if (value !== '') {
       setLoading(true);
-      axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-          setTableData(res.data);
 
+      axiosInstance
+        .get(`/salesref/invoice/all/pending/invoices/by/others/${value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
           setLoading(false);
+          setTableData(res.data);
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
+
+          console.log(err);
         });
     }
-  }, [messageOpen]);
-  const [invoice, setInvoice] = useState();
-  const [items, setItems] = useState();
-  const [dataSingle, setSataSingle] = useState();
-
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    setLoading(true);
-    setInvoice(value);
-    setSataSingle(value);
-    axiosInstance
-      .get(`/salesref/invoice/items/${value.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setItems(res.data);
-        setMessageOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log();
-        setLoading(false);
-      });
   };
-
-  const MyInvoice = React.forwardRef((props, ref) => {
-    return (
-      <ViewBill
-        issued_by={props.issued_by}
-        items={props.items}
-        invoice={props.invoice}
-        data={props.data}
-        user={props.user}
-        close={() => props.handleClose()}
-      />
-    );
-  });
 
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {detailsOpen ? (
-          <MyInvoice
-            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
-            items={items}
-            invoice={invoice}
-            oldinv={false}
-            data={dataSingle}
-            user={user}
-            handleClose={handleModalClose}
-          />
-        ) : messageOpen ? (
+        {messageOpen ? (
           <Message
             hide={handleModalClose}
             success={success}
@@ -203,9 +226,42 @@ const CreatedBills = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View All Pending Bills</p>
       </div>
       <div className="page__pcont">
+        {!user.is_salesref ? (
+          <div className="form">
+            <div className="page__pcont__row">
+              <div className="page__pcont__row__col">
+                <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Distributor</div>
+                    <div className="form__row__col__input">
+                      <select
+                        defaultValue={''}
+                        onChange={(e) => handleFilterInventory(e.target.value)}
+                        required
+                      >
+                        <option value="">Select distributor</option>
+                        {distributors.map((item, i) => (
+                          <option value={item.id} key={i}>
+                            {item.full_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="form__row__col dontdisp"></div>
+                  <div className="form__row__col dontdisp"></div>
+                  <div className="form__row__col dontdisp"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
+
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -229,35 +285,6 @@ const CreatedBills = () => {
                   actionsColumnIndex: 0,
                 }}
                 icons={tableIcons}
-                actions={[
-                  {
-                    icon: CgDetailsMore,
-                    tooltip: 'View details',
-                    onClick: (event, rowData) =>
-                      handleViewDetails(event, rowData),
-                  },
-                ]}
-                components={{
-                  Action: (props) => (
-                    <React.Fragment>
-                      {props.action.icon === CgDetailsMore ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'green' }} // customize the icon color
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <CgDetailsMore />
-                        </IconButton>
-                      ) : (
-                        ''
-                      )}
-                    </React.Fragment>
-                  ),
-                }}
               />
             </div>
           </div>
@@ -266,5 +293,4 @@ const CreatedBills = () => {
     </div>
   );
 };
-
-export default CreatedBills;
+export default ViewAllPendingBillsOthers;

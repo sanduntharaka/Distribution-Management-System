@@ -226,17 +226,21 @@ const ViewCategories = (props) => {
                     },
                   },
                 }}
-                editable={{
-                  onRowUpdate: (newData, oldData) =>
-                    new Promise((resolve) => {
-                      handleRowUpdate(newData, oldData, resolve);
-                    }),
+                editable={
+                  props.user.is_manager || props.user.is_company
+                    ? {
+                        onRowUpdate: (newData, oldData) =>
+                          new Promise((resolve) => {
+                            handleRowUpdate(newData, oldData, resolve);
+                          }),
 
-                  onRowDelete: (oldData) =>
-                    new Promise((resolve) => {
-                      handleRowDelete(oldData, resolve);
-                    }),
-                }}
+                        onRowDelete: (oldData) =>
+                          new Promise((resolve) => {
+                            handleRowDelete(oldData, resolve);
+                          }),
+                      }
+                    : ''
+                }
               />
             </div>
           </div>

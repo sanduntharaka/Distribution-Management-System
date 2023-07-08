@@ -7,6 +7,9 @@ import Modal from '@mui/material/Modal';
 import BillConfirm from './approvebill/BillConfirm';
 import ConfirmStatus from './creaditpayments/ConfirmStatus';
 import AddCreditDetails from './creaditpayments/AddCreditDetails';
+import ViewBillByOthers from './ViewBillByOthers';
+import ViewAllPendingBillsOthers from './approvebill/ViewAllPendingBillsOthers';
+import ViewAllCreditBillsOthers from './creaditpayments/ViewAllCreditBillsOthers';
 
 const MyMessage = React.forwardRef((props, ref) => {
   return (
@@ -32,7 +35,9 @@ const BillingTab = () => {
   const handleClose = () => setOpen(false);
 
   const [inventory, setInventory] = useState();
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(
+    user.is_distributor || user.is_salesref ? 0 : 1
+  );
   const [isLoading, setIsLoading] = useState(false);
   const handleSelect = (i) => {
     setSelected(i);
@@ -109,12 +114,16 @@ const BillingTab = () => {
       </Modal>
 
       <div className="tab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          Create Bill
-        </div>
+        {user.is_distributor || user.is_salesref ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            Create Bill
+          </div>
+        ) : (
+          ''
+        )}
 
         <div
           className={`item ${selected === 1 ? 'selected' : ''}`}
@@ -122,34 +131,35 @@ const BillingTab = () => {
         >
           All Bills
         </div>
-        {user.is_distributor ? (
-          <>
-            <div
-              className={`item ${selected === 2 ? 'selected' : ''}`}
-              onClick={() => handleSelect(2)}
-            >
-              Approve Bills
-            </div>
-            <div
-              className={`item ${selected === 3 ? 'selected' : ''}`}
-              onClick={() => handleSelect(3)}
-            >
-              Credit bills
-            </div>
-          </>
-        ) : (
-          ''
-        )}
+
+        <div
+          className={`item ${selected === 2 ? 'selected' : ''}`}
+          onClick={() => handleSelect(2)}
+        >
+          Approve Bills
+        </div>
+        <div
+          className={`item ${selected === 3 ? 'selected' : ''}`}
+          onClick={() => handleSelect(3)}
+        >
+          Credit bills
+        </div>
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
           <CreateBill inventory={inventory} />
-        ) : selected === 1 ? (
+        ) : selected === 1 && (user.is_distributor || user.is_salesref) ? (
           <CreatedBills />
-        ) : selected === 2 ? (
+        ) : selected === 1 ? (
+          <ViewBillByOthers user={user} />
+        ) : selected === 2 && user.is_distributor ? (
           <BillConfirm />
-        ) : selected === 3 ? (
+        ) : selected === 2 ? (
+          <ViewAllPendingBillsOthers user={user} />
+        ) : selected === 3 && user.is_distributor ? (
           <AddCreditDetails />
+        ) : selected === 3 ? (
+          <ViewAllCreditBillsOthers user={user} />
         ) : (
           ''
         )}

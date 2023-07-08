@@ -18,7 +18,7 @@ const ShowMessage = React.forwardRef((props, ref) => {
   );
 });
 
-const CreateDealer = () => {
+const CreateDealer = (props) => {
   const inputRef = useRef(null);
   const [show_message, setShowMsg] = useState(false);
   const [show_upload, setShowUplod] = useState(false);

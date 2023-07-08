@@ -146,17 +146,45 @@ const UserDetailsEdit = (props) => {
               <tr>
                 <td>Designation</td>
                 <td>
-                  {' '}
-                  <input
-                    type="text"
-                    value={editedData.designation}
+                  <select
+                    value={editedData.designation ? editedData.designation : ''}
                     onChange={(e) =>
                       setEditedData({
                         ...editedData,
                         designation: e.target.value,
                       })
                     }
-                  />
+                    required
+                  >
+                    <option value="">Select designation</option>
+
+                    {props.user.is_company ? (
+                      <>
+                        <option value="Company">Company</option>
+                        <option value="Executive">Excecutive</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+                    {props.user.is_excecutive || props.user.is_company ? (
+                      <>
+                        <option value="Manager">Manager</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+                    {props.user.is_excecutive ||
+                    props.user.is_company ||
+                    props.user.is_manager ? (
+                      <>
+                        <option value="Distributor">Distributor</option>
+                      </>
+                    ) : (
+                      ''
+                    )}
+
+                    <option value="Sales Rep">Sales Rep</option>
+                  </select>
                 </td>
               </tr>
               <tr>

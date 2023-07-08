@@ -1,7 +1,10 @@
-import React, { useEffect, useState, forwardRef } from 'react';
+import React, { useEffect, useState, forwardRef, useMemo } from 'react';
 import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
+import ProductDetails from './componets/ProductDetails';
+import ProductEdit from './componets/ProductEdit';
+import ProductDelete from './componets/ProductDelete';
 import Message from '../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
@@ -20,9 +23,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import ViewBill from './confim_bill/ViewBill';
-import RecommendIcon from '@mui/icons-material/Recommend';
-import Spinner from '../../components/loadingSpinner/Spinner';
+
+import EditIcon from '@mui/icons-material/Edit';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -46,27 +48,26 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-  Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
 
-const CreatedBills = () => {
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const [data, setData] = useState([]);
+const ViewInventoryOthers = ({ user }) => {
   const [tblData, setTableData] = useState([]);
-  const columns = [
-    {
-      title: '#',
-      field: 'rowIndex',
-      render: (rowData) => rowData?.tableData?.id + 1,
-    },
-    { title: 'Added_by', field: 'added_by' },
-    { title: 'Bill No', field: 'code' },
-    { title: 'Date', field: 'date' },
-    { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
-
-    { title: 'Status', field: 'status' },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        title: '#',
+        field: 'rowIndex',
+        render: (rowData) => rowData?.tableData?.id + 1,
+      },
+      { title: 'Item Code', field: 'item_code' },
+      { title: 'Category', field: 'category_name' },
+      { title: 'Description', field: 'description' },
+      { title: 'Base', field: 'base' },
+      { title: 'Foc', field: 'foc' },
+      { title: 'Qty', field: 'qty' },
+    ],
+    []
+  );
   const [loading, setLoading] = useState(false);
   //modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -75,6 +76,13 @@ const CreatedBills = () => {
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [itemDetails, setItemDetails] = useState();
+
+  //edit-details
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
+
+  //delete-details
+  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -83,112 +91,129 @@ const CreatedBills = () => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  useEffect(() => {
-    if (user.is_salesref) {
-      setLoading(true);
-      axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/salesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-          setTableData(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
-    }
-    if (user.is_distributor) {
-      setLoading(true);
-      axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-          setTableData(res.data);
+  const [distributors, setDistributors] = useState([]);
 
+  useEffect(() => {
+    setLoading(true);
+    if (user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
           setLoading(false);
+
+          console.log(res.data);
+          setDistributors(res.data);
         })
         .catch((err) => {
-          console.log(err);
           setLoading(false);
+
+          console.log(err);
         });
     }
-  }, [messageOpen]);
-  const [invoice, setInvoice] = useState();
-  const [items, setItems] = useState();
-  const [dataSingle, setSataSingle] = useState();
+    if (user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
+    if (user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log('d:', res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
+  }, [messageOpen, success]);
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    setLoading(true);
-    setInvoice(value);
-    setSataSingle(value);
-    axiosInstance
-      .get(`/salesref/invoice/items/${value.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setItems(res.data);
-        setMessageOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log();
-        setLoading(false);
-      });
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      // employee: value.added_by,
+      free_of_charge: value.foc,
+    });
+    setMessageOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(true);
+
+    handleModalOpen();
   };
 
-  const MyInvoice = React.forwardRef((props, ref) => {
-    return (
-      <ViewBill
-        issued_by={props.issued_by}
-        items={props.items}
-        invoice={props.invoice}
-        data={props.data}
-        user={props.user}
-        close={() => props.handleClose()}
-      />
-    );
-  });
+  const handleFilterInventory = (e) => {
+    if (e.target.value !== '') {
+      setLoading(true);
+
+      axiosInstance
+        .get(`/distributor/by/others/${e.target.value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
+  };
 
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
-          <MyInvoice
-            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
-            items={items}
-            invoice={invoice}
-            oldinv={false}
-            data={dataSingle}
+          <ProductDetails
+            data={itemDetails}
+            showDetails={setDetailsOpen}
+            showEdit={setEditDetailsOpen}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+            success={setSuccess}
             user={user}
-            handleClose={handleModalClose}
           />
         ) : messageOpen ? (
           <Message
@@ -203,9 +228,40 @@ const CreatedBills = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View distributor inventory</p>
       </div>
       <div className="page__pcont">
+        <div className="form">
+          <div className="page__pcont__row">
+            <div className="page__pcont__row__col">
+              <div className="form__row">
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Distributor</div>
+                  <div className="form__row__col__input">
+                    <select
+                      defaultValue={''}
+                      onChange={handleFilterInventory}
+                      required
+                    >
+                      <option value="">Select distributor</option>
+                      {distributors.map((item, i) => (
+                        <option value={item.id} key={i}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form__row__col dontdisp"></div>
+                <div className="form__row__col dontdisp"></div>
+                <div className="form__row__col dontdisp"></div>
+              </div>
+            </div>
+          </div>
+          <div className="page__pcont__row__col dontdisp"></div>
+          <div className="page__pcont__row__col dontdisp"></div>
+          <div className="page__pcont__row__col dontdisp"></div>
+        </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -218,11 +274,6 @@ const CreatedBills = () => {
                   ['&.MuiTable-root']: {
                     background: 'red',
                   },
-                }}
-                actionsColumnIndex={-1} // hide the actions column from view
-                actionsCellStyle={{
-                  // customize the actions cell style
-                  background: '#fde',
                 }}
                 options={{
                   exportButton: true,
@@ -267,4 +318,4 @@ const CreatedBills = () => {
   );
 };
 
-export default CreatedBills;
+export default ViewInventoryOthers;

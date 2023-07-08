@@ -328,7 +328,9 @@ const ShowDealers = () => {
                           <CgDetailsMore />
                         </IconButton>
                       ) : props.action.icon === EditIcon &&
-                        (user.is_distributor || user.is_manager) ? (
+                        (user.is_distributor ||
+                          user.is_manager ||
+                          user.is_excecutive) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -341,7 +343,7 @@ const ShowDealers = () => {
                           <EditIcon />
                         </IconButton>
                       ) : props.action.icon === DeleteOutline &&
-                        (user.is_distributor || user.is_manager) ? (
+                        (user.is_manager || user.is_excecutive) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

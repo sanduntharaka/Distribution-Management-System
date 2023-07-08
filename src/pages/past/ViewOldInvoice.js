@@ -22,9 +22,6 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import EditIcon from '@mui/icons-material/Edit';
-
-import EditDealerDetails from '../../components/edit/EditDealerDetails';
-import DealerDeleteConfirm from '../../components/userComfirm/DealerDeleteConfirm';
 import Message from '../../components/message/Message';
 import EditOldInv from '../../components/edit/EditOldInv';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
@@ -54,16 +51,13 @@ const tableIcons = {
 };
 
 const ViewOldInvoice = (props) => {
-  const user = JSON.parse(sessionStorage.getItem('user'));
-  const [data, setData] = useState([]);
+  const user = props.user;
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Invoice', field: 'inv_number' },
     { title: 'Date', field: 'inv_date' },
@@ -89,9 +83,6 @@ const ViewOldInvoice = (props) => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
-
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -99,41 +90,116 @@ const ViewOldInvoice = (props) => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [loading, setLoading] = useState(false);
 
+  const [distributors, setDistributors] = useState([]);
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/pastinv/inv/view/all/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
+    if (user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${user.id}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
-          }
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    } else if (user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    } else if (user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    } else if (user.is_salesref) {
+      setLoading(true);
+      axiosInstance
+        .get(`distributor/salesref/get/distributor/by/salesref/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          handleFilterInventory(res.data.distributor_id);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          setSuccess(false);
+          setError(true);
+          setMsg('You have not any distributor assigned');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
+        });
+    } else {
+      setLoading(true);
+
+      axiosInstance
+        .get(
+          `/pastinv/inv/view/all/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setTableData(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
   }, [success, props.success]);
 
   const handleEditDetails = (e, value) => {
@@ -164,15 +230,26 @@ const ViewOldInvoice = (props) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
+  const handleFilterInventory = (value) => {
+    if (value !== '') {
+      setLoading(true);
+
+      axiosInstance
+        .get(`/pastinv/inv/view/all/${value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
     }
   };
   return (
@@ -217,12 +294,33 @@ const ViewOldInvoice = (props) => {
         <p>View All Market credits</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
-          <div className="page__pcont__row__col"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div>
+        {!user.is_distributor && !user.is_salesref ? (
+          <div className="form__row">
+            <div className="form__row__col">
+              <div className="form__row__col__label">Distributor</div>
+              <div className="form__row__col__input">
+                <select
+                  defaultValue={''}
+                  onChange={(e) => handleFilterInventory(e.target.value)}
+                  required
+                >
+                  <option value="">Select distributor</option>
+                  {distributors.map((item, i) => (
+                    <option value={item.id} key={i}>
+                      {item.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="form__row__col dontdisp"></div>
+            <div className="form__row__col dontdisp"></div>
+            <div className="form__row__col dontdisp"></div>
+          </div>
+        ) : (
+          ''
+        )}
+
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -230,6 +328,7 @@ const ViewOldInvoice = (props) => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',
@@ -274,7 +373,10 @@ const ViewOldInvoice = (props) => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon ? (
+                      ) : props.action.icon === EditIcon &&
+                        (user.is_distributor ||
+                          user.is_manager ||
+                          user.is_excecutive) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -286,7 +388,8 @@ const ViewOldInvoice = (props) => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : props.action.icon === DeleteOutline ? (
+                      ) : props.action.icon === DeleteOutline &&
+                        (user.is_manager || user.is_excecutive) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

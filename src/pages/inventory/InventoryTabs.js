@@ -7,6 +7,7 @@ import SalesRefInventory from './SalesRefInventory';
 import { axiosInstance } from '../../axiosInstance';
 import Category from './Category';
 import AddDistributorInventoryStocks from './AddDistributorInventoryStocks';
+import ViewInventoryOthers from './ViewInventoryOthers';
 
 const InventoryTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -126,16 +127,13 @@ const InventoryTabs = () => {
         ) : (
           ''
         )}
-        {user.is_distributor || user.is_salesref ? (
-          <div
-            className={`item ${selected === 4 ? 'selected' : ''}`}
-            onClick={() => handleSelect(4)}
-          >
-            Distributor inventory
-          </div>
-        ) : (
-          ''
-        )}
+
+        <div
+          className={`item ${selected === 4 ? 'selected' : ''}`}
+          onClick={() => handleSelect(4)}
+        >
+          Distributor inventory
+        </div>
       </div>
       <div className="tab_page">
         {selected === 0 ? (
@@ -146,8 +144,13 @@ const InventoryTabs = () => {
           <ViewInventory />
         ) : loading === false && selected === 3 && inventory !== undefined ? (
           <AddDistributorInventory inventory={inventory} />
-        ) : loading === false && selected === 4 && inventory !== undefined ? (
+        ) : loading === false &&
+          selected === 4 &&
+          inventory !== undefined &&
+          (user.is_distributor || user.is_salesref) ? (
           <DistributorInventory inventory={inventory} user={user} />
+        ) : selected === 4 ? (
+          <ViewInventoryOthers user={user} />
         ) : loading === false && selected === 5 && inventory !== undefined ? (
           <AddDistributorInventoryStocks inventory={inventory} />
         ) : (

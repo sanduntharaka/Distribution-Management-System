@@ -150,9 +150,9 @@ const AllUsers = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    console.log('called');
+    setLoading(true);
     axiosInstance
       .get(`/users/all/`, {
         headers: {
@@ -161,7 +161,8 @@ const AllUsers = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
+        setLoading(false);
+
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
@@ -172,6 +173,7 @@ const AllUsers = (props) => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   }, [success]);
 
@@ -273,6 +275,7 @@ const AllUsers = (props) => {
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
             url={'/users/edit'}
+            user={user}
           />
         ) : deletedetailsOpen ? (
           <UserDetailsDelete
@@ -353,6 +356,7 @@ const AllUsers = (props) => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',
@@ -403,7 +407,10 @@ const AllUsers = (props) => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon && user.is_manager ? (
+                      ) : props.action.icon === EditIcon &&
+                        (user.is_manager ||
+                          user.is_company ||
+                          user.is_superuser) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -416,7 +423,9 @@ const AllUsers = (props) => {
                           <EditIcon />
                         </IconButton>
                       ) : props.action.icon === DeleteOutline &&
-                        user.is_manager ? (
+                        (user.is_manager ||
+                          user.is_company ||
+                          user.is_superuser) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

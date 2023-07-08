@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CreatePsa from './CreatePsa';
 
 const PsaTab = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [selected, setSelected] = useState(0);
   const handleSelect = (i) => {
     setSelected(i);
@@ -16,7 +17,9 @@ const PsaTab = () => {
           PSA
         </div>
       </div>
-      <div className="tab_page">{selected === 0 ? <CreatePsa /> : ''}</div>
+      <div className="tab_page">
+        {selected === 0 ? <CreatePsa user={user} /> : ''}
+      </div>
     </div>
   );
 };

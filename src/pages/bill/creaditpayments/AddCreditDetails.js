@@ -54,11 +54,9 @@ const AddCreditDetails = () => {
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Added by', field: 'added_by' },
     { title: 'Bill No', field: 'code' },
@@ -229,6 +227,7 @@ const AddCreditDetails = () => {
         msg={props.msg}
         showEdit={props.showEdit}
         closeModal={props.closeModal}
+        user={props.user}
       />
     );
   });
@@ -245,6 +244,7 @@ const AddCreditDetails = () => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : messageOpen ? (
           <Message
@@ -262,39 +262,6 @@ const AddCreditDetails = () => {
         <p>View All Credit Bills</p>
       </div>
       <div className="page__pcont">
-        {/* <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {sales_refs.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {distributors.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">

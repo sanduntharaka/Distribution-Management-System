@@ -7,7 +7,7 @@
     flex-direction: row;
     justify-content: space-around;
     width: 100%;
-
+    gap: 5px;
     // &.details {
     //   display: flex;
     //   justify-content: space-around;
@@ -16,7 +16,8 @@
     .title {
       width: 100%;
       text-align: start;
-      font-size: 25px;
+      font-size: 1.2rem;
+      font-weight: bold;
     }
 
     &.mt {
@@ -26,7 +27,21 @@
     &__col {
       flex: 1;
       text-align: center;
+      font-size: 0.8rem;
       font-weight: 500;
+
+      &.credit {
+        height: 100px;
+        border-radius: 25px;
+        text-align: center;
+        display: grid;
+        padding: 10px;
+        box-sizing: border-box;
+        margin-top: auto;
+        margin-bottom: auto;
+        color: #ffffff;
+        background-color: rgba(255, 61, 64, 1);
+      }
 
       &.icon {
         font-size: 20px;

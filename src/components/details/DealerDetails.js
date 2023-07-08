@@ -99,19 +99,23 @@ const DealerDetails = (props) => {
           </div>
         </div>
         <div className="details__content__row buttons">
-          {props.user.is_distributor ? (
-            <>
-              <div className="details__content__row__col">
-                <button className="btnEdit" onClick={handleEdit}>
-                  Edit
-                </button>
-              </div>
-              <div className="details__content__row__col">
-                <button className="btnDelete" onClick={handleDelete}>
-                  Delete
-                </button>
-              </div>
-            </>
+          {props.user.is_distributor ||
+          props.user.is_manager ||
+          props.user.is_excecutive ? (
+            <div className="details__content__row__col">
+              <button className="btnEdit" onClick={handleEdit}>
+                Edit
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
+          {props.user.is_manager || props.user.is_excecutive ? (
+            <div className="details__content__row__col">
+              <button className="btnDelete" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
           ) : (
             ''
           )}

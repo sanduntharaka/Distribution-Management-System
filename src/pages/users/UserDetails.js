@@ -92,19 +92,27 @@ const UserDetails = () => {
         setSuccess(true);
         setError(false);
         setTitle('Success');
-        setMsg('User created successfully. Please subimit user details.');
+        setMsg(
+          'User created successfully. Please add this user to proper relation.'
+        );
         sessionStorage.removeItem('new_user_email');
         setData({ ...data, user: '' });
       })
       .catch((err) => {
         setLoading(false);
 
-        console.log(err);
+        let error = JSON.parse(err.request.response);
+        console.log(typeof error);
+        console.log(error);
+
         handleOpen();
         setTitle('Error');
         setSuccess(false);
         setError(true);
         setMsg('Cannot save data. Please check again.');
+        if (error.errors.nic) {
+          setMsg(`${msg} ${error.errors.nic}`);
+        }
       });
   };
   const hanldeClear = (e) => {

@@ -145,6 +145,28 @@ const ViewAllDistributorsSalesRefs = (props) => {
           console.log(err);
         });
     }
+    if (props.user.is_company) {
+      axiosInstance
+        .get(`/distributor/salesref/all/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          setData(res.data);
+          setTableData(res.data);
+          res.data.forEach((item) => {
+            if (!itemCodes.includes(item.created_by)) {
+              itemCodes.push(item.created_by);
+            }
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [success, props.success]);
 
   const handleDeleteDetails = (e, value) => {

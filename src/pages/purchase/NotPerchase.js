@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Message from '../../components/message/Message';
+import SearchIcon from '@mui/icons-material/Search';
 import Modal from '@mui/material/Modal';
 import { axiosInstance } from '../../axiosInstance';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import SearchSpinner from '../../components/loadingSpinner/SearchSpinner';
 
 const MyMessage = React.forwardRef((props, ref) => {
   return (
@@ -43,24 +45,72 @@ const NotPerchase = () => {
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     dealer: '',
     reason: '',
+    dis_sales_ref: '',
   });
 
+  const [showDealers, setShowDealers] = useState(false);
+  const [valuedealer, setValueDealer] = useState('');
+
+  const [searchLoading, setSearchLoading] = useState(false);
+
   useEffect(() => {
+    setLoading(true);
     axiosInstance
-      .get('/dealer/all/', {
+      .get(
+        `/distributor/salesref/get/bysalesref/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        setData({ ...data, dis_sales_ref: res.data.id });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch data. Please try again');
+        setTitle('Error');
+        handleOpen();
+      });
+  }, []);
+
+  const filterDealers = (e) => {
+    setShowDealers(true);
+    setSearchLoading(true);
+    axiosInstance
+      .get(`/dealer/all/search?search=${e.target.value}`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
+        setSearchLoading(false);
+
         setDealers(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+    setValueDealer(e.target.value);
+  };
+  const handleSelectDealer = (e, item) => {
+    setValueDealer(item.name);
 
+    setData({
+      ...data,
+      dealer: item.id,
+    });
+    setShowDealers(false);
+  };
   const handleCheckedOnlyOur = (e) => {
     if (e.target.checked) {
       setData({
@@ -191,21 +241,79 @@ const NotPerchase = () => {
               <div className="form__row__col">
                 <div className="form__row__col__label">Select dealer</div>
                 <div className="form__row__col__input">
-                  <select
-                    name="dealer"
-                    value={data.dealer ? data.dealer : ''}
-                    onChange={(e) =>
-                      setData({ ...data, dealer: e.target.value })
-                    }
-                    required
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                    }}
                   >
-                    <option selected>Select dealer</option>
-                    {dealers.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.name} : {item.psa_name}
-                      </option>
-                    ))}
-                  </select>
+                    <input
+                      type="text"
+                      placeholder="search..."
+                      value={valuedealer}
+                      onChange={(e) => filterDealers(e)}
+                    />
+                    {searchLoading ? (
+                      <div
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: '-2px',
+                          bottom: 0,
+                        }}
+                      >
+                        <SearchSpinner search={true} />
+                      </div>
+                    ) : (
+                      <SearchIcon
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div
+                    className="searchContent"
+                    style={
+                      !showDealers ? { display: 'none' } : { display: 'grid' }
+                    }
+                  >
+                    <div className="searchContent__row">
+                      <div className="searchContent__row__details">
+                        <p>Name</p>
+                        <p>Address</p>
+                      </div>
+                    </div>
+                    {dealers
+                      .filter((item) => {
+                        const searchTerm = valuedealer.toLowerCase();
+                        const name = item.name.toLowerCase();
+                        const address = item.address.toLowerCase();
+                        return (
+                          (name.includes(searchTerm) && name !== searchTerm) ||
+                          (address.includes(searchTerm) &&
+                            address !== searchTerm)
+                        );
+                      })
+                      .map((item, i) => (
+                        <div
+                          className="searchContent__row"
+                          onClick={(e) => handleSelectDealer(e, item)}
+                          key={i}
+                        >
+                          <div className="searchContent__row__details">
+                            <p>{item.name}</p>
+                            <p>{item.address}</p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
             </div>

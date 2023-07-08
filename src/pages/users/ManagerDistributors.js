@@ -16,7 +16,7 @@ const ShowMessage = forwardRef((props, ref) => {
     />
   );
 });
-const ManagerDistributors = () => {
+const ManagerDistributors = ({ user }) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -26,11 +26,12 @@ const ManagerDistributors = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
-    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
-    manager: JSON.parse(sessionStorage.getItem('user_details')).id,
+    distributor: '',
+    manager: user.is_manager
+      ? JSON.parse(sessionStorage.getItem('user_details')).id
+      : '',
   });
   const [distributors, setDistributors] = useState([]);
   const [managers, setManagers] = useState([]);
@@ -53,25 +54,26 @@ const ManagerDistributors = () => {
 
         console.log(err);
       });
+    if (user.is_company) {
+      axiosInstance
+        .get('/users/managers/', {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
 
-    // axiosInstance
-    //   .get('/users/managers/', {
-    //     headers: {
-    //       Authorization:
-    //         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setLoading(false);
+          console.log(res.data);
+          setManagers(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
 
-    //     console.log(res.data);
-    //     setManagers(res.data);
-    //   })
-    //   .catch((err) => {
-    //     setLoading(false);
-
-    //     console.log(err);
-    //   });
+          console.log(err);
+        });
+    }
   }, []);
 
   const handleSubmit = (e) => {
@@ -143,23 +145,14 @@ const ManagerDistributors = () => {
                     onChange={(e) =>
                       setData({ ...data, manager: e.target.value })
                     }
-                    disabled
+                    disabled={user.is_manager}
                   >
-                    <option
-                      value={
-                        JSON.parse(sessionStorage.getItem('user_details')).id
-                      }
-                    >
-                      {
-                        JSON.parse(sessionStorage.getItem('user_details'))
-                          .full_name
-                      }
-                    </option>
-                    {/* {managers.map((item, i) => (
+                    <option value="">Select manager</option>
+                    {managers.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
                       </option>
-                    ))} */}
+                    ))}
                   </select>
                 </div>
               </div>
@@ -198,6 +191,7 @@ const ManagerDistributors = () => {
             <ViewAllManagerDistributors
               success={success}
               set_success={setSuccess}
+              user={user}
             />
           </div>
         </div>

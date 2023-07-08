@@ -28,49 +28,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import EditNotBuy from '../../components/edit/EditNotBuy';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
-const StyledMenu = styled((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === 'light'
-        ? 'rgb(55, 65, 81)'
-        : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 0',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
-        ),
-      },
-    },
-  },
-}));
-
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -94,17 +51,14 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const NotBuyDetails = () => {
-  const [data, setData] = useState([]);
+const NotBuyDetails = ({ user }) => {
   const [tblData, setTableData] = useState([]);
 
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Date', field: 'datetime' },
@@ -133,13 +87,7 @@ const NotBuyDetails = () => {
       },
     },
   ];
-  //   dealer
-  //   date
-  //   is_only_our
-  //   is_competitor
-  //   is_payment_problem
-  //   is_dealer_not_in
-  //   added_by
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -164,37 +112,87 @@ const NotBuyDetails = () => {
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  const [distributors, setDistributors] = useState([]);
   useEffect(() => {
-    axiosInstance
-      .get(`/not-buy/get/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.created_by)) {
-            itemCodes.push(item.created_by);
-          }
+    if (user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    } else if (user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log(res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    } else if (user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          console.log('d:', res.data);
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    } else if (user.is_distributor) {
+      handleFilterInventory(user.id);
+    } else {
+      axiosInstance
+        .get(`/not-buy/get/salesref/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [success]);
 
   const handleEditDetails = (e, value) => {
@@ -233,15 +231,26 @@ const NotBuyDetails = () => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.created_by === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
+  const handleFilterInventory = (value) => {
+    if (value !== '') {
+      setLoading(true);
+
+      axiosInstance
+        .get(`/not-buy/get/others/${value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
     }
   };
   return (
@@ -297,47 +306,33 @@ const NotBuyDetails = () => {
       <div className="page__pcont">
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
-            {/* <div>
-              <Button
-                id="demo-customized-button"
-                aria-controls={open ? 'demo-customized-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-                variant="contained"
-                disableElevation
-                onClick={handleClick}
-                endIcon={<KeyboardArrowDownIcon />}
-                fullWidth={150}
-              >
-                Filter By
-              </Button>
-              <StyledMenu
-                id="demo-customized-menu"
-                MenuListProps={{
-                  'aria-labelledby': 'demo-customized-button',
-                }}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={() => handleFilter('all')} disableRipple>
-                  All
-                </MenuItem>
-                {itemCodes.map((item, i) => (
-                  <MenuItem
-                    onClick={() => handleFilter(item)}
-                    key={i}
-                    disableRipple
-                  >
-                    {item}
-                  </MenuItem>
-                ))}
-              </StyledMenu> 
-            </div>*/}
+            {!user.is_salesref && !user.is_distributor ? (
+              <div className="form__row">
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Distributor</div>
+                  <div className="form__row__col__input">
+                    <select
+                      defaultValue={''}
+                      onChange={(e) => handleFilterInventory(e.target.value)}
+                      required
+                    >
+                      <option value="">Select distributor</option>
+                      {distributors.map((item, i) => (
+                        <option value={item.id} key={i}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="form__row__col dontdisp"></div>
+                <div className="form__row__col dontdisp"></div>
+                <div className="form__row__col dontdisp"></div>
+              </div>
+            ) : (
+              ''
+            )}
           </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
         </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
@@ -378,7 +373,8 @@ const NotBuyDetails = () => {
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === EditIcon ? (
+                      {props.action.icon === EditIcon &&
+                      (user.is_company || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -390,7 +386,8 @@ const NotBuyDetails = () => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : (
+                      ) : props.action.icon === DeleteOutline &&
+                        (user.is_company || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -402,6 +399,8 @@ const NotBuyDetails = () => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

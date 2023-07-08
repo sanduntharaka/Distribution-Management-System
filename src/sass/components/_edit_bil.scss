@@ -11,7 +11,10 @@
   right: 0;
   margin: auto;
   transform: translateY(-50%);
-
+  @include mobile {
+    width: 90%;
+    height: 60%;
+  }
   .container {
     width: 100%;
     height: 100%;
@@ -21,6 +24,26 @@
     display: block;
     color: black;
     box-sizing: border-box;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: #000f80 #ffffff;
+    &::-webkit-scrollbar {
+      width: 1px;
+      height: 50px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #000f80;
+      border-radius: 25px;
+    }
+    &::-webkit-scrollbar-button {
+      height: 5px;
+    }
 
     .title {
       background-color: $color-title-background-light;

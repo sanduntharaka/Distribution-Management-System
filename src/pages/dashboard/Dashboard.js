@@ -5,11 +5,13 @@ import MainChart from './widgets/MainChart';
 import InventoryQty from './widgets/InventoryQty';
 import ToDaySales from './widgets/ToDaySales';
 import ThisMonthSales from './widgets/ThisMonthSales';
-import TotalMarketReturns from './widgets/TotalMarketReturns';
+import TotalReturns from './widgets/TotalReturns';
 import { axiosInstance } from '../../axiosInstance';
-import TotalSalesReturns from './widgets/TotalSalesReturns';
 import ThisYearSales from './widgets/ThisYearSales';
 import ManagerAllDistributorPieChart from './widgets/ManagerAllDistributorPieChart';
+import ThreeDays from './widgets/ThreeDays';
+import TotalCredit from './widgets/TotalCredit';
+import PendingInvoices from './widgets/PendingInvoices';
 const Dashboard = () => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
@@ -34,6 +36,7 @@ const Dashboard = () => {
     sales_returns: 0,
     this_month: {},
     this_year: {},
+    three_days: {},
   });
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -68,6 +71,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
+            three_days: res.data.three_days,
           });
           console.log(res.data);
         });
@@ -95,6 +99,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
+            three_days: res.data.three_days,
           });
           console.log(res.data);
         });
@@ -122,6 +127,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
+            three_days: res.data.three_days,
           });
           console.log(res.data);
         });
@@ -147,20 +153,21 @@ const Dashboard = () => {
           </div>
           {user.is_distributor || user.is_salesref ? (
             <div className="page__pcont__row__col">
-              <div
-                style={{ display: 'flex', flexDirection: 'column', gap: 15 }}
-              >
-                <div className="widget returns">
-                  <TotalMarketReturns data={data.market_returns} />
-                </div>
-                <div className="widget returns">
-                  <TotalSalesReturns data={data.sales_returns} />
-                </div>
+              <div className="widget">
+                <TotalReturns
+                  market={data.market_returns}
+                  sales={data.sales_returns}
+                />
               </div>
             </div>
           ) : (
             ''
           )}
+          <div className="page__pcont__row__col ">
+            <div className="widget threedays">
+              <ThreeDays data={data.three_days} />
+            </div>
+          </div>
 
           <div className="page__pcont__row__col ">
             <div className="widget thismonth">
@@ -203,18 +210,34 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* <div className="page__pcont__row">
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
-            <div style={{ height: 400, border: '1px solid black' }}>
-              Pending invoices
+            <div
+              style={{
+                height: 'max-content',
+                padding: 25,
+                boxSizing: 'border-box',
+                backgroundColor: 'rgba(255, 255, 255, 1)',
+                boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <PendingInvoices />
             </div>
           </div>
           <div className="page__pcont__row__col">
-            <div style={{ height: 400, border: '1px solid black' }}>
-              Credit bills
+            <div
+              style={{
+                height: 'max-content',
+                padding: 25,
+                boxSizing: 'border-box',
+                backgroundColor: 'rgba(255, 255, 255, 1)',
+                boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
+              }}
+            >
+              <TotalCredit />
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );

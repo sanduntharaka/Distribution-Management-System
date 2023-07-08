@@ -17,7 +17,7 @@ const ShowMessage = forwardRef((props, ref) => {
   );
 });
 
-const DealerCategory = () => {
+const DealerCategory = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -90,41 +90,56 @@ const DealerCategory = () => {
           msg={msg}
         />
       </Modal>
-      <div className="page__title">
-        <p>Create Dealer Category</p>
-      </div>
-      <div className="page__pcont">
-        <div className="form">
-          <form action="">
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">Category title</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="type category title"
-                    onChange={(e) =>
-                      setData({ ...data, category_name: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="form__btn">
-              <div className="form__btn__container">
-                <button className="btnEdit" onClick={(e) => handleSubmit(e)}>
-                  save
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div className="page__pcont__row">
-          <div style={{ width: '100%' }}>
-            <ViewCategories success={success} set_success={setSuccess} />
+      {props.user.is_manager || props.user.is_company ? (
+        <>
+          <div className="page__title">
+            <p>Create Dealer Category</p>
           </div>
+          <div className="page__pcont">
+            <div className="form">
+              <form action="">
+                <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Category title</div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="type category title"
+                        onChange={(e) =>
+                          setData({ ...data, category_name: e.target.value })
+                        }
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form__btn">
+                  <div className="form__btn__container">
+                    <button
+                      className="btnEdit"
+                      onClick={(e) => handleSubmit(e)}
+                    >
+                      save
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      ) : (
+        ''
+      )}
+
+      <div className="page__pcont__row">
+        <div style={{ width: '100%' }}>
+          <ViewCategories
+            success={success}
+            set_success={setSuccess}
+            user={props.user}
+          />
         </div>
       </div>
     </div>

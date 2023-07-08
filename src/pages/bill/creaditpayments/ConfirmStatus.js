@@ -109,6 +109,7 @@ const ConfirmStatus = (props) => {
         invoice={props.invoice}
         showEdit={props.showEdit}
         closeModal={props.closeModal}
+        user={props.user}
       />
     );
   });
@@ -128,6 +129,7 @@ const ConfirmStatus = (props) => {
           invoice={props.invoice}
           showEdit={setEditDetailsOpen}
           closeModal={handleModalClose}
+          user={props.user}
         />
       </Modal>
       <div className="container">
@@ -184,6 +186,8 @@ const ConfirmStatus = (props) => {
                   <p>Paid</p>
                   <p>{props.invoice.payed}</p>
                 </div>
+              </div>
+              <div className="row">
                 <div className="col">
                   <button
                     className="addBtn"
@@ -193,26 +197,34 @@ const ConfirmStatus = (props) => {
                   </button>
                 </div>
               </div>
-              <div className="row">
-                <label htmlFor="">Payment type</label>
-                <select
-                  defaultValue={'0'}
-                  name=""
-                  id=""
-                  onChange={(e) =>
-                    setInvoice({ ...invoice, payment_type: e.target.value })
-                  }
-                >
-                  <option value="0">Select payment type</option>
-                  <option value="cash">cash</option>
-                  <option value="credit">credit</option>
-                  <option value="cheque">cheque</option>
-                  <option value="cash-credit">cash-credit</option>
-                  <option value="cash-cheque">cash-cheque</option>
-                  <option value="cheque-credit">cheque-credit</option>
-                  <option value="cash-credit-cheque">cash-credit-cheque</option>
-                </select>
-              </div>
+
+              {props.user.is_distributor ? (
+                <div className="row">
+                  <label htmlFor="">Payment type</label>
+                  <select
+                    defaultValue={'0'}
+                    name=""
+                    id=""
+                    onChange={(e) =>
+                      setInvoice({ ...invoice, payment_type: e.target.value })
+                    }
+                  >
+                    <option value="0">Select payment type</option>
+                    <option value="cash">cash</option>
+                    <option value="credit">credit</option>
+                    <option value="cheque">cheque</option>
+                    <option value="cash-credit">cash-credit</option>
+                    <option value="cash-cheque">cash-cheque</option>
+                    <option value="cheque-credit">cheque-credit</option>
+                    <option value="cash-credit-cheque">
+                      cash-credit-cheque
+                    </option>
+                  </select>
+                </div>
+              ) : (
+                ''
+              )}
+
               {exceed ? (
                 <div
                   className="row"
@@ -420,9 +432,13 @@ const ConfirmStatus = (props) => {
           </section>
         </div>
         <div className="buttoncontainer">
-          <button className="btnSave" onClick={(e) => handleConfirm(e)}>
-            submit
-          </button>
+          {props.user.is_distributor ? (
+            <button className="btnSave" onClick={(e) => handleConfirm(e)}>
+              submit
+            </button>
+          ) : (
+            ''
+          )}
 
           <button className="addBtn" onClick={(e) => handleCloseConfirm(e)}>
             close

@@ -48,6 +48,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 const ViewPsas = (props) => {
+  const user = props.user;
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -212,20 +213,24 @@ const ViewPsas = (props) => {
                   actionsColumnIndex: 0,
                 }}
                 icons={tableIcons}
-                actions={[
-                  {
-                    icon: EditIcon,
-                    tooltip: 'Edit details',
-                    onClick: (event, rowData) =>
-                      handleEditDetails(event, rowData),
-                  },
-                  {
-                    icon: DeleteOutline,
-                    tooltip: 'Delete details',
-                    onClick: (event, rowData) =>
-                      handleDeleteDetails(event, rowData),
-                  },
-                ]}
+                actions={
+                  user.is_manager || user.is_company
+                    ? [
+                        {
+                          icon: EditIcon,
+                          tooltip: 'Edit details',
+                          onClick: (event, rowData) =>
+                            handleEditDetails(event, rowData),
+                        },
+                        {
+                          icon: DeleteOutline,
+                          tooltip: 'Delete details',
+                          onClick: (event, rowData) =>
+                            handleDeleteDetails(event, rowData),
+                        },
+                      ]
+                    : ''
+                }
                 components={{
                   Action: (props) => (
                     <React.Fragment>
@@ -241,7 +246,7 @@ const ViewPsas = (props) => {
                         >
                           <EditIcon />
                         </IconButton>
-                      ) : (
+                      ) : props.action.icon === DeleteOutline ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -253,6 +258,8 @@ const ViewPsas = (props) => {
                         >
                           <DeleteOutline />
                         </IconButton>
+                      ) : (
+                        ''
                       )}
                     </React.Fragment>
                   ),

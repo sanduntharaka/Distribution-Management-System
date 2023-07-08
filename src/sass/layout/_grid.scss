@@ -18,7 +18,7 @@
       padding: 10px 15px;
       border-radius: 20px;
       @include mobile {
-        width: 90%;
+        width: 85%;
       }
 
       &__label {
@@ -253,7 +253,7 @@
   padding: 10px;
   display: grid;
   @include mobile {
-    width: 95%;
+    width: 85%;
   }
   &__row {
     padding: 5px;

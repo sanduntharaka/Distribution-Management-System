@@ -150,47 +150,55 @@ const UserCreation = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    axiosLoginInstance
-      .post('/users/', data)
-      .then((res) => {
-        setLoading(false);
-        handleOpen();
-        setSuccess(true);
-        setError(false);
-        setTitle('Success');
-        setMsg('User created successfully. Please subimit user details.');
-        sessionStorage.setItem('new_user', res.data.id);
-        if (data.is_company) {
-          sessionStorage.setItem('new_user_designation', 'company');
-        } else if (data.is_excecutive) {
-          sessionStorage.setItem('new_user_designation', 'excecutive');
-        } else if (data.is_distributor) {
-          sessionStorage.setItem('new_user_designation', 'distributor');
-        } else if (data.is_manager) {
-          sessionStorage.setItem('new_user_designation', 'manager');
-        } else if (data.is_salesref) {
-          sessionStorage.setItem('new_user_designation', 'sales_rep');
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
 
-        handleOpen();
-        setTitle('Error');
-        setSuccess(false);
-        setError(true);
-        console.log('e:', err.response.request.response);
-        if (err.response.request.response) {
-          let msg = JSON.parse(err.response.request.response);
-          if (msg.user_name) {
-            setMsg(msg.user_name);
+    if (data.password === data.re_password) {
+      setLoading(true);
+      axiosLoginInstance
+        .post('/users/', data)
+        .then((res) => {
+          setLoading(false);
+          handleOpen();
+          setSuccess(true);
+          setError(false);
+          setTitle('Success');
+          setMsg('User created successfully. Please subimit user details.');
+          sessionStorage.setItem('new_user', res.data.id);
+          if (data.is_company) {
+            sessionStorage.setItem('new_user_designation', 'company');
+          } else if (data.is_excecutive) {
+            sessionStorage.setItem('new_user_designation', 'excecutive');
+          } else if (data.is_distributor) {
+            sessionStorage.setItem('new_user_designation', 'distributor');
+          } else if (data.is_manager) {
+            sessionStorage.setItem('new_user_designation', 'manager');
+          } else if (data.is_salesref) {
+            sessionStorage.setItem('new_user_designation', 'sales_rep');
           }
-          if (msg.password) {
-            setMsg(msg.password);
+        })
+        .catch((err) => {
+          setLoading(false);
+          handleOpen();
+          setTitle('Error');
+          setSuccess(false);
+          setError(true);
+          console.log('e:', err.response.request.response);
+          if (err.response.request.response) {
+            let msg = JSON.parse(err.response.request.response);
+            if (msg.user_name) {
+              setMsg(msg.user_name);
+            }
+            if (msg.password) {
+              setMsg(msg.password);
+            }
           }
-        }
-      });
+        });
+    } else {
+      handleOpen();
+      setTitle('Error');
+      setSuccess(false);
+      setError(true);
+      setMsg('Two password you entered did not match.');
+    }
   };
   const handleClear = (e) => {
     e.preventDefault();

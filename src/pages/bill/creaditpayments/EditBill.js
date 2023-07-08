@@ -72,12 +72,9 @@ const EditBill = (props) => {
   const [items, setItems] = useState([]);
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
-      editable: false,
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Bill ', field: 'code', editable: false },
     { title: 'Date', field: 'date', editable: false },
@@ -218,14 +215,18 @@ const EditBill = (props) => {
                 actionsColumnIndex: 0,
               }}
               icons={tableIcons}
-              actions={[
-                {
-                  icon: ViewColumn,
-                  tooltip: 'View details',
-                  onClick: (event, rowData) =>
-                    handleViewDetails(event, rowData),
-                },
-              ]}
+              actions={
+                props.user.is_distributor
+                  ? [
+                      {
+                        icon: ViewColumn,
+                        tooltip: 'View details',
+                        onClick: (event, rowData) =>
+                          handleViewDetails(event, rowData),
+                      },
+                    ]
+                  : ''
+              }
               components={{
                 Action: (props) => (
                   <React.Fragment>

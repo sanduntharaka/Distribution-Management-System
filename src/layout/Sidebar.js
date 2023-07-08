@@ -106,21 +106,19 @@ const Sidebar = () => {
           ) : (
             ''
           )} */}
-          {user.is_manager || user.is_distributor ? (
-            <NavLink
-              to="/psa"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <MdRoute />
-              </div>
-              <div className="container__list__item__name">PSA</div>
-            </NavLink>
-          ) : (
-            ''
-          )}
+
+          <NavLink
+            to="/psa"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <MdRoute />
+            </div>
+            <div className="container__list__item__name">PSA</div>
+          </NavLink>
+
           <NavLink
             to="/dealer"
             className={(isActive, isPending) =>
@@ -132,91 +130,66 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">Dealer</div>
           </NavLink>
-          {user.is_distributor || user.is_salesref ? (
-            <NavLink
-              to="/bill"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <TbReportMoney />
-              </div>
-              <div className="container__list__item__name">billing</div>
-            </NavLink>
-          ) : (
-            ''
-          )}
-          {user.is_distributor ? (
-            <>
-              <NavLink
-                to="/past"
-                className={(isActive, isPending) =>
-                  handleClassname(isActive, isPending)
-                }
-              >
-                <div className="container__list__item__icon">
-                  <BiHistory />
-                </div>
-                <div className="container__list__item__name">Old details</div>
-              </NavLink>
 
-              {/* <NavLink
-                to="/confirm"
-                className={(isActive, isPending) =>
-                  handleClassname(isActive, isPending)
-                }
-              >
-                <div className="container__list__item__icon">
-                  <GiCheckedShield />
-                </div>
-                <div className="container__list__item__name">Approvals</div>
-              </NavLink> */}
-            </>
-          ) : (
-            ''
-          )}
+          <NavLink
+            to="/bill"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <TbReportMoney />
+            </div>
+            <div className="container__list__item__name">billing</div>
+          </NavLink>
 
-          {user.is_salesref || user.is_distributor ? (
-            <>
-              <NavLink
-                to="/purchase"
-                className={(isActive, isPending) =>
-                  handleClassname(isActive, isPending)
-                }
-              >
-                <div className="container__list__item__icon">
-                  <BiPurchaseTagAlt />
-                </div>
-                <div className="container__list__item__name">Non-buying</div>
-              </NavLink>
-              <NavLink
-                to="/mreturn"
-                className={(isActive, isPending) =>
-                  handleClassname(isActive, isPending)
-                }
-              >
-                <div className="container__list__item__icon">
-                  <TbTruckReturn />
-                </div>
-                <div className="container__list__item__name">market return</div>
-              </NavLink>
+          <NavLink
+            to="/past"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <BiHistory />
+            </div>
+            <div className="container__list__item__name">Old details</div>
+          </NavLink>
 
-              <NavLink
-                to="/sreturn"
-                className={(isActive, isPending) =>
-                  handleClassname(isActive, isPending)
-                }
-              >
-                <div className="container__list__item__icon">
-                  <TiArrowBackOutline />
-                </div>
-                <div className="container__list__item__name">sales return</div>
-              </NavLink>
-            </>
-          ) : (
-            ''
-          )}
+          <NavLink
+            to="/purchase"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <BiPurchaseTagAlt />
+            </div>
+            <div className="container__list__item__name">Non-buying</div>
+          </NavLink>
+          <NavLink
+            to="/mreturn"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <TbTruckReturn />
+            </div>
+            <div className="container__list__item__name">market return</div>
+          </NavLink>
+
+          <NavLink
+            to="/sreturn"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <TiArrowBackOutline />
+            </div>
+            <div className="container__list__item__name">sales return</div>
+          </NavLink>
+
           {user.is_distributor || user.is_manager || user.is_salesref ? (
             <NavLink
               to="/leave"

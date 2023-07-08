@@ -11,6 +11,8 @@ const Spinner = (props) => {
             ? 'detail'
             : props.page
             ? 'page'
+            : props.search
+            ? 'search'
             : ''
         } `}
       ></div>
