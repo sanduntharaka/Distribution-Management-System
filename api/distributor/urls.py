@@ -8,6 +8,10 @@ urlpatterns = [
 
     # get DistributorInventoryItems details
     path('all/<id>', views.GetDistributorInventoryItems.as_view()),
+
+    # get DistributorInventoryItems for company, manager and executive id is usedetails_id
+    path('by/others/<id>', views.GetDistributorInventoryItemsByUser.as_view()),
+
     # get ItemStock details
     path('items/all/<pk>', views.GetDistributorItems.as_view()),
 

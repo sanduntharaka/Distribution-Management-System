@@ -24,3 +24,19 @@ class EditNotBuy(generics.UpdateAPIView):
 class DeleteNotBuy(generics.DestroyAPIView):
     queryset = NotBuyDetails.objects.all()
     serializer_class = serializers.AddNotBuySerializer
+
+
+class GeTAllNotBuyBysSalesRef(generics.ListAPIView):
+    serializer_class = serializers.GetNotBuySerializer
+
+    def get_queryset(self):
+
+        return get_list_or_404(NotBuyDetails, dis_sales_ref__sales_ref=self.kwargs.get('id'))
+
+
+class GeTAllNotBuyBysOthers(generics.ListAPIView):
+    serializer_class = serializers.GetNotBuySerializer
+
+    def get_queryset(self):
+
+        return get_list_or_404(NotBuyDetails, dis_sales_ref__distributor=self.kwargs.get('id'))

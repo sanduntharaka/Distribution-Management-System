@@ -5,7 +5,7 @@ from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, C
 class CreateInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
-        fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
+        fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number', 'inventory',
                   'dealer', 'total', 'total_discount',  'added_by', 'billing_price_method', 'sub_total', 'time')
 
 
@@ -53,11 +53,17 @@ class GetInvoicesSerializer(serializers.ModelSerializer):
     dealer_name = serializers.CharField(source='dealer.name')
     dealer_address = serializers.CharField(source='dealer.address')
     contact_number = serializers.CharField(source='dealer.contact_number')
+    full_name = serializers.CharField(
+        source='dis_sales_ref.distributor.full_name')
+    address = serializers.CharField(
+        source='dis_sales_ref.distributor.address')
+    company_number = serializers.CharField(
+        source='dis_sales_ref.distributor.company_number')
 
     class Meta:
         model = SalesRefInvoice
-        fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
-                  'dealer', 'total', 'total_discount', 'dealer_address', 'contact_number', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled')
+        fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number', 'time',
+                  'dealer', 'total', 'total_discount', 'dealer_address', 'full_name', 'address', 'company_number', 'contact_number', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled')
 
 
 class GetInvoiceWithPaymentSerializer(serializers.ModelSerializer):

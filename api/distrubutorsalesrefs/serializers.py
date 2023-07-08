@@ -40,7 +40,9 @@ class GetDistributorDetails(serializers.ModelSerializer):
     full_name = serializers.CharField(source='distributor.full_name')
     address = serializers.CharField(source='distributor.address')
     company_number = serializers.CharField(source='distributor.company_number')
+    distributor_id = serializers.IntegerField(source='distributor.id')
 
     class Meta:
         model = SalesRefDistributor
-        fields = ('id', 'full_name', 'address', 'company_number')
+        fields = ('id', 'full_name', 'address',
+                  'company_number', 'distributor_id')

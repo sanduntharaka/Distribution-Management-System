@@ -3,6 +3,9 @@ from . import views
 urlpatterns = [
     path('get/bysalesref/<int:id>', views.GetBySalesRef.as_view()),
     path('get/bydistributor/<int:id>', views.GetByDistributor.as_view()),
+    path('get/bydistributor/single/<int:id>',
+         views.GetByDistributorSingle.as_view()),
+
     path('get/distributor/by/salesref/<int:id>',
          views.GetDistributorBySr.as_view()),
     path('get/distributor/by/distributor/<int:id>',

@@ -1,6 +1,6 @@
 from distrubutor_salesref.models import SalesRefDistributor
 from django.db import models
-from distributor_inventory.models import DistributorInventoryItems, ItemStock
+from distributor_inventory.models import DistributorInventoryItems, ItemStock, DistributorInventory
 from primary_sales_area.models import PrimarySalesArea
 from dealer_details.models import Dealer
 from userdetails.models import UserDetails
@@ -12,6 +12,8 @@ class SalesRefReturn(models.Model):
         ('pending', 'pending'),
         ('rejected', 'rejected'),
     )
+    inventory = models.ForeignKey(
+        DistributorInventory, on_delete=models.CASCADE, blank=True, null=True)
     dis_sales_ref = models.ForeignKey(
         SalesRefDistributor, on_delete=models.CASCADE)
     dealer = models.ForeignKey(Dealer,

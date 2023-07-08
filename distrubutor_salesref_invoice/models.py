@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from django.db import models
 from distrubutor_salesref.models import SalesRefDistributor
-from distributor_inventory.models import DistributorInventoryItems, ItemStock
+from distributor_inventory.models import DistributorInventoryItems, ItemStock, DistributorInventory
 from userdetails.models import UserDetails
 from dealer_details.models import Dealer
 from primary_sales_area.models import PrimarySalesArea
@@ -17,6 +17,8 @@ class SalesRefInvoice(models.Model):
     )
     dis_sales_ref = models.ForeignKey(
         SalesRefDistributor, on_delete=models.CASCADE)
+    inventory = models.ForeignKey(
+        DistributorInventory, on_delete=models.CASCADE, blank=True, null=True)
     date = models.DateField()
     bill_code = models.CharField(max_length=10, default='INV-')
     bill_number = models.IntegerField()
@@ -31,8 +33,7 @@ class SalesRefInvoice(models.Model):
         max_length=10, choices=BILL_STATUS, default='pending')
     is_settiled = models.BooleanField(default=False)
     rejected_reason = models.CharField(max_length=150, blank=True, null=True)
-    confirmed_date = models.DateField(
-        default="2023-01-01", blank=True, null=True)
+    confirmed_date = models.DateField(blank=True, null=True)
 
     def get_bill_code_number_combine(self):
         return self.bill_code + str(self.bill_number)

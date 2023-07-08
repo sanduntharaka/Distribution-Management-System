@@ -58,6 +58,14 @@ class GetDistributorInventoryItems(generics.ListAPIView):
         return get_list_or_404(DistributorInventoryItems, inventory=item)
 
 
+class GetDistributorInventoryItemsByUser(generics.ListAPIView):
+    serializer_class = serializers.GetInventoryItems
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        return get_list_or_404(DistributorInventoryItems, inventory__distributor__id=item)
+
+
 class GetDistributorInventory(generics.RetrieveAPIView):
 
     serializer_class = serializers.GetInventory

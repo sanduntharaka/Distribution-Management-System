@@ -6,6 +6,7 @@ urlpatterns = [
     path('by/manager/<id>', views.AllManagerDistributorByManager.as_view()),
     path('by/executive/<id>', views.AllManagerDistributorByExecutive.as_view()),
 
+
     path('delete/<int:pk>', views.DeleteManagerDistributor.as_view()),
 
 

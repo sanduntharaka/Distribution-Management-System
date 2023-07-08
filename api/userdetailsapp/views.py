@@ -156,7 +156,7 @@ class AllDistributorsByManager(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
         distributor_ids = ManagerDistributor.objects.filter(
-            added_by=item).values_list('distributor', flat=True)
+            manager=item).values_list('distributor', flat=True)
         distributors = UserDetails.objects.filter(id__in=distributor_ids)
         return get_list_or_404(distributors)
 
@@ -168,7 +168,7 @@ class AllDistributorsByExcecutive(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
         manager_ids = ExecutiveManager.objects.filter(
-            added_by=item).values_list('manager', flat=True)
+            executive=item).values_list('manager', flat=True)
         distributor_ids = ManagerDistributor.objects.filter(
             manager__in=manager_ids).values_list('distributor', flat=True)
         distributors = UserDetails.objects.filter(id__in=distributor_ids)

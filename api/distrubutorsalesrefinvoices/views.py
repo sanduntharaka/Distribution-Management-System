@@ -17,7 +17,7 @@ class CreateInvoice(generics.CreateAPIView):
 
         last_bill = SalesRefInvoice.objects.all().last()
         data = self.request.data
-        print('invsave:', data)
+        print(data)
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1
@@ -55,6 +55,16 @@ class AllInvoiceByDistributor(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
 
     def get_queryset(self, *args, **kwargs):
+
+        invs = SalesRefInvoice.objects.filter(
+            dis_sales_ref__distributor=self.kwargs.get('id'))
+        return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
+
+
+class AllInvoiceByOthers_Distributor(generics.ListAPIView):
+    serializer_class = serializers.GetInvoicesSerializer
+
+    def get_queryset(self, *args, **kwargs):
         return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
 
 
@@ -70,7 +80,31 @@ class AllPendingInvoice(generics.ListAPIView):
         return get_list_or_404(SalesRefInvoice, status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
 
 
+class AllPendingInvoiceByOthers(generics.ListAPIView):
+    serializer_class = serializers.GetInvoicesSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        disti_refs = SalesRefDistributor.objects.filter(
+            distributor=self.kwargs.get('id')).values('id')
+
+        distributorsrf_ids = [distributor['id']
+                              for distributor in disti_refs]
+        return get_list_or_404(SalesRefInvoice, status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+
+
 class AllCreditInvoice(generics.ListAPIView):
+    serializer_class = serializers.GetInvoiceWithPaymentSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        disti_refs = SalesRefDistributor.objects.filter(
+            distributor=self.kwargs.get('id')).values('id')
+
+        distributorsrf_ids = [distributor['id']
+                              for distributor in disti_refs]
+        return get_list_or_404(SalesRefInvoice, status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+
+
+class AllCreditInvoiceByOthers(generics.ListAPIView):
     serializer_class = serializers.GetInvoiceWithPaymentSerializer
 
     def get_queryset(self, *args, **kwargs):
