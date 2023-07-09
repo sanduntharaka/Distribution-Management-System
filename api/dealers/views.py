@@ -93,6 +93,7 @@ class GetAll(generics.ListAPIView):
             users.extend(salesref_users_ids)
 
         if (self.request.user.is_salesref):
+
             distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=user).distributor.user.id
             users.append(distributor)
@@ -101,10 +102,11 @@ class GetAll(generics.ListAPIView):
             users.append(manager)
 
             salesrefs = SalesRefDistributor.objects.filter(
-                distributor__user=user).values_list('sales_ref', flat=True)
+                distributor__user=distributor).values_list('sales_ref', flat=True)
             salesref_users_ids = UserDetails.objects.filter(
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
+
         return get_list_or_404(Dealer, added_by__in=users)
 
 
@@ -156,12 +158,12 @@ class GetAllSearch(generics.ListAPIView):
             manager = ManagerDistributor.objects.get(
                 distributor__user=distributor).manager.user.id
             users.append(manager)
-
             salesrefs = SalesRefDistributor.objects.filter(
-                distributor__user=user).values_list('sales_ref', flat=True)
+                distributor__user=distributor).values_list('sales_ref', flat=True)
             salesref_users_ids = UserDetails.objects.filter(
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
+
         return Dealer.objects.filter(added_by__in=users)
 
 
