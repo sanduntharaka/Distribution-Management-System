@@ -77,6 +77,7 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0003_salesreturn_inventory.py
 0003_salesrefreturn_inventory.py
 0003_salesrefinvoice_inventory_and_more.py
+0004_notbuydetails_inventory.py
 sersettings.py
 # Backup files # 
 *.bak 

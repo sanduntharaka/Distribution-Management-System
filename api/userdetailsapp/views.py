@@ -1,3 +1,4 @@
+from executive_distributor.models import ExecutiveDistributor
 from exceutive_manager.models import ExecutiveManager
 from distrubutor_salesref.models import SalesRefDistributor
 from django.db.models import Exists, OuterRef
@@ -104,6 +105,18 @@ class AllExecutives(generics.ListAPIView):
         return get_list_or_404(queryset)
 
 
+class AllNewExecutives(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        linked_executives = ExecutiveManager.objects.filter(
+            executive=OuterRef('pk'))
+        new_details = UserDetails.objects.filter(
+            user__is_excecutive=True).exclude(Exists(linked_executives))
+        return get_list_or_404(new_details)
+
+
 class AllManagers(generics.ListAPIView):
 
     serializer_class = serializers.AllDistributorsSerializer
@@ -167,10 +180,9 @@ class AllDistributorsByExcecutive(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        manager_ids = ExecutiveManager.objects.filter(
-            executive=item).values_list('manager', flat=True)
-        distributor_ids = ManagerDistributor.objects.filter(
-            manager__in=manager_ids).values_list('distributor', flat=True)
+
+        distributor_ids = ExecutiveDistributor.objects.filter(
+            executive=item).values_list('distributor', flat=True)
         distributors = UserDetails.objects.filter(id__in=distributor_ids)
         return get_list_or_404(distributors)
 
@@ -200,3 +212,16 @@ class AllNewSalesrefs(generics.ListAPIView):
 class ProfilePictureUpload(generics.UpdateAPIView):
     queryset = UserDetails.objects.all()
     serializer_class = serializers.ProfilePicUpdateSerializer
+
+
+class AllNotExecutiveDistributor(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        linked_distributors = ExecutiveDistributor.objects.filter(
+            distributor=OuterRef('pk'))
+
+        new_details = UserDetails.objects.filter(
+            user__is_distributor=True).exclude(Exists(linked_distributors))
+        return get_list_or_404(new_details)

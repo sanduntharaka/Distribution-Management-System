@@ -2,6 +2,7 @@ from django.utils.timezone import now
 from django.db import models
 from dealer_details.models import Dealer
 from django.conf import settings
+from distributor_inventory.models import DistributorInventory
 from distrubutor_salesref.models import SalesRefDistributor
 User = settings.AUTH_USER_MODEL
 
@@ -9,6 +10,8 @@ User = settings.AUTH_USER_MODEL
 class NotBuyDetails(models.Model):
     dis_sales_ref = models.ForeignKey(
         SalesRefDistributor, on_delete=models.CASCADE, null=True, blank=True)
+    inventory = models.ForeignKey(
+        DistributorInventory, on_delete=models.CASCADE, null=True, blank=True)
     dealer = models.ForeignKey(Dealer, on_delete=models.CASCADE)
     datetime = models.DateTimeField(default=now)
     is_only_our = models.BooleanField(default=False)

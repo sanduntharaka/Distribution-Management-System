@@ -25,5 +25,6 @@ urlpatterns = [
 
     # in stock items details
     path('inventory/items/<int:pk>', views.GetinventoryItems.as_view()),
-
+    path('inventory/items/<int:pk>/search',
+         views.GetinventoryItemsSearch.as_view()),
 ]

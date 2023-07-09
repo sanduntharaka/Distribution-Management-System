@@ -1,3 +1,4 @@
+from rest_framework import filters
 from rest_framework import status
 from rest_framework.response import Response
 from primary_sales_area.models import PrimarySalesArea
@@ -14,6 +15,14 @@ class CreatePSA(generics.CreateAPIView):
 class AllCreatedPsa(generics.ListAPIView):
     serializer_class = serializers.GetAllPSASerializer
     queryset = PrimarySalesArea.objects.all()
+
+
+class GetAllSearch(generics.ListAPIView):
+    serializer_class = serializers.GetAllPSASerializer
+    queryset = PrimarySalesArea.objects.all()
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('area_name',)
 
 
 class EditPsa(generics.UpdateAPIView):

@@ -45,7 +45,7 @@ class GetInventoryItemsStoks(serializers.ModelSerializer):
     class Meta:
         model = ItemStock
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
-                  'base', 'pack_size', 'date', 'whole_sale_price', 'retail_price', 'category_name', 'invoice_number')
+                  'base', 'pack_size', 'date', 'whole_sale_price', 'retail_price', 'from_sales_return', 'category_name', 'invoice_number')
 
 
 class GetInventoryItems(serializers.ModelSerializer):

@@ -44,7 +44,7 @@ class GetReturnsByDistributor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        print(item)
+
         return get_list_or_404(SalesReturn, dis_sales_ref__distributor=item)
 
 
@@ -53,7 +53,7 @@ class GetReturnsByDSalesref(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        print(item)
+
         return get_list_or_404(SalesReturn, dis_sales_ref__sales_ref=item)
 
 
@@ -86,16 +86,26 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         item = self.kwargs.get('pk')
-        print(request.data)
         return_bill = SalesReturn.objects.get(id=item)
         if request.data['status'] == 'approved':
             return_items = SalesReturnItem.objects.filter(
                 salesreturn=return_bill)
-
-            for i in return_items:
-                i.item.qty = i.item.qty+(i.qty+i.foc)
-                i.item.foc = i.item.foc+i.foc
-                i.item.save()
+            if request.data['is_deduct_qty']:
+                for i in return_items:
+                    # i.item.qty = i.item.qty+(i.qty+i.foc)
+                    # i.item.foc = i.item.foc+i.foc
+                    # i.item.save()
+                    stock = ItemStock(item=i.item.item,
+                                      invoice_number=i.salesreturn.getbillnumber(),
+                                      from_sales_return=True,
+                                      qty=i.qty+i.foc,
+                                      pack_size=i.item.pack_size,
+                                      foc=i.foc,
+                                      whole_sale_price=i.item.whole_sale_price,
+                                      retail_price=i.item.retail_price,
+                                      added_by=self.request.user,
+                                      )
+                    stock.save()
 
             return_bill.status = request.data['status']
             return_bill.save()
@@ -130,10 +140,9 @@ class AddReturnItem(APIView):
         return_items = []
         try:
             for item in request.data['items']:
-                print(item)
+
                 return_items.append(SalesReturnItem(salesreturn=sales_return, item=ItemStock.objects.get(
                     id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason']))
-            print(return_items)
 
             SalesReturnItem.objects.bulk_create(return_items)
             return Response(status=status.HTTP_200_OK)

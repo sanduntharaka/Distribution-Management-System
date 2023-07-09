@@ -8,6 +8,8 @@ urlpatterns = [
 
     path("all/users/", views.AllUsers.as_view()),
     path('executives/', views.AllExecutives.as_view()),
+    path('executives/new/', views.AllNewExecutives.as_view()),
+
     path('managers/', views.AllManagers.as_view()),
     path('distributors/', views.AllDistributors.as_view()),
     path('managers/new/', views.AllNewManagers.as_view()),
@@ -17,10 +19,18 @@ urlpatterns = [
          views.AllDistributorsByManager.as_view()),
     path('distributors/by/executive/<id>',
          views.AllDistributorsByExcecutive.as_view()),
+    path('distributor/not/executive/',
+         views.AllNotExecutiveDistributor.as_view()),
+
+
     path('salesrefs/', views.AllSalesRefs.as_view()),
     path('salesrefs/new/', views.AllNewSalesrefs.as_view()),
+
 
     path('get/<id>', views.getUsersDetails.as_view()),
     path('upload/image/<int:pk>', views.ProfilePictureUpload.as_view()),
     path('get/user/<id>', views.getUsersDetailsByMainUser.as_view()),
+
+
+
 ]

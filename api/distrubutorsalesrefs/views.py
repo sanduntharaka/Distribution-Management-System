@@ -1,3 +1,4 @@
+from rest_framework import filters
 from exceutive_manager.models import ExecutiveManager
 from rest_framework import status
 from rest_framework.response import Response
@@ -38,7 +39,14 @@ class GetinventoryItems (generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         return get_list_or_404(ItemStock, item__inventory=self.kwargs.get('pk'), qty__gt=0)
 
-#
+
+class GetinventoryItemsSearch (generics.ListAPIView):
+    serializer_class = serializers.DistributorInventoryItems
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('item__item_code', 'item__description')
+
+    def get_queryset(self, *args, **kwargs):
+        return ItemStock.objects.filter(item__inventory=self.kwargs.get('pk'), qty__gt=0)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):
@@ -64,11 +72,9 @@ class GetByDistributorSingle(generics.RetrieveAPIView):
     serializer_class = serializers.CreateDistributorSalesRefSerializer
 
     def get(self, *args, **kwargs):
-        print('calles')
 
         salesre_distributor = SalesRefDistributor.objects.filter(
             distributor=self.kwargs.get('id')).first()
-        print(salesre_distributor)
         return Response(data=salesre_distributor.id)
 
 

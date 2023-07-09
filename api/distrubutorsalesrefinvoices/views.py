@@ -17,7 +17,7 @@ class CreateInvoice(generics.CreateAPIView):
 
         last_bill = SalesRefInvoice.objects.all().last()
         data = self.request.data
-        print(data)
+
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1
@@ -201,7 +201,6 @@ class ConfirmInvoice(generics.UpdateAPIView):
                     bill.is_settiled = True
                 else:
                     bill.is_settiled = False
-                print(1)
 
                 payment_serializer = serializers.CreateInvoicePaymentSerializer(
                     data=payment_details)
@@ -244,7 +243,7 @@ class ConfirmInvoice(generics.UpdateAPIView):
                     bill.save()
                     return Response(status=status.HTTP_201_CREATED)
                 else:
-                    print(2)
+
                     print('ps:', payment_serializer.errors)
 
                     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -355,7 +354,7 @@ class ConfirmCheque(generics.UpdateAPIView):
 
 class InvoiceItemUpdate(APIView):
     def put(self, request, *args, **kwargs):
-        print(request.data)
+
         item = {
             'discount': float(request.data['discount']),
             'qty': float(request.data['qty']),
@@ -370,22 +369,22 @@ class InvoiceItemUpdate(APIView):
         prev_foc = invoice_item.foc
 
         if invoice_item.qty > item['qty']:
-            print('over')
+
             dis = 0
             if invoice_item.discount > item['discount']:
                 dis = item['discount'] - invoice_item.discount
-                print('od')
+
             elif invoice_item.discount < item['discount']:
                 dis = item['qty'] * item['discount'] - invoice_item.discount
             sub_tot = item['extended_price'] - invoice_item.extended_price
             bill.change_total(sub_tot, dis)
 
         else:
-            print('less')
+
             dis = 0
             if invoice_item.discount > item['discount']:
                 dis = item['discount'] - invoice_item.discount
-                print('od')
+
             elif invoice_item.discount < item['discount']:
                 dis = item['qty'] * item['discount'] - invoice_item.discount
             sub_tot = item['extended_price'] - invoice_item.extended_price
@@ -403,7 +402,7 @@ class InvoiceItemUpdate(APIView):
                 prev_qty=prev_qty, prev_foc=prev_foc)
             return Response(status=status.HTTP_200_OK)
         else:
-            print('invalid')
+
             print(serializer.errors)
 
             return Response(status=status.HTTP_400_BAD_REQUEST)
