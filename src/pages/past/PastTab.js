@@ -22,7 +22,7 @@ const PastTab = () => {
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
         >
-          Add Cheque
+          PD Cheque
         </div>
       </div>
       <div className="tab_page">

@@ -218,7 +218,7 @@ const AllCategories = (props) => {
                 data={tblData}
                 icons={tableIcons}
                 editable={
-                  props.user.is_manager || props.user.is_superuser
+                  props.user.is_manager || props.user.is_company
                     ? {
                         onRowUpdate: (newData, oldData) =>
                           new Promise((resolve) => {

@@ -122,7 +122,6 @@ const CreateDealer = (props) => {
         setShowMsg(true);
 
         handleOpen();
-        console.log(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -134,7 +133,6 @@ const CreateDealer = (props) => {
         setShowMsg(true);
 
         handleOpen();
-        console.log(err.data);
       });
   };
 

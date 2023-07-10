@@ -106,7 +106,6 @@ const EditBill = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setItems(res.data);
       })
       .catch((err) => {

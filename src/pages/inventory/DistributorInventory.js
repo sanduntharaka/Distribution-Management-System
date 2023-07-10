@@ -51,7 +51,6 @@ const tableIcons = {
 };
 
 const DistributorInventory = ({ inventory, user }) => {
-  const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = useMemo(
     () => [
@@ -92,18 +91,6 @@ const DistributorInventory = ({ inventory, user }) => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   useEffect(() => {
     setLoading(true);
     axiosInstance
@@ -114,14 +101,7 @@ const DistributorInventory = ({ inventory, user }) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
-        setData(res.data);
         setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
-          }
-        });
         setLoading(false);
       })
       .catch((err) => {
@@ -150,7 +130,6 @@ const DistributorInventory = ({ inventory, user }) => {
   };
 
   const handleEditDetails = (e, value) => {
-    console.log('v', value);
     setItemDetails({
       id: value.id,
       item_code: value.item_code,
@@ -184,19 +163,6 @@ const DistributorInventory = ({ inventory, user }) => {
     setEditDetailsOpen(false);
     setDeleteDetailsOpen(true);
     handleModalOpen();
-  };
-
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      //
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
   };
 
   return (
@@ -253,24 +219,7 @@ const DistributorInventory = ({ inventory, user }) => {
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            {/* <div>
-              <select
-                name=""
-                id=""
-                onChange={(e) => handleFilter(e.target.value)}
-              >
-                {itemCodes.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div> */}
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
+          <div className="page__pcont__row__col"></div>
         </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">

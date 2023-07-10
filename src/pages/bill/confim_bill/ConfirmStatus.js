@@ -35,7 +35,6 @@ const ConfirmStatus = (props) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           setChequeDetails(res.data);
         })
         .catch((err) => {
@@ -142,7 +141,6 @@ const ConfirmStatus = (props) => {
   const handleCloseConfirm = (e) => {
     e.preventDefault();
     props.closeModal();
-    console.log(props);
   };
 
   return (

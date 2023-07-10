@@ -170,7 +170,6 @@ const ViewBillByOthers = ({ user }) => {
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    console.log('val:', value);
     setInvoice(value);
     setSataSingle(value);
     axiosInstance
@@ -187,7 +186,7 @@ const ViewBillByOthers = ({ user }) => {
         handleModalOpen();
       })
       .catch((err) => {
-        console.log();
+        console.log(err);
         setDetailsOpen(false);
         setLoading(false);
         setSuccess(false);

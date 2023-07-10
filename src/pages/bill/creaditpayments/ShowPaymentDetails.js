@@ -41,7 +41,6 @@ const ShowPaymentDetails = (props) => {
         },
       })
       .then((res) => {
-        console.log('d:', res.data);
         setInvoice(res.data);
         if (res.data.cheque_id !== null) {
           axiosInstance
@@ -53,7 +52,6 @@ const ShowPaymentDetails = (props) => {
               },
             })
             .then((res) => {
-              console.log('c:', res.data);
               setCheque(res.data);
             })
             .catch((err) => {

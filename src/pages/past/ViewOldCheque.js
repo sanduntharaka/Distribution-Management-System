@@ -295,7 +295,7 @@ const ViewOldCheque = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Old cheques</p>
+        <p>View All PD cheques</p>
       </div>
       <div className="page__pcont">
         {!user.is_distributor && !user.is_salesref ? (

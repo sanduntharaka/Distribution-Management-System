@@ -47,25 +47,7 @@ const ConfirmStatus = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
-  // useEffect(() => {
 
-  //   if (props.invoice.payment_type === 'cheque') {
-  //     setLoading(trye)
-  //     axiosInstance
-  //       .get(`/salesref/invoice/get/invoice/cheque/${props.invoice.id}`, {
-  //         headers: {
-  //           Authorization:
-  //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-  //         },
-  //       })
-  //       .then((res) => {
-  //         console.log(res.data);
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }, []);
   const handleConfirm = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -85,7 +67,6 @@ const ConfirmStatus = (props) => {
         }
       )
       .then((res) => {
-        console.log(res);
         setLoading(false);
 
         props.showEdit(false);

@@ -103,18 +103,22 @@ const NotBuyDetails = ({ user }) => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
-
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(true);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [distributors, setDistributors] = useState([]);
+
+  useEffect(() => {
+    if (selected_distributor !== undefined) {
+      handleFilterInventory(selected_distributor);
+    }
+  }, [success]);
+
   useEffect(() => {
     if (user.is_manager) {
       setLoading(true);
@@ -178,7 +182,7 @@ const NotBuyDetails = ({ user }) => {
         });
     } else if (user.is_distributor) {
       handleFilterInventory(user.id);
-    } else {
+    } else if (user.is_salesref) {
       axiosInstance
         .get(`/not-buy/get/salesref/${user.id}`, {
           headers: {
@@ -231,7 +235,10 @@ const NotBuyDetails = ({ user }) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
+  const [selected_distributor, setSelectedDistributor] = useState();
+
   const handleFilterInventory = (value) => {
+    setSelectedDistributor(value);
     if (value !== '') {
       setLoading(true);
 
@@ -248,6 +255,7 @@ const NotBuyDetails = ({ user }) => {
         })
         .catch((err) => {
           setLoading(false);
+          setTableData([]);
 
           console.log(err);
         });

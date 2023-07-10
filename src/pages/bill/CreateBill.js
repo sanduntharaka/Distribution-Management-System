@@ -63,6 +63,7 @@ const CreateBill = ({ inventory }) => {
   const [product, setProduct] = useState();
   const [value2, setValue2] = useState('');
   const [items, setItems] = useState([]);
+  const [searchLoadingProducts, setSearchLoadingProducts] = useState(false);
 
   // qty
 
@@ -98,28 +99,6 @@ const CreateBill = ({ inventory }) => {
   const [valuedealer, setValueDealer] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
   useEffect(() => {
-    setLoading(true);
-    axiosInstance
-      .get(`/distributor/salesref/inventory/items/${inventory.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-
-        setProducts(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot fetch inventory items. Please try again');
-        setTitle('Error');
-        handleOpen();
-      });
     if (user.is_salesref) {
       setLoading(true);
       axiosInstance
@@ -164,7 +143,6 @@ const CreateBill = ({ inventory }) => {
           }
         )
         .then((res) => {
-          console.log('ddd:', res);
           setLoading(false);
           setData({ ...data, dis_sales_ref: res.data });
         })
@@ -225,6 +203,26 @@ const CreateBill = ({ inventory }) => {
 
   const filterProducts = (e) => {
     setShowProducts(true);
+
+    setSearchLoadingProducts(true);
+
+    axiosInstance
+      .get(
+        `/distributor/salesref/inventory/items/${inventory.id}/search?search=${e.target.value}`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setSearchLoadingProducts(false);
+        setProducts(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setValue2(e.target.value);
   };
 
@@ -315,7 +313,6 @@ const CreateBill = ({ inventory }) => {
     const item = newItems[index];
     newItems.splice(index, 1);
     setItems(newItems);
-    console.log('i', item);
 
     setData({
       ...data,
@@ -549,15 +546,29 @@ const CreateBill = ({ inventory }) => {
                       value={value2}
                       onChange={(e) => filterProducts(e)}
                     />
-                    <SearchIcon
-                      style={{
-                        padding: '5px',
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                      }}
-                    />
+                    {searchLoadingProducts ? (
+                      <div
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: '-2px',
+                          bottom: 0,
+                        }}
+                      >
+                        <SearchSpinner search={true} />
+                      </div>
+                    ) : (
+                      <SearchIcon
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        }}
+                      />
+                    )}
                   </div>
                   <div
                     className="searchContent"
@@ -686,11 +697,11 @@ const CreateBill = ({ inventory }) => {
                     <thead>
                       <tr className="tableHead">
                         <th> Item Code</th>
-                        <th>Whole sale</th>
-                        <th>Price</th>
+                        {/* <th>Whole sale</th>
+                        <th>Price</th> */}
                         <th>FOC</th>
                         <th>Qty</th>
-                        <th>Total Qty</th>
+                        {/* <th>Total Qty</th> */}
                         <th>Sub total</th>
                         <th>Discount</th>
                         <th>Action</th>
@@ -700,11 +711,11 @@ const CreateBill = ({ inventory }) => {
                       {items.map((item, i) => (
                         <tr className="datarow" key={i}>
                           <td>{item.item_code}</td>
-                          <td>{item.whole_sale_price}</td>
-                          <td>{item.price}</td>
+                          {/* <td>{item.whole_sale_price}</td>
+                          <td>{item.price}</td> */}
                           <td>{item.foc}</td>
                           <td>{item.qty}</td>
-                          <td>{item.qty + item.foc}</td>
+                          {/* <td>{item.qty + item.foc}</td> */}
 
                           <td>{item.extended_price}</td>
                           <td>{item.discount}</td>

@@ -112,7 +112,6 @@ const ConfimBill = (props) => {
           payee_name: props.cheque_detail.payee_name,
           amount: props.cheque_detail.amount,
         };
-        console.log(item_data);
         axiosInstance
           .post('/salesref/invoice/create/invoice/items/', item_data, {
             headers: {
@@ -136,8 +135,6 @@ const ConfimBill = (props) => {
                 )
                 .then((res) => {
                   isLoading(false);
-
-                  console.log(res);
 
                   handlePrintFile();
                 })

@@ -51,7 +51,6 @@ const ConfirmStatus = (props) => {
       .then((res) => {
         setLoading(false);
 
-        console.log(res);
         props.showEdit(false);
         props.msgErr(false);
         props.msgSuccess(true);
@@ -83,7 +82,6 @@ const ConfirmStatus = (props) => {
   const handleCloseConfirm = (e) => {
     e.preventDefault();
     props.closeModal();
-    console.log(props);
   };
   const handlePaymentHistory = (e) => {
     e.preventDefault();

@@ -20,9 +20,6 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import { styled, alpha } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
-
 import DistributorSalesrefConfirm from '../../components/userComfirm/DistributorSalesrefConfirm';
 
 const tableIcons = {
@@ -60,14 +57,10 @@ const ViewAllExecutiveManagers = (props) => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Executive', field: 'executive_name' },
     { title: 'Manager', field: 'manager_name' },
+    { title: 'Executive', field: 'executive_name' },
   ];
-  //  added_by
-  //  distributor
-  //  sales_ref
-  //  distributor_name
-  //  salesref_name
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);

@@ -9,9 +9,11 @@ const ConfirmStatus = (props) => {
     let day = d.getDate();
     return `${year}-${month}-${day}`;
   });
+  console.log(props);
   const [data, setData] = useState({
-    status: '',
+    status: 'pending',
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    is_deduct_qty: props.invoice.is_return_goods,
   });
   const [loading, setLoading] = useState(false);
 
@@ -137,8 +139,10 @@ const ConfirmStatus = (props) => {
             <div className="info">
               <div className="row">
                 <label htmlFor="">status</label>
+                {console.log('ss:', data.status)}
                 <select
                   defaultValue={0}
+                  value={data.status ? data.status : ''}
                   onChange={(e) => setData({ ...data, status: e.target.value })}
                   required
                 >

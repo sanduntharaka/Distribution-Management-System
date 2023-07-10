@@ -39,8 +39,6 @@ const RejectForm = (props) => {
         }
       )
       .then((res) => {
-        console.log(res);
-
         props.showEdit(false);
         props.msgErr(false);
         props.msgSuccess(true);

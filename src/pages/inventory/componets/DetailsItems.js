@@ -107,7 +107,6 @@ const DetailsItems = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setItems(res.data);
         setLoading(false);
       })
@@ -121,7 +120,6 @@ const DetailsItems = (props) => {
     setLoading(true);
     setError(false);
     setSuccess(false);
-    console.log(newData);
     axiosInstance
       .put(`/distributor/stoks/edit/${newData.id}`, newData, {
         headers: {

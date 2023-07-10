@@ -152,7 +152,9 @@ const Sidebar = () => {
             <div className="container__list__item__icon">
               <BiHistory />
             </div>
-            <div className="container__list__item__name">Old details</div>
+            <div className="container__list__item__name">
+              Distributor debtors
+            </div>
           </NavLink>
 
           <NavLink

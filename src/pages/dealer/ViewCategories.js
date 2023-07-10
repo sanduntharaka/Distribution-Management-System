@@ -54,7 +54,6 @@ const tableIcons = {
 
 const ViewCategories = (props) => {
   const [data, setData] = useState([]);
-  const [tblData, setTableData] = useState([]);
   const columns = [
     {
       title: 'ID',
@@ -74,34 +73,12 @@ const ViewCategories = (props) => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [itemDetails, setItemDetails] = useState();
-
-  //edit-details
-  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
-
-  //delete-details
-  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
-
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
-
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     axiosInstance
@@ -112,14 +89,7 @@ const ViewCategories = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setData(res.data);
-        setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.created_by)) {
-            itemCodes.push(item.created_by);
-          }
-        });
       })
       .catch((err) => {
         console.log(err);

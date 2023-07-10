@@ -163,7 +163,7 @@ const AddCheque = ({ user }) => {
       {user.is_distributor ? (
         <>
           <div className="page__title">
-            <p>Add old cheques</p>
+            <p>Add PD cheques</p>
           </div>
           <div className="page__pcont">
             <div className="form">

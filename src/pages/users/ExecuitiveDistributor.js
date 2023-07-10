@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import ViewAllManagerDistributors from './ViewAllManagerDistributors';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ViewAllExecutiveManagers from './ViewAllExecutiveManagers';
+import ViewAllExecutiveDistributors from './ViewAllExecutiveDistributors';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -17,7 +18,7 @@ const ShowMessage = forwardRef((props, ref) => {
     />
   );
 });
-const ExecutiveManagers = (props) => {
+const ExecuitiveDistributor = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -30,13 +31,11 @@ const ExecutiveManagers = (props) => {
 
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
-    executive: props.user.is_excecutive
-      ? JSON.parse(sessionStorage.getItem('user_details')).id
-      : '',
-    manager: JSON.parse(sessionStorage.getItem('user_details')).id,
+    executive: '',
+    distributor: '',
   });
   const [executives, setExecutives] = useState([]);
-  const [managers, setManagers] = useState([]);
+  const [distributors, setDistributors] = useState([]);
 
   const user = JSON.parse(sessionStorage.getItem('user'));
   const user_detail = JSON.parse(sessionStorage.getItem('user_details'));
@@ -45,7 +44,7 @@ const ExecutiveManagers = (props) => {
     // if (user.is_company) {
     setLoading(true);
     axiosInstance
-      .get(`/users/executives/new/`, {
+      .get(`/users/executives/`, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -66,7 +65,7 @@ const ExecutiveManagers = (props) => {
     setLoading(true);
 
     axiosInstance
-      .get('/users/managers/', {
+      .get('/users/distributor/not/executive/', {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -75,7 +74,7 @@ const ExecutiveManagers = (props) => {
       .then((res) => {
         setLoading(false);
 
-        setManagers(res.data);
+        setDistributors(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -90,7 +89,7 @@ const ExecutiveManagers = (props) => {
     setError(false);
     setSuccess(false);
     axiosInstance
-      .post('/executive/manager/create/', data, {
+      .post('/executive/distributor/create/', data, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -138,34 +137,14 @@ const ExecutiveManagers = (props) => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign Executive and Managers</p>
+        <p>Assign Executive and Distributors</p>
       </div>
       <div className="page__pcont">
         <div className="form">
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Managers</div>
-                <div className="form__row__col__input">
-                  <select
-                    type="text"
-                    defaultValue="0"
-                    onChange={(e) =>
-                      setData({ ...data, manager: e.target.value })
-                    }
-                  >
-                    <option value="0">Select manager</option>
-                    {managers.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.full_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form__row__col">
-                <div className="form__row__col__label">Executives</div>
+                <div className="form__row__col__label">Executive</div>
                 <div className="form__row__col__input">
                   <select
                     type="text"
@@ -178,6 +157,28 @@ const ExecutiveManagers = (props) => {
                   >
                     <option value="0">Select executive</option>
                     {executives.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    type="text"
+                    value={data.distributor}
+                    defaultValue="0"
+                    onChange={(e) =>
+                      setData({ ...data, distributor: e.target.value })
+                    }
+                    disabled={props.user.is_distributor}
+                  >
+                    <option value="0">Select executive</option>
+                    {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
                       </option>
@@ -198,7 +199,7 @@ const ExecutiveManagers = (props) => {
         </div>
         <div className="page__pcont__row">
           <div style={{ width: '100%' }}>
-            <ViewAllExecutiveManagers
+            <ViewAllExecutiveDistributors
               success={success}
               set_success={setSuccess}
               user={user}
@@ -210,4 +211,4 @@ const ExecutiveManagers = (props) => {
   );
 };
 
-export default ExecutiveManagers;
+export default ExecuitiveDistributor;

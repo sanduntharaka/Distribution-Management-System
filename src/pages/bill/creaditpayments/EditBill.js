@@ -100,14 +100,13 @@ const EditBill = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setItems(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
   }, [success, setSuccess]);
-  console.log(props);
+
   const handleClose = (e) => {
     e.preventDefault();
     props.showEdit(false);
@@ -122,7 +121,7 @@ const EditBill = (props) => {
     setShowPay(true);
     handleModalOpen();
   };
-  console.log('sh', showEditCheques);
+
   return (
     <div className="edit_details">
       {showpay ? (

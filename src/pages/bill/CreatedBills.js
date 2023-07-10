@@ -99,7 +99,6 @@ const CreatedBills = () => {
           }
         )
         .then((res) => {
-          console.log(res.data);
           setTableData(res.data);
           setLoading(false);
         })
@@ -123,7 +122,6 @@ const CreatedBills = () => {
           }
         )
         .then((res) => {
-          console.log(res.data);
           setTableData(res.data);
 
           setLoading(false);
@@ -151,7 +149,6 @@ const CreatedBills = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         setItems(res.data);
         setMessageOpen(false);
         setDetailsOpen(true);
@@ -159,7 +156,7 @@ const CreatedBills = () => {
         setLoading(false);
       })
       .catch((err) => {
-        console.log();
+        console.log(err);
         setLoading(false);
       });
   };

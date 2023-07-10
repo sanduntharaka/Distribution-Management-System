@@ -19,7 +19,7 @@ const MyMessage = React.forwardRef((props, ref) => {
   );
 });
 
-const NotPerchase = () => {
+const NotPerchase = ({ inventory }) => {
   //message modal
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -30,19 +30,12 @@ const NotPerchase = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [currentDate, setCurrentDate] = useState(() => {
-    const d = new Date();
-    let year = d.getFullYear();
-    let month = d.getMonth() + 1;
-    let day = d.getDate();
-    return `${year}-${month}-${day}`;
-  });
-
   const [dealers, setDealers] = useState([]);
 
   const [data, setData] = useState({
     datetime: new Date().toISOString(),
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    inventory: inventory.id,
     dealer: '',
     reason: '',
     dis_sales_ref: '',

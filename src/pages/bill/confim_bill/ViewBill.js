@@ -22,6 +22,7 @@ const ViewBill = (props) => {
   const handlePrint = () => {
     handlePrintFile();
   };
+
   return (
     <div className={styles.confirmBill}>
       <div className={styles.container}>
@@ -56,8 +57,8 @@ const ViewBill = (props) => {
               <p>
                 Invoice Date: {props.data.date} & {props.invoice.time}{' '}
               </p>
-              <p>Salesperson: {props.issued_by.full_name}</p>
-              <p>Telephone: {props.issued_by.company_number}</p>
+              <p>Salesperson: {props.invoice.added_by}</p>
+              <p>Telephone: {props.invoice.added_by_contact}</p>
             </div>
           </div>
           <div className={styles.row}>

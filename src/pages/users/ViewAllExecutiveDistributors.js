@@ -1,9 +1,8 @@
 import React, { useEffect, useState, forwardRef } from 'react';
-import { axiosInstance } from '../../../axiosInstance';
+import { axiosInstance } from '../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import Message from '../../../components/message/Message';
-import { CgDetailsMore } from 'react-icons/cg';
+import Message from '../../components/message/Message';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -21,9 +20,8 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import RecommendIcon from '@mui/icons-material/Recommend';
-import ConfirmStatus from './ConfirmStatus';
-import RejectForm from './RejectForm';
+import DistributorSalesrefConfirm from '../../components/userComfirm/DistributorSalesrefConfirm';
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -46,35 +44,31 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-  Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
 
-const BillConfirm = () => {
+const ViewAllExecutiveDistributors = (props) => {
+  const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
-      title: '#',
-      field: 'rowIndex',
-      render: (rowData) => rowData?.tableData?.id + 1,
+      title: 'ID',
+      field: 'id',
+      cellStyle: { width: '10px' },
+      width: '10px',
+      headerStyle: { width: '10px' },
     },
-    { title: 'Added by', field: 'added_by' },
-    { title: 'Bill No', field: 'code' },
-    { title: 'Date', field: 'date' },
-    { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
-
-    { title: 'Status', field: 'status' },
+    { title: 'Executive', field: 'executive_name' },
+    { title: 'Distributor', field: 'distributor_name' },
   ];
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => {
-    setModalOpen(false);
-    window.location.reload();
-  };
+  const handleModalClose = () => setModalOpen(false);
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [itemDetails, setItemDetails] = useState();
 
   //edit-details
   const [editdetailsOpen, setEditDetailsOpen] = useState(false);
@@ -82,104 +76,80 @@ const BillConfirm = () => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
-  const [rejected, setShowRejected] = useState(false);
-
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-  const [invoice, setInvoice] = useState();
 
   useEffect(() => {
-    axiosInstance
-      .get(
-        `/salesref/invoice/all/pending/invoices/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
+    if (props.user.is_company) {
+      axiosInstance
+        .get(`/executive/distributor/all/`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        }
-      )
-      .then((res) => {
-        setTableData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [messageOpen, success]);
+        })
+        .then((res) => {
+          console.log(res.data);
 
-  const handleConfirmDetails = (e, value) => {
-    setInvoice(value);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_manager) {
+      axiosInstance
+        .get(
+          `/executive/distributor/by/manager/${
+            JSON.parse(sessionStorage.getItem('user')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [success, props.success]);
+
+  const handleDeleteDetails = (e, value) => {
+    props.set_success(false);
+    setItemDetails({
+      id: value.id,
+    });
     setMessageOpen(false);
-    setDeleteDetailsOpen(false);
     setDetailsOpen(false);
-    setEditDetailsOpen(true);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(true);
     handleModalOpen();
   };
 
-  const MyInvoiceConfirm = React.forwardRef((props, ref) => {
-    return (
-      <ConfirmStatus
-        invoice={props.invoice}
-        openMsg={props.openMsg}
-        msgSuccess={props.msgSuccess}
-        msgErr={props.msgErr}
-        msgTitle={props.msgTitle}
-        msg={props.msg}
-        showEdit={props.showEdit}
-        showRejected={props.showRejected}
-        closeModal={props.closeModal}
-      />
-    );
-  });
-
-  const MyInvoiceReject = React.forwardRef((props, ref) => {
-    return (
-      <RejectForm
-        invoice={props.invoice}
-        openMsg={props.openMsg}
-        msgSuccess={props.msgSuccess}
-        msgErr={props.msgErr}
-        msgTitle={props.msgTitle}
-        msg={props.msg}
-        showEdit={props.showEdit}
-        showRejected={props.showRejected}
-        closeModal={props.closeModal}
-      />
-    );
-  });
-
   return (
-    <div className="page">
+    <div>
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {editdetailsOpen ? (
-          <MyInvoiceConfirm
-            invoice={invoice}
+        {deletedetailsOpen ? (
+          <DistributorSalesrefConfirm
+            data={itemDetails}
             openMsg={setMessageOpen}
             msgSuccess={setSuccess}
             msgErr={setError}
             msgTitle={setTitle}
             msg={setMsg}
-            showEdit={setEditDetailsOpen}
-            showRejected={setShowRejected}
+            showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-          />
-        ) : rejected ? (
-          <MyInvoiceReject
-            invoice={invoice}
-            openMsg={setMessageOpen}
-            msgSuccess={setSuccess}
-            msgErr={setError}
-            msgTitle={setTitle}
-            msg={setMsg}
-            showEdit={setEditDetailsOpen}
-            showRejected={setShowRejected}
-            closeModal={handleModalClose}
+            url={'/executive/manager/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -194,7 +164,7 @@ const BillConfirm = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Pending Bills</p>
+        <p>View All Executives and their Distributors</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
@@ -221,26 +191,26 @@ const BillConfirm = () => {
                 icons={tableIcons}
                 actions={[
                   {
-                    icon: RecommendIcon,
-                    tooltip: 'Confirm',
+                    icon: DeleteOutline,
+                    tooltip: 'Delete details',
                     onClick: (event, rowData) =>
-                      handleConfirmDetails(event, rowData),
+                      handleDeleteDetails(event, rowData),
                   },
                 ]}
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === RecommendIcon ? (
+                      {props.action.icon === DeleteOutline ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
                           }
                           color="primary"
-                          style={{ color: 'orange' }} // customize the icon color
+                          style={{ color: 'red' }} // customize the button style
                           size="small"
                           aria-label={props.action.tooltip}
                         >
-                          <RecommendIcon />
+                          <DeleteOutline />
                         </IconButton>
                       ) : (
                         ''
@@ -256,4 +226,5 @@ const BillConfirm = () => {
     </div>
   );
 };
-export default BillConfirm;
+
+export default ViewAllExecutiveDistributors;

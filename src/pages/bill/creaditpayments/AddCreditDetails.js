@@ -117,7 +117,6 @@ const AddCreditDetails = () => {
         }
       )
       .then((res) => {
-        console.log(res.data);
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {
@@ -140,7 +139,6 @@ const AddCreditDetails = () => {
   const [dataSingle, setSataSingle] = useState();
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    console.log(value);
     setInvoice(value);
     setSataSingle(value);
     axiosInstance
@@ -151,7 +149,6 @@ const AddCreditDetails = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         setItems(res.data);
         setMessageOpen(false);
         setEditDetailsOpen(false);
@@ -160,7 +157,7 @@ const AddCreditDetails = () => {
         handleModalOpen();
       })
       .catch((err) => {
-        console.log();
+        console.log(err);
       });
   };
 
@@ -193,29 +190,7 @@ const AddCreditDetails = () => {
     setEditDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.distributor === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
 
-  const handleFilterSalesRef = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.sales_ref === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
   const MyInvoiceConfirm = React.forwardRef((props, ref) => {
     return (
       <ConfirmStatus

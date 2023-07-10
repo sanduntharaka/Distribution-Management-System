@@ -170,7 +170,7 @@ const ViewAllPendingBillsOthers = ({ user }) => {
         })
         .then((res) => {
           setLoading(false);
-          console.log('res:', res.data);
+
           handleFilterInventory(res.data.distributor_id);
         })
         .catch((err) => {

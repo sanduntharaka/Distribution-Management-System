@@ -5,7 +5,12 @@ import DealerCategory from './DealerCategory';
 const DealersTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const [selected, setSelected] = useState(
-    user.is_manager || user.is_superuser ? 0 : 1
+    user.is_manager ||
+      user.is_superuser ||
+      user.is_company ||
+      user.is_excecutive
+      ? 0
+      : 1
   );
   const handleSelect = (i) => {
     setSelected(i);
@@ -23,7 +28,6 @@ const DealersTab = () => {
 
         {user.is_distributor ||
         user.is_salesref ||
-        user.is_excecutive ||
         user.is_manager ||
         user.is_superuser ? (
           <div

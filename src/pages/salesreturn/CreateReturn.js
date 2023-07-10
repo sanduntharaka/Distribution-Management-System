@@ -53,6 +53,7 @@ const CreateReturn = ({ inventory }) => {
   const [product, setProduct] = useState();
   const [value2, setValue2] = useState('');
   const [items, setItems] = useState([]);
+  const [searchLoadingProducts, setSearchLoadingProducts] = useState(false);
 
   const [psas, setPsas] = useState([]);
   const [dealers, setDealers] = useState([]);
@@ -95,39 +96,12 @@ const CreateReturn = ({ inventory }) => {
   const [valuedealer, setValueDealer] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
 
+  const [showPsas, setShowPsas] = useState(false);
+  const [valuePsa, setValuePsa] = useState('');
+
+  const [searchLoadingPsa, setSearchLoadingPsa] = useState(false);
+
   useEffect(() => {
-    setLoading(true);
-    axiosInstance
-      .get('/psa/all/', {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        setPsas(res.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
-    setLoading(true);
-    axiosInstance
-      .get(`/distributor/salesref/inventory/items/${inventory.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        setProducts(res.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
     if (user.is_salesref) {
       setLoading(true);
 
@@ -221,8 +195,58 @@ const CreateReturn = ({ inventory }) => {
     setShowDealers(false);
   };
 
+  const filterPsa = (e) => {
+    setShowPsas(true);
+    setSearchLoadingPsa(true);
+    axiosInstance
+      .get(`/psa/all/search?search=${e.target.value}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setSearchLoadingPsa(false);
+        setPsas(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setValuePsa(e.target.value);
+  };
+
+  const handleSelectPsa = (e, item) => {
+    setValuePsa(item.area_name);
+
+    setData({
+      ...data,
+      psa: item.id,
+    });
+    setShowPsas(false);
+  };
+
   const filterProducts = (e) => {
     setShowProducts(true);
+
+    setSearchLoadingProducts(true);
+
+    axiosInstance
+      .get(
+        `/distributor/salesref/inventory/items/${inventory.id}/search?search=${e.target.value}`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setSearchLoadingProducts(false);
+        setProducts(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setValue2(e.target.value);
   };
 
@@ -324,17 +348,72 @@ const CreateReturn = ({ inventory }) => {
               <div className="form__row__col">
                 <div className="form__row__col__label">Select pas</div>
                 <div className="form__row__col__input">
-                  <select
-                    name="psa"
-                    onChange={(e) => setData({ ...data, psa: e.target.value })}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      position: 'relative',
+                    }}
                   >
-                    <option selected>Select psa</option>
-                    {psas.map((item, i) => (
-                      <option value={item.id} key={i}>
-                        {item.area_name}
-                      </option>
-                    ))}
-                  </select>
+                    <input
+                      type="text"
+                      placeholder="search..."
+                      value={valuePsa}
+                      onChange={(e) => filterPsa(e)}
+                    />
+                    {searchLoadingPsa ? (
+                      <div
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: '-2px',
+                          bottom: 0,
+                        }}
+                      >
+                        <SearchSpinner search={true} />
+                      </div>
+                    ) : (
+                      <SearchIcon
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div
+                    className="searchContent"
+                    style={
+                      !showPsas ? { display: 'none' } : { display: 'grid' }
+                    }
+                  >
+                    <div className="searchContent__row">
+                      <div className="searchContent__row__details">
+                        <p>Name</p>
+                      </div>
+                    </div>
+                    {psas
+                      .filter((item) => {
+                        const searchTerm = valuePsa.toLowerCase();
+                        const name = item.area_name.toLowerCase();
+                        return name.includes(searchTerm) && name !== searchTerm;
+                      })
+                      .map((item, i) => (
+                        <div
+                          className="searchContent__row"
+                          onClick={(e) => handleSelectPsa(e, item)}
+                          key={i}
+                        >
+                          <div className="searchContent__row__details">
+                            <p>{item.area_name}</p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
               <div className="form__row__col">
@@ -434,15 +513,29 @@ const CreateReturn = ({ inventory }) => {
                       value={value2}
                       onChange={(e) => filterProducts(e)}
                     />
-                    <SearchIcon
-                      style={{
-                        padding: '5px',
-                        position: 'absolute',
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                      }}
-                    />
+                    {searchLoadingProducts ? (
+                      <div
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: '-2px',
+                          bottom: 0,
+                        }}
+                      >
+                        <SearchSpinner search={true} />
+                      </div>
+                    ) : (
+                      <SearchIcon
+                        style={{
+                          padding: '5px',
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        }}
+                      />
+                    )}
                   </div>
                   <div
                     className="searchContent"

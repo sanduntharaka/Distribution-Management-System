@@ -11,6 +11,7 @@ import DistributorSalesRef from './DistributorSalesRef';
 import AllUsers from './AllUsers';
 import ManagerDistributors from './ManagerDistributors';
 import ExecutiveManagers from './ExecutiveManagers';
+import ExecuitiveDistributor from './ExecuitiveDistributor';
 
 const UserTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -48,22 +49,33 @@ const UserTabs = () => {
         ) : (
           ''
         )}
-        {user.is_superuser || user.is_company ? (
+        {user.is_superuser || user.is_company || user.is_manager ? (
           <div
             className={`item ${selected === 5 ? 'selected' : ''}`}
             onClick={() => handleSelect(5)}
           >
-            Assign Executives
+            Assign Manager Executives
+          </div>
+        ) : (
+          ''
+        )}
+
+        {user.is_superuser || user.is_company || user.is_manager ? (
+          <div
+            className={`item ${selected === 3 ? 'selected' : ''}`}
+            onClick={() => handleSelect(3)}
+          >
+            Assign Manager Distributor
           </div>
         ) : (
           ''
         )}
         {user.is_superuser || user.is_company || user.is_manager ? (
           <div
-            className={`item ${selected === 3 ? 'selected' : ''}`}
-            onClick={() => handleSelect(3)}
+            className={`item ${selected === 6 ? 'selected' : ''}`}
+            onClick={() => handleSelect(6)}
           >
-            Assign Distributor
+            Assign Executive distributor
           </div>
         ) : (
           ''
@@ -73,7 +85,7 @@ const UserTabs = () => {
             className={`item ${selected === 2 ? 'selected' : ''}`}
             onClick={() => handleSelect(2)}
           >
-            Assign Sales Ref
+            Assign Distributor Sales Rep
           </div>
         ) : (
           ''
@@ -107,6 +119,8 @@ const UserTabs = () => {
           <AllUsers user={user} />
         ) : selected === 5 ? (
           <ExecutiveManagers user={user} />
+        ) : selected === 6 ? (
+          <ExecuitiveDistributor user={user} />
         ) : (
           ''
         )}

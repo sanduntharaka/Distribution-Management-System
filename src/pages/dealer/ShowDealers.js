@@ -121,7 +121,6 @@ const ShowDealers = () => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setLoading(false);
         setData(res.data);
         setTableData(res.data);
@@ -139,7 +138,7 @@ const ShowDealers = () => {
 
   const handleViewDetails = (e, value) => {
     e.preventDefault();
-    console.log(value);
+
     setItemDetails({
       id: value.id,
       name: value.name,
@@ -201,17 +200,7 @@ const ShowDealers = () => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>

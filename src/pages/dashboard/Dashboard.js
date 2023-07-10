@@ -44,8 +44,7 @@ const Dashboard = () => {
       console.log('not');
       navigate('login/');
     }
-  }, []);
-
+  }, ['']);
   useEffect(() => {
     let date = currentDate;
     if (user.is_manager) {
