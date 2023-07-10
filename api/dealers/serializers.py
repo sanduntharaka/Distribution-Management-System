@@ -24,4 +24,4 @@ class EditDealersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dealer
         fields = ('name', 'contact_number', 'address', 'owner_name', 'company_number', 'owner_personal_number',
-                  'owner_home_number', 'assistant_name', 'assistant_contact_number', 'category', 'psa')
+                  'owner_home_number', 'assistant_name', 'assistant_contact_number')
