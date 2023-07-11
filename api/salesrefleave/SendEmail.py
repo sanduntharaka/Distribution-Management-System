@@ -5,11 +5,9 @@ from sales_ref_leave.models import SalesRefLeave
 
 
 class SendEmail:
-    def __init__(self, id, supurvisor) -> None:
+    def __init__(self, id) -> None:
         self.email_to = SystemSettings.objects.get(id=1).hr_email
         self.leave = SalesRefLeave.objects.get(id=id)
-        self.supervisor = supurvisor
-        print(self.leave)
 
     def send_email(self):
         try:
@@ -33,7 +31,7 @@ class SendEmail:
                 subject=subject,  # title
                 message=message,
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[self.email_to, self.supervisor],
+                recipient_list=[self.email_to],
                 fail_silently=False
             )
         except Exception as e:
