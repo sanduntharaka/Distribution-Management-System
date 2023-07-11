@@ -101,6 +101,7 @@ class AllCreditInvoice(generics.ListAPIView):
 
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
+
         return get_list_or_404(SalesRefInvoice, status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
 
 
@@ -341,6 +342,13 @@ class AddCredit(generics.UpdateAPIView):
                     print(cheque_serializer.errors)
                     PaymentDetails.objects.get(id=saved_id).delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+            bill = PaymentDetails.objects.get(id=saved_id).bill
+
+            if bill.get_payed() == bill.total:
+                bill.is_settiled = True
+                bill.save()
+
             return Response(status=status.HTTP_201_CREATED)
         else:
             print(payment_serializer.errors)

@@ -7,6 +7,7 @@ urlpatterns = [
     path('get/<int:pk>', views.GetReturn.as_view()),
     path('get/distributor/<id>', views.GetReturnsByDistributor.as_view()),
     path('get/salesref/<id>', views.GetReturnsByDSalesref.as_view()),
+    path('get/by/others/distributor/<id>', views.GetReturnsByOthers.as_view()),
     path('get/pending/', views.GetPendingReturns.as_view()),
     path('update/status/<int:pk>', views.UpdateStatusPendingReturns.as_view()),
     path('get/pending/distributor/<id>',

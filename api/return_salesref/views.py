@@ -56,6 +56,14 @@ class GetReturnsByDSalesref(generics.ListAPIView):
         return get_list_or_404(SalesRefReturn, dis_sales_ref__sales_ref=item)
 
 
+class GetReturnsByOthers(generics.ListAPIView):
+    serializer_class = serializers.GetReturnsSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        item = self.kwargs.get('id')
+        return get_list_or_404(SalesRefReturn, dis_sales_ref__distributor=item)
+
+
 class GetReturn(generics.RetrieveAPIView):
     serializer_class = serializers.GetReturnsSerializer
     queryset = SalesRefReturn.objects.all()
