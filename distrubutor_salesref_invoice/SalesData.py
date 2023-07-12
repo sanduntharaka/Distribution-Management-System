@@ -4,6 +4,7 @@ from manager_distributor.models import ManagerDistributor
 from datetime import datetime
 from django.db.models.functions import ExtractMonth
 import calendar
+from executive_distributor.models import ExecutiveDistributor
 
 
 class SalesData:
@@ -24,9 +25,28 @@ class SalesData:
             "November": 11,
             "December": 12,
         }
+        if self.user == 'company':
+            manager_sales_refs = ManagerDistributor.objects.all().values('distributor')
+            distributor_ids = [dis_mn['distributor']
+                               for dis_mn in manager_sales_refs]
+            distri_salesrefs = SalesRefDistributor.objects.filter(
+                distributor_id__in=distributor_ids).values('id')
+            distri_salesref_ids = [dis_sf['id'] for dis_sf in distri_salesrefs]
+            self.months = SalesRefInvoice.objects.filter(dis_sales_ref__in=distri_salesref_ids).annotate(
+                month=ExtractMonth('date')).values('month').distinct()
+
         if self.user == 'manager':
             manager_sales_refs = ManagerDistributor.objects.filter(
                 manager=self.id).values('distributor')
+            distributor_ids = [dis_mn['distributor']
+                               for dis_mn in manager_sales_refs]
+            distri_salesrefs = SalesRefDistributor.objects.filter(
+                distributor_id__in=distributor_ids).values('id')
+            distri_salesref_ids = [dis_sf['id'] for dis_sf in distri_salesrefs]
+            self.months = SalesRefInvoice.objects.filter(dis_sales_ref__in=distri_salesref_ids).annotate(
+                month=ExtractMonth('date')).values('month').distinct()
+        if self.user == 'executive':
+            manager_sales_refs = ManagerDistributor.objects.all().values('distributor')
             distributor_ids = [dis_mn['distributor']
                                for dis_mn in manager_sales_refs]
             distri_salesrefs = SalesRefDistributor.objects.filter(

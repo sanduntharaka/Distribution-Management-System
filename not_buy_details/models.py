@@ -1,3 +1,4 @@
+from userdetails.models import UserDetails
 from django.utils.timezone import now
 from django.db import models
 from dealer_details.models import Dealer
@@ -33,3 +34,6 @@ class NotBuyDetails(models.Model):
             reason += " Dealer not in."
 
         return reason
+
+    def get_added_by_name(self):
+        return UserDetails.objects.get(user=self.added_by).full_name

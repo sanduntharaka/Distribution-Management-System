@@ -1,3 +1,4 @@
+from data_classes.UsersUnderDestributor import UsersUnderDestributor
 from rest_framework import status
 from rest_framework.response import Response
 from userdetails.models import UserDetails
@@ -34,17 +35,22 @@ class AllStaffDetailsByManager(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class AllStaffDetailsByDistributor(APIView):
+class AllStaffDetailsBy(APIView):
     def get(self, *args, **kwargs):
-        item = self.kwargs.get('id')
+        user_details_id = self.kwargs.get('id')
+        users = []
+        if self.request.user.is_distributor:
+            print('distributor')
+            salesrefs = UsersUnderDestributor(user_details_id)
+            users = salesrefs.get_users_under_to_me_ids()
 
-        sales_refs = SalesRefDistributor.objects.filter(
-            distributor_id=item).values('sales_ref')
-        sales_ref_ids = [sales_ref['sales_ref'] for sales_ref in sales_refs]
-        sales_refs_list = UserDetails.objects.filter(id__in=sales_ref_ids)
-
+        # sales_refs = SalesRefDistributor.objects.filter(
+        #     distributor_id=item).values('sales_ref')
+        # sales_ref_ids = [sales_ref['sales_ref'] for sales_ref in sales_refs]
+        user_details = UserDetails.objects.filter(id__in=users)
+        print(users)
         serializer = serializers.AllStaffDetailsSerializer(
-            list(sales_refs_list), many=True)
+            list(user_details), many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 #

@@ -9,29 +9,40 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 
+from data_classes.UsersUnderDestributor import UsersUnderDestributor
+
 
 class AllDealerDetails(generics.ListAPIView):
     queryset = Dealer.objects.all()
     serializer_class = serializers.DealerDetailsSerializer
 
 
-class AllDealerDetailsByDistributor(APIView):
+class AllDealerDetailsBy(APIView):
     def get(self, *args, **kwargs):
-        item = self.kwargs.get('id')
-        salesrefs = SalesRefDistributor.objects.filter(
-            distributor=item).values('sales_ref')
-        salesrefs_ids = [salesref['sales_ref']
-                         for salesref in salesrefs]
-        salesref_list = UserDetails.objects.filter(
-            id__in=salesrefs_ids).values('user')
-        distributoruser = UserDetails.objects.get(
-            id=item)
-        salesref_users_id = [sf['user']
-                             for sf in salesref_list]
-        salesref_users_id.append(distributoruser.user.id)
+        user_details_id = self.kwargs.get('id')
+
+        users = []
+        if self.request.user.is_distributor:
+            user_details = UsersUnderDestributor(user_details_id)
+            users = user_details.get_users_under_to_me_with_me_ids()
+            print(users)
+        # salesrefs = SalesRefDistributor.objects.filter(
+        #     distributor=item).values('sales_ref')
+        # salesrefs_ids = [salesref['sales_ref']
+        #                  for salesref in salesrefs]
+        # salesref_list = UserDetails.objects.filter(
+        #     id__in=salesrefs_ids).values('user')
+        # distributoruser = UserDetails.objects.get(
+        #     id=item)
+        # salesref_users_id = [sf['user']
+        #                      for sf in salesref_list]
+        # salesref_users_id.append(distributoruser.user.id)
+        user_ids = UserDetails.objects.filter(
+            id__in=users).values_list('user', flat=True)
         dealers = Dealer.objects.filter(
-            added_by__in=salesref_users_id)
+            added_by__in=user_ids)
         serializer = serializers.DealerDetailsSerializer(dealers, many=True)
+        #
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

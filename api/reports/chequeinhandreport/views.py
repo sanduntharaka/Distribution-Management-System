@@ -25,7 +25,7 @@ class GetByDistributor(APIView):
 
         filters = {
             'bill__dis_sales_ref__in': salesrefs_distributor,
-            'payment_type': 'cheque'
+            'payment_type__in': ['cheque', 'cash-cheque', 'cash-credit-cheque', 'cheque-credit']
         }
         if by_date:
             filters['date__range'] = (date_from, date_to)
@@ -70,13 +70,12 @@ class GetByDistributorPeriod(APIView):
 
         filters = {
             'bill__dis_sales_ref__in': salesrefs_distributor,
-            'date__range': (range_start, range_end),
-            'payment_type': 'cheque'
+            'payment_type__in': ['cheque', 'cash-cheque', 'cash-credit-cheque', 'cheque-credit']
         }
 
         invoices = PaymentDetails.objects.filter(**filters)
         cheque_details = ChequeDetails.objects.filter(
-            payment_details__in=invoices, status='pending')
+            payment_details__in=invoices, date__range=(range_end, range_start))
         serializer = serializers.ChequeDetailsSerializer(
             cheque_details, many=True)
 
@@ -116,7 +115,7 @@ class ReturnsGetByDistributorPeriod(APIView):
         filters = {
             'bill__dis_sales_ref__in': salesrefs_distributor,
             'date__range': (range_start, range_end),
-            'payment_type': 'cheque'
+            'payment_type__in': ['cheque', 'cash-cheque', 'cash-credit-cheque', 'cheque-credit']
         }
 
         invoices = PaymentDetails.objects.filter(**filters)

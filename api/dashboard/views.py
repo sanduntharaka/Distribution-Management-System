@@ -25,6 +25,41 @@ def currentUserCount(request):
 
 
 @api_view(['POST'])
+def today_as_company(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='company')
+    total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
+    total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+    total_count_days, total_sales_days = total.getThreeDays()
+    data = {
+        'sales': {
+            'count': total.getCount(),
+            'total': total.totalSale(),
+            'discount': total.totalDiscont(),
+            'status': total.getPrevDayStatus()
+        },
+        'three_days': {
+            'count': total_count_days,
+            'total_sales': total_sales_days,
+        },
+        'this_month': {
+            'count': total_count_month,
+            'total_sales': total_sales_month,
+            'total_balance': total_balance_month
+        },
+        'this_year': {
+            'count': total_count_year,
+            'total_sales': total_sales_year,
+            'total_balance': total_balance_year
+        }
+
+
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
 def today_as_distributor(request, *args, **kwargs):
     item = kwargs.get('id')
     total = CountSalesInvoiceAll(
@@ -36,6 +71,8 @@ def today_as_distributor(request, *args, **kwargs):
     total_count_days, total_sales_days = total.getThreeDays()
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+    tota_p_inv, pending_count, pending_obove = total.getPendingInvoices()
+    tota_c_inv, credit_count, credit_obove = total.getCreditInvoices()
 
     data = {
         'sales': {
@@ -59,6 +96,16 @@ def today_as_distributor(request, *args, **kwargs):
             'count': total_count_year,
             'total_sales': total_sales_year,
             'total_balance': total_balance_year
+        },
+        'pending_inv': {
+            'total': tota_p_inv,
+            'count': pending_count,
+            'above': pending_obove
+        },
+        'credit_inv': {
+            'total': tota_c_inv,
+            'count': credit_count,
+            'above': credit_obove
         }
 
 
@@ -78,6 +125,7 @@ def today_as_saleref(request, *args, **kwargs):
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
     total_count_days, total_sales_days = total.getThreeDays()
+    tota_p_inv, pending_count, pending_obove = total.getPendingInvoices()
     data = {
         'sales': {
             'count': total.getCount(),
@@ -100,6 +148,11 @@ def today_as_saleref(request, *args, **kwargs):
             'count': total_count_year,
             'total_sales': total_sales_year,
             'total_balance': total_balance_year
+        },
+        'pending_inv': {
+            'total': tota_p_inv,
+            'count': pending_count,
+            'above': pending_obove
         }
 
 
@@ -112,6 +165,41 @@ def today_as_manager(request, *args, **kwargs):
     item = kwargs.get('id')
     total = CountSalesInvoiceAll(
         date=request.data['date'], user_details=item, user_type='manager')
+    total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
+    total_count_year, total_sales_year, total_balance_year = total.getThisYear()
+    total_count_days, total_sales_days = total.getThreeDays()
+    data = {
+        'sales': {
+            'count': total.getCount(),
+            'total': total.totalSale(),
+            'discount': total.totalDiscont(),
+            'status': total.getPrevDayStatus()
+        },
+        'three_days': {
+            'count': total_count_days,
+            'total_sales': total_sales_days,
+        },
+        'this_month': {
+            'count': total_count_month,
+            'total_sales': total_sales_month,
+            'total_balance': total_balance_month
+        },
+        'this_year': {
+            'count': total_count_year,
+            'total_sales': total_sales_year,
+            'total_balance': total_balance_year
+        }
+
+
+    }
+    return Response(data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def today_as_executive(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='executive')
     total_count_month, total_sales_month, total_balance_month = total.getThisMonth()
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
     total_count_days, total_sales_days = total.getThreeDays()
@@ -165,7 +253,7 @@ def today_company_inventory_status(request):
 
 @api_view(['GET'])
 def allSalesinvoicedataBymonth(request):
-    inv = SalesData()
+    inv = SalesData('company', id=None)
 
     return Response(data=inv.getData(), status=status.HTTP_200_OK)
 
@@ -174,6 +262,13 @@ def allSalesinvoicedataBymonth(request):
 def allSalesinvoicedataManagerBymonth(request, *args, **kwargs):
     item = kwargs.get('id')
     inv = SalesData('manager', item)
+    return Response(data=inv.getData(), status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def allSalesinvoicedataExecutiveBymonth(request, *args, **kwargs):
+    item = kwargs.get('id')
+    inv = SalesData('executive', item)
     return Response(data=inv.getData(), status=status.HTTP_200_OK)
 
 
@@ -197,6 +292,32 @@ def allDistributorSalesByManager(request, *args, **kwargs):
     total = CountSalesInvoiceAll(
         date=request.data['date'], user_details=item, user_type='manager')
     distributors, codes = total.getAllDistributorsSales()
+    data = {
+        'distributors': distributors,
+        'color': codes
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def allDistributorSalesByExecutive(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='executive')
+    distributors, codes = total.getAllDistributorsSales()
+    data = {
+        'distributors': distributors,
+        'color': codes
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def allDistributorSalesByCompany(request, *args, **kwargs):
+    item = kwargs.get('id')
+    total = CountSalesInvoiceAll(
+        date=request.data['date'], user_details=item, user_type='company')
+    distributors, codes = total.getAllManagersSales()
     data = {
         'distributors': distributors,
         'color': codes

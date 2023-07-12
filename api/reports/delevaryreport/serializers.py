@@ -5,7 +5,7 @@ from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, 
 class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefInvoice
-        fields = ('id', 'date', 'total')
+        fields = ('date', 'total')
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):

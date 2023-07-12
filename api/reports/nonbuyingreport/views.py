@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,7 +10,7 @@ from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 today = date.today()
 
@@ -17,13 +18,20 @@ today = date.today()
 class GetByDistributor(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
-        date_from = request.data['date_from']
-        date_to = request.data['date_to']
+        print(request.data)
+        #
+        date_from = timezone.make_aware(datetime.strptime(
+            request.data['date_from'], "%Y-%m-%d"))
+        date_to = timezone.make_aware(datetime.strptime(
+            request.data['date_to'], "%Y-%m-%d"))
         by_date = bool(date_from and date_to)
-        distributor_srf = SalesRefDistributor.objects.filter(
-            distributor_id=item).first()
-        user_ids = SalesRefDistributor.objects.filter(
-            distributor_id=item).values_list('sales_ref__user_id', flat=True)
+        distributor = UserDetails.objects.get(id=item)
+        salesrefs = SalesRefDistributor.objects.filter(
+            distributor_id=item).values_list('sales_ref', flat=True)
+
+        user_ids = UserDetails.objects.filter(
+            id__in=salesrefs).values_list('user', flat=True)
+
         filters = {
             'added_by__in': user_ids,
         }
@@ -31,10 +39,9 @@ class GetByDistributor(APIView):
             filters['datetime__range'] = (date_from, date_to)
 
         not_buy = NotBuyDetails.objects.filter(**filters)
-
         data = {
-            'terriotory': distributor_srf.distributor.terriotory,
-            'Distributor': distributor_srf.distributor.full_name
+            'terriotory': distributor.terriotory,
+            'Distributor': distributor.full_name
         }
         serializer = serializers.NonBuyDetailsSerializer(not_buy, many=True)
         data['details'] = serializer.data

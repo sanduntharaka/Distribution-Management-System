@@ -14,6 +14,7 @@ class SalesReturnSerializer(serializers.ModelSerializer):
 
 class SalesReturnItemsSerializer(serializers.ModelSerializer):
     item = serializers.CharField(source='item.item.item_code')
+    item_description = serializers.CharField(source='item.item.description')
     # description = serializers.CharField(source='item.description')
     # date = serializers.CharField(source='salesrefreturn.date')
     # bill = serializers.CharField(source='salesrefreturn.getbillnumber')
@@ -22,5 +23,5 @@ class SalesReturnItemsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SalesReturnItem
-        fields = ('item', 'reason', 'qty',  'sub_total')
+        fields = ('item', 'reason', 'qty',  'sub_total', 'item_description')
         # 'foc','bill', 'price', 'date', 'description',

@@ -22,6 +22,7 @@ class FilterByDateDistributor(APIView):
             filters['confirmed_date__range'] = (date_from, date_to)
         invoices = SalesRefInvoice.objects.filter(**filters)
         serializer = serializers.InvoiceSerializer(invoices, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

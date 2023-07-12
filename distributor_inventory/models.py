@@ -41,3 +41,6 @@ class ItemStock(models.Model):
     retail_price = models.FloatField(blank=False)
     date = models.DateField(auto_now_add=True)
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    def get_qty_wholesale_multiple(self):
+        return self.qty*self.whole_sale_price

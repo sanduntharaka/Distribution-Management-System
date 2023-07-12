@@ -16,6 +16,7 @@ class GetByDistributor(APIView):
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
+        filter_status = int(request.data['filter_status'])
         sales_refs = SalesRefDistributor.objects.filter(
             distributor=item).values('sales_ref')
         sales_ref_ids = [salesref['sales_ref']
@@ -31,7 +32,14 @@ class GetByDistributor(APIView):
         }
         if by_date:
             filters['salesreturn__date__range'] = (date_from, date_to)
-
+        if by_date:
+            filters['salesreturn__date__range'] = (date_from, date_to)
+        if filter_status == 1:
+            filters['salesreturn__status'] = 'pending'
+        elif filter_status == 2:
+            filters['salesreturn__status'] = 'approved'
+        elif filter_status == 3:
+            filters['salesreturn__status'] = 'rejected'
         sales_returns_items = SalesReturnItem.objects.filter(**filters)
         serializer = serializers.SalesReturnItemsSerializer(
             sales_returns_items, many=True)

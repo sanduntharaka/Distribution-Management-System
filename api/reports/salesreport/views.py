@@ -16,6 +16,7 @@ class FilterByDateDistributor(APIView):
         by_date = bool(date_from and date_to)
         filters = {
             'dis_sales_ref__distributor': item,
+            'status': 'confirmed'
         }
         if by_date:
             filters['date__range'] = (date_from, date_to)
@@ -28,13 +29,21 @@ class FilterByCategoryDistributor(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         category = int(request.data['category'])
+        date_from = request.data['date_from']
+        date_to = request.data['date_to']
+        by_date = bool(date_from and date_to)
+
         invoices = SalesRefInvoice.objects.filter(
             dis_sales_ref__distributor=item)
         filters = {
-            'bill__in': invoices
+            'bill__in': invoices,
+            'bill__status': 'confirmed'
         }
         if category != -1:
             filters['item__item__category'] = category
+        if by_date:
+            filters['bill__date__range'] = (date_from, date_to)
+
         items = InvoiceIntem.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -44,13 +53,19 @@ class FilterByProductDistributor(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         product = int(request.data['product'])
+        date_from = request.data['date_from']
+        date_to = request.data['date_to']
+        by_date = bool(date_from and date_to)
         invoices = SalesRefInvoice.objects.filter(
             dis_sales_ref__distributor=item)
         filters = {
-            'bill__in': invoices
+            'bill__in': invoices,
+            'bill__status': 'confirmed'
         }
         if product != -1:
             filters['item'] = product
+        if by_date:
+            filters['bill__date__range'] = (date_from, date_to)
         items = InvoiceIntem.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

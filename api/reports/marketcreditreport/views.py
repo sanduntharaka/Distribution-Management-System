@@ -68,8 +68,9 @@ class GetByDistributorPeriod(APIView):
 
         filters = {
             'bill__dis_sales_ref__in': salesrefs_distributor,
-            'date__range': (range_start, range_end),
-            'payment_type': 'credit'
+            'bill__confirmed_date__range': (range_start, range_end),
+            'bill__is_settiled': False,
+            'payment_type__in': ['credit', 'cash-credit', 'cash-cheque', 'cheque-credit', 'cash-credit-cheque']
         }
 
         invoices = PaymentDetails.objects.filter(**filters)
