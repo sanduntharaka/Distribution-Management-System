@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 class GetFocReport(APIView):
     def post(self, request, *args, **kwargs):
-        print(request.user.id)
         item = self.kwargs.get('id')
         category = int(request.data['category'])
         date_from = request.data['date_from']
@@ -22,7 +21,7 @@ class GetFocReport(APIView):
         }
 
         if by_date:
-            filters['date__range'] = (date_from, date_to)
+            filters['confirmed_date__range'] = (date_from, date_to)
         invoices = SalesRefInvoice.objects.filter(**filters).values('id')
         invoice_ids = [inv['id'] for inv in invoices]
         items_filter = {

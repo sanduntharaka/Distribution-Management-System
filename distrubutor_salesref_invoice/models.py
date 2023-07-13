@@ -59,7 +59,7 @@ class SalesRefInvoice(models.Model):
 
     def get_foc(self):
         try:
-            return InvoiceIntem.objects.filter(bill=self.id).aggregate(total_qty=Sum('foc'))['total_foc']
+            return sum(list(InvoiceIntem.objects.filter(bill=self.id).values_list('foc', flat=True)))
         except:
             return 0
 

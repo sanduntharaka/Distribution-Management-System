@@ -8,8 +8,8 @@ class NormalPsaSerializer(serializers.ModelSerializer):
     dealer_contact = serializers.CharField(source='dealer.contact_number')
     dealer_category = serializers.CharField(
         source='dealer.category.category_name')
-    qty = serializers.CharField(source='get_qty')
-    foc = serializers.CharField(source='get_foc')
+    qty = serializers.IntegerField(source='get_qty')
+    foc = serializers.IntegerField(source='get_foc')
 
     class Meta:
         model = SalesRefInvoice

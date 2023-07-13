@@ -3,9 +3,9 @@ from inventory_history.models import DistributorHistoryItem
 
 
 class InventoryStatusSerializer(serializers.ModelSerializer):
-    item_code = serializers.CharField(source='item.item_code')
-    category = serializers.CharField(source='item.category.category_name')
-    description = serializers.CharField(source='item.description')
+    item_code = serializers.CharField(source='item.item.item_code')
+    category = serializers.CharField(source='item.item.category.category_name')
+    description = serializers.CharField(source='item.item.description')
 
     class Meta:
         model = DistributorHistoryItem

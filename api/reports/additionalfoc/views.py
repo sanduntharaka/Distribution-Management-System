@@ -21,7 +21,7 @@ class GetFocReport(APIView):
         }
 
         if by_date:
-            filters['date__range'] = (date_from, date_to)
+            filters['confirmed_date__range'] = (date_from, date_to)
         invoices = SalesRefInvoice.objects.filter(**filters)
         invoice_ids = [inv['id'] for inv in invoices.values('id')]
         items_filter = {

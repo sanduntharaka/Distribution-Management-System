@@ -80,17 +80,21 @@ class GetPaymentDataByDistributor(APIView):
     def post(self, request, *args, **kwargs):
         print(request.data)
         item = self.kwargs.get('id')
+        dealer = request.data['dealer']
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
         filters = {
             'dis_sales_ref__distributor': item,
+            'dealer': dealer,
 
         }
         if by_date:
             filters['confirmed_date__range'] = (date_from, date_to)
+
         invoices = SalesRefInvoice.objects.filter(
             **filters).values('id')
+
         invoice_ids = [inv['id'] for inv in invoices]
         payments = PaymentDetails.objects.filter(bill__in=invoice_ids)
         serializer = serializers.InvoicePaymentSerializer(payments, many=True)

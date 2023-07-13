@@ -21,7 +21,7 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceIntem
         fields = ('id', 'item_code', 'qty', 'foc',
-                  'price', 'discount', 'extended_price')
+                  'price', 'discount', 'description', 'extended_price')
 
 
 class InvoicePaymentSerializer(serializers.ModelSerializer):
