@@ -5,6 +5,8 @@ import AllReturns from './AllReturns';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import MarketReturnConfirm from './marcketreturnconfirm/MarketReturnConfirm';
+import ViewMarketReturnByOthers from './ViewMarketReturnByOthers';
+import ViewAllMarketReturnsConfimsByOthers from './marcketreturnconfirm/ViewAllMarketReturnsConfimsByOthers';
 
 const MyMessage = React.forwardRef((props, ref) => {
   return (
@@ -21,9 +23,7 @@ const MyMessage = React.forwardRef((props, ref) => {
 const ReturnTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const [inventory, setInventory] = useState();
-  const [selected, setSelected] = useState(
-    user.is_manager || user.is_distributor ? 1 : 0
-  );
+  const [selected, setSelected] = useState(user.is_salesref ? 0 : 1);
   const [isLoading, setIsLoading] = useState(false);
 
   //message modal
@@ -126,24 +126,31 @@ const ReturnTab = () => {
         >
           All returns
         </div>
-        {user.is_distributor ? (
-          <div
-            className={`item ${selected === 2 ? 'selected' : ''}`}
-            onClick={() => handleSelect(2)}
-          >
-            Approve market returns
-          </div>
-        ) : (
-          ''
-        )}
+
+        <div
+          className={`item ${selected === 2 ? 'selected' : ''}`}
+          onClick={() => handleSelect(2)}
+        >
+          Approve market returns
+        </div>
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
           <CreateReturn inventory={inventory} />
-        ) : selected === 1 && isLoading === false && inventory !== undefined ? (
+        ) : selected === 1 &&
+          isLoading === false &&
+          inventory !== undefined &&
+          (user.is_distributor || user.is_salesref) ? (
           <AllReturns inventory={inventory} />
-        ) : selected === 2 && isLoading === false && inventory !== undefined ? (
+        ) : selected === 1 ? (
+          <ViewMarketReturnByOthers user={user} />
+        ) : selected === 2 &&
+          isLoading === false &&
+          inventory !== undefined &&
+          user.is_distributor ? (
           <MarketReturnConfirm />
+        ) : selected === 2 ? (
+          <ViewAllMarketReturnsConfimsByOthers user={user} />
         ) : (
           ''
         )}

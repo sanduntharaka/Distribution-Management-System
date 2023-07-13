@@ -51,19 +51,14 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const CreatedLeaves = () => {
+const ToApproveLeaves = () => {
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(sessionStorage.getItem('user'));
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
-    {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
-    },
+    { title: 'Name', field: 'applicant' },
+    { title: 'Designation', field: 'designation' },
     { title: 'Apply Date', field: 'leave_apply_date' },
     { title: 'End Date', field: 'leave_end_date' },
     { title: 'No of  Dates', field: 'number_of_dates' },
@@ -97,95 +92,49 @@ const CreatedLeaves = () => {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
-    setLoading(true);
-    axiosInstance
-      .get(
-        `/leave/all/user/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
+    if (user.is_company) {
+      setLoading(true);
+
+      axiosInstance
+        .get(`/leave/all/by/company/`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        setLoading(false);
-        setData(res.data);
-        setTableData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
-    // }
+        })
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
+    if (user.is_manager) {
+      setLoading(true);
 
-    // if (user.is_distributor) {
-    //   setLoading(true);
-
-    //   axiosInstance
-    //     .get(
-    //       `/leave/all/by/distributor/${
-    //         JSON.parse(sessionStorage.getItem('user_details')).id
-    //       }`,
-    //       {
-    //         headers: {
-    //           Authorization:
-    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       setLoading(false);
-
-    //       console.log(res.data);
-    //       setData(res.data);
-    //       setTableData(res.data);
-    //       // res.data.forEach((item) => {
-    //       //   if (!itemCodes.includes(item.created_by)) {
-    //       //     itemCodes.push(item.created_by);
-    //       //   }
-    //       // });
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       setLoading(false);
-    //     });
-    // }
-    // if (user.is_manager) {
-    //   setLoading(true);
-
-    //   axiosInstance
-    //     .get(
-    //       `/leave/all/by/manager/${
-    //         JSON.parse(sessionStorage.getItem('user_details')).id
-    //       }`,
-    //       {
-    //         headers: {
-    //           Authorization:
-    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       setLoading(false);
-
-    //       console.log(res.data);
-    //       setData(res.data);
-    //       setTableData(res.data);
-    //       // res.data.forEach((item) => {
-    //       //   if (!itemCodes.includes(item.created_by)) {
-    //       //     itemCodes.push(item.created_by);
-    //       //   }
-    //       // });
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //       setLoading(false);
-    //     });
-    // }
+      axiosInstance
+        .get(
+          `/leave/all/by/manager/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
   }, [success]);
 
   const handleViewDetails = (e, value) => {
@@ -317,7 +266,7 @@ const CreatedLeaves = () => {
             msg={setMsg}
             showConfirm={setApproveDetailsOpen}
             closeModal={handleModalClose}
-            url={'/leave/approve/by/manager'}
+            url={'/leave/approve'}
           />
         ) : messageOpen ? (
           <Message
@@ -332,25 +281,9 @@ const CreatedLeaves = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Leaves</p>
+        <p>View Not Approved Leaves</p>
       </div>
       <div className="page__pcont">
-        {/* <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                {itemCodes.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -443,7 +376,7 @@ const CreatedLeaves = () => {
                           <DeleteOutline />
                         </IconButton>
                       ) : props.action.icon === CheckCircleOutlineIcon &&
-                        user.is_manager ? (
+                        (user.is_manager || user.is_company) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -470,4 +403,4 @@ const CreatedLeaves = () => {
   );
 };
 
-export default CreatedLeaves;
+export default ToApproveLeaves;

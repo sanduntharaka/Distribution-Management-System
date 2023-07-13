@@ -44,6 +44,8 @@ const ByDateRangeTable = (props) => {
     { title: 'Date', field: 'date' },
     { title: 'Invoice number', field: 'invoice_number' },
     { title: 'Invoice amount', field: 'invoice_amount' },
+    { title: 'Invoice Payed', field: 'total_payed' },
+
     { title: 'Balance amount', field: 'balance_amount' },
     { title: 'Due date', field: 'due_date' },
   ];

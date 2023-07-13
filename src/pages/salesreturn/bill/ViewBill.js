@@ -6,60 +6,60 @@ import { useReactToPrint } from 'react-to-print';
 const ViewBill = (props) => {
   console.log(props);
   const compoenentRef = useRef();
-  const [distributor, setDistributor] = useState({
-    full_name: '',
-    address: '',
-    company_number: '',
-  });
-  useEffect(() => {
-    if (props.user.is_salesref) {
-      axiosInstance
-        .get(
-          `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setDistributor({
-            full_name: res.data.full_name,
-            address: res.data.address,
-            company_number: res.data.company_number,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    if (props.user.is_distributor) {
-      axiosInstance
-        .get(
-          `/distributor/salesref/get/distributor/by/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setDistributor({
-            full_name: res.data.full_name,
-            address: res.data.address,
-            company_number: res.data.company_number,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    console.log('inv v:', props.invoice.billing_price_method);
-  }, []);
+  // const [distributor, setDistributor] = useState({
+  //   full_name: '',
+  //   address: '',
+  //   company_number: '',
+  // });
+  // useEffect(() => {
+  //   if (props.user.is_salesref) {
+  //     axiosInstance
+  //       .get(
+  //         `/distributor/salesref/get/distributor/by/salesref/${props.issued_by.id}`,
+  //         {
+  //           headers: {
+  //             Authorization:
+  //               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //           },
+  //         }
+  //       )
+  //       .then((res) => {
+  //         setDistributor({
+  //           full_name: res.data.full_name,
+  //           address: res.data.address,
+  //           company_number: res.data.company_number,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  //   if (props.user.is_distributor) {
+  //     axiosInstance
+  //       .get(
+  //         `/distributor/salesref/get/distributor/by/distributor/${
+  //           JSON.parse(sessionStorage.getItem('user_details')).id
+  //         }`,
+  //         {
+  //           headers: {
+  //             Authorization:
+  //               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //           },
+  //         }
+  //       )
+  //       .then((res) => {
+  //         setDistributor({
+  //           full_name: res.data.full_name,
+  //           address: res.data.address,
+  //           company_number: res.data.company_number,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  //   console.log('inv v:', props.invoice.billing_price_method);
+  // }, []);
 
   const handleCancle = (e) => {
     e.preventDefault();
@@ -82,9 +82,9 @@ const ViewBill = (props) => {
                 <img src="./images/Bixton_logo.png" alt="" />
               </div>
               <div className={styles.hcol2}>
-                <h2>{distributor.full_name}</h2>
-                <p>{distributor.address}</p>
-                <p>{distributor.company_number}</p>
+                <h2>{props.invoice.distributor}</h2>
+                <p>{props.invoice.distributor_address}</p>
+                <p>{props.invoice.distributor_company_number}</p>
                 <h3>Sales return receipt</h3>
               </div>
             </div>
@@ -104,8 +104,8 @@ const ViewBill = (props) => {
             <div className={styles.col}>
               <p>Invoice No: {props.invoice.code}</p>
               <p>Invoice Date: {props.data.date}</p>
-              <p>Salesperson: {props.issued_by.full_name}</p>
-              <p>Telephone: {props.issued_by.company_number}</p>
+              <p>Salesperson: {props.invoice.added_name}</p>
+              <p>Telephone: {props.invoice.added_contact}</p>
             </div>
           </div>
           <div className={styles.row}>

@@ -41,6 +41,7 @@ const tableIcons = {
 };
 const ByDateRangeTable = (props) => {
   const columns = [
+    { title: 'Invoice', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Total', field: 'total' },
   ];
@@ -49,6 +50,7 @@ const ByDateRangeTable = (props) => {
       title={false}
       columns={columns}
       data={props.data}
+      isLoading={props.loading}
       sx={{
         ['&.MuiTable-root']: {
           background: 'red',

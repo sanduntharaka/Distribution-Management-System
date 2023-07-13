@@ -13,7 +13,6 @@ import {
 const MainChart = (props) => {
   const [data, setData] = useState([]);
   useEffect(() => {
-    console.log('lgd', props.info);
     if (props.user.is_salesref) {
       axiosInstance
         .get(`/dashboard/get/allsales/salesref/months/${props.info.id}`, {
@@ -23,7 +22,6 @@ const MainChart = (props) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           setData(res.data);
         });
     }
@@ -36,7 +34,30 @@ const MainChart = (props) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
+          setData(res.data);
+        });
+    }
+    if (props.user.is_excecutive) {
+      axiosInstance
+        .get(`/dashboard/get/allsales/executive/months/${props.info.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setData(res.data);
+        });
+    }
+    if (props.user.is_company) {
+      axiosInstance
+        .get(`/dashboard/get/allsales/company/months/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
           setData(res.data);
         });
     }
@@ -49,12 +70,10 @@ const MainChart = (props) => {
           },
         })
         .then((res) => {
-          console.log(res.data);
           setData(res.data);
         });
     }
   }, []);
-  console.log(data);
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart

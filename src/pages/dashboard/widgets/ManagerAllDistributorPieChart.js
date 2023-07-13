@@ -13,24 +13,66 @@ const ManagerAllDistributorPieChart = (props) => {
   const [details, setDetails] = useState([]);
   const [colors, setColors] = useState([]);
   useEffect(() => {
-    axiosInstance
-      .post(
-        `/dashboard/get/distributors/sales/${props.info.id}`,
-        {
-          date: props.date,
-        },
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+    if (props.user.is_manager) {
+      axiosInstance
+        .post(
+          `/dashboard/get/distributors/sales/${props.info.id}`,
+          {
+            date: props.date,
           },
-        }
-      )
-      .then((res) => {
-        console.log('res', res.data);
-        setDetails(res.data.distributors);
-        setColors(res.data.color);
-      });
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log('res', res.data);
+          setDetails(res.data.distributors);
+          setColors(res.data.color);
+        });
+    }
+    if (props.user.is_excecutive) {
+      axiosInstance
+        .post(
+          `/dashboard/get/distributors/sales/byex/${props.info.id}`,
+          {
+            date: props.date,
+          },
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log('res', res.data);
+          setDetails(res.data.distributors);
+          setColors(res.data.color);
+        });
+    }
+    if (props.user.is_company) {
+      axiosInstance
+        .post(
+          `/dashboard/get/manager/sales/`,
+          {
+            date: props.date,
+          },
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log('res', res.data);
+          setDetails(res.data.distributors);
+          setColors(res.data.color);
+        });
+    }
   }, []);
   const data = [
     { name: 'Group A', value: 400 },

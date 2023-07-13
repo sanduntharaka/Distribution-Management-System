@@ -73,18 +73,8 @@ const SalesReturnConfirm = () => {
     window.location.reload();
   };
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
   //edit-details
   const [editdetailsOpen, setEditDetailsOpen] = useState(false);
-
-  //delete-details
-  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
-
-  //filter_lists
-  const [sales_refs, setSales_refs] = useState([]);
-  const [distributors, setDistributors] = useState([]);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -93,14 +83,7 @@ const SalesReturnConfirm = () => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
   const [invoice, setInvoice] = useState();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
   const [done, setDone] = useState(1);
   useEffect(() => {
     console.log('run me');
@@ -118,17 +101,6 @@ const SalesReturnConfirm = () => {
       )
       .then((res) => {
         setData(res.data);
-        // setTableData(res.data);
-        // res.data.forEach((item) => {
-        //   if (!sales_refs.includes(item.sales_ref)) {
-        //     sales_refs.push(item.sales_ref);
-        //   }
-        // });
-        // res.data.forEach((item) => {
-        //   if (!distributors.includes(item.distributor)) {
-        //     distributors.push(item.distributor);
-        //   }
-        // });
       })
       .catch((err) => {
         console.log(err);
@@ -139,34 +111,10 @@ const SalesReturnConfirm = () => {
     console.log(value);
     setInvoice(value);
     setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
     setEditDetailsOpen(true);
     handleModalOpen();
   };
-  // const handleFilter = (i) => {
-  //   handleClose();
-  //   console.log(i);
-  //   if (i === 'all') {
-  //     setTableData(data);
-  //   } else {
-  //     let filteredItems = data.filter((item) => item.distributor === i);
-  //     console.log(filteredItems);
-  //     setTableData(filteredItems);
-  //   }
-  // };
 
-  // const handleFilterSalesRef = (i) => {
-  //   handleClose();
-  //   console.log(i);
-  //   if (i === 'all') {
-  //     setTableData(data);
-  //   } else {
-  //     let filteredItems = data.filter((item) => item.sales_ref === i);
-  //     console.log(filteredItems);
-  //     setTableData(filteredItems);
-  //   }
-  // };
   console.log('s:', success);
   const MyInvoiceConfirm = React.forwardRef((props, ref) => {
     return (
@@ -179,6 +127,7 @@ const SalesReturnConfirm = () => {
         msg={props.msg}
         showEdit={props.showEdit}
         closeModal={props.closeModal}
+        user={props.user}
       />
     );
   });
@@ -195,6 +144,7 @@ const SalesReturnConfirm = () => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : messageOpen ? (
           <Message
@@ -213,39 +163,6 @@ const SalesReturnConfirm = () => {
         <p>View All Pending Sales Returns</p>
       </div>
       <div className="page__pcont">
-        {/* <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {sales_refs.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {distributors.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">

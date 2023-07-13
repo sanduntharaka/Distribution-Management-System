@@ -42,7 +42,9 @@ const tableIcons = {
 const SalesReturnTable = (props) => {
   const columns = [
     { title: 'Item code', field: 'item' },
-    { title: 'Description', field: 'reason' },
+    { title: 'Description', field: 'item_description' },
+
+    { title: 'Reason', field: 'reason' },
     { title: 'Qty', field: 'qty' },
     { title: 'Value', field: 'sub_total' },
   ];
@@ -52,6 +54,7 @@ const SalesReturnTable = (props) => {
       title={false}
       columns={columns}
       data={props.data}
+      isLoading={props.loading}
       sx={{
         ['&.MuiTable-root']: {
           background: 'red',

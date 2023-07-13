@@ -54,15 +54,12 @@ const tableIcons = {
 
 const MarketReturnConfirm = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
-  const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
-      title: 'ID',
-      field: 'id',
-      cellStyle: { width: '10px' },
-      width: '10px',
-      headerStyle: { width: '10px' },
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
     },
     { title: 'Added by', field: 'added_name' },
     { title: 'Bill No', field: 'code' },
@@ -76,18 +73,8 @@ const MarketReturnConfirm = () => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
   //edit-details
   const [editdetailsOpen, setEditDetailsOpen] = useState(false);
-
-  //delete-details
-  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
-
-  //filter_lists
-  const [sales_refs, setSales_refs] = useState([]);
-  const [distributors, setDistributors] = useState([]);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -95,15 +82,6 @@ const MarketReturnConfirm = () => {
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     axiosInstance
@@ -119,19 +97,7 @@ const MarketReturnConfirm = () => {
         }
       )
       .then((res) => {
-        console.log('redpend:', res.data);
-        setData(res.data);
         setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!sales_refs.includes(item.sales_ref)) {
-            sales_refs.push(item.sales_ref);
-          }
-        });
-        res.data.forEach((item) => {
-          if (!distributors.includes(item.distributor)) {
-            distributors.push(item.distributor);
-          }
-        });
       })
       .catch((err) => {
         console.log(err);
@@ -140,37 +106,12 @@ const MarketReturnConfirm = () => {
   const [invoice, setInvoice] = useState();
 
   const handleConfirmDetails = (e, value) => {
-    console.log(value);
     setInvoice(value);
     setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
     setEditDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.distributor === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
 
-  const handleFilterSalesRef = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.sales_ref === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
   const MyInvoiceConfirm = React.forwardRef((props, ref) => {
     return (
       <ConfirmStatus
@@ -182,6 +123,7 @@ const MarketReturnConfirm = () => {
         msg={props.msg}
         showEdit={props.showEdit}
         closeModal={props.closeModal}
+        user={props.user}
       />
     );
   });
@@ -198,6 +140,7 @@ const MarketReturnConfirm = () => {
             msg={setMsg}
             showEdit={setEditDetailsOpen}
             closeModal={handleModalClose}
+            user={user}
           />
         ) : messageOpen ? (
           <Message
@@ -215,39 +158,6 @@ const MarketReturnConfirm = () => {
         <p>View All Pending Market Returns</p>
       </div>
       <div className="page__pcont">
-        {/* <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {sales_refs.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col">
-            <div>
-              <select name="" id="">
-                <option value="" selected>
-                  select
-                </option>
-                {distributors.map((item, i) => (
-                  <option value={item} key={i}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">

@@ -97,7 +97,7 @@ const StaffReport = () => {
     if (JSON.parse(sessionStorage.getItem('user')).is_distributor) {
       axiosInstance
         .get(
-          `/reports/staffdetails/by/distributor/${
+          `/reports/staffdetails/by/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {

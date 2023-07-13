@@ -3,7 +3,8 @@
     width: 60%;
     overflow-y: scroll;
     scrollbar-gutter: stable;
-    height: 350px;
+    height: max-content;
+    max-height: 60vh;
     background-color: white;
     border-radius: 25px;
     padding: 50px;

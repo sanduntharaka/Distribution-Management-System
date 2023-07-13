@@ -58,6 +58,7 @@ const ByDateRangeChequeTable = (props) => {
       title={false}
       columns={columns}
       data={props.data}
+      isLoading={props.loading}
       sx={{
         ['&.MuiTable-root']: {
           background: 'red',

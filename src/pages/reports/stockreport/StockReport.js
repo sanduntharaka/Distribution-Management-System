@@ -68,6 +68,7 @@ const StockReport = () => {
       'retail_price',
       'foc',
       'qty',
+      'value',
     ];
     const columnTitles = [
       'Item Code',
@@ -76,6 +77,7 @@ const StockReport = () => {
       'Whole sale price',
       'Retail Price',
       'FOC',
+      'Qty',
       'Value',
     ];
 
@@ -132,28 +134,6 @@ const StockReport = () => {
         <div className="form">
           <div className="form__row">
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
-              <div className="form__row__col__input">
-                <input
-                  type="date"
-                  onChange={(e) =>
-                    setFilterData({ ...filterData, date_from: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
-              <div className="form__row__col__input">
-                <input
-                  type="date"
-                  onChange={(e) =>
-                    setFilterData({ ...filterData, date_to: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            <div className="form__row__col">
               <div className="form__row__col__label">Stock type</div>
               <div className="form__row__col__input">
                 <select
@@ -189,6 +169,7 @@ const StockReport = () => {
                 </select>
               </div>
             </div>
+
             <div
               className="form__row__col dontdisp"
               style={{ display: 'flex', alignItems: 'center' }}

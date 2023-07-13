@@ -7,11 +7,13 @@ const MarketReturnReport = () => {
   const [filterData, setFilterData] = useState({
     date_from: '',
     date_to: '',
+    filter_status: -1,
   });
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const handleFilter = (e) => {
     e.preventDefault();
+    setLoading(true);
     axiosInstance
       .post(
         `/reports/mkreturns/by/distributor/${
@@ -39,8 +41,14 @@ const MarketReturnReport = () => {
     e.preventDefault();
     // Calculate the total quantity
 
-    const columnOrder = ['item', 'reason', 'qty', 'sub_total'];
-    const columnTitles = ['Item Code', 'Description', 'Qty', 'Value'];
+    const columnOrder = [
+      'item',
+      'item_description',
+      'reason',
+      'qty',
+      'sub_total',
+    ];
+    const columnTitles = ['Item Code', 'Description', 'Reason', 'Qty', 'Value'];
 
     const dataWithoutTableData = data.map(({ tableData, id, ...item }) => item);
     const total = data.reduce((sum, item) => sum + item.sub_total, 0);
@@ -112,6 +120,27 @@ const MarketReturnReport = () => {
                 />
               </div>
             </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Status</div>
+              <div className="form__row__col__input">
+                <select
+                  name=""
+                  id=""
+                  defaultValue={'-1'}
+                  onChange={(e) =>
+                    setFilterData({
+                      ...filterData,
+                      filter_status: e.target.value,
+                    })
+                  }
+                >
+                  <option value="-1">All</option>
+                  <option value="1">Pending</option>
+                  <option value="2">Approved</option>
+                  <option value="3">Rejected</option>
+                </select>
+              </div>
+            </div>
 
             <div
               className="form__row__col dontdisp"
@@ -127,7 +156,7 @@ const MarketReturnReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <MkReturntable data={data} />
+              <MkReturntable data={data} loading={loading} />
             </div>
           </div>
         </div>

@@ -100,6 +100,36 @@ const ShowPaymentDetails = (props) => {
       });
   };
 
+  const handleReject = (e) => {
+    axiosInstance
+      .put(
+        `/salesref/invoice/confirm/cheque/${cheque.id}`,
+        { status: 'return' },
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setSuccess(true);
+        setError(false);
+        setTitle('Success');
+        setMsg('Your cheque set as cleared status');
+        handleOpen();
+      })
+      .catch((err) => {
+        console.log(err);
+
+        setTitle('Error');
+        setSuccess(false);
+        setError(true);
+        setMsg('Your cheque cannot confirm. please try again later.');
+        handleOpen();
+      });
+  };
+
   const handleEdit = (e) => {
     props.setPaymentId(invoice.cheque_id);
     props.showPayment(false);
@@ -233,9 +263,18 @@ const ShowPaymentDetails = (props) => {
 
         <div className="buttoncontainer">
           {invoice.cheque_id && cheque.status === 'pending' ? (
-            <button className="addBtn" onClick={(e) => handleConfirem(e)}>
-              cheque Confirm
-            </button>
+            <>
+              <button
+                className="addBtn"
+                style={{ background: 'blue' }}
+                onClick={(e) => handleConfirem(e)}
+              >
+                cheque Confirm
+              </button>
+              <button className="addBtn" onClick={(e) => handleReject(e)}>
+                cheque reject
+              </button>
+            </>
           ) : (
             ''
           )}

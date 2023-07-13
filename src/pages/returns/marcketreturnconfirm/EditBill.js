@@ -182,17 +182,23 @@ const EditBill = (props) => {
         columns={columns}
         data={items}
         icons={tableIcons}
-        editable={{
-          onRowUpdate: (newData, oldData) =>
-            new Promise((resolve) => {
-              handleEdit(newData, oldData, resolve);
-            }),
+        editable={
+          props.user.is_manager ||
+          props.user.is_excecutive ||
+          props.user.is_distributor
+            ? {
+                onRowUpdate: (newData, oldData) =>
+                  new Promise((resolve) => {
+                    handleEdit(newData, oldData, resolve);
+                  }),
 
-          onRowDelete: (oldData) =>
-            new Promise((resolve) => {
-              handleDelete(oldData, resolve);
-            }),
-        }}
+                onRowDelete: (oldData) =>
+                  new Promise((resolve) => {
+                    handleDelete(oldData, resolve);
+                  }),
+              }
+            : ''
+        }
       />
     </section>
   );

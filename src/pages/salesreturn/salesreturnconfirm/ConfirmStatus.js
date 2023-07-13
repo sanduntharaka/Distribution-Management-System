@@ -132,37 +132,52 @@ const ConfirmStatus = (props) => {
               </div>
             </div>
           </section>
-          <section>
-            <div className="subtitle">
-              <p>Bill details</p>
-            </div>
-            <div className="info">
-              <div className="row">
-                <label htmlFor="">status</label>
-                {console.log('ss:', data.status)}
-                <select
-                  defaultValue={0}
-                  value={data.status ? data.status : ''}
-                  onChange={(e) => setData({ ...data, status: e.target.value })}
-                  required
-                >
-                  <option value="0">Select status</option>
-                  <option value="approved">Approved</option>
-                  <option value="pending">Pending</option>
-                  <option value="rejected">Rejected</option>
-                </select>
+          {props.user.is_distributor ? (
+            <section>
+              <div className="subtitle">
+                <p>Bill details</p>
               </div>
-            </div>
-          </section>
-          <EditBill invoice={props.invoice} />
+              <div className="info">
+                <div className="row">
+                  <label htmlFor="">status</label>
+                  {console.log('ss:', data.status)}
+                  <select
+                    defaultValue={0}
+                    value={data.status ? data.status : ''}
+                    onChange={(e) =>
+                      setData({ ...data, status: e.target.value })
+                    }
+                    required
+                  >
+                    <option value="0">Select status</option>
+                    <option value="approved">Approved</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+          ) : (
+            ''
+          )}
+          <EditBill invoice={props.invoice} user={props.user} />
         </div>
         <div className="buttoncontainer">
-          <button className="btnDelete" onClick={(e) => handleDelete(e)}>
-            delete
-          </button>
-          <button className="btnSave" onClick={(e) => handleConfirm(e)}>
-            save
-          </button>
+          {props.user.is_manager || props.user.is_excecutive ? (
+            <button className="btnDelete" onClick={(e) => handleDelete(e)}>
+              delete
+            </button>
+          ) : (
+            ''
+          )}
+
+          {props.user.is_distributor ? (
+            <button className="btnSave" onClick={(e) => handleConfirm(e)}>
+              save
+            </button>
+          ) : (
+            ''
+          )}
           <button className="addBtn" onClick={(e) => handleCloseConfirm(e)}>
             close
           </button>

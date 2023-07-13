@@ -69,6 +69,7 @@ const TotalOutstanding = () => {
       'date',
       'invoice_number',
       'invoice_amount',
+      'total_payed',
       'balance_amount',
       'due_date',
     ];
@@ -76,6 +77,7 @@ const TotalOutstanding = () => {
       'Date',
       'Invoice number',
       'Invoice amount',
+      'Invoice payed',
       'Balance amount',
       'Due date',
     ];

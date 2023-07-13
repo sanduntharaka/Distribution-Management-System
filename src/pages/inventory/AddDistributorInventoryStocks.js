@@ -216,6 +216,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                       placeholder="search..."
                       value={value2}
                       onChange={(e) => filterProducts(e)}
+                      required
                     />
                     <SearchIcon
                       style={{
@@ -344,6 +345,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                     name="free_of_charge"
                     value={data.foc === undefined ? '' : data.foc}
                     onChange={(e) => setData({ ...data, foc: e.target.value })}
+                    required
                   />
                 </div>
               </div>
@@ -373,6 +375,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, pack_size: e.target.value })
                     }
+                    required
                   />
                 </div>
               </div>

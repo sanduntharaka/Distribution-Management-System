@@ -37,20 +37,77 @@ const Dashboard = () => {
     this_month: {},
     this_year: {},
     three_days: {},
+    pending: {},
+    credit: {},
   });
   const [show, setShow] = useState(false);
   useEffect(() => {
     if (!userInfo) {
-      console.log('not');
       navigate('login/');
     }
   }, ['']);
   useEffect(() => {
     let date = currentDate;
+    if (user.is_company) {
+      axiosInstance
+        .post(
+          `/dashboard/today/company/`,
+          {
+            date: date,
+          },
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setData({
+            ...data,
+            sales: res.data.sales,
+            allpendig: res.data.allpendig,
+            market_returns: res.data.market_returns,
+            sales_returns: res.data.sales_returns,
+            this_month: res.data.this_month,
+            this_year: res.data.this_year,
+            three_days: res.data.three_days,
+          });
+          console.log(res.data);
+        });
+    }
     if (user.is_manager) {
       axiosInstance
         .post(
           `/dashboard/today/manager/${userDelails.id}`,
+          {
+            date: date,
+          },
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setData({
+            ...data,
+            sales: res.data.sales,
+            allpendig: res.data.allpendig,
+            market_returns: res.data.market_returns,
+            sales_returns: res.data.sales_returns,
+            this_month: res.data.this_month,
+            this_year: res.data.this_year,
+            three_days: res.data.three_days,
+          });
+          console.log(res.data);
+        });
+    }
+    if (user.is_excecutive) {
+      axiosInstance
+        .post(
+          `/dashboard/today/executive/${userDelails.id}`,
           {
             date: date,
           },
@@ -90,6 +147,7 @@ const Dashboard = () => {
           }
         )
         .then((res) => {
+          console.log(res.data);
           setData({
             ...data,
             sales: res.data.sales,
@@ -99,8 +157,9 @@ const Dashboard = () => {
             this_month: res.data.this_month,
             this_year: res.data.this_year,
             three_days: res.data.three_days,
+            pending: res.data.pending_inv,
+            credit: res.data.credit_inv,
           });
-          console.log(res.data);
         });
     }
     if (user.is_salesref) {
@@ -118,6 +177,7 @@ const Dashboard = () => {
           }
         )
         .then((res) => {
+          console.log('sr', res.data);
           setData({
             ...data,
             sales: res.data.sales,
@@ -127,8 +187,9 @@ const Dashboard = () => {
             this_month: res.data.this_month,
             this_year: res.data.this_year,
             three_days: res.data.three_days,
+            pending: res.data.pending_inv,
+            credit: res.data.credit_inv,
           });
-          console.log(res.data);
         });
     }
   }, []);
@@ -188,9 +249,16 @@ const Dashboard = () => {
             ) : (
               ''
             )}
-            {user.is_manager ? (
+            {user.is_manager || user.is_company || user.is_excecutive ? (
               <div className="chart simple_chart">
-                <div className="title">Distributors sales {monthName}</div>
+                {user.is_manager || user.is_excecutive ? (
+                  <div className="title">Distributors sales {monthName}</div>
+                ) : user.is_company ? (
+                  <div className="title">Manager sales {monthName}</div>
+                ) : (
+                  ''
+                )}
+
                 <ManagerAllDistributorPieChart
                   user={user}
                   info={userDelails}
@@ -208,35 +276,38 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            <div
-              style={{
-                height: 'max-content',
-                padding: 25,
-                boxSizing: 'border-box',
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              <PendingInvoices />
+        {user.is_distributor || user.is_salesref ? (
+          <div className="page__pcont__row">
+            <div className="page__pcont__row__col">
+              <div
+                style={{
+                  height: 'max-content',
+                  padding: 25,
+                  boxSizing: 'border-box',
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <PendingInvoices data={data.pending} />
+              </div>
+            </div>
+            <div className="page__pcont__row__col">
+              <div
+                style={{
+                  height: 'max-content',
+                  padding: 25,
+                  boxSizing: 'border-box',
+                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                  boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <TotalCredit data={data.credit} />
+              </div>
             </div>
           </div>
-          <div className="page__pcont__row__col">
-            <div
-              style={{
-                height: 'max-content',
-                padding: 25,
-                boxSizing: 'border-box',
-                backgroundColor: 'rgba(255, 255, 255, 1)',
-                boxShadow: '0px 0px 0px 1px rgba(0, 0, 0, 0.3)',
-              }}
-            >
-              <TotalCredit />
-            </div>
-          </div>
-        </div>
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );

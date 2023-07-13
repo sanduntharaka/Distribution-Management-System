@@ -89,7 +89,7 @@ const DealerPaymentPattern = () => {
   const handleShowFilter = (e) => {
     e.preventDefault();
     setLoading(true);
-
+    setDateByData([]);
     axiosInstance
       .post(
         `/reports/dealer-pattern/payment/distributor/data/${

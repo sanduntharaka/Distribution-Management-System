@@ -161,12 +161,14 @@ const ShowDealers = () => {
   };
 
   const handleEditDetails = (e, value) => {
+    console.log(value);
     setItemDetails({
       id: value.id,
       name: value.name,
       contact_number: value.contact_number,
       address: value.address,
       owner_name: value.owner_name,
+
       company_number: value.company_number,
       owner_personal_number: value.owner_personal_number,
       owner_home_number: value.owner_home_number,

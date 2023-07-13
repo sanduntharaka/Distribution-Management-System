@@ -69,7 +69,7 @@ const ReportsTab = () => {
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
         >
-          Stock report
+          Current Stock report
         </div>
         <div
           className={`item ${selected === 2 ? 'selected' : ''}`}

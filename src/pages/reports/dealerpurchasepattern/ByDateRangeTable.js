@@ -42,6 +42,8 @@ const tableIcons = {
 const ByDateRangeTable = (props) => {
   const columns = [
     { title: 'Item code', field: 'item_code' },
+    { title: 'Item description', field: 'description' },
+
     { title: 'Qty', field: 'qty' },
     { title: 'Foc', field: 'foc' },
     { title: 'Price', field: 'price' },

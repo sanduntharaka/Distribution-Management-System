@@ -6,6 +6,7 @@ import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ConfimBill from './confim_bill/ConfimBill';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
 
 import SearchSpinner from '../../components/loadingSpinner/SearchSpinner';
 
@@ -721,12 +722,14 @@ const CreateBill = ({ inventory }) => {
                           <td>{item.discount}</td>
 
                           <td className="action">
-                            <button
-                              className="btnDelete"
-                              onClick={(e) => handleRemove(e, i)}
+                            <div
+                            // className="btnDelete"
                             >
-                              remove
-                            </button>
+                              <DeleteOutline
+                                className="btnDelete hand"
+                                onClick={(e) => handleRemove(e, i)}
+                              />
+                            </div>
                           </td>
                         </tr>
                       ))}

@@ -34,9 +34,13 @@ const SalesReport = (props) => {
   });
   const [categoryBy, setCategoryBy] = useState({
     category: '-1',
+    date_from: '',
+    date_to: '',
   });
   const [productBy, setProductBy] = useState({
     product: '-1',
+    date_from: '',
+    date_to: '',
   });
   const [loading, setLoading] = useState(false);
   const [dateByData, setDateByData] = useState([]);
@@ -111,8 +115,8 @@ const SalesReport = (props) => {
 
   const exportByDate = (e) => {
     e.preventDefault();
-    const columnOrder = ['date', 'total'];
-    const columnTitles = ['Date', 'Value'];
+    const columnOrder = ['code', 'date', 'total'];
+    const columnTitles = ['Invoice', 'Date', 'Value'];
 
     const file_name = 'salesreport_by_date.xlsx';
     const totalValue = dateByData.reduce((sum, item) => sum + item.total, 0);
@@ -255,7 +259,7 @@ const SalesReport = (props) => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeTable data={dateByData} />
+              <ByDateRangeTable data={dateByData} loading={loading} />
             </div>
           </div>
         </div>
@@ -268,11 +272,33 @@ const SalesReport = (props) => {
         </div>
         <div className="page__pcont__row ">
           <div className="page__pcont__row__col">
-            <p>Filter by Category</p>
+            <p>Filter sales items by category</p>
           </div>
         </div>
         <div className="form">
           <div className="form__row">
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setCategoryBy({ ...categoryBy, date_from: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setCategoryBy({ ...categoryBy, date_to: e.target.value })
+                  }
+                />
+              </div>
+            </div>
             <div className="form__row__col">
               <div className="form__row__col__label">Category</div>
               <div className="form__row__col__input">
@@ -309,7 +335,7 @@ const SalesReport = (props) => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByCategoryTable data={categoryByData} />
+              <ByCategoryTable data={categoryByData} loading={loading} />
             </div>
           </div>
         </div>
@@ -322,11 +348,33 @@ const SalesReport = (props) => {
         </div>
         <div className="page__pcont__row ">
           <div className="page__pcont__row__col">
-            <p>Filter by product</p>
+            <p>Filter sales items by itemcodes</p>
           </div>
         </div>
         <div className="form">
           <div className="form__row">
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setProductBy({ ...productBy, date_from: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setProductBy({ ...productBy, date_to: e.target.value })
+                  }
+                />
+              </div>
+            </div>
             <div className="form__row__col">
               <div className="form__row__col__label">Product</div>
               <div className="form__row__col__input">
@@ -363,7 +411,7 @@ const SalesReport = (props) => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByProductTable data={productByData} />
+              <ByProductTable data={productByData} loading={loading} />
             </div>
           </div>
         </div>

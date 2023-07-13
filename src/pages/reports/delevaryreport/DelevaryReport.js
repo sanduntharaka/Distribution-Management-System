@@ -35,6 +35,10 @@ const DelevaryReport = () => {
     category: '-1',
   });
   const [loading, setLoading] = useState(false);
+
+  const [dateLoading, setDateLoading] = useState(false);
+  const [cateLoading, setCateLoading] = useState(false);
+
   const [dateByData, setDateByData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [categoryByData, setCategoryByData] = useState([]);
@@ -59,7 +63,7 @@ const DelevaryReport = () => {
   }, []);
   const handleDateByFilter = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setDateLoading(true);
 
     axiosInstance
       .post(
@@ -75,19 +79,34 @@ const DelevaryReport = () => {
         }
       )
       .then((res) => {
-        setLoading(false);
-        setDateByData(res.data);
+        setDateLoading(false);
+
+        const result = Object.values(
+          res.data.reduce((acc, item) => {
+            const { date, total } = item;
+
+            if (acc[date]) {
+              acc[date].total += total;
+              acc[date].count += 1;
+            } else {
+              acc[date] = { ...item };
+              acc[date].count = 1;
+            }
+            return acc;
+          }, {})
+        );
+        setDateByData(result);
       })
       .catch((err) => {
-        setLoading(false);
+        setDateLoading(false);
         console.log(err);
       });
   };
 
   const exportByDate = (e) => {
     e.preventDefault();
-    const columnOrder = ['date', 'total'];
-    const columnTitles = ['Date', 'Value'];
+    const columnOrder = ['date', 'total', 'count'];
+    const columnTitles = ['Date', 'Value', 'Pc'];
 
     const file_name = 'deleveryreport_by_date.xlsx';
     const totalValue = dateByData.reduce((sum, item) => sum + item.total, 0);
@@ -102,7 +121,7 @@ const DelevaryReport = () => {
 
   const handleCategoryByFilter = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setCateLoading(true);
 
     axiosInstance
       .post(
@@ -118,11 +137,11 @@ const DelevaryReport = () => {
         }
       )
       .then((res) => {
-        setLoading(false);
+        setCateLoading(false);
         setCategoryByData(res.data);
       })
       .catch((err) => {
-        setLoading(false);
+        setCateLoading(false);
         console.log(err);
       });
   };
@@ -203,7 +222,7 @@ const DelevaryReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeTable data={dateByData} />
+              <ByDateRangeTable data={dateByData} loading={dateLoading} />
             </div>
           </div>
         </div>
@@ -257,7 +276,7 @@ const DelevaryReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByCategoryTable data={categoryByData} />
+              <ByCategoryTable data={categoryByData} loading={cateLoading} />
             </div>
           </div>
         </div>

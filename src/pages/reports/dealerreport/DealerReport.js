@@ -102,7 +102,7 @@ const DealerReport = () => {
 
       axiosInstance
         .get(
-          `/reports/delaerdetails/by/distributor/${
+          `/reports/delaerdetails/by/${
             JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {

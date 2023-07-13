@@ -21,6 +21,25 @@
   display: block;
   color: black;
   font-size: 12px;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #000f80 #ffffff;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #000f80;
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 50px;
+  }
 }
 .row {
   margin-bottom: 10px;

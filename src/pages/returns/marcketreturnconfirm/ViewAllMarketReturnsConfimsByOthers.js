@@ -1,8 +1,8 @@
 import React, { useEffect, useState, forwardRef } from 'react';
-import { axiosInstance } from '../../axiosInstance';
+import { axiosInstance } from '../../../axiosInstance';
 import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
-import Message from '../../components/message/Message';
+import Message from '../../../components/message/Message';
 import { CgDetailsMore } from 'react-icons/cg';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
@@ -20,17 +20,22 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import ViewBill from './confim_bill/ViewBill';
+
 import RecommendIcon from '@mui/icons-material/Recommend';
+import ConfirmStatus from './ConfirmStatus';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
   Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => (
+    <DeleteOutline {...props} ref={ref} style={{ color: 'red' }} />
+  )),
   DetailPanel: forwardRef((props, ref) => (
     <ChevronRight {...props} ref={ref} />
   )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Edit: forwardRef((props, ref) => (
+    <Edit {...props} ref={ref} style={{ color: 'orange' }} />
+  )),
   Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
   Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
   FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
@@ -47,8 +52,8 @@ const tableIcons = {
   Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
 
-const ViewBillByOthers = ({ user }) => {
-  const [data, setData] = useState([]);
+const ViewAllMarketReturnsConfimsByOthers = () => {
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
@@ -56,24 +61,23 @@ const ViewBillByOthers = ({ user }) => {
       field: 'rowIndex',
       render: (rowData) => rowData?.tableData?.id + 1,
     },
-    { title: 'Added_by', field: 'added_by' },
+    { title: 'Added by', field: 'added_name' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
-
-    { title: 'Status', field: 'status' },
+    { title: 'Total', field: 'psa_name' },
   ];
-  const [loading, setLoading] = useState(false);
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [distributors, setDistributors] = useState([]);
+
+  //edit-details
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -81,10 +85,6 @@ const ViewBillByOthers = ({ user }) => {
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  const [invoice, setInvoice] = useState();
-  const [items, setItems] = useState();
-  const [dataSingle, setSataSingle] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -103,7 +103,6 @@ const ViewBillByOthers = ({ user }) => {
           setDistributors(res.data);
         })
         .catch((err) => {
-          setDetailsOpen(false);
           setLoading(false);
           setSuccess(false);
           setError(true);
@@ -130,7 +129,7 @@ const ViewBillByOthers = ({ user }) => {
         })
         .catch((err) => {
           setLoading(false);
-          setDetailsOpen(false);
+
           setSuccess(false);
           setError(true);
           setMsg('You have not any distributor assigned');
@@ -156,7 +155,7 @@ const ViewBillByOthers = ({ user }) => {
         })
         .catch((err) => {
           setLoading(false);
-          setDetailsOpen(false);
+
           setSuccess(false);
           setError(true);
           setMsg('Cannot find any istributor');
@@ -166,52 +165,45 @@ const ViewBillByOthers = ({ user }) => {
           console.log(err);
         });
     }
+    if (user.is_salesref) {
+      setLoading(true);
+      axiosInstance
+        .get(`distributor/salesref/get/distributor/by/salesref/${user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          handleFilterInventory(res.data.distributor_id);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          setSuccess(false);
+          setError(true);
+          setMsg('You have not any distributor assigned');
+          setTitle('Error');
+          setMessageOpen(true);
+          handleModalOpen();
+          console.log(err);
+        });
+    }
   }, [messageOpen, success]);
 
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    setInvoice(value);
-    setSataSingle(value);
-    axiosInstance
-      .get(`/salesref/invoice/items/${value.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setItems(res.data);
-        setMessageOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
-      })
-      .catch((err) => {
-        console.log(err);
-        setDetailsOpen(false);
-        setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot find any items');
-        setTitle('Error');
-        setMessageOpen(true);
-        handleModalOpen();
-      });
-  };
-
-  const handleFilterInventory = (e) => {
-    if (e.target.value !== '') {
+  const handleFilterInventory = (value) => {
+    if (value !== '') {
       setLoading(true);
 
       axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/others/distributor/${e.target.value}`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
+        .get(`/salesref/return/get/pending/distributor/${value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
         .then((res) => {
           setLoading(false);
           setTableData(res.data);
@@ -219,36 +211,49 @@ const ViewBillByOthers = ({ user }) => {
         .catch((err) => {
           setLoading(false);
           setTableData([]);
-
           console.log(err);
         });
     }
   };
-  const MyInvoice = React.forwardRef((props, ref) => {
+
+  const [invoice, setInvoice] = useState();
+
+  const handleConfirmDetails = (e, value) => {
+    setInvoice(value);
+    setMessageOpen(false);
+    setEditDetailsOpen(true);
+    handleModalOpen();
+  };
+
+  const MyInvoiceConfirm = React.forwardRef((props, ref) => {
     return (
-      <ViewBill
-        issued_by={props.issued_by}
-        items={props.items}
+      <ConfirmStatus
         invoice={props.invoice}
-        data={props.data}
+        openMsg={props.openMsg}
+        msgSuccess={props.msgSuccess}
+        msgErr={props.msgErr}
+        msgTitle={props.msgTitle}
+        msg={props.msg}
+        showEdit={props.showEdit}
+        closeModal={props.closeModal}
         user={props.user}
-        close={() => props.handleClose()}
       />
     );
   });
-
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
-        {detailsOpen ? (
-          <MyInvoice
-            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
-            items={items}
+        {editdetailsOpen ? (
+          <MyInvoiceConfirm
             invoice={invoice}
-            oldinv={false}
-            data={dataSingle}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showEdit={setEditDetailsOpen}
+            closeModal={handleModalClose}
             user={user}
-            handleClose={handleModalClose}
           />
         ) : messageOpen ? (
           <Message
@@ -263,37 +268,41 @@ const ViewBillByOthers = ({ user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View All Pending Market Returns</p>
       </div>
       <div className="page__pcont">
-        <div className="form">
-          <div className="page__pcont__row">
-            <div className="page__pcont__row__col">
-              <div className="form__row">
-                <div className="form__row__col">
-                  <div className="form__row__col__label">Distributor</div>
-                  <div className="form__row__col__input">
-                    <select
-                      defaultValue={''}
-                      onChange={handleFilterInventory}
-                      required
-                    >
-                      <option value="">Select distributor</option>
-                      {distributors.map((item, i) => (
-                        <option value={item.id} key={i}>
-                          {item.full_name}
-                        </option>
-                      ))}
-                    </select>
+        {!user.is_salesref ? (
+          <div className="form">
+            <div className="page__pcont__row">
+              <div className="page__pcont__row__col">
+                <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Distributor</div>
+                    <div className="form__row__col__input">
+                      <select
+                        defaultValue={''}
+                        onChange={(e) => handleFilterInventory(e.target.value)}
+                        required
+                      >
+                        <option value="">Select distributor</option>
+                        {distributors.map((item, i) => (
+                          <option value={item.id} key={i}>
+                            {item.full_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
+                  <div className="form__row__col dontdisp"></div>
+                  <div className="form__row__col dontdisp"></div>
+                  <div className="form__row__col dontdisp"></div>
                 </div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          ''
+        )}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -319,26 +328,26 @@ const ViewBillByOthers = ({ user }) => {
                 icons={tableIcons}
                 actions={[
                   {
-                    icon: CgDetailsMore,
-                    tooltip: 'View details',
+                    icon: RecommendIcon,
+                    tooltip: 'Confirm',
                     onClick: (event, rowData) =>
-                      handleViewDetails(event, rowData),
+                      handleConfirmDetails(event, rowData),
                   },
                 ]}
                 components={{
                   Action: (props) => (
                     <React.Fragment>
-                      {props.action.icon === CgDetailsMore ? (
+                      {props.action.icon === RecommendIcon ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
                           }
                           color="primary"
-                          style={{ color: 'green' }} // customize the icon color
+                          style={{ color: 'orange' }} // customize the icon color
                           size="small"
                           aria-label={props.action.tooltip}
                         >
-                          <CgDetailsMore />
+                          <RecommendIcon />
                         </IconButton>
                       ) : (
                         ''
@@ -354,5 +363,4 @@ const ViewBillByOthers = ({ user }) => {
     </div>
   );
 };
-
-export default ViewBillByOthers;
+export default ViewAllMarketReturnsConfimsByOthers;

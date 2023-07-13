@@ -149,7 +149,7 @@ const ViewAllExecutiveDistributors = (props) => {
             msg={setMsg}
             showConfirm={setDeleteDetailsOpen}
             closeModal={handleModalClose}
-            url={'/executive/manager/delete'}
+            url={'/executive/distributor/delete'}
           />
         ) : messageOpen ? (
           <Message

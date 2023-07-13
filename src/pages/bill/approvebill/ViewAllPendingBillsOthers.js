@@ -204,6 +204,7 @@ const ViewAllPendingBillsOthers = ({ user }) => {
         })
         .catch((err) => {
           setLoading(false);
+          setTableData([]);
 
           console.log(err);
         });
@@ -287,6 +288,12 @@ const ViewAllPendingBillsOthers = ({ user }) => {
                 icons={tableIcons}
               />
             </div>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>Rs {tblData.reduce((sum, item) => sum + item.total, 0)}/-</p>
           </div>
         </div>
       </div>

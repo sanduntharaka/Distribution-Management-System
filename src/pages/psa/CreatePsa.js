@@ -89,7 +89,7 @@ const CreatePsa = (props) => {
           msg={msg}
         />
       </Modal>
-      {props.user.is_manager || props.user.is_company ? (
+      {props.user.is_manager || props.user.is_distributor ? (
         <>
           <div className="page__title">
             <p>Create Primary Sales Area</p>

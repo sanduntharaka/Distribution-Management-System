@@ -119,6 +119,7 @@ const DealerPurchasePattern = () => {
     e.preventDefault();
     const columnOrder = [
       'item_code',
+      'description',
       'qty',
       'foc',
       'price',
@@ -127,6 +128,7 @@ const DealerPurchasePattern = () => {
     ];
     const columnTitles = [
       'Item code',
+      'Item description',
       'Qty',
       'Foc',
       'Price',

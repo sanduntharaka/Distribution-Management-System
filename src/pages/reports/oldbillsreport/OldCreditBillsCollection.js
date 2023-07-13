@@ -33,6 +33,9 @@ const OldCreditBillsCollection = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [creditLoading, setCreditLoading] = useState(false);
+
   const [dateByDataInv, setDateByDataInv] = useState([]);
   const [dateByDataCheque, setDateByDataCheque] = useState([]);
 
@@ -40,7 +43,7 @@ const OldCreditBillsCollection = () => {
 
   const handleDateByFilter = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setMarketLoading(true);
 
     axiosInstance
       .post(
@@ -56,19 +59,19 @@ const OldCreditBillsCollection = () => {
         }
       )
       .then((res) => {
-        setLoading(false);
-        console.log(res.data);
+        setMarketLoading(false);
+
         setDateByDataInv(res.data);
       })
       .catch((err) => {
-        setLoading(false);
+        setMarketLoading(false);
         console.log(err);
       });
   };
 
   const handleDateByFilterCheque = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setCreditLoading(true);
 
     axiosInstance
       .post(
@@ -84,12 +87,11 @@ const OldCreditBillsCollection = () => {
         }
       )
       .then((res) => {
-        setLoading(false);
-        console.log(res.data);
+        setCreditLoading(false);
         setDateByDataCheque(res.data);
       })
       .catch((err) => {
-        setLoading(false);
+        setCreditLoading(false);
         console.log(err);
       });
   };
@@ -181,7 +183,7 @@ const OldCreditBillsCollection = () => {
   return (
     <div className="page">
       <div className="page__title">
-        <p>Old Credit bills collection report (Invoice)</p>
+        <p>Old Credit bills collection report (Market credit)</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row ">
@@ -230,7 +232,10 @@ const OldCreditBillsCollection = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeInvoiceTable data={dateByDataInv} />
+              <ByDateRangeInvoiceTable
+                data={dateByDataInv}
+                loading={marketLoading}
+              />
             </div>
           </div>
         </div>
@@ -256,7 +261,7 @@ const OldCreditBillsCollection = () => {
         </div>
       </div>
       <div className="page__title">
-        <p>Old Credit bills collection report (cheque)</p>
+        <p>Old Credit bills collection report (PD cheques)</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row ">
@@ -305,7 +310,10 @@ const OldCreditBillsCollection = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeChequeTable data={dateByDataCheque} />
+              <ByDateRangeChequeTable
+                data={dateByDataCheque}
+                loading={creditLoading}
+              />
             </div>
           </div>
         </div>

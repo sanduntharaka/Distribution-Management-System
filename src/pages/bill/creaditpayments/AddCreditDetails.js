@@ -50,7 +50,6 @@ const tableIcons = {
 
 const AddCreditDetails = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
-  const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
@@ -71,21 +70,13 @@ const AddCreditDetails = () => {
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => setModalOpen(false);
-
-  //details
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [itemDetails, setItemDetails] = useState();
+  const handleModalClose = () => {
+    setModalOpen(false);
+    window.location.reload();
+  };
 
   //edit-details
   const [editdetailsOpen, setEditDetailsOpen] = useState(false);
-
-  //delete-details
-  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
-
-  //filter_lists
-  const [sales_refs, setSales_refs] = useState([]);
-  const [distributors, setDistributors] = useState([]);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -93,15 +84,6 @@ const AddCreditDetails = () => {
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     axiosInstance
@@ -117,76 +99,18 @@ const AddCreditDetails = () => {
         }
       )
       .then((res) => {
-        setData(res.data);
         setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!sales_refs.includes(item.sales_ref)) {
-            sales_refs.push(item.sales_ref);
-          }
-        });
-        res.data.forEach((item) => {
-          if (!distributors.includes(item.distributor)) {
-            distributors.push(item.distributor);
-          }
-        });
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [messageOpen]);
+  }, [success]);
+
   const [invoice, setInvoice] = useState();
-  const [items, setItems] = useState();
-  const [dataSingle, setSataSingle] = useState();
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    setInvoice(value);
-    setSataSingle(value);
-    axiosInstance
-      .get(`/salesref/invoice/items/${value.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setItems(res.data);
-        setMessageOpen(false);
-        setEditDetailsOpen(false);
-        setDeleteDetailsOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
-  const handleEditDetails = (e, value) => {
-    setInvoice({
-      id: value.id,
-      name: value.name,
-      contact_number: value.contact_number,
-      address: value.address,
-      owner_name: value.owner_name,
-      company_number: value.company_number,
-      owner_personal_number: value.owner_personal_number,
-      owner_home_number: value.owner_home_number,
-      assistant_name: value.assistant_name,
-      assistant_contact_number: value.assistant_contact_number,
-      added: value.added,
-    });
-
-    setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
-    setEditDetailsOpen(true);
-    handleModalOpen();
-  };
   const handleConfirmDetails = (e, value) => {
     setInvoice(value);
     setMessageOpen(false);
-    setDeleteDetailsOpen(false);
-    setDetailsOpen(false);
     setEditDetailsOpen(true);
     handleModalOpen();
   };

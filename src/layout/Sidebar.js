@@ -192,21 +192,18 @@ const Sidebar = () => {
             <div className="container__list__item__name">sales return</div>
           </NavLink>
 
-          {user.is_distributor || user.is_manager || user.is_salesref ? (
-            <NavLink
-              to="/leave"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <AiOutlineFieldTime />
-              </div>
-              <div className="container__list__item__name">leave</div>
-            </NavLink>
-          ) : (
-            ''
-          )}
+          <NavLink
+            to="/leave"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <AiOutlineFieldTime />
+            </div>
+            <div className="container__list__item__name">leave</div>
+          </NavLink>
+
           {user.is_superuser || user.is_distributor || user.is_manager ? (
             <NavLink
               to="/report"

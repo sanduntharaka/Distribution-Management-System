@@ -19,6 +19,7 @@ const ApproveLeave = (props) => {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
+        timeout: 50000,
       })
       .then((res) => {
         console.log(res);
@@ -42,6 +43,10 @@ const ApproveLeave = (props) => {
         props.openMsg(true);
       });
   };
+
+  const handleClose = () => {
+    props.closeModal();
+  };
   return (
     <div className="confirm">
       <div className="confirm__content">
@@ -56,7 +61,7 @@ const ApproveLeave = (props) => {
           <button className="btnEdit" onClick={handleClickDelete}>
             <p>Approve</p>
           </button>
-          <button className="addBtn">
+          <button className="addBtn" onClick={handleClose}>
             <p>Cancel</p>
           </button>
           {loading ? <Spinner page={true} /> : ''}

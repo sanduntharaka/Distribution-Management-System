@@ -20,8 +20,9 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import ViewBill from './confim_bill/ViewBill';
-import RecommendIcon from '@mui/icons-material/Recommend';
+import Spinner from '../../components/loadingSpinner/Spinner';
+import LeaveDetails from '../../components/details/LeaveDetails';
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -44,11 +45,10 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-  Recommend: forwardRef((props, ref) => <RecommendIcon {...props} ref={ref} />),
 };
-
-const ViewBillByOthers = ({ user }) => {
-  const [data, setData] = useState([]);
+const AllLeaves = () => {
+  const [loading, setLoading] = useState(false);
+  const user = JSON.parse(sessionStorage.getItem('user'));
   const [tblData, setTableData] = useState([]);
   const columns = [
     {
@@ -56,15 +56,15 @@ const ViewBillByOthers = ({ user }) => {
       field: 'rowIndex',
       render: (rowData) => rowData?.tableData?.id + 1,
     },
-    { title: 'Added_by', field: 'added_by' },
-    { title: 'Bill No', field: 'code' },
-    { title: 'Date', field: 'date' },
-    { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
-
-    { title: 'Status', field: 'status' },
+    { title: 'Name', field: 'applicant' },
+    { title: 'Designation', field: 'designation' },
+    { title: 'Apply Date', field: 'leave_apply_date' },
+    { title: 'End Date', field: 'leave_end_date' },
+    { title: 'No of  Dates', field: 'number_of_dates' },
+    { title: 'Type', field: 'leave_type' },
+    { title: 'Approved', field: 'leave_status' },
   ];
-  const [loading, setLoading] = useState(false);
+
   //modal
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -72,8 +72,16 @@ const ViewBillByOthers = ({ user }) => {
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [itemDetails, setItemDetails] = useState();
 
-  const [distributors, setDistributors] = useState([]);
+  //edit-details
+  const [editdetailsOpen, setEditDetailsOpen] = useState(false);
+
+  //delete-details
+  const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
+
+  //approve details
+  const [approvedetailsOpen, setApproveDetailsOpen] = useState(false);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -82,173 +90,69 @@ const ViewBillByOthers = ({ user }) => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  const [invoice, setInvoice] = useState();
-  const [items, setItems] = useState();
-  const [dataSingle, setSataSingle] = useState();
-
   useEffect(() => {
     setLoading(true);
-    if (user.is_manager) {
-      setLoading(true);
-      axiosInstance
-        .get(`/users/distributors/by/manager/${user.id}`, {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        })
-        .then((res) => {
-          setLoading(false);
-
-          setDistributors(res.data);
-        })
-        .catch((err) => {
-          setDetailsOpen(false);
-          setLoading(false);
-          setSuccess(false);
-          setError(true);
-          setMsg('You have not any distributor assigned');
-          setTitle('Error');
-          setMessageOpen(true);
-          handleModalOpen();
-          console.log(err);
-        });
-    }
-    if (user.is_excecutive) {
-      setLoading(true);
-      axiosInstance
-        .get(`/users/distributors/by/executive/${user.id}`, {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        })
-        .then((res) => {
-          setLoading(false);
-
-          setDistributors(res.data);
-        })
-        .catch((err) => {
-          setLoading(false);
-          setDetailsOpen(false);
-          setSuccess(false);
-          setError(true);
-          setMsg('You have not any distributor assigned');
-          setTitle('Error');
-          setMessageOpen(true);
-          handleModalOpen();
-          console.log(err);
-        });
-    }
-    if (user.is_company) {
-      setLoading(true);
-      axiosInstance
-        .get(`/users/distributors/`, {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        })
-        .then((res) => {
-          setLoading(false);
-
-          setDistributors(res.data);
-        })
-        .catch((err) => {
-          setLoading(false);
-          setDetailsOpen(false);
-          setSuccess(false);
-          setError(true);
-          setMsg('Cannot find any istributor');
-          setTitle('Error');
-          setMessageOpen(true);
-          handleModalOpen();
-          console.log(err);
-        });
-    }
-  }, [messageOpen, success]);
-
-  const handleViewDetails = (e, value) => {
-    e.preventDefault();
-    setInvoice(value);
-    setSataSingle(value);
     axiosInstance
-      .get(`/salesref/invoice/items/${value.id}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
+      .get(
+        `/leave/all/${JSON.parse(sessionStorage.getItem('user_details')).id}`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
       .then((res) => {
-        setItems(res.data);
-        setMessageOpen(false);
-        setDetailsOpen(true);
-        handleModalOpen();
+        setLoading(false);
+        setTableData(res.data);
       })
       .catch((err) => {
         console.log(err);
-        setDetailsOpen(false);
         setLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot find any items');
-        setTitle('Error');
-        setMessageOpen(true);
-        handleModalOpen();
       });
+  }, [success]);
+
+  const handleViewDetails = (e, value) => {
+    e.preventDefault();
+    console.log(value);
+    setItemDetails({
+      id: value.id,
+      is_annual: value.is_annual,
+      is_casual: value.is_casual,
+      leave_apply_date: value.leave_apply_date,
+      is_sick: value.is_sick,
+      leave_end_date: value.leave_end_date,
+      leave_status: value.leave_status,
+      leave_type: value.leave_type,
+      number_of_dates: value.number_of_dates,
+      reason: value.reason,
+      created_by: value.created_by,
+      return_to_work: value.return_to_work,
+      salesref: value.salesref,
+    });
+    setMessageOpen(false);
+    setDetailsOpen(true);
+    handleModalOpen();
   };
-
-  const handleFilterInventory = (e) => {
-    if (e.target.value !== '') {
-      setLoading(true);
-
-      axiosInstance
-        .get(
-          `/salesref/invoice/all/invoice/by/others/distributor/${e.target.value}`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setLoading(false);
-          setTableData(res.data);
-        })
-        .catch((err) => {
-          setLoading(false);
-          setTableData([]);
-
-          console.log(err);
-        });
-    }
-  };
-  const MyInvoice = React.forwardRef((props, ref) => {
-    return (
-      <ViewBill
-        issued_by={props.issued_by}
-        items={props.items}
-        invoice={props.invoice}
-        data={props.data}
-        user={props.user}
-        close={() => props.handleClose()}
-      />
-    );
-  });
 
   return (
-    <div className="page">
+    <div>
+      {loading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )}
       <Modal open={modalOpen} onClose={handleModalClose}>
         {detailsOpen ? (
-          <MyInvoice
-            issued_by={JSON.parse(sessionStorage.getItem('user_details'))}
-            items={items}
-            invoice={invoice}
-            oldinv={false}
-            data={dataSingle}
+          <LeaveDetails
+            data={itemDetails}
+            showDetails={setDetailsOpen}
+            closeModal={handleModalClose}
             user={user}
-            handleClose={handleModalClose}
           />
         ) : messageOpen ? (
           <Message
@@ -263,37 +167,9 @@ const ViewBillByOthers = ({ user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View All Leaves</p>
       </div>
       <div className="page__pcont">
-        <div className="form">
-          <div className="page__pcont__row">
-            <div className="page__pcont__row__col">
-              <div className="form__row">
-                <div className="form__row__col">
-                  <div className="form__row__col__label">Distributor</div>
-                  <div className="form__row__col__input">
-                    <select
-                      defaultValue={''}
-                      onChange={handleFilterInventory}
-                      required
-                    >
-                      <option value="">Select distributor</option>
-                      {distributors.map((item, i) => (
-                        <option value={item.id} key={i}>
-                          {item.full_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
@@ -301,7 +177,6 @@ const ViewBillByOthers = ({ user }) => {
                 title={false}
                 columns={columns}
                 data={tblData}
-                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',
@@ -355,4 +230,4 @@ const ViewBillByOthers = ({ user }) => {
   );
 };
 
-export default ViewBillByOthers;
+export default AllLeaves;

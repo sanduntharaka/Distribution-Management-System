@@ -47,7 +47,12 @@ const StockTable = (props) => {
     { title: 'Whole sale price', field: 'whole_sale_price' },
     { title: 'Retail price', field: 'retail_price' },
     { title: 'Foc', field: 'foc' },
-    { title: 'Value', field: 'qty' },
+    { title: 'Qty', field: 'qty' },
+
+    {
+      title: 'Value',
+      field: 'value',
+    },
   ];
 
   return (

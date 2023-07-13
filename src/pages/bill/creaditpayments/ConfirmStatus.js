@@ -32,7 +32,7 @@ const ConfirmStatus = (props) => {
     amount: 0,
     cheque_date: '',
     deposited_at: currentDate,
-    cheque_status: '',
+    cheque_status: 'pending',
   });
   const handleConfirm = (e) => {
     e.preventDefault();

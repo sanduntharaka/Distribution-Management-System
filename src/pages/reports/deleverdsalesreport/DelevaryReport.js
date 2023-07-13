@@ -32,12 +32,14 @@ const DistributorDeleveredSalesReport = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [dateLoading, setDateLoading] = useState(false);
+
   const [dateByData, setDateByData] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const handleDateByFilter = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setDateLoading(true);
 
     axiosInstance
       .post(
@@ -53,12 +55,11 @@ const DistributorDeleveredSalesReport = () => {
         }
       )
       .then((res) => {
-        setLoading(false);
-        console.log(res.data);
+        setDateLoading(false);
         setDateByData(res.data);
       })
       .catch((err) => {
-        setLoading(false);
+        setDateLoading(false);
         console.log(err);
       });
   };
@@ -130,7 +131,7 @@ const DistributorDeleveredSalesReport = () => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
-              <ByDateRangeTable data={dateByData} />
+              <ByDateRangeTable data={dateByData} loading={dateLoading} />
             </div>
           </div>
         </div>

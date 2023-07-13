@@ -6,6 +6,8 @@ import { axiosInstance } from '../../axiosInstance';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ConfimReceipt from './bill/ConfimReceipt';
 import SearchSpinner from '../../components/loadingSpinner/SearchSpinner';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+
 const MyMessage = React.forwardRef((props, ref) => {
   return (
     <Message
@@ -666,12 +668,12 @@ const CreateReturn = ({ inventory }) => {
                         <td>{item.reason}</td>
 
                         <td className="action">
-                          <button
-                            className="btnDelete"
-                            onClick={(e) => handleRemove(e, item.id)}
-                          >
-                            remove
-                          </button>
+                          <div>
+                            <DeleteOutline
+                              className="btnDelete hand"
+                              onClick={(e) => handleRemove(e, item.id)}
+                            />
+                          </div>
                         </td>
                       </tr>
                     ))}
