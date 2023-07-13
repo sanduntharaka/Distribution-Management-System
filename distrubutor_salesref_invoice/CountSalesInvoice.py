@@ -30,6 +30,10 @@ class CountSalesInvoiceAll:
                 date=previous_date_str, dis_sales_ref__distributor__in=self.salesre_distributors_ids).all()
 
         if user_type == 'salesref':
+            salesre_distributors = SalesRefDistributor.objects.filter(
+                sales_ref=user_details).values('distributor')
+            self.salesre_distributors_ids = [salesre_distributor['distributor']
+                                             for salesre_distributor in salesre_distributors]
             self.invoices = SalesRefInvoice.objects.filter(
                 date=date, dis_sales_ref__sales_ref=user_details, added_by=user_details).all()
             self.previnvoices = SalesRefInvoice.objects.filter(

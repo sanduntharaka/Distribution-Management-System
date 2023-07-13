@@ -126,6 +126,8 @@ def today_as_saleref(request, *args, **kwargs):
     total_count_year, total_sales_year, total_balance_year = total.getThisYear()
     total_count_days, total_sales_days = total.getThreeDays()
     tota_p_inv, pending_count, pending_obove = total.getPendingInvoices()
+    tota_c_inv, credit_count, credit_obove = total.getCreditInvoices()
+    print(tota_c_inv)
     data = {
         'sales': {
             'count': total.getCount(),
@@ -153,6 +155,11 @@ def today_as_saleref(request, *args, **kwargs):
             'total': tota_p_inv,
             'count': pending_count,
             'above': pending_obove
+        },
+        'credit_inv': {
+            'total': tota_c_inv,
+            'count': credit_count,
+            'above': credit_obove
         }
 
 
