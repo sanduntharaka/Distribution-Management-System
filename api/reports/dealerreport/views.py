@@ -21,11 +21,11 @@ class AllDealerDetailsBy(APIView):
     def get(self, *args, **kwargs):
         try:
             user_details_id = self.kwargs.get('id')
-
+            user = self.request.user.id
             users = []
-            if self.request.user.is_distributor:
-                user_details = UsersUnderDestributor(user_details_id)
-                users = user_details.get_users_under_to_me_with_me_ids()
+            # if self.request.user.is_distributor:
+            #     user_details = UsersUnderDestributor(user_details_id)
+            #     users = user_details.get_users_under_to_me_with_me_ids()
             # salesrefs = SalesRefDistributor.objects.filter(
             #     distributor=item).values('sales_ref')
             # salesrefs_ids = [salesref['sales_ref']
@@ -37,6 +37,16 @@ class AllDealerDetailsBy(APIView):
             # salesref_users_id = [sf['user']
             #                      for sf in salesref_list]
             # salesref_users_id.append(distributoruser.user.id)
+
+            users.append(user)
+            manager = ManagerDistributor.objects.get(
+                distributor__user=user).manager.user.id
+            users.append(manager)
+            salesrefs = SalesRefDistributor.objects.filter(
+                distributor__user=user).values_list('sales_ref', flat=True)
+            salesref_users_ids = UserDetails.objects.filter(
+                id__in=salesrefs).values_list('user', flat=True)
+            users.extend(salesref_users_ids)
             user_ids = UserDetails.objects.filter(
                 id__in=users).values_list('user', flat=True)
             dealers = Dealer.objects.filter(
