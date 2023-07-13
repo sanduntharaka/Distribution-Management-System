@@ -10,22 +10,26 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 class FilterByDateDistributorInvoice(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
-        date_from = request.data['date_from']
-        date_to = request.data['date_to']
-        by_date = bool(date_from and date_to)
-        filters = {
-            'distributor': item,
-        }
+        try:
+            item = self.kwargs.get('id')
+            date_from = request.data['date_from']
+            date_to = request.data['date_to']
+            by_date = bool(date_from and date_to)
+            filters = {
+                'distributor': item,
+            }
 
-        if by_date:
-            filters['date__range'] = (date_from, date_to)
+            if by_date:
+                filters['date__range'] = (date_from, date_to)
 
-        past_invoices = PastInvoice.objects.filter(**filters)
+            past_invoices = PastInvoice.objects.filter(**filters)
 
-        serializer_inv = serializers.PastInvoiceSerializer(
-            past_invoices, many=True)
-        return Response(serializer_inv.data, status=status.HTTP_200_OK)
+            serializer_inv = serializers.PastInvoiceSerializer(
+                past_invoices, many=True)
+            return Response(serializer_inv.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class FilterByDateDistributorCheque(APIView):
