@@ -26,7 +26,7 @@ class AddNewItems(generics.CreateAPIView):
             'item': item.id,
             'qty': request.data['qty'],
             'pack_size': request.data.get('pack_size', 0),
-            'foc': request.data['foc'],
+            'foc': request.data['free_of_charge'],
             'whole_sale_price': request.data['whole_sale_price'],
             'retail_price': request.data['retail_price'],
             'from_sales_return': request.data.get('from_sales_return', False),
@@ -38,7 +38,8 @@ class AddNewItems(generics.CreateAPIView):
         try:
             item_details_serializer.is_valid(raise_exception=True)
             item_details_serializer.save()
-        except:
+        except Exception as e:
+            print(e)
             item.delete()
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
