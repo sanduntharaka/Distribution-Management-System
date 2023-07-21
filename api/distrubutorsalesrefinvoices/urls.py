@@ -41,8 +41,10 @@ urlpatterns = [
 
     path('create/invoice/items/', views.CreateInvoiceItems.as_view()),
     path('confirm/cheque/<pk>', views.ConfirmCheque.as_view()),
+    path('reject/cheque/', views.ReturnCheque.as_view()),
+
     path('edit/cheque/<pk>', views.EditCheque.as_view()),
-
-
+    path('get/cheque/search', views.GetCheque.as_view()),
 
 ]
+# salesref/invoice/

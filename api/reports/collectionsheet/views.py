@@ -16,6 +16,7 @@ class FilterByDateDistributor(APIView):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
+        salesref = int(request.data['salesref'])
         by_date = bool(date_from and date_to)
         filters = {
             'dis_sales_ref__distributor': item,
@@ -23,6 +24,11 @@ class FilterByDateDistributor(APIView):
         }
         if by_date:
             filters['confirmed_date__range'] = (date_from, date_to)
+
+        if salesref != -1:
+            filters['added_by'] = salesref
+        if salesref == 0:
+            filters['added_by'] = item
         invoices = SalesRefInvoice.objects.filter(**filters).values('id')
 
         invoices_ids = [invoice['id'] for invoice in invoices]
@@ -46,9 +52,9 @@ class FilterByDateDistributor(APIView):
                 detail = date_details[date]
                 if payment_type == 'cash':
                     detail['cash'] = detail.get('cash', 0) + paid_amount
-                elif payment_type == 'cheque':
+                elif payment_type in ['cheque', 'cheque-credit', 'cash-credit-cheque']:
                     detail['cheque'] = detail.get('cheque', 0) + paid_amount
-                elif payment_type in ['credit', 'cash-credit', 'cheque-credit', 'cash-credit-cheque']:
+                elif payment_type in ['credit', 'cash-credit', 'cash-credit-cheque']:
                     detail['credit'] = detail.get('credit', 0) + paid_amount
             else:
                 # If the date is encountered for the first time, create a new detail dictionary
@@ -73,7 +79,6 @@ class FilterByDateDistributor(APIView):
         # serializer = serializers.PyementDetailsSerializer(
         #     payment_details, many=True)
         return Response(data=data, status=status.HTTP_200_OK)
-
 
     # serializer.data,
 [

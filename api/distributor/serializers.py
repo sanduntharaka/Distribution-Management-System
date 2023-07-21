@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock
+from distrubutor_salesref.models import SalesRefDistributor
 
 
 class AddItemsSerializer(serializers.ModelSerializer):
@@ -12,6 +13,25 @@ class AddItemDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemStock
         fields = ('__all__')
+
+    def create(self, validated_data):
+        # Set initial_qty and initial_foc to the current qty and foc values respectively
+        initial_qty = validated_data.get('qty')
+        initial_foc = validated_data.get('foc')
+
+        # Remove initial_qty and initial_foc from the validated data before creating the object
+        # As they are not part of the model fields
+        validated_data.pop('initial_qty', None)
+        validated_data.pop('initial_foc', None)
+
+        # Create the ItemStock object with the updated validated data
+        item_stock = ItemStock.objects.create(
+            initial_qty=initial_qty,
+            initial_foc=initial_foc,
+            **validated_data
+        )
+
+        return item_stock
 
 
 class EditItemsSerializer(serializers.ModelSerializer):
@@ -57,3 +77,12 @@ class GetInventoryItems(serializers.ModelSerializer):
         model = DistributorInventoryItems
         fields = ('id', 'item_code', 'description',
                   'base', 'category_name', 'qty', 'foc', 'category')
+
+
+class MySalesrefs(serializers.ModelSerializer):
+    full_name = serializers.CharField(source='sales_ref.full_name')
+    salesref_id = serializers.CharField(source='sales_ref.id')
+
+    class Meta:
+        model = SalesRefDistributor
+        fields = ('id', 'full_name', 'salesref_id')

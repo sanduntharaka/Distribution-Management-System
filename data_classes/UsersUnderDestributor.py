@@ -10,18 +10,23 @@ class UsersUnderDestributor:
         self.users = []
 
     def get_users_under_to_me_ids(self):
+        """
+        return all users without me. returns as list.
+        ex:- [12, 6, 7, 8]
+        this numbers all user details ids
+        """
         self.users = SalesRefDistributor.objects.filter(
             distributor=self.id).values_list('sales_ref', flat=True)
-        return self.users
+        return list(self.users)
 
     def get_users_under_to_me_with_me_ids(self):
-        self.users.append(self.id)
+        self.users.extend(self.id)
         manager = ManagerDistributor.objects.get(
             distributor=self.id).manager.id
-        self.users.append(manager)
+        self.users.extend(manager)
         executive = ExecutiveDistributor.objects.get(
             distributor=self.id).executive.id
-        self.users.append(executive)
+        self.users.extend(executive)
 
         salesrefs = SalesRefDistributor.objects.filter(
             distributor=self.id).values_list('sales_ref', flat=True)

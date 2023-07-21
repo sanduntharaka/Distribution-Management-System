@@ -7,10 +7,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
     address = serializers.CharField(source='bill.dealer.address')
     invoice_number = serializers.CharField(
         source='bill.get_bill_code_number_combine')
-    balance = serializers.CharField(source='bill.get_balance')
+    balance = serializers.FloatField(source='bill.get_balance')
     confirmed_date = serializers.CharField(
         source='bill.confirmed_date')
-    total = serializers.CharField(
+    total = serializers.FloatField(
         source='bill.total')
 
     class Meta:

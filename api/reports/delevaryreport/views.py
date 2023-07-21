@@ -30,14 +30,24 @@ class FilterByCategoryDistributor(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         category = int(request.data['category'])
+        description = int(request.data['item'])
+        date_from = request.data['date_from']
+        date_to = request.data['date_to']
+        by_date = bool(date_from and date_to)
+
         invoices = SalesRefInvoice.objects.filter(
             dis_sales_ref__distributor=item, status='confirmed')
+
         filters = {
             'bill__in': invoices,
 
         }
         if category != -1:
             filters['item__item__category'] = category
+        if description != -1:
+            filters['item__item__id'] = description
+        if by_date:
+            filters['confirmed_date__range'] = (date_from, date_to)
         items = InvoiceIntem.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

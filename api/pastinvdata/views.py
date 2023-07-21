@@ -80,7 +80,7 @@ class DeleteInvoice(generics.DestroyAPIView):
 
 
 class ViewInvoices(generics.ListAPIView):
-    serializer_class = serializers.AddInvSerializer
+    serializer_class = serializers.ViewInvSerializer
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
@@ -141,7 +141,7 @@ class AddCheque(generics.CreateAPIView):
 
 
 class ViewCheque(generics.ListAPIView):
-    serializer_class = serializers.AddChequeSerializer
+    serializer_class = serializers.ViewChequeSerializer
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')

@@ -1,3 +1,4 @@
+from distrubutor_salesref.models import SalesRefDistributor
 import math
 from item_category.models import Category
 from rest_framework.views import APIView
@@ -322,3 +323,11 @@ class AddItemsExcel(APIView):
             return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors': erros, 'resons': erros_reson}, status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors_count': len(erros), 'error_rows': erros, 'resons': erros_reson}, status=status.HTTP_201_CREATED)
+
+
+class AllSalesrefsByDistributor(generics.ListAPIView):
+    serializer_class = serializers.MySalesrefs
+
+    def get_queryset(self):
+        item = self.kwargs.get('id')
+        return get_list_or_404(SalesRefDistributor, distributor=item)

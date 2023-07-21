@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.backends import TokenBackend
 from executive_distributor.models import ExecutiveDistributor
 from exceutive_manager.models import ExecutiveManager
 from manager_distributor.models import ManagerDistributor
@@ -110,11 +111,19 @@ class GetAll(generics.ListAPIView):
         return get_list_or_404(Dealer, added_by__in=users)
 
 
+class GradeFilterBackend(filters.BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        grade = request.query_params.get('grade')
+        if grade:
+            return queryset.filter(grade=grade)
+        return queryset
+
+
 class GetAllSearch(generics.ListAPIView):
     serializer_class = serializers.GetAllDealersSerializer
     # queryset = Dealer.objects.all()
-    filter_backends = [filters.SearchFilter]
-    search_fields = ('name', 'address')
+    filter_backends = [GradeFilterBackend, filters.SearchFilter]
+    search_fields = ('name', 'address', 'grade')
 
     def get_queryset(self):
         user = self.request.user.id
@@ -175,6 +184,12 @@ class DeleteDealer(generics.DestroyAPIView):
 class EditDealerDetails(generics.UpdateAPIView):
     serializer_class = serializers.EditDealersSerializer
     queryset = Dealer.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        if request.user.is_distributor or request.user.is_manager:
+            return super().update(request, *args, **kwargs)
+        else:
+            return Response(data='user not allowed', status=status.HTTP_401_UNAUTHORIZED)
 
 
 class GetAllByDistributor(generics.ListAPIView):

@@ -36,10 +36,12 @@ class ItemStock(models.Model):
     invoice_number = models.CharField(max_length=15, default='INV-0000')
     qty = models.IntegerField(blank=False)
     pack_size = models.IntegerField(default=0)
-    foc = models.FloatField(blank=False, default=0)
+    foc = models.IntegerField(blank=False, default=0)
     whole_sale_price = models.FloatField(blank=False)
     retail_price = models.FloatField(blank=False)
     date = models.DateField(auto_now_add=True)
+    initial_qty = models.IntegerField(blank=True, null=True)
+    initial_foc = models.IntegerField(blank=True, default=0)
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def get_qty_wholesale_multiple(self):

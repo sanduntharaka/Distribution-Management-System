@@ -1,3 +1,6 @@
+from rest_framework.permissions import IsAuthenticated
+import jwt
+from rest_framework import filters
 from rest_framework import status
 from rest_framework.response import Response
 from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails
@@ -15,7 +18,9 @@ class CreateInvoice(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
 
-        last_bill = SalesRefInvoice.objects.all().last()
+        last_bill = SalesRefInvoice.objects.filter(
+            inventory=request.data['inventory']).last()
+
         data = self.request.data
 
         if last_bill is not None:
@@ -186,11 +191,12 @@ class ConfirmInvoice(generics.UpdateAPIView):
             confirm_status = cof_status['status']
             if confirm_status == 'confirmed':
                 payment_type = cof_status['payment_type']
-
+                cheque_amount = float(
+                    cof_status['amount']) if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque' else 0
                 payment_details = {
                     'bill': self.kwargs.get('pk'),
                     'payment_type': payment_type,
-                    'paid_amount': float(cof_status['paid_amount']),
+                    'paid_amount': float(cof_status['paid_amount'])+cheque_amount,
                     'date': cof_status['date'],
                     'added_by': cof_status['added_by'],
                     'due_date': cof_status['due_date']
@@ -305,10 +311,12 @@ class AddCredit(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         cof_status = request.data
         payment_type = cof_status['payment_type']
+        cheque_amount = float(
+            cof_status['amount']) if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque' else 0
         payment_details = {
             'bill': self.kwargs.get('pk'),
             'payment_type': payment_type,
-            'paid_amount': float(cof_status['paid_amount']),
+            'paid_amount': float(cof_status['paid_amount']) + cheque_amount,
             'date': cof_status['date'],
             'due_date': cof_status['due_date'],
             'added_by': cof_status['added_by'],
@@ -358,6 +366,27 @@ class AddCredit(generics.UpdateAPIView):
 class ConfirmCheque(generics.UpdateAPIView):
     queryset = ChequeDetails.objects.all()
     serializer_class = serializers.ChangeStatusChequeSerializer
+
+
+class ReturnCheque(generics.UpdateAPIView):
+    serializer_class = serializers.ChangeStatusChequeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        if not request.user.is_distributor:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            cheque = ChequeDetails.objects.get(
+                cheque_number=request.data['cheque_number'])
+            cheque.status = 'return'
+            cheque.save()
+            bill = cheque.payment_details
+            bill.paid_amount = bill.paid_amount - cheque.amount
+            bill.save()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class InvoiceItemUpdate(APIView):
@@ -493,3 +522,15 @@ class DeleteInvoicePayment(generics.DestroyAPIView):
         payment_details.delete()
 
         return Response(status=status.HTTP_200_OK)
+
+
+class GetCheque(generics.ListAPIView):
+    serializer_class = serializers.GetChequeDetailsSerialzer
+    # queryset = Dealer.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('cheque_number',)
+
+    def get_queryset(self):
+        request = self.request
+        user = request.user.id
+        return ChequeDetails.objects.filter(added_by__user=user)

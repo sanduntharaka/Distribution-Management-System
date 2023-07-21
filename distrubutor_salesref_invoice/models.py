@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.db.models import Sum
 from django.db import models
 from distrubutor_salesref.models import SalesRefDistributor
@@ -141,8 +142,13 @@ class PaymentDetails(models.Model):
 
     def get_credit(self):
         try:
-            return self.paid_amount if self.payment_type == 'credit' or self.payment_type == 'cash-credit' or self.payment_type == 'cheque-credit' or self.payment_type == 'cash-credit-cheque' else 0
-        except:
+            total_payed_details = PaymentDetails.objects.filter(Q(date=self.date) | Q(date__lt=self.date),
+                                                                bill=self.bill).values('paid_amount')
+            payed = [i['paid_amount'] for i in total_payed_details]
+
+            return self.bill.total - (sum(list(payed)))
+        except Exception as e:
+            print(e)
             return 0
 
     def get_cheque(self):
@@ -166,7 +172,8 @@ class ChequeDetails(models.Model):
     payee_name = models.CharField(max_length=150)
     bank = models.CharField(max_length=150)
     amount = models.FloatField()
-    date = models.DateField()
+
+    date = models.DateField()  # cheque date
     deposited_at = models.DateField()
     status = models.CharField(
         max_length=10, choices=CHEQUE_STATUS, default='pending')

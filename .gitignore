@@ -80,6 +80,8 @@ distrubutor_salesref_invoice/migrations/0002_initial.py
 0004_notbuydetails_inventory.py
 0002_alter_distributorhistoryitem_item.py
 sersettings.py
+0003_dealer_grade.py
+0003_itemstock_initial_foc_itemstock_initial_qty_and_more.py
 # Backup files # 
 *.bak 
 *.vscode

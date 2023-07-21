@@ -23,7 +23,7 @@ class GetByDistributor(APIView):
             'bill__dis_sales_ref__in': salesrefs_distributor,
         }
         if by_date:
-            filters['date__range'] = (date_from, date_to)
+            filters['bill__confirmed_date__range'] = (date_from, date_to)
         invoices = PaymentDetails.objects.filter(**filters)
 
         serializer = serializers.PendingInvoiceSerializer(

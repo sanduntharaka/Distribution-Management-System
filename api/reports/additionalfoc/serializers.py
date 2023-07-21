@@ -17,7 +17,7 @@ class AddtionalFocSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceIntem
         fields = ('foc', 'qty',
-                  'date', 'item_code', 'invoice_number', 'dealer_name', 'dealer_address', 'dealer_contact_number', 'category', 'addtional_foc_qty', 'value')
+                  'date', 'item_code', 'discount', 'invoice_number', 'dealer_name', 'dealer_address', 'dealer_contact_number', 'category', 'addtional_foc_qty', 'value')
 
 # Date
 # Invoice number

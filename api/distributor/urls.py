@@ -20,6 +20,8 @@ urlpatterns = [
 
     path('items/delete/<int:pk>', views.DeleteDistributorItem.as_view()),
     path('stoks/delete/<int:pk>', views.DeleteDistributorStock.as_view()),
+    path('salesrefs/<id>', views.AllSalesrefsByDistributor.as_view()),
+
 
 
 ]

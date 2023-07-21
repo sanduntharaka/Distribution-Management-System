@@ -102,6 +102,13 @@ class EditChequeDetailsSerialzer(serializers.ModelSerializer):
                   'branch', 'bank', 'deposited_at', 'status')
 
 
+class GetChequeDetailsSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = ChequeDetails
+        fields = ('number_of_dates', 'cheque_number',
+                  'branch', 'bank', 'deposited_at', 'status', 'date', 'amount')
+
+
 class ConfirmChequeDetailsSerialzer(serializers.ModelSerializer):
     class Meta:
         model = ChequeDetails

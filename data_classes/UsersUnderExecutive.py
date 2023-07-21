@@ -12,10 +12,10 @@ class UsersUnderExecutive:
     def get_users_under_to_me_ids(self):
         destributors = ExecutiveDistributor.objects.filter(
             executive__user=self.id).values_list('distributor', flat=True)
-        self.users.append(destributors)
+        self.users.extend(list(destributors))
         salesrefs = SalesRefDistributor.objects.filter(
             distributor__in=destributors).values_list('sales_ref', flat=True)
-        self.users.extend(salesrefs)
+        self.users.extend(list(salesrefs))
 
         return self.users
 

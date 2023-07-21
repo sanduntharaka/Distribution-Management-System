@@ -8,7 +8,9 @@ class PendingInvoiceSerializer(serializers.ModelSerializer):
     cash = serializers.FloatField(source='get_cash')
     cheque = serializers.FloatField(source='get_cheque')
     credit = serializers.FloatField(source='get_credit')
+    total = serializers.FloatField(source='bill.total')
 
     class Meta:
         model = PaymentDetails
-        fields = ('date', 'invoice_number', 'cash', 'cheque', 'credit')
+        fields = ('date', 'invoice_number', 'cash',
+                  'cheque', 'credit', 'total')

@@ -14,10 +14,12 @@ class GetFocReport(APIView):
         category = int(request.data['category'])
         date_from = request.data['date_from']
         date_to = request.data['date_to']
+        description = int(request.data['item'])
         by_date = bool(date_from and date_to)
 
         filters = {
             'dis_sales_ref__distributor': item,
+
         }
 
         if by_date:
@@ -29,9 +31,9 @@ class GetFocReport(APIView):
         }
         if category != -1:
             items_filter['item__item__category'] = category
-
+        if description != -1:
+            items_filter['item__item__id'] = description
         items = InvoiceIntem.objects.filter(**items_filter)
-
         serializer = serializers.FocSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #

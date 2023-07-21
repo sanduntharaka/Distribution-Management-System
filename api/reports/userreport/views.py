@@ -1,3 +1,6 @@
+from data_classes.UsersUnderExecutive import UsersUnderExecutive
+from data_classes.UsersUderCompany import UsersUnderCompany
+from data_classes.UsersUnderManager import UsersUnderManager
 from data_classes.UsersUnderDestributor import UsersUnderDestributor
 from rest_framework import status
 from rest_framework.response import Response
@@ -37,20 +40,36 @@ class AllStaffDetailsByManager(APIView):
 
 class AllStaffDetailsBy(APIView):
     def get(self, *args, **kwargs):
-        user_details_id = self.kwargs.get('id')
-        users = []
-        if self.request.user.is_distributor:
-            print('distributor')
-            salesrefs = UsersUnderDestributor(user_details_id)
-            users = salesrefs.get_users_under_to_me_ids()
+        user = self.request.user
+        if user.is_company:
+            users_class = UsersUnderCompany(user.id)
+            users = users_class.get_users_under_to_me_ids()
+            user_details = UserDetails.objects.filter(id__in=users)
+            serializer = serializers.AllStaffDetailsSerializer(
+                list(user_details), many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # sales_refs = SalesRefDistributor.objects.filter(
-        #     distributor_id=item).values('sales_ref')
-        # sales_ref_ids = [sales_ref['sales_ref'] for sales_ref in sales_refs]
-        user_details = UserDetails.objects.filter(id__in=users)
-        print(users)
-        serializer = serializers.AllStaffDetailsSerializer(
-            list(user_details), many=True)
+        if user.is_manager:
+            users_class = UsersUnderManager(user.id)
+            users = users_class.get_users_under_to_me_ids()
+            user_details = UserDetails.objects.filter(id__in=users)
+            serializer = serializers.AllStaffDetailsSerializer(
+                list(user_details), many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if user.is_distributor:
+            users_class = UsersUnderDestributor(user.id)
+            users = users_class.get_users_under_to_me_ids()
+            user_details = UserDetails.objects.filter(id__in=users)
+            serializer = serializers.AllStaffDetailsSerializer(
+                list(user_details), many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if user.is_excecutive:
+            users_class = UsersUnderExecutive(user.id)
+            users = users_class.get_users_under_to_me_ids()
+            user_details = UserDetails.objects.filter(id__in=users)
+            serializer = serializers.AllStaffDetailsSerializer(
+                list(user_details), many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 #

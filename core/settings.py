@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # 'bixtonlighting.com', 'main.bixtonlighting.com'
-ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'django_cron',
+    'django_crontab',
     # 'rest_framework.authtoken',
     # 'rest_framework_swagger',
     'djoser',
@@ -157,23 +157,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bixtonlightingdb',
-        'USER': 'doadmin',
-        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
-        'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
-        'PORT': '25060',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'bixtonlightingdb',
+#         'USER': 'doadmin',
+#         'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
+#         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+#         'PORT': '25060',
+#     }
+# }
 
 
 # Password validation
@@ -225,8 +225,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.UserAccount'
 
 # cron job
-CRON_CLASSES = [
-    "inventory_history.cron.AutoCreateCronJob",
+CRONJOBS = [
+    ('0 0 * * *', 'backgrountasks.cheque_realize.realizeAllCheques'),
+    ('0 1 * * *', 'backgrountasks.inventory_history.autoCreateInventoryHistory'),
+
+
 ]
 
 # Email Settings
