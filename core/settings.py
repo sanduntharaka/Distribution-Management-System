@@ -225,11 +225,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.UserAccount'
 
 # cron job
+# '0 1 * * *
 CRONJOBS = [
     ('0 0 * * *', 'backgrountasks.cheque_realize.realizeAllCheques'),
-    ('0 1 * * *', 'backgrountasks.inventory_history.autoCreateInventoryHistory'),
-
-
+    ('*/5 * * * *', 'backgrountasks.inventory_history.autoCreateInventoryHistory'),
 ]
 
 # Email Settings
