@@ -10,18 +10,27 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 
-class GetByDistributor(APIView):
+class GetAllData(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        salesrefs_distributor = SalesRefDistributor.objects.filter(
-            distributor=item)
+        if request.user.is_salesref:
+            salesrefs_distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id)
+            filters = {
+                'bill__dis_sales_ref_id': salesrefs_distributor,
+            }
 
-        filters = {
-            'bill__dis_sales_ref__in': salesrefs_distributor,
-        }
+        else:
+
+            salesrefs_distributor = SalesRefDistributor.objects.filter(
+                distributor=request.data['distributor'])
+
+            filters = {
+                'bill__dis_sales_ref__in': salesrefs_distributor,
+            }
         if by_date:
             filters['bill__confirmed_date__range'] = (date_from, date_to)
         invoices = PaymentDetails.objects.filter(**filters)

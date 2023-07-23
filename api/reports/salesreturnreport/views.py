@@ -10,26 +10,35 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 
-class GetByDistributor(APIView):
+class GetData(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
         filter_status = int(request.data['filter_status'])
-        sales_refs = SalesRefDistributor.objects.filter(
-            distributor=item).values('sales_ref')
-        sales_ref_ids = [salesref['sales_ref']
-                         for salesref in sales_refs]
-        salesref_list = UserDetails.objects.filter(
-            id__in=sales_ref_ids).values('user')
-        salesref_users_id = [sf['user']
-                             for sf in salesref_list]
+        if request.user.is_salesref:
+            sales_ref = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id).sales_ref.user.id
+            filters = {
+                'salesreturn__added_by_id': sales_ref,
 
-        filters = {
-            'salesreturn__added_by_id__in': salesref_users_id,
+            }
+        else:
+            sales_refs = SalesRefDistributor.objects.filter(
+                distributor_id=request.data['distributor']).values('sales_ref')
 
-        }
+            sales_ref_ids = [salesref['sales_ref']
+                             for salesref in sales_refs]
+            salesref_list = UserDetails.objects.filter(
+                id__in=sales_ref_ids).values('user')
+            salesref_users_id = [sf['user']
+                                 for sf in salesref_list]
+
+            filters = {
+                'salesreturn__added_by_id__in': salesref_users_id,
+
+            }
         if by_date:
             filters['salesreturn__date__range'] = (date_from, date_to)
         if by_date:

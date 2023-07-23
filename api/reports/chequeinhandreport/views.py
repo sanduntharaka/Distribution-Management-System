@@ -14,19 +14,30 @@ from datetime import date, timedelta
 today = date.today()
 
 
-class GetByDistributor(APIView):
+class GetByDate(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        salesrefs_distributor = SalesRefDistributor.objects.filter(
-            distributor=item)
+        if request.user.is_salesref:
+            salesrefs_distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id)
+            filters = {
+                'bill__dis_sales_ref_id': salesrefs_distributor,
+            }
 
-        filters = {
-            'bill__dis_sales_ref__in': salesrefs_distributor,
-            'payment_type__in': ['cheque', 'cash-cheque', 'cash-credit-cheque', 'cheque-credit']
-        }
+        else:
+
+            salesrefs_distributor = SalesRefDistributor.objects.filter(
+                distributor=request.data['distributor'])
+
+            filters = {
+                'bill__dis_sales_ref__in': salesrefs_distributor,
+            }
+
+        filters['payment_type__in'] = ['cheque', 'cash-cheque',
+                                       'cash-credit-cheque', 'cheque-credit']
 
         invoices = PaymentDetails.objects.filter(**filters)
 
@@ -44,12 +55,29 @@ class GetByDistributor(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GetByDistributorPeriod(APIView):
+class GetByPeriod(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         period = int(request.data['period'])
-        salesrefs_distributor = SalesRefDistributor.objects.filter(
-            distributor=item)
+        # salesrefs_distributor = SalesRefDistributor.objects.filter(
+        #     distributor=item)
+
+        if request.user.is_salesref:
+            salesrefs_distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id)
+            filters = {
+                'bill__dis_sales_ref_id': salesrefs_distributor,
+            }
+
+        else:
+
+            salesrefs_distributor = SalesRefDistributor.objects.filter(
+                distributor=request.data['distributor'])
+
+            filters = {
+                'bill__dis_sales_ref__in': salesrefs_distributor,
+            }
+
         if period == 7:
             range_start = today - timedelta(days=150)
             range_end = today - timedelta(days=121)
@@ -74,10 +102,8 @@ class GetByDistributorPeriod(APIView):
         range_start = today - timedelta(days=days_mapping[period][0])
         range_end = today - timedelta(days=days_mapping[period][1])
 
-        filters = {
-            'bill__dis_sales_ref__in': salesrefs_distributor,
-            'payment_type__in': ['cheque', 'cash-cheque', 'cash-credit-cheque', 'cheque-credit']
-        }
+        filters['payment_type__in'] = ['cheque', 'cash-cheque',
+                                       'cash-credit-cheque', 'cheque-credit']
 
         invoices = PaymentDetails.objects.filter(**filters)
         cheque_details = ChequeDetails.objects.filter(

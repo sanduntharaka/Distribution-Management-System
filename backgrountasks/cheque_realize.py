@@ -11,3 +11,8 @@ def realizeAllCheques():
     for cheque in yesterday_cheques:
         cheque.status = 'cleared'
         cheque.save()
+
+    f = open("./logs/cheque_realize/logs.txt", "a")
+    f.write(
+        f"{current_date} confirmed cheque date {yesterday}  total {len(yesterday_cheques)}\n")
+    f.close()
