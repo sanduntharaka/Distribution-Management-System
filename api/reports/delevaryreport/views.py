@@ -8,14 +8,13 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 
-class FilterByDateDistributor(APIView):
+class FilterByDate(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
         filters = {
-            'dis_sales_ref__distributor': item,
+            'dis_sales_ref__distributor': request.data['distributor'],
             'status': 'confirmed',
         }
         if by_date:
@@ -26,9 +25,8 @@ class FilterByDateDistributor(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class FilterByCategoryDistributor(APIView):
+class FilterByCategory(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
         category = int(request.data['category'])
         description = int(request.data['item'])
         date_from = request.data['date_from']
@@ -36,7 +34,7 @@ class FilterByCategoryDistributor(APIView):
         by_date = bool(date_from and date_to)
 
         invoices = SalesRefInvoice.objects.filter(
-            dis_sales_ref__distributor=item, status='confirmed')
+            dis_sales_ref__distributor=request.data['distributor'], status='confirmed')
 
         filters = {
             'bill__in': invoices,

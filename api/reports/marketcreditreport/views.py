@@ -38,12 +38,26 @@ today = date.today()
 #         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class GetByDistributorPeriod(APIView):
+class GetByPeriod(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         period = int(request.data['period'])
-        salesrefs_distributor = SalesRefDistributor.objects.filter(
-            distributor=item)
+        if request.user.is_salesref:
+            salesrefs_distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id)
+            filters = {
+                'bill__dis_sales_ref_id': salesrefs_distributor,
+                'bill__added_by__user': request.user.id
+            }
+
+        else:
+
+            salesrefs_distributor = SalesRefDistributor.objects.filter(
+                distributor=request.data['distributor'])
+
+            filters = {
+                'bill__dis_sales_ref__in': salesrefs_distributor,
+            }
         if period == 7:
             range_start = today - timedelta(days=150)
             range_end = today - timedelta(days=121)
@@ -66,12 +80,10 @@ class GetByDistributorPeriod(APIView):
         range_start = today - timedelta(days=days_mapping[period][0])
         range_end = today - timedelta(days=days_mapping[period][1])
 
-        filters = {
-            'bill__dis_sales_ref__in': salesrefs_distributor,
-            'bill__confirmed_date__range': (range_start, range_end),
-            'bill__is_settiled': False,
-            'payment_type__in': ['credit', 'cash-credit', 'cash-cheque', 'cheque-credit', 'cash-credit-cheque']
-        }
+        filters['bill__confirmed_date__range'] = (range_start, range_end)
+        filters['bill__is_settiled'] = False
+        filters['payment_type__in'] = ['credit', 'cash-credit',
+                                       'cash-cheque', 'cheque-credit', 'cash-credit-cheque']
 
         invoices = PaymentDetails.objects.filter(**filters)
         serializer = serializers.InvoiceSerializer(
@@ -79,7 +91,7 @@ class GetByDistributorPeriod(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+#
 # class GetByManager(APIView):
 #     def post(self, request, *args, **kwargs):
 #         item = self.kwargs.get('id')

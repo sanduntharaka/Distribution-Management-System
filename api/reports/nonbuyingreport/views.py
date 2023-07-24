@@ -15,26 +15,37 @@ from datetime import date, timedelta, datetime
 today = date.today()
 
 
-class GetByDistributor(APIView):
+class GetByData(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
-        print(request.data)
         #
-        date_from = timezone.make_aware(datetime.strptime(
-            request.data['date_from'], "%Y-%m-%d"))
-        date_to = timezone.make_aware(datetime.strptime(
-            request.data['date_to'], "%Y-%m-%d"))
+        # if request.data['date_from'] != '' and request.data['date_to'] != '':
+        date_from = request.data['date_from']
+        # timezone.make_aware(datetime.strptime(
+        # request.data['date_from'], "%Y-%m-%d"))
+        date_to = request.data['date_to']
+        # timezone.make_aware(datetime.strptime(
+        #     request.data['date_to'], "%Y-%m-%d"))
         by_date = bool(date_from and date_to)
-        distributor = UserDetails.objects.get(id=item)
-        salesrefs = SalesRefDistributor.objects.filter(
-            distributor_id=item).values_list('sales_ref', flat=True)
 
-        user_ids = UserDetails.objects.filter(
-            id__in=salesrefs).values_list('user', flat=True)
+        if request.user.is_salesref:
+            filters = {
+                'added_by_id': request.user.id,
+            }
+            distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id).distributor
 
-        filters = {
-            'added_by__in': user_ids,
-        }
+        else:
+
+            salesrefs = SalesRefDistributor.objects.filter(
+                distributor=request.data['distributor']).values_list('sales_ref', flat=True)
+            user_ids = UserDetails.objects.filter(
+                id__in=salesrefs).values_list('user', flat=True)
+            distributor = UserDetails.objects.get(
+                id=request.data['distributor'])
+            filters = {
+                'added_by__in': user_ids,
+            }
+
         if by_date:
             filters['datetime__range'] = (date_from, date_to)
 
