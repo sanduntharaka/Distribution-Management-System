@@ -8,15 +8,14 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 
-class FilterByDateDistributorInvoice(APIView):
+class FilterByDateInvoice(APIView):
     def post(self, request, *args, **kwargs):
         try:
-            item = self.kwargs.get('id')
             date_from = request.data['date_from']
             date_to = request.data['date_to']
             by_date = bool(date_from and date_to)
             filters = {
-                'distributor': item,
+                'distributor': request.data['distributor'],
             }
 
             if by_date:
@@ -32,14 +31,13 @@ class FilterByDateDistributorInvoice(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class FilterByDateDistributorCheque(APIView):
+class FilterByDaterCheque(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
         filters = {
-            'distributor': item,
+            'distributor': request.data['distributor'],
         }
 
         if by_date:

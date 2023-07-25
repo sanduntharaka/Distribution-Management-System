@@ -7,18 +7,32 @@ from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
+from userdetails.models import UserDetails
 
 
-class FilterPurchaseByDateDistributor(APIView):
+class FilterPurchaseByDate(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        filters = {
-            'dis_sales_ref__distributor': item,
-            'status': 'confirmed',
-        }
+
+        if request.user.is_salesref:
+            distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id).distributor
+            filters = {
+                'dis_sales_ref__distributor': distributor,
+                'status': 'confirmed',
+                'added_by': UserDetails.objects.get(user=request.user.id)
+            }
+
+        else:
+
+            filters = {
+                'dis_sales_ref__distributor': request.data['distributor'],
+                'status': 'confirmed',
+            }
+
         if by_date:
             filters['confirmed_date__range'] = (date_from, date_to)
         invoices = SalesRefInvoice.objects.filter(
@@ -49,16 +63,28 @@ class GetPurchaseDataByDistributor(APIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
-class FilterPaymentByDateDistributor(APIView):
+class FilterPaymentByDate(APIView):
     def post(self, request, *args, **kwargs):
         item = self.kwargs.get('id')
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        filters = {
-            'bill__dis_sales_ref__distributor': item,
-            'bill__status': 'confirmed',
-        }
+        if request.user.is_salesref:
+            distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id).distributor
+            filters = {
+                'bill__dis_sales_ref__distributor': distributor,
+                'bill__status': 'confirmed',
+                'bill__added_by': UserDetails.objects.get(user=request.user.id)
+            }
+
+        else:
+
+            filters = {
+                'bill__dis_sales_ref__distributor': request.data['distributor'],
+                'bill__status': 'confirmed',
+            }
+
         if by_date:
             filters['date__range'] = (date_from, date_to)
         payments = PaymentDetails.objects.filter(**filters).values('bill')
@@ -78,17 +104,29 @@ class FilterPaymentByDateDistributor(APIView):
 
 class GetPaymentDataByDistributor(APIView):
     def post(self, request, *args, **kwargs):
-        print(request.data)
         item = self.kwargs.get('id')
         dealer = request.data['dealer']
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
-        filters = {
-            'dis_sales_ref__distributor': item,
-            'dealer': dealer,
 
-        }
+        if request.user.is_salesref:
+            distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=request.user.id).distributor
+            filters = {
+                'dis_sales_ref__distributor': distributor,
+                'status': 'confirmed',
+                'added_by': UserDetails.objects.get(user=request.user.id),
+                'dealer': dealer,
+            }
+
+        else:
+
+            filters = {
+                'dis_sales_ref__distributor': request.data['distributor'],
+                'status': 'confirmed',
+                'dealer': dealer,
+            }
         if by_date:
             filters['confirmed_date__range'] = (date_from, date_to)
 

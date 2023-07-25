@@ -4,6 +4,8 @@
 *.pyc
 __pycache__
 db.sqlite3
+settings.py
+settings.py
 media
 0001_initial.py
 0002_userdetails_photo_alter_userdetails_company_number_and_more.py

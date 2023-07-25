@@ -11,24 +11,23 @@ from django.db.models import Sum
 from datetime import date
 
 
-class FilterByDateDistributor(APIView):
+class FilterByDate(APIView):
     def post(self, request, *args, **kwargs):
-        item = self.kwargs.get('id')
+
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         salesref = int(request.data['salesref'])
         by_date = bool(date_from and date_to)
         filters = {
-            'dis_sales_ref__distributor': item,
+            'dis_sales_ref__distributor':  request.data['distributor'],
             'status': 'confirmed',
         }
         if by_date:
             filters['confirmed_date__range'] = (date_from, date_to)
-
         if salesref != -1:
             filters['added_by'] = salesref
         if salesref == 0:
-            filters['added_by'] = item
+            filters['added_by'] = request.data['distributor']
         invoices = SalesRefInvoice.objects.filter(**filters).values('id')
 
         invoices_ids = [invoice['id'] for invoice in invoices]
