@@ -5,8 +5,9 @@
 __pycache__
 db.sqlite3
 settings.py
-settings.py
+core/settings.py
 media
+0005_paymentdetails_is_completed.py
 0001_initial.py
 0002_userdetails_photo_alter_userdetails_company_number_and_more.py
 0002_remove_salesrefreturn_foc_remove_salesrefreturn_item_and_more.py

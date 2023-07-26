@@ -6,9 +6,9 @@ class SalesRefInvoiceAdmin(admin.ModelAdmin):
     list_display = ('id', 'bill_code', 'bill_number', 'dealer', 'dis_sales_ref', 'date',
                     'total_discount', 'total')
     list_display_links = ('id', 'bill_code', 'bill_number')
-    list_filter = ('dealer', 'added_by',
-                   'dis_sales_ref')
-    search_fields = ('dealer', 'bill_number')
+    list_filter = ('added_by',
+                   'dis_sales_ref', 'date')
+    search_fields = ('dealer', 'bill_number', 'date')
     list_per_page = 25
 
 

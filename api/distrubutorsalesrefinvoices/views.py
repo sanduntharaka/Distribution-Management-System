@@ -199,15 +199,12 @@ class ConfirmInvoice(generics.UpdateAPIView):
                     'paid_amount': float(cof_status['paid_amount'])+cheque_amount,
                     'date': cof_status['date'],
                     'added_by': cof_status['added_by'],
-                    'due_date': cof_status['due_date']
+                    'due_date': cof_status['due_date'],
+                    'is_completed': False if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque' else True
                 }
 
                 bill.status = 'confirmed'
                 bill.confirmed_date = cof_status['confirmed_date']
-                if bill.total - float(cof_status['paid_amount'])+float(cof_status['amount']) == 0:
-                    bill.is_settiled = True
-                else:
-                    bill.is_settiled = False
 
                 payment_serializer = serializers.CreateInvoicePaymentSerializer(
                     data=payment_details)
@@ -230,6 +227,7 @@ class ConfirmInvoice(generics.UpdateAPIView):
                             'deposited_at': cof_status['deposited_at'],
                             'status': cof_status['cheque_status'],
                             'added_by': cof_status['added_by'],
+
                         }
 
                         cheque_serializer = serializers.AddChequeDetailsSerialzer(
@@ -248,6 +246,12 @@ class ConfirmInvoice(generics.UpdateAPIView):
                             return Response(status=status.HTTP_400_BAD_REQUEST)
 
                     bill.save()
+
+                    bill = PaymentDetails.objects.get(id=saved_id).bill
+                    if bill.get_payed() == bill.total:
+                        bill.is_settiled = True
+                        bill.save()
+
                     return Response(status=status.HTTP_201_CREATED)
                 else:
 
@@ -267,38 +271,6 @@ class ConfirmInvoice(generics.UpdateAPIView):
                         item=item.item, qty=item.qty, foc=item.foc)
                     reduce_qty.deleted_details()
 
-                # payment_serializer = serializers.CreateInvoicePaymentSerializer(
-                #     data=payment_details)
-                # if payment_serializer.is_valid():
-                #     p_s = payment_serializer.save()
-                #     saved_id = p_s.id
-                #     if payment_type == 'cheque' or payment_type == 'cash-cheque' or payment_type == 'cheque-credit' or payment_type == 'cash-credit-cheque':
-                #         cheque_details = {
-                #             'payment_details': saved_id,
-                #             'number_of_dates': cof_status['number_of_dates'],
-                #             'cheque_number': cof_status['cheque_number'],
-                #             'account_number': cof_status['account_number'],
-                #             'payee_name': cof_status['payee_name'],
-                #             'bank': cof_status['bank'],
-                #             'amount': cof_status['amount'],
-                #             'date': cof_status['date'],
-                #             'deposited_at': cof_status['deposited_at'],
-                #             'status': cof_status['cheque_status'],
-                #             'added_by': cof_status['added_by'],
-                #         }
-                #         cheque_serializer = serializers.AddChequeDetailsSerialzer(
-                #             data=cheque_details)
-                #         if cheque_serializer.is_valid():
-                #             cheque_serializer.save()
-                #             return Response(status=status.HTTP_201_CREATED)
-
-                #         else:
-                #             print(cheque_serializer.errors)
-                #             return Response(status=status.HTTP_400_BAD_REQUEST)
-                #     return Response(status=status.HTTP_201_CREATED)
-
-                # else:
-                #     print(payment_serializer.errors)
                 return Response(status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
@@ -344,6 +316,9 @@ class AddCredit(generics.UpdateAPIView):
                     data=cheque_details)
                 if cheque_serializer.is_valid():
                     cheque_serializer.save()
+                    pay_details = PaymentDetails.objects.get(id=saved_id)
+                    pay_details.is_completed = False
+                    pay_details.save()
                     return Response(status=status.HTTP_201_CREATED)
 
                 else:
@@ -380,8 +355,10 @@ class ReturnCheque(generics.UpdateAPIView):
                 cheque_number=request.data['cheque_number'])
             cheque.status = 'return'
             cheque.save()
+
             bill = cheque.payment_details
             bill.paid_amount = bill.paid_amount - cheque.amount
+            bill.is_completed = False
             bill.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:

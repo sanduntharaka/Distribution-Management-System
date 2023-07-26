@@ -47,7 +47,7 @@ class SalesRefInvoice(models.Model):
 
     def get_payed(self):
         payments = PaymentDetails.objects.filter(
-            bill=self.id).values('paid_amount')
+            bill=self.id, is_completed=True).values('paid_amount')
         amount = [pay['paid_amount'] for pay in payments]
 
         return sum(amount)
@@ -97,6 +97,7 @@ class PaymentDetails(models.Model):
     date = models.DateField()
     due_date = models.DateField(null=True, blank=True)
     added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
+    is_completed = models.BooleanField(default=True)
 
     def get_cheque_id(self):
         try:

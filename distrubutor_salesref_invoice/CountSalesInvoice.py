@@ -89,36 +89,40 @@ class CountSalesInvoiceAll:
         return SalesRefInvoice.objects.filter(
             status='pending', dis_sales_ref__distributor__in=self.salesre_distributors_ids).all().count()
 
-    def getThreeDays(self):
+    def getYesterDay(self):
         invoice_count = 0
         total_sales = 0
         total_balance = 0
 
-        three_days_ago = self.date_obj - timedelta(days=3)
+        yesterday = self.date_obj - timedelta(days=1)
+        print(yesterday)
         if self.user_type == 'company':
             invoices = SalesRefInvoice.objects.filter(
-                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date__gte=three_days_ago).all()
+                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date=yesterday).all()
             invoice_count = invoices.count()
             total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
                 total=Sum('total'))['total'] is not None else 0
 
         if self.user_type == 'manager':
+
             invoices = SalesRefInvoice.objects.filter(
-                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date__gte=three_days_ago).all()
+                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date=yesterday).all()
             invoice_count = invoices.count()
             total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
                 total=Sum('total'))['total'] is not None else 0
 
         if self.user_type == 'executive':
             invoices = SalesRefInvoice.objects.filter(
-                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date__gte=three_days_ago).all()
+                status='pending', dis_sales_ref__distributor__in=self.distributor_ids, date=yesterday).all()
             invoice_count = invoices.count()
             total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
                 total=Sum('total'))['total'] is not None else 0
 
         if self.user_type == 'distributor':
+
             invoices = SalesRefInvoice.objects.filter(
-                status='pending', dis_sales_ref__distributor__in=self.salesre_distributors_ids, date__gte=three_days_ago).all()
+                status='pending', dis_sales_ref__distributor__in=self.salesre_distributors_ids, date=yesterday).all()
+
             invoice_count = invoices.count()
             total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
                 total=Sum('total'))['total'] is not None else 0
@@ -128,7 +132,7 @@ class CountSalesInvoiceAll:
 
         if self.user_type == 'salesref':
             invoices = SalesRefInvoice.objects.filter(
-                status='pending', dis_sales_ref__sales_ref=self.user_details, date__gte=three_days_ago, added_by=self.user_details).all()
+                status='pending', dis_sales_ref__sales_ref=self.user_details, date=yesterday, added_by=self.user_details).all()
             invoice_count = invoices.count()
             total_sales = invoices.aggregate(total=Sum('total'))['total'] if invoices.aggregate(
                 total=Sum('total'))['total'] is not None else 0
