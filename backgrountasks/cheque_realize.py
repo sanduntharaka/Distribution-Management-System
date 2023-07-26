@@ -12,6 +12,10 @@ def realizeAllCheques():
     for cheque in yesterday_cheques:
         cheque.status = 'cleared'
         cheque.save()
+        pay_details = cheque.payment_details
+        pay_details.is_completed = True
+        pay_details.save()
+
         bill = PaymentDetails.objects.get(id=cheque.payment_details.id).bill
         if bill.get_payed() == bill.total:
             bill.is_settiled = True
