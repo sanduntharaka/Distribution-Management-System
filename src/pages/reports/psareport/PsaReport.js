@@ -42,9 +42,15 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-const PsaReport = () => {
+const PsaReport = (props) => {
   const [data, setData] = useState([]);
   const [expData, setExpData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [filterData, setFilterData] = useState({
+    distributor: '',
+  });
+  const [dateByData, setDateByData] = useState([]);
+
   const columns = [
     { title: 'PSA', field: 'psa', defaultGroupOrder: 0 },
     { title: 'Category', field: 'category' },
@@ -102,6 +108,97 @@ const PsaReport = () => {
         });
     }
   }, []);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributor = (e) => {
+    setFilterData({
+      ...filterData,
+      distributor: e.target.value,
+    });
+    setDateByData([]);
+  };
+  const handleDateByFilter = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    axiosInstance
+      .get(`/reports/psadetails/distributor/${filterData.distributor}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setExpData(res.data);
+        let res_data = res.data;
+        const result = res_data.psas.flatMap((psa) =>
+          res_data.category_names.map((category) => ({
+            psa,
+            category,
+            count: res_data.details[psa][category],
+          }))
+        );
+        setData(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const exportByCategory = (e) => {
     e.preventDefault();
@@ -143,6 +240,46 @@ const PsaReport = () => {
         <p>Psa report</p>
       </div>
       <div className="page__pcont">
+        {props.user.is_manager ||
+        props.user.is_company ||
+        props.user.is_excecutive ? (
+          <div className="form">
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributor(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div
+                className="form__row__col dontdisp"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <button
+                  className="btnEdit"
+                  onClick={(e) => handleDateByFilter(e)}
+                >
+                  Filter
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          ''
+        )}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">

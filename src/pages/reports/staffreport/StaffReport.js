@@ -43,13 +43,11 @@ const tableIcons = {
 const StaffReport = () => {
   const [data, setData] = useState([]);
   const columns = [
-    // {
-    //   title: 'ID',
-    //   field: 'id',
-    //   cellStyle: { width: '10px' },
-    //   width: '10px',
-    //   headerStyle: { width: '10px' },
-    // },
+    {
+      title: '#',
+      field: 'rowIndex',
+      render: (rowData) => rowData?.tableData?.id + 1,
+    },
     { title: 'Name', field: 'full_name' },
     { title: 'Address', field: 'address' },
     { title: 'NIC', field: 'id_number' },
@@ -57,63 +55,30 @@ const StaffReport = () => {
     { title: 'Designation', field: 'designation' },
     { title: 'Contact number', field: 'personal_number' },
   ];
+  const [loading, setIs_Loading] = useState(false);
   useEffect(() => {
-    if (JSON.parse(sessionStorage.getItem('user')).is_superuser) {
-      axiosInstance
-        .get('/reports/staffdetails/all/', {
+    setIs_Loading(true);
+    axiosInstance
+      .get(
+        `/reports/staffdetails/by/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        })
-        .then((res) => {
-          setData(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-
-    if (JSON.parse(sessionStorage.getItem('user')).is_manager) {
-      axiosInstance
-        .get(
-          `/reports/staffdetails/by/manager/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setData(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    if (JSON.parse(sessionStorage.getItem('user')).is_distributor) {
-      axiosInstance
-        .get(
-          `/reports/staffdetails/by/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setData(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+        }
+      )
+      .then((res) => {
+        setData(res.data);
+        setIs_Loading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIs_Loading(false);
+      });
+    // }
   }, []);
   return (
     <div className="page">
@@ -128,6 +93,7 @@ const StaffReport = () => {
                 title={false}
                 columns={columns}
                 data={data}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',

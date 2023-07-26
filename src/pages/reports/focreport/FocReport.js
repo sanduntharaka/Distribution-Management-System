@@ -4,15 +4,19 @@ import { utils, writeFile } from 'xlsx';
 
 import FocReportTable from './FocReportTable';
 
-const FocReport = () => {
+const FocReport = (props) => {
   const [filterData, setFilterData] = useState({
     date_from: '',
     date_to: '',
-    stock_type: '1',
-    category: '-1',
+    stock_type: 1,
+    category: -1,
+    item: -1,
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
+
   const [data, setData] = useState([]);
   useEffect(() => {
     setLoading(true);
@@ -31,25 +35,117 @@ const FocReport = () => {
         setLoading(false);
         console.log(err);
       });
-  }, []);
-  const handleFilter = (e) => {
-    e.preventDefault();
     setLoading(true);
-    axiosInstance
-      .post(
-        `/reports/focreport/get/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        filterData,
-        {
+    if (props.user.is_distributor || props.user.is_salesref) {
+      axiosInstance
+        .get(`distributor/all/${props.inventory}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        }
-      )
+        })
+        .then((res) => {
+          setLoading(false);
+          setDescriptions(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    }
+  }, []);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributorDateBy = (e) => {
+    setFilterData({
+      ...filterData,
+      distributor: e.target.value,
+    });
+    setData([]);
+    setLoading(true);
+    axiosInstance
+      .get(`distributor/by/others/${e.target.value}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
-        console.log(res.data);
+        setLoading(false);
+        setDescriptions(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
+
+  const handleFilter = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    axiosInstance
+      .post(`/reports/focreport/get/`, filterData, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
         setLoading(false);
         setData(res.data);
       })
@@ -100,6 +196,30 @@ const FocReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorDateBy(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -137,6 +257,26 @@ const FocReport = () => {
                   {categories.map((item, i) => (
                     <option value={item.id} key={i}>
                       {item.category_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Description</div>
+              <div className="form__row__col__input">
+                <select
+                  name=""
+                  id=""
+                  defaultValue={'-1'}
+                  onChange={(e) =>
+                    setFilterData({ ...filterData, item: e.target.value })
+                  }
+                >
+                  <option value="-1">All</option>
+                  {descriptions.map((item, i) => (
+                    <option value={item.id} key={i}>
+                      {item.description}
                     </option>
                   ))}
                 </select>

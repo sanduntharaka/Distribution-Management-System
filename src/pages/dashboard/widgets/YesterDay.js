@@ -1,12 +1,12 @@
 import React from 'react';
 
-const ThreeDays = (props) => {
+const YesterDay = (props) => {
   return (
     <div className="wcontainer ">
       <div className="wcontainer__row ">
         <div className="wcontainer__row__col">
           <div className="title">
-            <h4>Three days Sales</h4>
+            <h4>Yesterday Sales</h4>
           </div>
         </div>
       </div>
@@ -24,4 +24,4 @@ const ThreeDays = (props) => {
   );
 };
 
-export default ThreeDays;
+export default YesterDay;

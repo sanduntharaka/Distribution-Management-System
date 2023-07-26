@@ -18,6 +18,7 @@ const MyMessage = React.forwardRef((props, ref) => {
 });
 const PurchTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
+  const userdetail = JSON.parse(sessionStorage.getItem('user_details'));
   const [selected, setSelected] = useState(user.is_salesref ? 0 : 1);
 
   //message modal
@@ -101,7 +102,7 @@ const PurchTab = () => {
         {selected === 0 && isLoading === false && inventory !== undefined ? (
           <NotPerchase inventory={inventory} />
         ) : selected === 1 ? (
-          <NotBuyDetails user={user} />
+          <NotBuyDetails user={user} userdetail={userdetail} />
         ) : (
           ''
         )}

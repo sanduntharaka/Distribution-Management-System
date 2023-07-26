@@ -41,10 +41,10 @@ const AddDistributorInventory = ({ inventory }) => {
     item_code: '',
     invoice_number: '',
     description: '',
-    base: '',
+    base: ' ',
     qty: '',
-    pack_size: '',
-    free_of_charge: '',
+    pack_size: 0,
+    free_of_charge: 0,
     whole_sale_price: '',
     retail_price: '',
     from_sales_return: false,
@@ -114,6 +114,7 @@ const AddDistributorInventory = ({ inventory }) => {
       item_code: '',
       invoice_number: '',
       description: '',
+      foc: '',
       base: '',
       qty: '',
       pack_size: '',
@@ -360,6 +361,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, description: e.target.value })
                     }
+                    required
                   ></textarea>
                 </div>
               </div>

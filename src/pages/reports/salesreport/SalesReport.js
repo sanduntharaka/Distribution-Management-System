@@ -31,16 +31,20 @@ const SalesReport = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
+
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [categoryBy, setCategoryBy] = useState({
     category: '-1',
     date_from: '',
     date_to: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [productBy, setProductBy] = useState({
     product: '-1',
     date_from: '',
     date_to: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
   const [dateByData, setDateByData] = useState([]);
@@ -49,8 +53,63 @@ const SalesReport = (props) => {
 
   const [categoryByData, setCategoryByData] = useState([]);
   const [productByData, setProdctByData] = useState([]);
-
+  const [distributors, setDistributors] = useState([]);
   useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
     setLoading(true);
     axiosInstance
       .get(`/category/all/`, {
@@ -86,23 +145,25 @@ const SalesReport = (props) => {
         console.log(err);
       });
   }, []);
+
+  const handleDistributor = (e) => {
+    setDateBy({
+      ...dateBy,
+      distributor: e.target.value,
+    });
+    setDateByData([]);
+  };
   const handleDateByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/salesdetails/distributor/date/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        dateBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/salesdetails/date/`, dateBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         setDateByData(res.data);
@@ -129,23 +190,24 @@ const SalesReport = (props) => {
     exportExcell(columnOrder, columnTitles, dateByData, totalRow, file_name);
   };
 
+  const handleDistributorCategory = (e) => {
+    setCategoryBy({
+      ...categoryBy,
+      distributor: e.target.value,
+    });
+    setCategoryByData([]);
+  };
   const handleCategoryByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/salesdetails/distributor/category/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        categoryBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/salesdetails/category/`, categoryBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         setCategoryByData(res.data);
@@ -180,24 +242,41 @@ const SalesReport = (props) => {
       file_name
     );
   };
+  const handleDistributorProduct = (e) => {
+    setProductBy({
+      ...productBy,
+      distributor: e.target.value,
+    });
+    setProdctByData([]);
+    setLoading(true);
 
+    axiosInstance
+      .get(`distributor/by/others/${e.target.value}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setProducts(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
   const handleProductByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/salesdetails/distributor/product/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        productBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/salesdetails/product/`, productBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         setProdctByData(res.data);
@@ -220,6 +299,30 @@ const SalesReport = (props) => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributor(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -264,6 +367,12 @@ const SalesReport = (props) => {
           </div>
         </div>
         <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>Rs {dateByData.reduce((sum, item) => sum + item.total, 0)}/-</p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByDate(e)}>
               Export
@@ -277,6 +386,30 @@ const SalesReport = (props) => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorCategory(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -340,6 +473,19 @@ const SalesReport = (props) => {
           </div>
         </div>
         <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs{' '}
+              {categoryByData.reduce(
+                (sum, item) => sum + item.extended_price,
+                0
+              )}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByCategory(e)}>
               Export
@@ -348,11 +494,35 @@ const SalesReport = (props) => {
         </div>
         <div className="page__pcont__row ">
           <div className="page__pcont__row__col">
-            <p>Filter sales items by itemcodes</p>
+            <p>Filter sales items by item codes</p>
           </div>
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorProduct(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -413,6 +583,19 @@ const SalesReport = (props) => {
             <div className="dataTable">
               <ByProductTable data={productByData} loading={loading} />
             </div>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs{' '}
+              {productByData.reduce(
+                (sum, item) => sum + item.extended_price,
+                0
+              )}
+              /-
+            </p>
           </div>
         </div>
         <div className="page__pcont__row">

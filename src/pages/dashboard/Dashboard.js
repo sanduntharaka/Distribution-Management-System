@@ -9,7 +9,7 @@ import TotalReturns from './widgets/TotalReturns';
 import { axiosInstance } from '../../axiosInstance';
 import ThisYearSales from './widgets/ThisYearSales';
 import ManagerAllDistributorPieChart from './widgets/ManagerAllDistributorPieChart';
-import ThreeDays from './widgets/ThreeDays';
+import YesterDay from './widgets/YesterDay';
 import TotalCredit from './widgets/TotalCredit';
 import PendingInvoices from './widgets/PendingInvoices';
 const Dashboard = () => {
@@ -36,7 +36,7 @@ const Dashboard = () => {
     sales_returns: 0,
     this_month: {},
     this_year: {},
-    three_days: {},
+    yester_day: {},
     pending: {},
     credit: {},
   });
@@ -71,7 +71,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
-            three_days: res.data.three_days,
+            yester_day: res.data.yester_day,
           });
           console.log(res.data);
         });
@@ -99,7 +99,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
-            three_days: res.data.three_days,
+            yester_day: res.data.yester_day,
           });
           console.log(res.data);
         });
@@ -127,7 +127,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
-            three_days: res.data.three_days,
+            yester_day: res.data.yester_day,
           });
           console.log(res.data);
         });
@@ -156,7 +156,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
-            three_days: res.data.three_days,
+            yester_day: res.data.yester_day,
             pending: res.data.pending_inv,
             credit: res.data.credit_inv,
           });
@@ -186,7 +186,7 @@ const Dashboard = () => {
             sales_returns: res.data.sales_returns,
             this_month: res.data.this_month,
             this_year: res.data.this_year,
-            three_days: res.data.three_days,
+            yester_day: res.data.yester_day,
             pending: res.data.pending_inv,
             credit: res.data.credit_inv,
           });
@@ -207,8 +207,24 @@ const Dashboard = () => {
       <div className="page__pcont">
         <div className="page__pcont__row center">
           <div className="page__pcont__row__col">
-            <div className="widget">
+            <div className="widget today">
               <ToDaySales data={data.sales} />
+            </div>
+          </div>
+          <div className="page__pcont__row__col ">
+            <div className="widget yesterday">
+              <YesterDay data={data.yester_day} />
+            </div>
+          </div>
+
+          <div className="page__pcont__row__col ">
+            <div className="widget thismonth">
+              <ThisMonthSales data={data.this_month} month={monthName} />
+            </div>
+          </div>
+          <div className="page__pcont__row__col ">
+            <div className="widget thisyear">
+              <ThisYearSales data={data.this_year} year={year} />
             </div>
           </div>
           {user.is_distributor || user.is_salesref ? (
@@ -223,22 +239,6 @@ const Dashboard = () => {
           ) : (
             ''
           )}
-          <div className="page__pcont__row__col ">
-            <div className="widget threedays">
-              <ThreeDays data={data.three_days} />
-            </div>
-          </div>
-
-          <div className="page__pcont__row__col ">
-            <div className="widget thismonth">
-              <ThisMonthSales data={data.this_month} month={monthName} />
-            </div>
-          </div>
-          <div className="page__pcont__row__col ">
-            <div className="widget thisyear">
-              <ThisYearSales data={data.this_year} year={year} />
-            </div>
-          </div>
         </div>
         <div className="page__pcont__row center">
           <div className="page__pcont__row__col f1">

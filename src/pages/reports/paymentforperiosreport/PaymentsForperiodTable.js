@@ -43,6 +43,8 @@ const PaymentsForperiodTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
     { title: 'Invoice', field: 'invoice_number' },
+    { title: 'Total', field: 'total' },
+
     { title: 'Cash', field: 'cash' },
     { title: 'Cheque', field: 'cheque' },
     { title: 'Credit', field: 'credit' },

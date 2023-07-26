@@ -21,9 +21,6 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import { styled, alpha } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
 import EditNotBuy from '../../components/edit/EditNotBuy';
 import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
@@ -51,7 +48,7 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
-const NotBuyDetails = ({ user }) => {
+const NotBuyDetails = ({ user, userdetail }) => {
   const [tblData, setTableData] = useState([]);
 
   const columns = [
@@ -92,6 +89,7 @@ const NotBuyDetails = ({ user }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+  const [salesrefs, setSalesrefs] = useState([]);
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -113,17 +111,17 @@ const NotBuyDetails = ({ user }) => {
 
   const [distributors, setDistributors] = useState([]);
 
-  useEffect(() => {
-    if (selected_distributor !== undefined) {
-      handleFilterInventory(selected_distributor);
-    }
-  }, [success]);
+  // useEffect(() => {
+  //   if (selected_distributor !== undefined) {
+  //     handleFilterInventory(selected_distributor);
+  //   }
+  // }, [success]);
 
   useEffect(() => {
     if (user.is_manager) {
       setLoading(true);
       axiosInstance
-        .get(`/users/distributors/by/manager/${user.id}`, {
+        .get(`/users/distributors/by/manager/${userdetail.id}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -143,7 +141,7 @@ const NotBuyDetails = ({ user }) => {
     } else if (user.is_excecutive) {
       setLoading(true);
       axiosInstance
-        .get(`/users/distributors/by/executive/${user.id}`, {
+        .get(`/users/distributors/by/executive/${userdetail.id}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -181,10 +179,20 @@ const NotBuyDetails = ({ user }) => {
           console.log(err);
         });
     } else if (user.is_distributor) {
-      handleFilterInventory(user.id);
+      // handleFilterInventory(user.id);
+      axiosInstance
+        .get(`/distributor/salesrefs/${userdetail.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setSalesrefs(res.data);
+        });
     } else if (user.is_salesref) {
       axiosInstance
-        .get(`/not-buy/get/salesref/${user.id}`, {
+        .get(`/not-buy/get/salesref/${userdetail.id}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -235,31 +243,52 @@ const NotBuyDetails = ({ user }) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-  const [selected_distributor, setSelectedDistributor] = useState();
-
-  const handleFilterInventory = (value) => {
-    setSelectedDistributor(value);
+  const [filterBy, setFilterBy] = useState({
+    distributor: userdetail.id,
+    salesref: -1,
+  });
+  const handleFilterSalesrefs = (value) => {
+    setFilterBy({ ...filterBy, distributor: value });
     if (value !== '') {
       setLoading(true);
 
       axiosInstance
-        .get(`/not-buy/get/others/${value}`, {
+        .get(`/distributor/salesrefs/${value}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
         })
         .then((res) => {
+          setSalesrefs(res.data);
           setLoading(false);
-          setTableData(res.data);
-        })
-        .catch((err) => {
-          setLoading(false);
-          setTableData([]);
-
-          console.log(err);
         });
     }
+  };
+
+  const handleFilterBySalesref = (e) => {
+    setFilterBy({ ...filterBy, salesref: e.target.value });
+    setTableData([]);
+  };
+
+  const handleFilter = (e) => {
+    axiosInstance
+      .post(`/not-buy/get/filter/`, filterBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log('dd:', res.data);
+        setTableData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        setTableData([]);
+      });
   };
   return (
     <div className="page">
@@ -313,34 +342,61 @@ const NotBuyDetails = ({ user }) => {
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
-          <div className="page__pcont__row__col">
-            {!user.is_salesref && !user.is_distributor ? (
-              <div className="form__row">
-                <div className="form__row__col">
-                  <div className="form__row__col__label">Distributor</div>
-                  <div className="form__row__col__input">
-                    <select
-                      defaultValue={''}
-                      onChange={(e) => handleFilterInventory(e.target.value)}
-                      required
-                    >
-                      <option value="">Select distributor</option>
-                      {distributors.map((item, i) => (
-                        <option value={item.id} key={i}>
-                          {item.full_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
-                <div className="form__row__col dontdisp"></div>
+          {!user.is_salesref && !user.is_distributor ? (
+            <div className="form__row__col">
+              <div className="form__row__col__label">Distributor</div>
+              <div className="form__row__col__input">
+                <select
+                  defaultValue={''}
+                  onChange={(e) => handleFilterSalesrefs(e.target.value)}
+                  required
+                >
+                  <option value="">Select distributor</option>
+                  {distributors.map((item, i) => (
+                    <option value={item.id} key={i}>
+                      {item.full_name}
+                    </option>
+                  ))}
+                </select>
               </div>
-            ) : (
-              ''
-            )}
-          </div>
+            </div>
+          ) : (
+            ''
+          )}
+          {!user.is_salesref ? (
+            <>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Salesrefs</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'-1'}
+                    onChange={(e) => handleFilterBySalesref(e)}
+                  >
+                    <option value="-1">All</option>
+                    {salesrefs.map((item, i) => (
+                      <option value={item.salesref_id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div
+                className="form__row__col dontdisp"
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
+                <button className="btnEdit" onClick={(e) => handleFilter(e)}>
+                  Filter
+                </button>
+              </div>
+            </>
+          ) : (
+            ''
+          )}
+          <div className="form__row__col dontdisp"></div>
+          <div className="form__row__col dontdisp"></div>
         </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
@@ -349,6 +405,7 @@ const NotBuyDetails = ({ user }) => {
                 title={false}
                 columns={columns}
                 data={tblData}
+                isLoading={loading}
                 sx={{
                   ['&.MuiTable-root']: {
                     background: 'red',

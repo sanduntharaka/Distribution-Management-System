@@ -26,13 +26,18 @@ function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   writeFile(workbook, file_name);
 }
 
-const DelevaryReport = () => {
+const DelevaryReport = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [categoryBy, setCategoryBy] = useState({
     category: '-1',
+    item: '-1',
+    date_from: '',
+    date_to: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +45,9 @@ const DelevaryReport = () => {
   const [cateLoading, setCateLoading] = useState(false);
 
   const [dateByData, setDateByData] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
   const [categories, setCategories] = useState([]);
+
   const [categoryByData, setCategoryByData] = useState([]);
 
   useEffect(() => {
@@ -60,24 +67,100 @@ const DelevaryReport = () => {
         setLoading(false);
         console.log(err);
       });
+    setLoading(true);
+    axiosInstance
+      .get(`distributor/all/${props.inventory}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setDescriptions(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   }, []);
+
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributorDateBy = (e) => {
+    setDateBy({
+      ...dateBy,
+      distributor: e.target.value,
+    });
+    setDateByData([]);
+  };
+
   const handleDateByFilter = (e) => {
     e.preventDefault();
     setDateLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/deleverydetails/distributor/date/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        dateBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/deleverydetails/date/`, dateBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setDateLoading(false);
 
@@ -118,24 +201,24 @@ const DelevaryReport = () => {
 
     exportExcell(columnOrder, columnTitles, dateByData, totalRow, file_name);
   };
-
+  const handleDistributorCategory = (e) => {
+    setCategoryBy({
+      ...categoryBy,
+      distributor: e.target.value,
+    });
+    setCategoryByData([]);
+  };
   const handleCategoryByFilter = (e) => {
     e.preventDefault();
     setCateLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/deleverydetails/distributor/category/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        categoryBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/deleverydetails/category/`, categoryBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setCateLoading(false);
         setCategoryByData(res.data);
@@ -183,6 +266,30 @@ const DelevaryReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorDateBy(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -227,6 +334,15 @@ const DelevaryReport = () => {
           </div>
         </div>
         <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.total, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByDate(e)}>
               Export
@@ -240,6 +356,52 @@ const DelevaryReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorCategory(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setCategoryBy({ ...categoryBy, date_from: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__input">
+                <input
+                  type="date"
+                  onChange={(e) =>
+                    setCategoryBy({ ...categoryBy, date_to: e.target.value })
+                  }
+                />
+              </div>
+            </div>
             <div className="form__row__col">
               <div className="form__row__col__label">Category</div>
               <div className="form__row__col__input">
@@ -255,6 +417,26 @@ const DelevaryReport = () => {
                   {categories.map((item, i) => (
                     <option value={item.id} key={i}>
                       {item.category_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Product</div>
+              <div className="form__row__col__input">
+                <select
+                  name=""
+                  id=""
+                  defaultValue={'-1'}
+                  onChange={(e) =>
+                    setCategoryBy({ ...categoryBy, item: e.target.value })
+                  }
+                >
+                  <option value="-1">All</option>
+                  {descriptions.map((item, i) => (
+                    <option value={item.id} key={i}>
+                      {item.description}
                     </option>
                   ))}
                 </select>
@@ -278,6 +460,19 @@ const DelevaryReport = () => {
             <div className="dataTable">
               <ByCategoryTable data={categoryByData} loading={cateLoading} />
             </div>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs{' '}
+              {categoryByData.reduce(
+                (sum, item) => sum + item.extended_price,
+                0
+              )}
+              /-
+            </p>
           </div>
         </div>
         <div className="page__pcont__row">

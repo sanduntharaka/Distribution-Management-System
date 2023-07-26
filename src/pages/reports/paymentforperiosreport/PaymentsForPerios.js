@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 import { utils, writeFile } from 'xlsx';
 import PaymentsForperiodTable from './PaymentsForperiodTable';
@@ -23,32 +23,90 @@ function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   writeFile(workbook, file_name);
 }
 
-const PaymentsForPerios = () => {
+const PaymentsForPerios = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
 
   const [dateByData, setDateByData] = useState([]);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
 
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributor = (e) => {
+    setDateBy({
+      ...dateBy,
+      distributor: e.target.value,
+    });
+    setDateByData([]);
+  };
   const handleDateByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/payments/by/distributor/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        dateBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/payments/get/`, dateBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         setDateByData(res.data);
@@ -80,7 +138,7 @@ const PaymentsForPerios = () => {
   return (
     <div className="page">
       <div className="page__title">
-        <p>Distributor payments for period report</p>
+        <p>Distributor payments vs sales report</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row ">
@@ -90,6 +148,30 @@ const PaymentsForPerios = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributor(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">

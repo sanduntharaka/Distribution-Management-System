@@ -191,7 +191,7 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">sales return</div>
           </NavLink>
-
+          {/* 
           <NavLink
             to="/leave"
             className={(isActive, isPending) =>
@@ -202,23 +202,20 @@ const Sidebar = () => {
               <AiOutlineFieldTime />
             </div>
             <div className="container__list__item__name">leave</div>
+          </NavLink> */}
+
+          <NavLink
+            to="/report"
+            className={(isActive, isPending) =>
+              handleClassname(isActive, isPending)
+            }
+          >
+            <div className="container__list__item__icon">
+              <TbReportSearch />
+            </div>
+            <div className="container__list__item__name">reports</div>
           </NavLink>
 
-          {user.is_superuser || user.is_distributor || user.is_manager ? (
-            <NavLink
-              to="/report"
-              className={(isActive, isPending) =>
-                handleClassname(isActive, isPending)
-              }
-            >
-              <div className="container__list__item__icon">
-                <TbReportSearch />
-              </div>
-              <div className="container__list__item__name">reports</div>
-            </NavLink>
-          ) : (
-            ''
-          )}
           {user.is_company ? (
             <NavLink
               to="/settings"

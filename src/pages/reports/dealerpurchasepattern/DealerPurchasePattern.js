@@ -25,37 +25,83 @@ function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   writeFile(workbook, file_name);
 }
 
-const DealerPurchasePattern = () => {
+const DealerPurchasePattern = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
     dealer: '',
     invoice: '',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
 
   const [loading, setLoading] = useState(false);
   const [dateByData, setDateByData] = useState([]);
   const [dealers, setDealers] = useState([]);
   const [invoice, setInvoices] = useState([]);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
 
-  const handleDealer = (e) => {
-    console.log(e);
-    axiosInstance
-      .get(`/salesref/invoice/all/invoice/by/dealer/${e}`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
-        console.log(res.data);
-        setInvoices(res.data);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributorDateBy = (e) => {
+    setDateBy({
+      ...dateBy,
+      distributor: e.target.value,
+    });
+    setDealers([]);
+    setInvoices([]);
   };
 
   const handleDateByFilter = (e) => {
@@ -63,18 +109,12 @@ const DealerPurchasePattern = () => {
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/dealer-pattern/purchase/distributor/date/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        dateBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/dealer-pattern/purchase/date/`, dateBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
 
@@ -162,6 +202,30 @@ const DealerPurchasePattern = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorDateBy(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -228,7 +292,7 @@ const DealerPurchasePattern = () => {
                     setDateBy({ ...dateBy, invoice: e.target.value })
                   }
                 >
-                  <option value="0">Select dealer</option>
+                  <option value="0">Select invoice</option>
                   {invoice.map((item, i) => (
                     <option value={item.id} key={i}>
                       {item.code}

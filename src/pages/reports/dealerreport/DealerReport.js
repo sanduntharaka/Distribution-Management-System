@@ -73,55 +73,29 @@ const DealerReport = () => {
         });
     }
 
-    if (JSON.parse(sessionStorage.getItem('user')).is_manager) {
-      setLoading(true);
+    setLoading(true);
 
-      axiosInstance
-        .get(
-          `/reports/delaerdetails/by/manager/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setData(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
-    }
-    if (JSON.parse(sessionStorage.getItem('user')).is_distributor) {
-      setLoading(true);
-
-      axiosInstance
-        .get(
-          `/reports/delaerdetails/by/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-          setData(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
-    }
+    axiosInstance
+      .get(
+        `/reports/delaerdetails/by/${
+          JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   }, []);
   return (
     <div className="page">

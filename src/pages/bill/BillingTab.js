@@ -10,6 +10,7 @@ import AddCreditDetails from './creaditpayments/AddCreditDetails';
 import ViewBillByOthers from './ViewBillByOthers';
 import ViewAllPendingBillsOthers from './approvebill/ViewAllPendingBillsOthers';
 import ViewAllCreditBillsOthers from './creaditpayments/ViewAllCreditBillsOthers';
+import RejectCheque from './RejectCheque';
 
 const MyMessage = React.forwardRef((props, ref) => {
   return (
@@ -144,6 +145,12 @@ const BillingTab = () => {
         >
           Credit bills
         </div>
+        <div
+          className={`item ${selected === 4 ? 'selected' : ''}`}
+          onClick={() => handleSelect(4)}
+        >
+          Return cheque
+        </div>
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
@@ -160,6 +167,8 @@ const BillingTab = () => {
           <AddCreditDetails />
         ) : selected === 3 ? (
           <ViewAllCreditBillsOthers user={user} />
+        ) : selected === 4 && user.is_distributor ? (
+          <RejectCheque />
         ) : (
           ''
         )}

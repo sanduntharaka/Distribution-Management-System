@@ -25,33 +25,125 @@ function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   writeFile(workbook, file_name);
 }
 
-const CollectionsReport = () => {
+const CollectionsReport = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
+    salesref: -1,
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
-
+  const [distributor, setDistributor] = useState(
+    props.user.is_distributor ? props.user_details.full_name : ''
+  );
   const [loading, setLoading] = useState(false);
   const [dateByData, setDateByData] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [salesrefs, setSalesrefs] = useState([]);
 
+  useEffect(() => {
+    if (props.user.is_distributor) {
+      axiosInstance
+        .get(`/distributor/salesrefs/${props.user_details.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setSalesrefs(res.data);
+        });
+    }
+  }, []);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributorDateBy = (e) => {
+    setDateBy({
+      ...dateBy,
+      distributor: e.target.value,
+    });
+
+    let distri = distributors.find((obj) => {
+      return obj.id == e.target.value;
+    });
+    setDistributor(distri.full_name);
+    setDateByData([]);
+
+    axiosInstance
+      .get(`/distributor/salesrefs/${e.target.value}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setSalesrefs(res.data);
+      });
+  };
   const handleDateByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/collectionsheet/distributor/date/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        dateBy,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/collectionsheet/date/`, dateBy, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         console.log(res.data);
@@ -84,7 +176,7 @@ const CollectionsReport = () => {
   return (
     <div className="page">
       <div className="page__title">
-        <p>Credit bills collection report</p>
+        <p>collection report</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row ">
@@ -94,6 +186,30 @@ const CollectionsReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributorDateBy(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Date from</div>
               <div className="form__row__col__input">
@@ -114,6 +230,27 @@ const CollectionsReport = () => {
                     setDateBy({ ...dateBy, date_to: e.target.value })
                   }
                 />
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Salesrefs</div>
+              <div className="form__row__col__input">
+                <select
+                  name=""
+                  id=""
+                  defaultValue={'-1'}
+                  onChange={(e) =>
+                    setDateBy({ ...dateBy, salesref: e.target.value })
+                  }
+                >
+                  <option value="-1">All</option>
+                  <option value="0">{distributor}</option>
+                  {salesrefs.map((item, i) => (
+                    <option value={item.salesref_id} key={i}>
+                      {item.full_name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div

@@ -238,6 +238,53 @@ const CreateBill = ({ inventory }) => {
     setQty(0);
     setFoc(0);
     setDiscount(0);
+    setData({
+      ...data,
+      dealer: '',
+      dealer_name: '',
+      dealer_address: '',
+      dealer_contact: '',
+      inventory: inventory.id,
+      dis_sales_ref: '',
+      date: currentDate,
+      time: currentTime,
+      bill_code: 'INV-',
+      total: 0,
+      total_discount: 0,
+      payment_type: payment,
+      billing_price_method: billingPriceMethod,
+      discount_percentage: 0,
+      sub_total: 0,
+
+      added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    });
+  };
+  const handleClearAll = () => {
+    setItems([]);
+    setQty(0);
+    setFoc(0);
+    setDiscount(0);
+    setDealers([]);
+    setData({
+      ...data,
+      dealer: '',
+      dealer_name: '',
+      dealer_address: '',
+      dealer_contact: '',
+      inventory: inventory.id,
+      dis_sales_ref: '',
+      date: currentDate,
+      time: currentTime,
+      bill_code: 'INV-',
+      total: 0,
+      total_discount: 0,
+      payment_type: payment,
+      billing_price_method: billingPriceMethod,
+      discount_percentage: 0,
+      sub_total: 0,
+
+      added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    });
   };
   const handleBillingPriceMethod = (e) => {
     handleClear(e);
@@ -391,6 +438,7 @@ const CreateBill = ({ inventory }) => {
         close={() => props.handleClose()}
         cheque={cheque}
         cheque_detail={chequeDetails}
+        clear={() => props.clear()}
       />
     );
   });
@@ -426,6 +474,7 @@ const CreateBill = ({ inventory }) => {
           oldinv={false}
           data={data}
           handleClose={handleCloseInv}
+          clear={handleClearAll}
         />
       </Modal>
       <div className="page__title">

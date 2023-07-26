@@ -7,6 +7,7 @@ const EditDealerDetails = (props) => {
     name: props.data.name,
     contact_number: props.data.contact_number,
     address: props.data.address,
+    grade: props.data.grade,
     owner_name: props.data.owner_name,
     company_number: props.data.company_number,
     owner_personal_number: props.data.owner_personal_number,
@@ -62,6 +63,24 @@ const EditDealerDetails = (props) => {
                 <td>Id</td>
                 <td>
                   <input type="text" value={editedData.id} disabled />
+                </td>
+              </tr>
+              <tr>
+                <td>Grade</td>
+                <td>
+                  {/* <input type="text" value={editedData.grade} disabled /> */}
+                  <select
+                    name=""
+                    id=""
+                    value={editedData.grade}
+                    onChange={(e) =>
+                      setEditedData({ ...editedData, grade: e.target.value })
+                    }
+                  >
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </select>
                 </td>
               </tr>
               <tr>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 import { utils, writeFile } from 'xlsx';
 import ChequeRetuernsTable from './ChequeRetuernsTable';
@@ -23,31 +23,90 @@ function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   writeFile(workbook, file_name);
 }
 
-const ChqueReturnsReport = () => {
+const ChqueReturnsReport = (props) => {
   const [filterData, setFilterData] = useState({
     period: '0',
+    distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
 
   const [dateByData, setDateByData] = useState([]);
+  const [distributors, setDistributors] = useState([]);
+  useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
+  const handleDistributor = (e) => {
+    setFilterData({
+      ...filterData,
+      distributor: e.target.value,
+    });
+    setDateByData([]);
+  };
 
   const handleDateByFilter = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post(
-        `/reports/cheque/returns/by/distributor/period/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        filterData,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
+      .post(`/reports/cheque/returns/by/period/`, filterData, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
       .then((res) => {
         setLoading(false);
         setDateByData(res.data);
@@ -104,6 +163,30 @@ const ChqueReturnsReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributor(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
             <div className="form__row__col">
               <div className="form__row__col__label">Period</div>
               <div className="form__row__col__input">
@@ -145,6 +228,15 @@ const ChqueReturnsReport = () => {
             <div className="dataTable">
               <ChequeRetuernsTable data={dateByData} loading={loading} />
             </div>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.amount, 0)}
+              /-
+            </p>
           </div>
         </div>
         <div className="page__pcont__row">

@@ -3,6 +3,8 @@ import styles from './confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
 import Spinner from '../../../components/loadingSpinner/Spinner';
+import BillSuccess from '../../../components/userComfirm/BillSuccess';
+import Modal from '@mui/material/Modal';
 const ConfimBill = (props) => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const compoenentRef = useRef();
@@ -13,6 +15,13 @@ const ConfimBill = (props) => {
   });
 
   const [loading, isLoading] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    props.close();
+    props.clear();
+  };
   useEffect(() => {
     if (user.is_salesref) {
       axiosInstance
@@ -86,7 +95,86 @@ const ConfimBill = (props) => {
     bill_code: '',
     bill_number: '',
   });
-  const handlePrint = () => {
+  // const handlePrint = () => {
+  //   // isLoading(true);
+  //   // axiosInstance
+  //   //   .post('/salesref/invoice/create/invoice/', props.data, {
+  //   //     headers: {
+  //   //       Authorization:
+  //   //         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //   //     },
+  //   //   })
+  //   //   .then((res) => {
+  //   //     setInvoice({
+  //   //       bill_code: res.data.bill_code,
+  //   //       bill_number: res.data.bill_number,
+  //   //     });
+  //   //     const item_data = {
+  //   //       bill: res.data.id,
+  //   //       items: props.items,
+  //   //     };
+  //   //     let cheque_details = {
+  //   //       bill: res.data.id,
+  //   //       date: props.cheque_detail.date,
+  //   //       cheque_number: props.cheque_detail.cheque_number,
+  //   //       account_number: props.cheque_detail.account_number,
+  //   //       payee_name: props.cheque_detail.payee_name,
+  //   //       amount: props.cheque_detail.amount,
+  //   //     };
+  //   //     axiosInstance
+  //   //       .post('/salesref/invoice/create/invoice/items/', item_data, {
+  //   //         headers: {
+  //   //           Authorization:
+  //   //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //   //         },
+  //   //       })
+  //   //       .then((res) => {
+  //   //         if (props.cheque) {
+  //   //           axiosInstance
+  //   //             .post(
+  //   //               '/salesref/invoice/create/invoice/cheque/',
+  //   //               cheque_details,
+  //   //               {
+  //   //                 headers: {
+  //   //                   Authorization:
+  //   //                     'JWT ' +
+  //   //                     JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //   //                 },
+  //   //               }
+  //   //             )
+  //   //             .then((res) => {
+  //   //               isLoading(false);
+
+  //   //               handlePrintFile();
+  //   //             })
+  //   //             .catch((err) => {
+  //   //               isLoading(false);
+
+  //   //               console.log(err);
+  //   //             });
+  //   //         } else {
+  //   //           isLoading(false);
+
+  //   //           handlePrintFile();
+  //   //         }
+  //   //       })
+  //   //       .catch((err) => {
+  //   //         isLoading(false);
+
+  //   //         console.log(err);
+  //   //       });
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     console.log(err);
+  //   //   });
+  //   handlePrintFile();
+  // };
+  const [successBill, setSuccessBill] = useState(false);
+  const [errorBill, setErrorBill] = useState(false);
+  const [title, setTitle] = useState('');
+  const [msg, setMsg] = useState('');
+
+  const handleSaveBill = () => {
     isLoading(true);
     axiosInstance
       .post('/salesref/invoice/create/invoice/', props.data, {
@@ -135,23 +223,43 @@ const ConfimBill = (props) => {
                 )
                 .then((res) => {
                   isLoading(false);
-
-                  handlePrintFile();
+                  setSuccessBill(true);
+                  setErrorBill(false);
+                  setTitle('Success');
+                  setMsg(
+                    'Your bill saved successfully. If you want to get print, please click print button'
+                  );
+                  handleOpen();
                 })
                 .catch((err) => {
                   isLoading(false);
-
+                  setErrorBill(true);
+                  setSuccessBill(false);
+                  setTitle('Error');
+                  setMsg(
+                    'Your bill cannot save right now. Please try again later'
+                  );
+                  handleOpen();
                   console.log(err);
                 });
             } else {
               isLoading(false);
-
-              handlePrintFile();
+              setSuccessBill(true);
+              setErrorBill(false);
+              setTitle('Success');
+              setMsg(
+                'Your bill saved successfully. If you want to get print, please click print button'
+              );
+              handleOpen();
             }
           })
           .catch((err) => {
             isLoading(false);
-
+            setErrorBill(true);
+            setSuccessBill(false);
+            setTitle('Error');
+            setMsg('Your bill cannot save right now. Please try again later');
+            handleOpen();
             console.log(err);
           });
       })
@@ -159,8 +267,42 @@ const ConfimBill = (props) => {
         console.log(err);
       });
   };
+  const MyMessage = React.forwardRef((props, ref) => {
+    return (
+      <BillSuccess
+        hide={() => props.handleClose()}
+        success={props.success}
+        error={props.error}
+        title={props.title}
+        msg={props.msg}
+        print={() => props.print()}
+        clear={() => props.clear()}
+        ref={ref}
+      />
+    );
+  });
   return (
     <div className={styles.confirmBill}>
+      {/* {isLoading ? (
+        <div className="page-spinner">
+          <div className="page-spinner__back">
+            <Spinner detail={true} />
+          </div>
+        </div>
+      ) : (
+        ''
+      )} */}
+      <Modal open={open} onClose={handleClose}>
+        <MyMessage
+          handleClose={handleClose}
+          success={successBill}
+          error={errorBill}
+          title={title}
+          msg={msg}
+          print={handlePrintFile}
+          clear={props.clear}
+        />
+      </Modal>
       <div className={styles.container}>
         <div ref={compoenentRef} style={{ fontSize: '12px' }}>
           <div className={styles.row}>
@@ -284,12 +426,13 @@ const ConfimBill = (props) => {
             </div>
           </div>
         </div>
+        {/* handlePrint */}
         <div className={styles.row}>
           <div className={styles.button_bar}>
             <div className={styles.buttons}>
               <button
                 className="btnEdit"
-                onClick={handlePrint}
+                onClick={handleSaveBill}
                 style={{ display: 'flex', alignItems: 'center', gap: 5 }}
               >
                 Save

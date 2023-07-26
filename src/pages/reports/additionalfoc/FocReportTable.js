@@ -50,6 +50,7 @@ const FocReportTable = (props) => {
     { title: 'Dealer contact number', field: 'dealer_contact_number' },
     { title: 'Qty', field: 'qty' },
     { title: 'Additional foc', field: 'addtional_foc_qty' },
+    { title: 'Discount', field: 'discount' },
     { title: 'Value', field: 'value' },
   ];
 

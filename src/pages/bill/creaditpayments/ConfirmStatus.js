@@ -72,11 +72,14 @@ const ConfirmStatus = (props) => {
   };
 
   const handlePayed = (e) => {
-    if (e.target.value > props.invoice.total) {
+    if (
+      parseFloat(e.target.value) + parseFloat(props.invoice.payed) >
+      parseFloat(props.invoice.total)
+    ) {
       setExceed(true);
     } else {
       setExceed(false);
-      setInvoice({ ...invoice, paid_amount: e.target.value });
+      setInvoice({ ...invoice, paid_amount: parseFloat(e.target.value) });
     }
   };
   const handleCloseConfirm = (e) => {
@@ -89,15 +92,18 @@ const ConfirmStatus = (props) => {
     handleModalOpen();
   };
   const handleChequePaymentType = (e) => {
-    setInvoice({
-      ...invoice,
-      amount: e.target.value,
-      paid_amount: e.target.value,
-    });
-    if (invoice.payment_type === 'cheque') {
+    if (
+      parseFloat(e.target.value) +
+        parseFloat(invoice.paid_amount) +
+        parseFloat(props.invoice.payed) >
+      parseFloat(props.invoice.total)
+    ) {
+      setExceed(true);
+    } else {
+      setExceed(false);
       setInvoice({
         ...invoice,
-        paid_amount: e.target.value,
+        amount: parseFloat(e.target.value),
       });
     }
   };

@@ -4,17 +4,76 @@ import { utils, writeFile } from 'xlsx';
 
 import StockTable from './StockTable';
 
-const StockReport = () => {
+const StockReport = (props) => {
   const [filterData, setFilterData] = useState({
+    distributor: null,
     date_from: '',
     date_to: '',
+    item: '-1',
     stock_type: '1',
     category: '-1',
   });
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [descriptions, setDescriptions] = useState([]);
+  const [distributors, setDistributors] = useState([]);
+
   const [data, setData] = useState([]);
   useEffect(() => {
+    if (props.user.is_manager) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/manager/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_company) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    if (props.user.is_excecutive) {
+      setLoading(true);
+      axiosInstance
+        .get(`/users/distributors/by/executive/${props.user.id}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+
+          setDistributors(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
     setLoading(true);
     axiosInstance
       .get(`/category/all/`, {
@@ -31,7 +90,51 @@ const StockReport = () => {
         setLoading(false);
         console.log(err);
       });
+    //get all items details
+    if (props.user.is_distributor || props.user.is_salesref) {
+      setLoading(true);
+
+      axiosInstance
+        .get(`distributor/all/${props.inventory}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setDescriptions(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    }
   }, []);
+
+  const handleDistributor = (e) => {
+    setFilterData({
+      ...filterData,
+      distributor: e.target.value,
+    });
+    setLoading(true);
+
+    axiosInstance
+      .get(`distributor/by/others/${e.target.value}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setLoading(false);
+        setDescriptions(res.data);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
+  };
 
   const handleFilter = (e) => {
     e.preventDefault();
@@ -133,6 +236,31 @@ const StockReport = () => {
         </div>
         <div className="form">
           <div className="form__row">
+            {props.user.is_manager ||
+            props.user.is_company ||
+            props.user.is_excecutive ? (
+              <div className="form__row__col">
+                <div className="form__row__col__label">Distributor</div>
+                <div className="form__row__col__input">
+                  <select
+                    name=""
+                    id=""
+                    defaultValue={'1'}
+                    onChange={(e) => handleDistributor(e)}
+                  >
+                    <option value="">Select distributor</option>
+                    {distributors.map((item, i) => (
+                      <option value={item.id} key={i}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+
             <div className="form__row__col">
               <div className="form__row__col__label">Stock type</div>
               <div className="form__row__col__input">
@@ -164,6 +292,26 @@ const StockReport = () => {
                   {categories.map((item, i) => (
                     <option value={item.id} key={i}>
                       {item.category_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="form__row__col">
+              <div className="form__row__col__label">Description</div>
+              <div className="form__row__col__input">
+                <select
+                  name=""
+                  id=""
+                  defaultValue={'-1'}
+                  onChange={(e) =>
+                    setFilterData({ ...filterData, item: e.target.value })
+                  }
+                >
+                  <option value="-1">All</option>
+                  {descriptions.map((item, i) => (
+                    <option value={item.id} key={i}>
+                      {item.description}
                     </option>
                   ))}
                 </select>

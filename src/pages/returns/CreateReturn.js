@@ -609,7 +609,7 @@ const CreateReturn = ({ inventory }) => {
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Reason</div>
+                <div className="form__row__col__label">Serial numbers</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"

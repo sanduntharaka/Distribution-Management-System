@@ -27,7 +27,10 @@ import OldCreditBillsCollection from './oldbillsreport/OldCreditBillsCollection'
 import AddtionalFocReport from './additionalfoc/AddtionalFocReport';
 import DaylyInventoryPeriod from './dailyInventoryreport/DaylyInventoryPeriod';
 const ReportsTab = () => {
-  const [selected, setSelected] = useState(0);
+  const user_details = JSON.parse(sessionStorage.getItem('user_details'));
+  const user = JSON.parse(sessionStorage.getItem('user'));
+
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inventory, setInventory] = useState('');
   const handleSelect = (i) => {
@@ -35,36 +38,60 @@ const ReportsTab = () => {
   };
   useEffect(() => {
     setLoading(true);
-    axiosInstance
-      .get(
-        `/distributor/get/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
+    if (user.is_distributor) {
+      axiosInstance
+        .get(`/distributor/get/${user_details.id}`, {
           headers: {
             Authorization:
               'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
           },
-        }
-      )
-      .then((res) => {
-        setLoading(false);
-        setInventory(res.data.id);
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
+        })
+        .then((res) => {
+          setLoading(false);
+          setInventory(res.data.id);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    }
+    if (user.is_salesref) {
+      axiosInstance
+        .get(
+          `/distributor/salesref/inventory/bysalesref/${
+            JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          setInventory(res.data.id);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
+    }
   }, []);
   return (
     <div className="vtab">
       <div className="vtab_contaner">
-        <div
-          className={`item ${selected === 0 ? 'selected' : ''}`}
-          onClick={() => handleSelect(0)}
-        >
-          Staff details
-        </div>
+        {user.is_manager || user.is_company ? (
+          <div
+            className={`item ${selected === 0 ? 'selected' : ''}`}
+            onClick={() => handleSelect(0)}
+          >
+            Staff details
+          </div>
+        ) : (
+          ''
+        )}
+
         <div
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
@@ -105,7 +132,7 @@ const ReportsTab = () => {
           className={`item ${selected === 7 ? 'selected' : ''}`}
           onClick={() => handleSelect(7)}
         >
-          Payments report
+          Payment vs sales report
         </div>
         <div
           className={`item ${selected === 8 ? 'selected' : ''}`}
@@ -117,7 +144,7 @@ const ReportsTab = () => {
           className={`item ${selected === 9 ? 'selected' : ''}`}
           onClick={() => handleSelect(9)}
         >
-          All cheques
+          Cheque by period
         </div>
         <div
           className={`item ${selected === 10 ? 'selected' : ''}`}
@@ -143,12 +170,16 @@ const ReportsTab = () => {
         >
           Psa report
         </div>
-        <div
-          className={`item ${selected === 14 ? 'selected' : ''}`}
-          onClick={() => handleSelect(14)}
-        >
-          Delevery report
-        </div>
+        {!user.is_salesref ? (
+          <div
+            className={`item ${selected === 14 ? 'selected' : ''}`}
+            onClick={() => handleSelect(14)}
+          >
+            Delevery report /value/category/product
+          </div>
+        ) : (
+          ''
+        )}
         <div
           className={`item ${selected === 15 ? 'selected' : ''}`}
           onClick={() => handleSelect(15)}
@@ -161,30 +192,39 @@ const ReportsTab = () => {
         >
           Credit bills collection
         </div>
-        <div
-          className={`item ${selected === 23 ? 'selected' : ''}`}
-          onClick={() => handleSelect(23)}
-        >
-          Old Credit bills collection
-        </div>
-        <div
-          className={`item ${selected === 17 ? 'selected' : ''}`}
-          onClick={() => handleSelect(17)}
-        >
-          Collection sheet
-        </div>
+        {!user.is_salesref ? (
+          <div
+            className={`item ${selected === 23 ? 'selected' : ''}`}
+            onClick={() => handleSelect(23)}
+          >
+            Old debtors collection
+          </div>
+        ) : (
+          ''
+        )}
+        {!user.is_salesref ? (
+          <div
+            className={`item ${selected === 17 ? 'selected' : ''}`}
+            onClick={() => handleSelect(17)}
+          >
+            Collection sheet
+          </div>
+        ) : (
+          ''
+        )}
+        {/*
         <div
           className={`item ${selected === 18 ? 'selected' : ''}`}
           onClick={() => handleSelect(18)}
         >
           Normal foc report
         </div>
-        <div
+         <div
           className={`item ${selected === 19 ? 'selected' : ''}`}
           onClick={() => handleSelect(19)}
         >
           Total outstanding
-        </div>
+        </div> */}
         <div
           className={`item ${selected === 20 ? 'selected' : ''}`}
           onClick={() => handleSelect(20)}
@@ -217,58 +257,62 @@ const ReportsTab = () => {
         </div>
       </div>
       <div className="vtab_page">
-        {selected === 0 ? (
+        {selected === 0 &&
+        (user.is_company ||
+          user.is_distributor ||
+          user.is_manager ||
+          user.is_excecutive) ? (
           <StaffReport />
-        ) : selected === 1 ? (
-          <StockReport />
+        ) : selected === 1 && loading == false && inventory !== undefined ? (
+          <StockReport inventory={inventory} user={user} />
         ) : selected === 2 ? (
-          <DealerReport />
-        ) : selected === 3 && loading == false && inventory !== undefined ? (
-          <SalesReport inventory={inventory} />
+          <DealerReport user={user} />
+        ) : selected === 3 ? (
+          <SalesReport inventory={inventory} user={user} />
         ) : selected === 4 ? (
-          <MarketReturnReport />
+          <MarketReturnReport user={user} />
         ) : selected === 5 ? (
-          <SalesReturnReport />
+          <SalesReturnReport user={user} />
         ) : selected === 6 ? (
-          <PendingOrderReport />
+          <PendingOrderReport user={user} />
         ) : selected === 7 ? (
-          <PaymentsForPerios />
+          <PaymentsForPerios user={user} />
         ) : selected === 8 ? (
-          <ChequeInHand />
+          <ChequeInHand user={user} />
         ) : selected === 9 ? (
-          <ChequeByPeriod />
+          <ChequeByPeriod user={user} />
         ) : selected === 10 ? (
-          <MarketCreditReport />
+          <MarketCreditReport user={user} />
         ) : selected === 11 ? (
-          <ChqueReturnsReport />
+          <ChqueReturnsReport user={user} />
         ) : selected === 12 ? (
-          <NonBuyingDealerReport />
+          <NonBuyingDealerReport user={user} />
         ) : selected === 13 ? (
-          <PsaReport />
+          <PsaReport user={user} />
         ) : selected === 14 ? (
-          <DelevaryReport />
+          <DelevaryReport inventory={inventory} user={user} />
         ) : selected === 15 ? (
-          <DistributorDeleveredSalesReport />
+          <DistributorDeleveredSalesReport user={user} />
         ) : selected === 16 ? (
-          <CreditBillsCollection />
+          <CreditBillsCollection user={user} />
         ) : selected === 17 ? (
-          <CollectionsReport />
+          <CollectionsReport user_details={user_details} user={user} />
         ) : selected === 18 ? (
-          <NormalFocReport />
+          <NormalFocReport user={user} />
         ) : selected === 19 ? (
-          <TotalOutstanding />
+          <TotalOutstanding user={user} />
         ) : selected === 20 ? (
-          <DealerPurchasePattern />
+          <DealerPurchasePattern user={user} />
         ) : selected === 21 ? (
-          <DealerPaymentPattern />
+          <DealerPaymentPattern user={user} />
         ) : selected === 22 ? (
-          <FocReport />
+          <FocReport inventory={inventory} user={user} />
         ) : selected === 23 ? (
-          <OldCreditBillsCollection />
+          <OldCreditBillsCollection user={user} />
         ) : selected === 24 ? (
-          <AddtionalFocReport />
+          <AddtionalFocReport user={user} />
         ) : selected === 25 ? (
-          <DaylyInventoryPeriod />
+          <DaylyInventoryPeriod user={user} />
         ) : (
           ''
         )}

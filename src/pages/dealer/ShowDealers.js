@@ -73,6 +73,7 @@ const ShowDealers = () => {
     { title: 'Address', field: 'address' },
     { title: 'Owner', field: 'owner_name' },
     { title: 'Owner contact', field: 'owner_personal_number' },
+    { title: 'Grade', field: 'grade' },
   ];
 
   const [loading, setLoading] = useState(false);
@@ -168,7 +169,7 @@ const ShowDealers = () => {
       contact_number: value.contact_number,
       address: value.address,
       owner_name: value.owner_name,
-
+      grade: value.grade,
       company_number: value.company_number,
       owner_personal_number: value.owner_personal_number,
       owner_home_number: value.owner_home_number,
@@ -202,7 +203,28 @@ const ShowDealers = () => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
+  const handleFilterDealers = (value) => {
+    if (value !== '') {
+      setLoading(true);
 
+      axiosInstance
+        .get(`/dealer/all/search?grade=${value}`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
+          setTableData(res.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+
+          console.log(err);
+        });
+    }
+  };
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
@@ -253,11 +275,25 @@ const ShowDealers = () => {
         <p>View Dealers</p>
       </div>
       <div className="page__pcont">
-        <div className="page__pcont__row">
-          <div className="page__pcont__row__col"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
-          <div className="page__pcont__row__col dontdisp"></div>
+        <div className="form__row">
+          <div className="form__row__col">
+            <div className="form__row__col__label">Grade</div>
+            <div className="form__row__col__input">
+              <select
+                defaultValue={''}
+                onChange={(e) => handleFilterDealers(e.target.value)}
+                required
+              >
+                <option value="">Select grade</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+              </select>
+            </div>
+          </div>
+          <div className="form__row__col dontdisp"></div>
+          <div className="form__row__col dontdisp"></div>
+          <div className="form__row__col dontdisp"></div>
         </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
