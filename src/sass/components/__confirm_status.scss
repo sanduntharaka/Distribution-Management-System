@@ -1,5 +1,6 @@
 .confirm_details {
   height: max-content;
+  max-height: 90%;
   width: 900px;
   font-size: 12px;
   display: flex;
@@ -11,6 +12,25 @@
   right: 0;
   margin: auto;
   transform: translateY(-50%);
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #000f80 #ffffff;
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #000f80;
+    border-radius: 25px;
+  }
+  &::-webkit-scrollbar-button {
+    height: 50px;
+  }
   @include mobile {
     width: 90%;
   }
