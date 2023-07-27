@@ -43,7 +43,7 @@ class GetByDate(APIView):
 
         cheque_filters = {
             'payment_details__in': invoices,
-            'status': 'pending',
+            # 'status': 'pending',
         }
         if by_date:
             cheque_filters['date__range'] = (date_from, date_to)
