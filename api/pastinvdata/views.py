@@ -85,7 +85,7 @@ class ViewInvoices(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         try:
             item = self.kwargs.get('id')
-            past_inv = PastInvoice.objects.get(distributor=item)
+            past_inv = PastInvoice.objects.filter(distributor=item)
             serializer = serializers.ViewInvSerializer(past_inv, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
