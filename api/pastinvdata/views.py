@@ -79,10 +79,10 @@ class DeleteInvoice(generics.DestroyAPIView):
     queryset = PastInvoice.objects.all()
 
 
-class ViewInvoices(generics.ListAPIView):
-    serializer_class = serializers.ViewInvSerializer
+class ViewInvoices(APIView):
+    # serializer_class = serializers.ViewInvSerializer
 
-    def get_queryset(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
             item = self.kwargs.get('id')
             past_inv = PastInvoice.objects.filter(distributor=item)
