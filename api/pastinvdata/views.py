@@ -83,8 +83,12 @@ class ViewInvoices(generics.ListAPIView):
     serializer_class = serializers.ViewInvSerializer
 
     def get_queryset(self, *args, **kwargs):
-        item = self.kwargs.get('id')
-        return get_list_or_404(PastInvoice, distributor=item)
+        try:
+            item = self.kwargs.get('id')
+            return get_list_or_404(PastInvoice, distributor=item)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddChequeExcel(APIView):
