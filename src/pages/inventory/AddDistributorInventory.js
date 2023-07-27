@@ -211,7 +211,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="item_code"
                     value={data.item_code === undefined ? '' : data.item_code}
                     onChange={(e) =>
@@ -222,11 +222,11 @@ const AddDistributorInventory = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">base</div>
+                <div className="form__row__col__label">Base</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="base"
                     value={data.base === undefined ? '' : data.base}
                     onChange={(e) => setData({ ...data, base: e.target.value })}
@@ -234,11 +234,11 @@ const AddDistributorInventory = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">invoice</div>
+                <div className="form__row__col__label">Invoice</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="invoice"
                     value={
                       data.invoice_number === undefined
@@ -255,13 +255,13 @@ const AddDistributorInventory = ({ inventory }) => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Whole sale price</div>
+                <div className="form__row__col__label">Wholesale Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     step="0.01"
                     min="0"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="whole_sale_price"
                     value={
                       data.whole_sale_price === undefined
@@ -276,11 +276,11 @@ const AddDistributorInventory = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Retail price</div>
+                <div className="form__row__col__label">Retail Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     name="retail_price"
@@ -299,7 +299,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     name="free_of_charge"
@@ -321,7 +321,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="qty"
                     value={data.qty === undefined ? '' : data.qty}
                     onChange={(e) => setData({ ...data, qty: e.target.value })}
@@ -334,7 +334,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="pack_size"
                     value={data.pack_size === undefined ? '' : data.pack_size}
                     onChange={(e) =>
@@ -353,7 +353,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     id="description"
                     rows="5"
                     cols="30"
-                    placeholder="type here..."
+                    placeholder="Type here..."
                     name="description"
                     value={
                       data.description === undefined ? '' : data.description
@@ -369,7 +369,7 @@ const AddDistributorInventory = ({ inventory }) => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>Choose if from sales return</p>
+                  <p>Choose if From Sales Return</p>
                 </div>
                 <div className="specialColumn" style={{ display: 'grid' }}>
                   <div className="form__row__col__input aligned">

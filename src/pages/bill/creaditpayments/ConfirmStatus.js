@@ -204,7 +204,7 @@ const ConfirmStatus = (props) => {
 
               {props.user.is_distributor ? (
                 <div className="row">
-                  <label htmlFor="">Payment type</label>
+                  <label htmlFor="">Payment Type</label>
                   <select
                     defaultValue={'0'}
                     name=""
@@ -213,7 +213,7 @@ const ConfirmStatus = (props) => {
                       setInvoice({ ...invoice, payment_type: e.target.value })
                     }
                   >
-                    <option value="0">Select payment type</option>
+                    <option value="0">Select Payment Type</option>
                     <option value="cash">cash</option>
                     <option value="credit">credit</option>
                     <option value="cheque">cheque</option>
@@ -260,11 +260,11 @@ const ConfirmStatus = (props) => {
               invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
-                    <p>Add credit details</p>
+                    <p>Add Credit Details</p>
                   </div>
                   <div className="info">
                     <div className="row">
-                      <label htmlFor="">Due date</label>
+                      <label htmlFor="">Due Date</label>
                       <input
                         type="date"
                         onChange={(e) =>
@@ -287,7 +287,7 @@ const ConfirmStatus = (props) => {
               invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
-                    <p>Add cheque status</p>
+                    <p>Add Cheque Status</p>
                   </div>
                   <div className="info">
                     {/*
@@ -305,7 +305,7 @@ const ConfirmStatus = (props) => {
                       />
                     </div>*/}
                     <div className="row">
-                      <label htmlFor="">status</label>
+                      <label htmlFor="">Status</label>
                       <select
                         onChange={(e) =>
                           setInvoice({
@@ -387,7 +387,7 @@ const ConfirmStatus = (props) => {
                         className="col"
                         style={{ display: 'flex', flexDirection: 'column' }}
                       >
-                        <label>Cheque date</label>
+                        <label>Cheque Date</label>
 
                         <input
                           type="date"
@@ -403,7 +403,7 @@ const ConfirmStatus = (props) => {
                         className="col"
                         style={{ display: 'flex', flexDirection: 'column' }}
                       >
-                        <label>No of dates</label>
+                        <label>No of Days</label>
 
                         <input
                           type="number"

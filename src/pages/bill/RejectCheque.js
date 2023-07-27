@@ -163,7 +163,7 @@ const RejectCheque = () => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Type cheque number</div>
+                <div className="form__row__col__label">Type Cheque Number</div>
                 <div className="form__row__col__input">
                   <div
                     style={{
@@ -174,7 +174,7 @@ const RejectCheque = () => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={valuecheque}
                       onChange={(e) => filterCheques(e)}
                     />
@@ -235,36 +235,45 @@ const RejectCheque = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">cheque_number</div>
+                <div className="form__row__col__label">Cheque Number</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
+                    placeholder="Type cheque number here"
                     value={data.cheque_number ? data.cheque_number : ''}
                   />
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">branch</div>
+                <div className="form__row__col__label">Bank</div>
                 <div className="form__row__col__input">
-                  <input type="text" value={data.branch ? data.branch : ''} />
+                  <input
+                    type="text"
+                    placeholder="Type bank here"
+                    value={data.bank ? data.bank : ''}
+                  />
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">bank</div>
+                <div className="form__row__col__label">Branch</div>
                 <div className="form__row__col__input">
-                  <input type="text" value={data.bank ? data.bank : ''} />
+                  <input
+                    type="text"
+                    placeholder="Type branch name here"
+                    value={data.branch ? data.branch : ''}
+                  />
                 </div>
               </div>
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">cheque date</div>
+                <div className="form__row__col__label">Cheque Date</div>
                 <div className="form__row__col__input">
                   <input type="date" value={data.date ? data.date : ''} />
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">deposited at</div>
+                <div className="form__row__col__label">Deposited at</div>
                 <div className="form__row__col__input">
                   <input
                     type="date"
@@ -275,16 +284,21 @@ const RejectCheque = () => {
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">amount</div>
-                <div className="form__row__col__input">
-                  <input type="number" value={data.amount ? data.amount : ''} />
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">number of days</div>
+                <div className="form__row__col__label">Amount</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
+                    placeholder="0"
+                    value={data.amount ? data.amount : ''}
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">Number of Days</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    placeholder="0"
                     value={data.number_of_dates ? data.number_of_dates : ''}
                   />
                 </div>

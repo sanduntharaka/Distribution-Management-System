@@ -156,7 +156,7 @@ const DistributorSalesRef = () => {
           />
         </Modal>
         <div className="page__title">
-          <p>Assign SalesRef</p>
+          <p>Assign Distributors and Sales Reps</p>
         </div>
 
         <div className="page__pcont">
@@ -164,7 +164,7 @@ const DistributorSalesRef = () => {
             <form action="">
               <div className="form__row">
                 <div className="form__row__col">
-                  <div className="form__row__col__label">Distributor</div>
+                  <div className="form__row__col__label">Distributors</div>
                   <div className="form__row__col__input">
                     <select
                       type="text"
@@ -178,7 +178,7 @@ const DistributorSalesRef = () => {
                         {' '}
                         {user.is_distributor
                           ? user_detail.full_name
-                          : 'Select distributor'}
+                          : 'Select Distributors'}
                       </option>
                       {distributors.map((item, i) => (
                         <option value={item.id} key={i}>
@@ -189,7 +189,7 @@ const DistributorSalesRef = () => {
                   </div>
                 </div>
                 <div className="form__row__col">
-                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__label">Sales Rep</div>
                   <div className="form__row__col__input">
                     <select
                       type="text"
@@ -198,7 +198,7 @@ const DistributorSalesRef = () => {
                         setData({ ...data, sales_ref: e.target.value })
                       }
                     >
-                      <option value="0">Select sales ref</option>
+                      <option value="0">Select Sales Rep</option>
                       {salesrefs.map((item, i) => (
                         <option value={item.id} key={i}>
                           {item.full_name}

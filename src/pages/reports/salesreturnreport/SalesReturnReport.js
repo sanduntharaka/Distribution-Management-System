@@ -244,6 +244,15 @@ const SalesReturnReport = (props) => {
           </div>
         </div>
         <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs {data.reduce((sum, item) => sum + item.sub_total, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => handleExport(e)}>
               Export

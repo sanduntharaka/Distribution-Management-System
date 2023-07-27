@@ -66,39 +66,49 @@ const AddInvoice = ({ user }) => {
         console.log(err);
       });
   }, []);
-
+  const [validations, setValidations] = useState({
+    inv_number: false,
+    date: false,
+    dealer: false,
+    amount: false,
+    paid: false,
+    balance: false,
+  });
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (data.customer_name !== '') {
+      setLoading(true);
+      setShowUplod(false);
+      setShowMsg(true);
+      axiosInstance
+        .post('/pastinv/inv/add/', data, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          setLoading(false);
 
-    setLoading(true);
-    setShowUplod(false);
-    setShowMsg(true);
-    axiosInstance
-      .post('/pastinv/inv/add/', data, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        setLoading(false);
+          setError(false);
+          setSuccess(true);
+          setTitle('Success');
+          setMsg('Details added successfully.');
+          handleOpen();
+        })
+        .catch((err) => {
+          setLoading(false);
 
-        setError(false);
-        setSuccess(true);
-        setTitle('Success');
-        setMsg('Details added successfully.');
-        handleOpen();
-      })
-      .catch((err) => {
-        setLoading(false);
-
-        console.log(err);
-        setSuccess(false);
-        setError(true);
-        setTitle('Error');
-        setMsg('Cannot save data. Please check and try again.');
-        handleOpen();
-      });
+          console.log(err);
+          setSuccess(false);
+          setError(true);
+          setTitle('Error');
+          setMsg('Cannot save data. Please check and try again.');
+          handleOpen();
+        });
+    } else {
+      setValidations({ ...validations, dealer: true });
+    }
   };
   const hanldeFileUpload = (e) => {
     e.preventDefault();
@@ -163,11 +173,11 @@ const AddInvoice = ({ user }) => {
               <form action="" onSubmit={handleSubmit}>
                 <div className="form__row">
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Invoice number</div>
+                    <div className="form__row__col__label">Invoice Number</div>
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type here"
+                        placeholder="Type here"
                         name="invoice_number"
                         value={
                           data.inv_number === undefined ? '' : data.inv_number
@@ -193,15 +203,16 @@ const AddInvoice = ({ user }) => {
                     </div>
                   </div>
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Dealer name</div>
-                    <div className="form__row__col__input">
+                    <div className="form__row__col__label">Dealer Name</div>
+                    <div className="form__row__col__input ">
                       <select
+                        className={validations.dealer ? 'err' : ''}
                         defaultValue={''}
                         onChange={(e) =>
                           setData({ ...data, customer_name: e.target.value })
                         }
                       >
-                        <option value="">Select dealer</option>
+                        <option value="">Select Dealer</option>
                         {delaers.map((item, i) => (
                           <option value={item.id} key={i}>
                             {item.name} : {item.psa_name}
@@ -213,14 +224,14 @@ const AddInvoice = ({ user }) => {
                 </div>
 
                 <div className="form__row">
-                  <div className="form__row__col">
-                    <div className="form__row__col__label">Original amount</div>
-                    <div className="form__row__col__input">
+                  <div className="form__row__col ">
+                    <div className="form__row__col__label">Original Amount</div>
+                    <div className="form__row__col__input ">
                       <input
                         type="number"
                         step="0.01"
                         min="0"
-                        placeholder="type here"
+                        placeholder="Type here"
                         name="original_amount"
                         value={
                           data.original_amount === undefined
@@ -235,11 +246,11 @@ const AddInvoice = ({ user }) => {
                     </div>
                   </div>
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Paid amount</div>
+                    <div className="form__row__col__label">Paid Amount</div>
                     <div className="form__row__col__input">
                       <input
                         type="number"
-                        placeholder="type here"
+                        placeholder="Type here"
                         step="0.01"
                         min="0"
                         name="paid_amount"
@@ -254,11 +265,11 @@ const AddInvoice = ({ user }) => {
                     </div>
                   </div>
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Balance amount</div>
+                    <div className="form__row__col__label">Balance Amount</div>
                     <div className="form__row__col__input">
                       <input
                         type="number"
-                        placeholder="type here"
+                        placeholder="Type here"
                         step="0.01"
                         min="0"
                         name="balance_amount"

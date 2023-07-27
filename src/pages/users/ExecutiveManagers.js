@@ -138,7 +138,7 @@ const ExecutiveManagers = (props) => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign Executive and Managers</p>
+        <p>Assign Managers and Executives</p>
       </div>
       <div className="page__pcont">
         <div className="form">
@@ -154,7 +154,7 @@ const ExecutiveManagers = (props) => {
                       setData({ ...data, manager: e.target.value })
                     }
                   >
-                    <option value="0">Select manager</option>
+                    <option value="0">Select Manager</option>
                     {managers.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -176,7 +176,7 @@ const ExecutiveManagers = (props) => {
                     }
                     disabled={props.user.is_excecutive}
                   >
-                    <option value="0">Select executive</option>
+                    <option value="0">Select Executive</option>
                     {executives.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}

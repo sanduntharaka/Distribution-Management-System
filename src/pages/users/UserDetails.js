@@ -161,11 +161,11 @@ const UserDetails = () => {
           <form action="" onSubmit={handleSubmit}>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select user account</div>
+                <div className="form__row__col__label">Select User Account</div>
                 <div className="form__row__col__input">
                   {/* <input
                     type="text"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     value={data.full_name ? data.full_name : ''}
                     onChange={(e) =>
                       setData({ ...data, full_name: e.target.value })
@@ -179,7 +179,7 @@ const UserDetails = () => {
                     value={data.user ? data.user : ''}
                     onChange={(e) => setData({ ...data, user: e.target.value })}
                   >
-                    <option value="null">Select user</option>
+                    <option value="null">Select User</option>
                     {users.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.user_name}
@@ -189,11 +189,11 @@ const UserDetails = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Name with initials</div>
+                <div className="form__row__col__label">Name with Initials</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     value={data.full_name ? data.full_name : ''}
                     onChange={(e) =>
                       setData({ ...data, full_name: e.target.value })
@@ -212,7 +212,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type email here"
+                    placeholder="Type email here"
                     value={data.email ? data.email : ''}
                     onChange={(e) =>
                       setData({ ...data, email: e.target.value })
@@ -229,7 +229,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type address here"
+                    placeholder="Type address here"
                     value={data.address ? data.address : ''}
                     onChange={(e) =>
                       setData({ ...data, address: e.target.value })
@@ -243,7 +243,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type designation here"
+                    placeholder=" Type NIC number here"
                     value={data.nic ? data.nic : ''}
                     onChange={(e) => setData({ ...data, nic: e.target.value })}
                     required
@@ -258,7 +258,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="date"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     value={data.dob ? data.dob : ''}
                     onChange={(e) => setData({ ...data, dob: e.target.value })}
                     required
@@ -275,7 +275,7 @@ const UserDetails = () => {
                     }
                     required
                   >
-                    <option value="">Select designation</option>
+                    <option value="">Select Designation</option>
 
                     {user.is_company ? (
                       <>
@@ -310,13 +310,13 @@ const UserDetails = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Contacts</div>
+                <div className="form__row__col__label">Contact Numbers</div>
 
                 <div className="specialColumn">
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type company number"
+                      placeholder="Type company number"
                       value={data.company_number ? data.company_number : ''}
                       onChange={(e) =>
                         setData({ ...data, company_number: e.target.value })
@@ -328,7 +328,7 @@ const UserDetails = () => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type personal number"
+                      placeholder="Type personal number"
                       value={data.personal_number ? data.personal_number : ''}
                       onChange={(e) =>
                         setData({ ...data, personal_number: e.target.value })
@@ -340,7 +340,7 @@ const UserDetails = () => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type home number"
+                      placeholder="Type home number"
                       value={data.home_number ? data.home_number : ''}
                       onChange={(e) =>
                         setData({ ...data, home_number: e.target.value })
@@ -360,7 +360,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={
                       data.immediate_contact_person_name
                         ? data.immediate_contact_person_name
@@ -377,12 +377,12 @@ const UserDetails = () => {
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  Immediate contact Person number
+                  Immediate contact Person Number
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="tel"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={
                       data.immediate_contact_person_number
                         ? data.immediate_contact_person_number
@@ -401,11 +401,11 @@ const UserDetails = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Terriotory</div>
+                <div className="form__row__col__label">Territory </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type address here"
+                    placeholder="Type address here"
                     value={data.terriotory ? data.terriotory : ''}
                     onChange={(e) =>
                       setData({ ...data, terriotory: e.target.value })

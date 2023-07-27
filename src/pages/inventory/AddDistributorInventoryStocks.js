@@ -274,11 +274,11 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
               </div>
 
               <div className="form__row__col">
-                <div className="form__row__col__label">invoice</div>
+                <div className="form__row__col__label">Invoice</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="invoice"
                     value={
                       data.invoice_number === undefined
@@ -295,13 +295,13 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Whole sale price</div>
+                <div className="form__row__col__label">Whole Sale Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     step="0.01"
                     min="0"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="whole_sale_price"
                     value={
                       data.whole_sale_price === undefined
@@ -316,11 +316,11 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Retail price</div>
+                <div className="form__row__col__label">Retail Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     name="retail_price"
@@ -339,7 +339,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     name="free_of_charge"
@@ -356,7 +356,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="qty"
                     value={data.qty === undefined ? '' : data.qty}
                     onChange={(e) => setData({ ...data, qty: e.target.value })}
@@ -369,7 +369,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     name="pack_size"
                     value={data.pack_size === undefined ? '' : data.pack_size}
                     onChange={(e) =>
@@ -383,7 +383,7 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>Choose if from sales return</p>
+                  <p>Choose if From Sales Return</p>
                 </div>
                 <div className="specialColumn" style={{ display: 'grid' }}>
                   <div className="form__row__col__input aligned">

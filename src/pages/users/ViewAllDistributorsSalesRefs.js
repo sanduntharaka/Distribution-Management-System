@@ -219,7 +219,7 @@ const ViewAllDistributorsSalesRefs = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Distributor and their Salesrefs</p>
+        <p>View all Distributors and their Sales Reps</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

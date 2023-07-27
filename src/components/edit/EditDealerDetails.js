@@ -97,7 +97,7 @@ const EditDealerDetails = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Contact number</td>
+                <td>Contact Number</td>
                 <td>
                   {' '}
                   <input
@@ -142,7 +142,7 @@ const EditDealerDetails = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Company number</td>
+                <td>Company Number</td>
                 <td>
                   {' '}
                   <input
@@ -158,7 +158,7 @@ const EditDealerDetails = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Personal number</td>
+                <td>Personal Number</td>
                 <td>
                   {' '}
                   <input
@@ -174,7 +174,7 @@ const EditDealerDetails = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Home number</td>
+                <td>Home Number</td>
                 <td>
                   {' '}
                   <input
@@ -205,7 +205,7 @@ const EditDealerDetails = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Assistant number</td>
+                <td>Assistant Number</td>
                 <td>
                   <input
                     type="text"

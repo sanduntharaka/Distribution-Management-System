@@ -347,7 +347,7 @@ const CreateReturn = ({ inventory }) => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select pas</div>
+                <div className="form__row__col__label">Select PSA</div>
 
                 <div className="form__row__col__input">
                   <div
@@ -359,7 +359,7 @@ const CreateReturn = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={valuePsa}
                       onChange={(e) => filterPsa(e)}
                     />
@@ -419,7 +419,7 @@ const CreateReturn = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Select dealer</div>
+                <div className="form__row__col__label">Select Dealer</div>
                 <div className="form__row__col__input">
                   <div
                     style={{
@@ -430,7 +430,7 @@ const CreateReturn = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={valuedealer}
                       onChange={(e) => filterDealers(e)}
                     />
@@ -511,7 +511,7 @@ const CreateReturn = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={value2}
                       onChange={(e) => filterProducts(e)}
                     />
@@ -583,7 +583,7 @@ const CreateReturn = ({ inventory }) => {
               <div className="form__row__col">
                 <div className="form__row__col__label">
                   {' '}
-                  QTY(add qty with foc)
+                  QTY(Add QTY with FOC)
                 </div>
                 <div className="form__row__col__input">
                   <input
@@ -596,7 +596,7 @@ const CreateReturn = ({ inventory }) => {
               <div className="form__row__col">
                 <div className="form__row__col__label">
                   {' '}
-                  FOC(add foc count only)
+                  FOC(Add FOC Count Only)
                 </div>
                 <div className="form__row__col__input">
                   <input
@@ -609,11 +609,12 @@ const CreateReturn = ({ inventory }) => {
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Serial numbers</div>
+                <div className="form__row__col__label">Serial Numbers</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
                     value={reason}
+                    placeholder="Type serial numbers"
                     onChange={(e) => setReason(e.target.value)}
                   />
                 </div>

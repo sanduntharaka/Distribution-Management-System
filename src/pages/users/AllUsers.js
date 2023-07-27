@@ -24,10 +24,6 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
-
-import DealerDetails from '../../components/details/DealerDetails';
-import EditDealerDetails from '../../components/edit/EditDealerDetails';
-import DealerDeleteConfirm from '../../components/userComfirm/DealerDeleteConfirm';
 import Message from '../../components/message/Message';
 import UserDetails from '../../components/details/UserDetails';
 import UserDetailsEdit from '../../components/edit/UserDetailsEdit';
@@ -302,7 +298,7 @@ const AllUsers = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All User Details</p>
+        <p>View all User Details</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

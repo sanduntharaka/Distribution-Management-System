@@ -263,7 +263,7 @@ const ReportsTab = () => {
           user.is_manager ||
           user.is_excecutive) ? (
           <StaffReport />
-        ) : selected === 1 && loading == false && inventory !== undefined ? (
+        ) : selected === 1 ? (
           <StockReport inventory={inventory} user={user} />
         ) : selected === 2 ? (
           <DealerReport user={user} />

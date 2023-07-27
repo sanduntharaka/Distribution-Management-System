@@ -99,11 +99,11 @@ const CreatePsa = (props) => {
               <form action="">
                 <div className="form__row">
                   <div className="form__row__col">
-                    <div className="form__row__col__label">area name</div>
+                    <div className="form__row__col__label">Area Name</div>
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type psa name"
+                        placeholder="Type PSA  name"
                         onChange={(e) =>
                           setData({ ...data, area_name: e.target.value })
                         }

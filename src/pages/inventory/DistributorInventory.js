@@ -215,7 +215,7 @@ const DistributorInventory = ({ inventory, user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View distributor inventory</p>
+        <p>View Distributor Inventory</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

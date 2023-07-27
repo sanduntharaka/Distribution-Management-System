@@ -163,7 +163,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type name here"
+                        placeholder="Type name here"
                         value={
                           data.full_name !== undefined ? data.full_name : ''
                         }
@@ -183,7 +183,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type email here"
+                        placeholder="Type email here"
                         value={data.email !== undefined ? data.email : ''}
                         disabled
                       />
@@ -197,7 +197,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type address here"
+                        placeholder="Type address here"
                         value={data.address !== undefined ? data.address : ''}
                         onChange={(e) =>
                           setData({ ...data, address: e.target.value })
@@ -210,7 +210,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type designation here"
+                        placeholder="Type designation here"
                         value={
                           data.designation !== undefined ? data.designation : ''
                         }
@@ -228,7 +228,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="date"
-                        placeholder="type name here"
+                        placeholder="Type name here"
                         value={data.dob !== undefined ? data.dob : ''}
                         onChange={(e) =>
                           setData({ ...data, dob: e.target.value })
@@ -250,7 +250,7 @@ const Profile = () => {
                       >
                         <input
                           type="tel"
-                          placeholder="type company number"
+                          placeholder="Type company number"
                           value={
                             data.company_number !== undefined
                               ? data.company_number
@@ -268,7 +268,7 @@ const Profile = () => {
                       >
                         <input
                           type="tel"
-                          placeholder="type personal number"
+                          placeholder="Type personal number"
                           value={
                             data.personal_number !== undefined
                               ? data.personal_number
@@ -289,7 +289,7 @@ const Profile = () => {
                       >
                         <input
                           type="tel"
-                          placeholder="type home number"
+                          placeholder="Type home number"
                           value={
                             data.home_number !== undefined
                               ? data.home_number
@@ -312,7 +312,7 @@ const Profile = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type here"
+                        placeholder="Type here"
                         value={
                           data.immediate_contact_person_name !== undefined
                             ? data.immediate_contact_person_name
@@ -329,12 +329,12 @@ const Profile = () => {
                   </div>
                   <div className="form__row__col">
                     <div className="form__row__col__label">
-                      Immediate contact Person number
+                      Immediate Contact Person Number
                     </div>
                     <div className="form__row__col__input">
                       <input
                         type="tel"
-                        placeholder="type here"
+                        placeholder="Type here"
                         value={
                           data.immediate_contact_person_number !== undefined
                             ? data.immediate_contact_person_number
@@ -353,11 +353,11 @@ const Profile = () => {
 
                 <div className="form__row">
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Terriotory</div>
+                    <div className="form__row__col__label">Territory</div>
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type address here"
+                        placeholder="Type address here"
                         value={
                           data.terriotory !== undefined ? data.terriotory : ''
                         }

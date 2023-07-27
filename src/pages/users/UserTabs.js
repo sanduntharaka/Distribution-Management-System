@@ -54,7 +54,7 @@ const UserTabs = () => {
             className={`item ${selected === 5 ? 'selected' : ''}`}
             onClick={() => handleSelect(5)}
           >
-            Assign Manager Executives
+            Managers and Executives
           </div>
         ) : (
           ''
@@ -65,7 +65,7 @@ const UserTabs = () => {
             className={`item ${selected === 3 ? 'selected' : ''}`}
             onClick={() => handleSelect(3)}
           >
-            Assign Manager Distributor
+            Managers and Distributors
           </div>
         ) : (
           ''
@@ -75,7 +75,7 @@ const UserTabs = () => {
             className={`item ${selected === 6 ? 'selected' : ''}`}
             onClick={() => handleSelect(6)}
           >
-            Assign Executive distributor
+            Executives and Distributors
           </div>
         ) : (
           ''
@@ -85,7 +85,7 @@ const UserTabs = () => {
             className={`item ${selected === 2 ? 'selected' : ''}`}
             onClick={() => handleSelect(2)}
           >
-            Assign Distributor Sales Rep
+            Distributor Sales Rep
           </div>
         ) : (
           ''
@@ -100,7 +100,7 @@ const UserTabs = () => {
             className={`item ${selected === 4 ? 'selected' : ''}`}
             onClick={() => handleSelect(4)}
           >
-            View details
+            View Details
           </div>
         ) : (
           ''

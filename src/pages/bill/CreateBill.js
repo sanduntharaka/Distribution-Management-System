@@ -204,7 +204,7 @@ const CreateBill = ({ inventory }) => {
 
   const filterProducts = (e) => {
     setShowProducts(true);
-
+    setAddedsameItem(false);
     setSearchLoadingProducts(true);
 
     axiosInstance
@@ -226,11 +226,23 @@ const CreateBill = ({ inventory }) => {
       });
     setValue2(e.target.value);
   };
-
+  const [addedsameItem, setAddedsameItem] = useState(false);
   const hanldeProductFilter = (e, item) => {
     setValue2(item.item_code);
     setProduct(item);
     setShowProducts(false);
+    if (
+      items.some((element) => {
+        if (element.id === item.id) {
+          return true;
+        }
+
+        return false;
+      })
+    ) {
+      console.log('found');
+      setAddedsameItem(true);
+    }
   };
   const handleClear = (e) => {
     e.preventDefault();
@@ -293,49 +305,51 @@ const CreateBill = ({ inventory }) => {
   };
   const handleAdd = (e) => {
     e.preventDefault();
+    if (addedsameItem === false) {
+      if (product.qty >= qty) {
+        if (billingPriceMethod === '1') {
+          setData({
+            ...data,
+            sub_total: data.sub_total + product.whole_sale_price * qty,
+            total_discount: data.total_discount + parseFloat(discount),
+          });
+        }
+        if (billingPriceMethod === '2') {
+          setData({
+            ...data,
+            sub_total: data.sub_total + product.retail_price * qty,
+            total_discount: data.total_discount + parseFloat(discount),
+          });
+        }
 
-    if (product.qty >= qty) {
-      if (billingPriceMethod === '1') {
-        setData({
-          ...data,
-          sub_total: data.sub_total + product.whole_sale_price * qty,
-          total_discount: data.total_discount + parseFloat(discount),
-        });
+        setItems([
+          ...items,
+          {
+            id: product.id,
+            item_code: product.item_code,
+            description: product.description,
+            whole_sale_price: product.whole_sale_price,
+            price: product.retail_price,
+            qty: parseInt(qty),
+            foc: parseInt(foc),
+            discount: parseFloat(discount),
+            pack_size: product.pack_size,
+            extended_price:
+              billingPriceMethod === '1'
+                ? product.whole_sale_price * parseInt(qty) -
+                  parseFloat(discount)
+                : product.retail_price * parseInt(qty) - parseFloat(discount),
+          },
+        ]);
+
+        setQty(0);
+        setFoc(0);
+        setSubTotal(0);
+        setDiscount(0);
+        setValue2('');
+      } else {
+        setExceedQty(true);
       }
-      if (billingPriceMethod === '2') {
-        setData({
-          ...data,
-          sub_total: data.sub_total + product.retail_price * qty,
-          total_discount: data.total_discount + parseFloat(discount),
-        });
-      }
-
-      setItems([
-        ...items,
-        {
-          id: product.id,
-          item_code: product.item_code,
-          description: product.description,
-          whole_sale_price: product.whole_sale_price,
-          price: product.retail_price,
-          qty: parseInt(qty),
-          foc: parseInt(foc),
-          discount: parseFloat(discount),
-          pack_size: product.pack_size,
-          extended_price:
-            billingPriceMethod === '1'
-              ? product.whole_sale_price * parseInt(qty) - parseFloat(discount)
-              : product.retail_price * parseInt(qty) - parseFloat(discount),
-        },
-      ]);
-
-      setQty(0);
-      setFoc(0);
-      setSubTotal(0);
-      setDiscount(0);
-      setValue2('');
-    } else {
-      setExceedQty(true);
     }
   };
 
@@ -485,7 +499,7 @@ const CreateBill = ({ inventory }) => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select dealer</div>
+                <div className="form__row__col__label">Select Dealer</div>
                 <div className="form__row__col__input">
                   <div
                     style={{
@@ -496,7 +510,7 @@ const CreateBill = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={valuedealer}
                       onChange={(e) => filterDealers(e)}
                     />
@@ -564,7 +578,7 @@ const CreateBill = ({ inventory }) => {
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  Select billing price method{' '}
+                  Select Billing Price Method{' '}
                 </div>
 
                 <div className="form__row__col__input">
@@ -592,7 +606,7 @@ const CreateBill = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={value2}
                       onChange={(e) => filterProducts(e)}
                     />
@@ -665,6 +679,13 @@ const CreateBill = ({ inventory }) => {
                       ))}
                   </div>
                 </div>
+                {addedsameItem ? (
+                  <div className="form__row__col__error">
+                    <p>You Already Added This Item</p>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">QTY</div>
@@ -678,7 +699,7 @@ const CreateBill = ({ inventory }) => {
                 </div>
                 {exceed_qty ? (
                   <div className="form__row__col__error">
-                    <p>Inventory has not engough quanty</p>
+                    <p>Inventory Has Not Engough Quanty</p>
                   </div>
                 ) : (
                   ''
@@ -697,7 +718,7 @@ const CreateBill = ({ inventory }) => {
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Sub total</div>
+                <div className="form__row__col__label">Sub Total</div>
                 <div className="form__row__col__label">{subTotal}</div>
               </div>
               <div className="form__row__col">

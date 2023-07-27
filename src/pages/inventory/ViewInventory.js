@@ -294,7 +294,7 @@ const ViewInventory = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View Company inventory</p>
+        <p>View Company Inventory</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

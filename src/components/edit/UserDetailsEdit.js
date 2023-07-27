@@ -83,7 +83,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Personal number</td>
+                <td>Personal Number</td>
                 <td>
                   {' '}
                   <input
@@ -99,7 +99,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Company number</td>
+                <td>Company Number</td>
                 <td>
                   {' '}
                   <input
@@ -115,7 +115,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Home number</td>
+                <td>Home Number</td>
                 <td>
                   {' '}
                   <input
@@ -156,7 +156,7 @@ const UserDetailsEdit = (props) => {
                     }
                     required
                   >
-                    <option value="">Select designation</option>
+                    <option value="">Select Designation</option>
 
                     {props.user.is_company ? (
                       <>
@@ -188,7 +188,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Terriotory</td>
+                <td>Territory</td>
                 <td>
                   {' '}
                   <input
@@ -204,7 +204,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Date of birth</td>
+                <td>Date of Birth</td>
                 <td>
                   {' '}
                   <input
@@ -217,7 +217,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Immediate contact person name</td>
+                <td>Immediate Contact Person Name</td>
                 <td>
                   {' '}
                   <input
@@ -233,7 +233,7 @@ const UserDetailsEdit = (props) => {
                 </td>
               </tr>
               <tr>
-                <td>Immediate contact person phone</td>
+                <td>Immediate Contact Person Phone</td>
                 <td>
                   {' '}
                   <input

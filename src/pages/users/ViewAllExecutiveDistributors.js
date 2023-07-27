@@ -164,7 +164,7 @@ const ViewAllExecutiveDistributors = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Executives and their Distributors</p>
+        <p>View all Executives and their Distributors</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

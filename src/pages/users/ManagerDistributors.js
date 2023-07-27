@@ -130,7 +130,7 @@ const ManagerDistributors = ({ user }) => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign Distributors</p>
+        <p>Assign Managers and Distributors</p>
       </div>
       <div className="page__pcont">
         <div className="form">
@@ -147,7 +147,18 @@ const ManagerDistributors = ({ user }) => {
                     }
                     disabled={user.is_manager}
                   >
-                    <option value="">Select manager</option>
+                    {user.is_manager ? (
+                      <option value="">
+                        {' '}
+                        {
+                          JSON.parse(sessionStorage.getItem('user_details'))
+                            .full_name
+                        }
+                      </option>
+                    ) : (
+                      <option value="">Select manager</option>
+                    )}
+
                     {managers.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -166,7 +177,7 @@ const ManagerDistributors = ({ user }) => {
                       setData({ ...data, distributor: e.target.value })
                     }
                   >
-                    <option value="0">Select distributor</option>
+                    <option value="0">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}

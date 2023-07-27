@@ -300,11 +300,11 @@ const ConfirmStatus = (props) => {
               invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
-                    <p>Add credit details</p>
+                    <p>Add Credit Details</p>
                   </div>
                   <div className="info">
                     <div className="row">
-                      <label htmlFor="">Due date</label>
+                      <label htmlFor="">Due Date</label>
                       <input
                         type="date"
                         onChange={(e) =>
@@ -327,7 +327,7 @@ const ConfirmStatus = (props) => {
               invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
-                    <p>Add cheque status</p>
+                    <p>Add Cheque Status</p>
                   </div>
                   <div className="info">
                     {/*<div className="row">
@@ -424,7 +424,7 @@ const ConfirmStatus = (props) => {
                         className="col"
                         style={{ display: 'flex', flexDirection: 'column' }}
                       >
-                        <label>Cheque date</label>
+                        <label>Cheque Date</label>
 
                         <input
                           type="date"
@@ -440,7 +440,7 @@ const ConfirmStatus = (props) => {
                         className="col"
                         style={{ display: 'flex', flexDirection: 'column' }}
                       >
-                        <label>No of dates</label>
+                        <label>No of Days</label>
 
                         <input
                           type="number"

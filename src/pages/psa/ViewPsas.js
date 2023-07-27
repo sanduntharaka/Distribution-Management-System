@@ -188,7 +188,7 @@ const ViewPsas = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Primary Sales Areas</p>
+        <p>View all Primary Sales Areas</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

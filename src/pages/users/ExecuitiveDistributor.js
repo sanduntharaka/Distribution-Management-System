@@ -137,7 +137,7 @@ const ExecuitiveDistributor = (props) => {
         />
       </Modal>
       <div className="page__title">
-        <p>Assign Executive and Distributors</p>
+        <p>Assign Executives and Distributors</p>
       </div>
       <div className="page__pcont">
         <div className="form">
@@ -155,7 +155,7 @@ const ExecuitiveDistributor = (props) => {
                     }
                     disabled={props.user.is_excecutive}
                   >
-                    <option value="0">Select executive</option>
+                    <option value="0">Select Executives</option>
                     {executives.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -177,7 +177,7 @@ const ExecuitiveDistributor = (props) => {
                     }
                     disabled={props.user.is_distributor}
                   >
-                    <option value="0">Select executive</option>
+                    <option value="0">Select Distributors</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}

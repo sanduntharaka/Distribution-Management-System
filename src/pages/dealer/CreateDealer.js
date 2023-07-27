@@ -242,7 +242,7 @@ const CreateDealer = (props) => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     onChange={(e) => setData({ ...data, name: e.target.value })}
                     value={data.name ? data.name : ''}
                     required
@@ -254,7 +254,7 @@ const CreateDealer = (props) => {
                 <div className="form__row__col__input">
                   <input
                     type="tel"
-                    placeholder="type contact number here"
+                    placeholder="Type contact number here"
                     onChange={(e) =>
                       setData({ ...data, contact_number: e.target.value })
                     }
@@ -271,7 +271,7 @@ const CreateDealer = (props) => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type address here"
+                    placeholder="Type address here"
                     onChange={(e) =>
                       setData({ ...data, address: e.target.value })
                     }
@@ -284,11 +284,11 @@ const CreateDealer = (props) => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Owner name</div>
+                <div className="form__row__col__label">Owner Name</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     onChange={(e) =>
                       setData({ ...data, owner_name: e.target.value })
                     }
@@ -308,7 +308,7 @@ const CreateDealer = (props) => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type company number"
+                      placeholder="Type company number"
                       onChange={(e) =>
                         setData({ ...data, company_number: e.target.value })
                       }
@@ -320,7 +320,7 @@ const CreateDealer = (props) => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type personal number"
+                      placeholder="Type personal number"
                       onChange={(e) =>
                         setData({
                           ...data,
@@ -339,7 +339,7 @@ const CreateDealer = (props) => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="type home number"
+                      placeholder="Type home number"
                       onChange={(e) =>
                         setData({ ...data, owner_home_number: e.target.value })
                       }
@@ -355,11 +355,11 @@ const CreateDealer = (props) => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Assistant name</div>
+                <div className="form__row__col__label">Assistant Name</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     onChange={(e) =>
                       setData({ ...data, assistant_name: e.target.value })
                     }
@@ -370,12 +370,12 @@ const CreateDealer = (props) => {
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  Assistant contact number
+                  Assistant Contact Number
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="tel"
-                    placeholder="type here"
+                    placeholder="Type here"
                     onChange={(e) =>
                       setData({
                         ...data,

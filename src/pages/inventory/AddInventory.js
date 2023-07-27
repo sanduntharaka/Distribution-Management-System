@@ -173,7 +173,7 @@ const AddInventory = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={data.item_code ? data.item_code : ''}
                     onChange={(e) =>
                       setData({ ...data, item_code: e.target.value })
@@ -183,11 +183,11 @@ const AddInventory = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">base</div>
+                <div className="form__row__col__label">Base</div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={data.base ? data.base : ''}
                     onChange={(e) => setData({ ...data, base: e.target.value })}
                   />
@@ -197,13 +197,13 @@ const AddInventory = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Whole sale price</div>
+                <div className="form__row__col__label">Wholesale Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     step="0.01"
                     min="0"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={data.whole_sale_price ? data.whole_sale_price : ''}
                     onChange={(e) =>
                       setData({ ...data, whole_sale_price: e.target.value })
@@ -213,11 +213,11 @@ const AddInventory = () => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Retail price</div>
+                <div className="form__row__col__label">Retail Price</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     value={data.retail_price ? data.retail_price : ''}
@@ -233,7 +233,7 @@ const AddInventory = () => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     step="0.01"
                     min="0"
                     value={data.free_of_charge ? data.free_of_charge : ''}
@@ -250,7 +250,7 @@ const AddInventory = () => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={data.qty ? data.qty : ''}
                     onChange={(e) => setData({ ...data, qty: e.target.value })}
                     required
@@ -262,7 +262,7 @@ const AddInventory = () => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="type here"
+                    placeholder="Type here"
                     value={data.pack_size ? data.pack_size : ''}
                     onChange={(e) =>
                       setData({ ...data, pack_size: e.target.value })
@@ -281,7 +281,7 @@ const AddInventory = () => {
                     name="message"
                     rows="5"
                     cols="30"
-                    placeholder="type here..."
+                    placeholder="Type here..."
                     value={data.description ? data.description : ''}
                     onChange={(e) =>
                       setData({ ...data, description: e.target.value })

@@ -44,7 +44,7 @@ const PsaEdit = (props) => {
     <div className="edit">
       <div className="edit__content">
         <dib className="edit__content__title">
-          <h4>Edit Psa Details</h4>
+          <h4>Edit PSA Details</h4>
         </dib>
         <div className="edit__content__table">
           <div className="form">

@@ -232,7 +232,7 @@ const NotPerchase = ({ inventory }) => {
           <form action="" onSubmit={(e) => handleSave(e)}>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Select dealer</div>
+                <div className="form__row__col__label">Select Dealer</div>
                 <div className="form__row__col__input">
                   <div
                     style={{
@@ -243,7 +243,7 @@ const NotPerchase = ({ inventory }) => {
                   >
                     <input
                       type="text"
-                      placeholder="search..."
+                      placeholder="Search..."
                       value={valuedealer}
                       onChange={(e) => filterDealers(e)}
                     />
@@ -321,7 +321,7 @@ const NotPerchase = ({ inventory }) => {
                     checked={data.is_only_our ? true : false}
                     onChange={(e) => handleCheckedOnlyOur(e)}
                   />
-                  <label htmlFor="">Have only our goods </label>
+                  <label htmlFor="">Have Only Our Goods </label>
                 </div>
                 <div className="form__row__col__input aligned">
                   <input
@@ -330,7 +330,7 @@ const NotPerchase = ({ inventory }) => {
                     checked={data.is_competitor ? true : false}
                     onChange={(e) => handleCheckedCompetitor(e)}
                   />
-                  <label htmlFor="">Have competitor goods </label>
+                  <label htmlFor="">Have Competitor Goods </label>
                 </div>
                 <div className="form__row__col__input aligned">
                   <input
@@ -339,7 +339,7 @@ const NotPerchase = ({ inventory }) => {
                     checked={data.is_payment_problem ? true : false}
                     onChange={(e) => handleCheckeProblem(e)}
                   />
-                  <label htmlFor="">payment problem </label>
+                  <label htmlFor="">Payment Problem </label>
                 </div>
                 <div className="form__row__col__input aligned">
                   <input
@@ -348,7 +348,7 @@ const NotPerchase = ({ inventory }) => {
                     checked={data.is_dealer_not_in ? true : false}
                     onChange={(e) => handleCheckedNotIn(e)}
                   />
-                  <label htmlFor="">Dealer not in </label>
+                  <label htmlFor="">Dealer Not In </label>
                 </div>
               </div>
               <div className="form__row__col dontdisp"></div>

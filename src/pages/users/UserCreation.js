@@ -247,12 +247,12 @@ const UserCreation = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>user name</p>
+                  <p>Username</p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="type name here"
+                    placeholder="Type name here"
                     autoComplete="username"
                     value={data.user_name ? data.user_name : ''}
                     onChange={(e) =>
@@ -264,13 +264,13 @@ const UserCreation = () => {
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>password</p>
+                  <p>Password</p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="password"
                     name="password1"
-                    placeholder="type password here"
+                    placeholder="Type password here"
                     value={data.password ? data.password : ''}
                     onChange={(e) =>
                       setData({ ...data, password: e.target.value })
@@ -287,13 +287,13 @@ const UserCreation = () => {
               </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>Confirm password</p>
+                  <p>Confirm Password</p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="password"
                     name="password2"
-                    placeholder="type password again"
+                    placeholder="Type password again"
                     value={data.re_password ? data.re_password : ''}
                     onChange={(e) =>
                       setData({ ...data, re_password: e.target.value })
@@ -307,7 +307,7 @@ const UserCreation = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>User type</p>
+                  <p>User Type</p>
                 </div>
                 <div className="specialColumn" style={{ display: 'grid' }}>
                   {/* {user.is_superuser ? (
@@ -374,7 +374,7 @@ const UserCreation = () => {
                         checked={data.is_salesref}
                         onChange={(e) => handleCheckSalesRef(e)}
                       />
-                      <label htmlFor="">Sales rep</label>
+                      <label htmlFor="">Sales Rep</label>
                     </div>
                   ) : (
                     ''

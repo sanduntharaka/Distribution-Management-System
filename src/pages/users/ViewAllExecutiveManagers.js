@@ -197,7 +197,7 @@ const ViewAllExecutiveManagers = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Executives and their Managers</p>
+        <p>View all Managers and their Executives</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

@@ -24,44 +24,44 @@ const DealerDetails = (props) => {
         </dib>
         <div className="details__content__body">
           <div className="details__content__row">
-            <div className="details__content__row__col .title">By</div>
+            <div className="details__content__row__col .title">By:</div>
             <div className="details__content__row__col .detail">
               {data.added}
             </div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Id</div>
+            <div className="details__content__row__col .title">Id:</div>
             <div className="details__content__row__col .detail">{data.id}</div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Name</div>
+            <div className="details__content__row__col .title">Name:</div>
             <div className="details__content__row__col .detail">
               {data.name}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Contact number
+              Contact Number:
             </div>
             <div className="details__content__row__col .detail">
               {data.contact_number}
             </div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Address</div>
+            <div className="details__content__row__col .title">Address:</div>
             <div className="details__content__row__col .detail">
               {data.address}
             </div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Owner Name</div>
+            <div className="details__content__row__col .title">Owner Name:</div>
             <div className="details__content__row__col .detail">
               {data.owner_name}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Company number
+              Company Number:
             </div>
             <div className="details__content__row__col .detail">
               {data.company_number}
@@ -69,21 +69,23 @@ const DealerDetails = (props) => {
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Personal number
+              Personal Number:
             </div>
             <div className="details__content__row__col .detail">
               {data.owner_personal_number}
             </div>
           </div>
           <div className="details__content__row">
-            <div className="details__content__row__col .title">Home number</div>
+            <div className="details__content__row__col .title">
+              Home Number:
+            </div>
             <div className="details__content__row__col .detail">
               {data.owner_home_number}
             </div>
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Assistant Name
+              Assistant Name:
             </div>
             <div className="details__content__row__col .detail">
               {data.assistant_name}
@@ -91,7 +93,7 @@ const DealerDetails = (props) => {
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">
-              Assistant number
+              Assistant Number:
             </div>
             <div className="details__content__row__col .detail">
               {data.assistant_contact_number}

@@ -114,7 +114,7 @@ const Category = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type category name"
+                        placeholder="Type category name"
                         value={data.category_name ? data.category_name : ''}
                         onChange={(e) =>
                           setData({ ...data, category_name: e.target.value })
@@ -128,7 +128,7 @@ const Category = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type more details"
+                        placeholder="Type more details"
                         value={data.description ? data.description : ''}
                         onChange={(e) =>
                           setData({ ...data, description: e.target.value })
@@ -138,7 +138,7 @@ const Category = (props) => {
                   </div>
                   <div className="form__row__col">
                     <div className="form__row__col__label">
-                      Foc percentage(%)
+                      FOC percentage(%)
                     </div>
                     <div className="form__row__col__input">
                       <input

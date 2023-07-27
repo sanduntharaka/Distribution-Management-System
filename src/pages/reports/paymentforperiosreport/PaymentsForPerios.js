@@ -215,6 +215,47 @@ const PaymentsForPerios = (props) => {
             </div>
           </div>
         </div>
+
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total Cash</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.cash, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total Cheque</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.cheque, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total Credit</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.credit, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs{' '}
+              {dateByData.reduce(
+                (sum, item) => sum + item.cash + item.cheque + item.credit,
+                0
+              )}
+              /-
+            </p>
+          </div>
+        </div>
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByDate(e)}>

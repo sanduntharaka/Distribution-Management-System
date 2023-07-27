@@ -224,6 +224,15 @@ const PendingOrderReport = (props) => {
           </div>
         </div>
         <div className="page__pcont__row">
+          <div className="page__pcont__row__col total">
+            <p>Total</p>
+            <p>
+              Rs {dateByData.reduce((sum, item) => sum + item.total, 0)}
+              /-
+            </p>
+          </div>
+        </div>
+        <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByDate(e)}>
               Export
