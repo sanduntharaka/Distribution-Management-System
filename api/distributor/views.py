@@ -234,7 +234,7 @@ class AddItemsExcel(APIView):
                 stock_data = {
                     'item': item.id,
                     'pack_size': 0 if math.isnan(row[4]) else row[4],
-                    'qty': row[5],
+                    'qty': int(row[5])+int(row[6]),
                     'foc': row[6],
                     'whole_sale_price': row[7],
                     'retail_price': row[8],
@@ -259,7 +259,7 @@ class AddItemsExcel(APIView):
                 }
                 stock_data = {
                     'pack_size': row[4] if row[4] is not None else 0,
-                    'qty': row[5],
+                    'qty': int(row[5])+int(row[6]),
                     'foc': row[6],
                     'whole_sale_price': row[7],
                     'retail_price': row[8],
