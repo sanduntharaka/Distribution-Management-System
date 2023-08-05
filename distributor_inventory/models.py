@@ -40,7 +40,7 @@ class ItemStock(models.Model):
     whole_sale_price = models.FloatField(blank=False)
     retail_price = models.FloatField(blank=False)
     date = models.DateField(auto_now_add=True)
-    initial_qty = models.IntegerField(blank=True, null=True)
+    initial_qty = models.IntegerField(blank=True, default=0)
     initial_foc = models.IntegerField(blank=True, default=0)
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 

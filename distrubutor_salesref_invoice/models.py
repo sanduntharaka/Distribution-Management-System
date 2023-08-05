@@ -184,7 +184,7 @@ class ChequeDetails(models.Model):
 class InvoiceIntem(models.Model):
     bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
     item = models.ForeignKey(ItemStock,
-                             on_delete=models.DO_NOTHING)
+                             on_delete=models.DO_NOTHING, related_name='to_remove_item')
     discount = models.FloatField(default=0)
     item_code = models.CharField(max_length=50)
     description = models.TextField(null=True)
@@ -203,3 +203,11 @@ class InvoiceIntem(models.Model):
 
     def get_value(self):
         return self.qty+self.foc
+    
+class Item(models.Model):
+    invoice_item = models.ForeignKey(InvoiceIntem,
+                                     on_delete=models.CASCADE, null=True, blank=True, related_name='related_main_item')
+    item = models.ForeignKey(ItemStock,
+                             on_delete=models.DO_NOTHING, related_name='related_item')
+    qty = models.IntegerField(default=0)
+    foc = models.IntegerField(default=0)

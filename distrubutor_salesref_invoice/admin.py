@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails
+from .models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails,Item
 
 
 class SalesRefInvoiceAdmin(admin.ModelAdmin):
@@ -24,6 +24,14 @@ class SalesRefInvoiceItemAdmin(admin.ModelAdmin):
 
 
 admin.site.register(InvoiceIntem, SalesRefInvoiceItemAdmin)
+
+class SalesRefInvoiceItemItemsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'invoice_item', 'item', 'qty', 'foc', )
+    list_display_links = ('id',)
+    list_per_page = 25
+
+
+admin.site.register(Item, SalesRefInvoiceItemItemsAdmin)
 
 
 class PaymentDetailsAdmin(admin.ModelAdmin):
