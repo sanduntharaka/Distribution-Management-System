@@ -38,10 +38,16 @@ class SalesReturnItem(models.Model):
     salesreturn = models.ForeignKey(SalesReturn,
                                     on_delete=models.CASCADE)
     item = models.ForeignKey(ItemStock,
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE,blank=True,null=True)
+    inventory_item = models.ForeignKey(DistributorInventoryItems,
+                             on_delete=models.CASCADE,blank=True,null=True)
     qty = models.IntegerField()
     reason = models.TextField()
     foc = models.IntegerField(default=0)
+    whole_sale_price = models.FloatField(blank=True,null=True)
+    retail_price = models.FloatField(blank=True,null=True)
+    initial_qty = models.IntegerField(blank=True, default=0)
+    initial_foc = models.IntegerField(blank=True, default=0)
 
     def total(self):
         return self.qty*self.item.retail_price

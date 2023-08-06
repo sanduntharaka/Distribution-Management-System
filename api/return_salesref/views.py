@@ -132,14 +132,17 @@ class DeleteReturn(APIView):
 class AddReturnItem(APIView):
 
     def post(self, request, *args, **kwargs):
-
+        print('hi1')
         sales_ref_return = SalesRefReturn.objects.get(id=self.kwargs.get('id'))
         return_items = []
         try:
             for item in request.data['items']:
                 print(item)
-                return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return, item=ItemStock.objects.get(
-                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason']))
+                return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return,  inventory_item=DistributorInventoryItems.objects.get(
+                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'],whole_sale_price=item['whole_sale_price'],
+                    retail_price=item['retail_price'],
+                    initial_qty=int(item['qty']),
+                    initial_foc=int(item['foc'])))
             print(return_items)
 
             SalesRefReturnItem.objects.bulk_create(return_items)

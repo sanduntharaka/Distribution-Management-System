@@ -30,8 +30,8 @@ class UpdateInvoiceItemsSerializer(serializers.ModelSerializer):
 
 
 class GetInvoiceItemsSerializer(serializers.ModelSerializer):
-    wholesale_price = serializers.CharField(source='item.whole_sale_price')
-    retail_price = serializers.CharField(source='item.retail_price')
+    wholesale_price = serializers.CharField(source='whole_sale_price')
+    retail_price = serializers.CharField(source='price')
     bill_code = serializers.CharField(
         source='bill.get_bill_code_number_combine')
     billing_price_method = serializers.CharField(
@@ -39,8 +39,8 @@ class GetInvoiceItemsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InvoiceIntem
-        fields = ('id', 'bill', 'item', 'discount', 'item_code', 'description', 'qty',
-                  'foc', 'pack_size', 'price', 'extended_price', 'wholesale_price', 'retail_price', 'bill_code', 'billing_price_method')
+        fields = ('id', 'bill', 'discount', 'item_code', 'description', 'qty',
+                  'foc', 'pack_size', 'price', 'retail_price', 'extended_price', 'wholesale_price', 'retail_price', 'bill_code', 'billing_price_method')
 
 
 class GetInvoicesSerializer(serializers.ModelSerializer):

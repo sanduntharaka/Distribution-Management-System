@@ -1,3 +1,7 @@
+from rest_framework.views import APIView
+from itertools import chain
+from django.db.models import Sum, F, Q
+from django.db.models.functions import Coalesce
 from rest_framework import filters
 from exceutive_manager.models import ExecutiveManager
 from rest_framework import status
@@ -40,13 +44,49 @@ class GetinventoryItems (generics.ListAPIView):
         return get_list_or_404(ItemStock, item__inventory=self.kwargs.get('pk'), qty__gt=0)
 
 
-class GetinventoryItemsSearch (generics.ListAPIView):
+class GetinventoryItemsSearch (APIView):
     serializer_class = serializers.DistributorInventoryItems
-    filter_backends = [filters.SearchFilter]
-    search_fields = ('item__item_code', 'item__description')
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ('item__item_code', 'item__description')
 
-    def get_queryset(self, *args, **kwargs):
-        return ItemStock.objects.filter(item__inventory=self.kwargs.get('pk'), qty__gt=0)
+    def get(self, request, *args, **kwargs):
+        # Retrieve ItemStock data for the specific distributor inventory
+        inventory_id = kwargs.get('pk')
+        queryset = ItemStock.objects.filter(
+            item__inventory=inventory_id, qty__gt=0)
+
+        # Separate data for the same price and different prices
+        same_price_data = queryset.values('whole_sale_price', 'retail_price', 'item__id', 'item__item_code', 'item__description').annotate(
+            total_qty=Sum('qty'), total_foc=Sum('foc')
+        )
+
+        # Retrieve data for different prices
+        different_price_data = queryset.exclude(
+            Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
+            Q(retail_price__in=same_price_data.values('retail_price'))
+        )
+
+        # Combine data for same price and different prices
+        combined_queryset = list(chain(same_price_data, different_price_data))
+
+        # Get the search term from the request
+        search_term = self.request.GET.get('search', '')
+
+        # Manually filter based on the search term
+        filtered_queryset = [
+            {
+                'item_code': item['item__item_code'],
+                'description': item['item__description'],
+                'id':item['item__id'],
+                'whole_sale_price': item['whole_sale_price'],
+                'retail_price': item['retail_price'],
+                'qty': item['total_qty'],
+                'foc': item['total_foc']
+            }
+            for item in combined_queryset
+            if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
+        ]
+        return Response(data=filtered_queryset, status=status.HTTP_200_OK)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):

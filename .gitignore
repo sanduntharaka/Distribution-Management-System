@@ -7,6 +7,12 @@ db.sqlite3
 settings.py
 core/settings.py
 media
+DeleteBillItems.py
+EditBillItems.py
+0004_salesrefreturnitem_initial_foc_and_more.py
+0004_salesreturnitem_initial_foc_and_more.py
+0008_item_from_foc.py
+0007_invoiceintem_whole_sale_price_and_more.py
 0005_paymentdetails_is_completed.py
 0005_notbuydetails_is_have_our_brands.py
 0008_alter_userdetails_email.py

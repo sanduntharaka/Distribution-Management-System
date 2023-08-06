@@ -37,7 +37,7 @@ urlpatterns = [
          views.AllInvoiceByDealer.as_view()),
     path('items/<id>', views.InvoiceItems.as_view()),
     path('item/update/<id>', views.InvoiceItemUpdate.as_view()),
-    path('item/delete/<id>', views.InvoiceItemDelete.as_view()),
+    path('item/delete/', views.InvoiceItemDelete.as_view()),
 
     path('create/invoice/items/', views.CreateInvoiceItems.as_view()),
     path('confirm/cheque/<pk>', views.ConfirmCheque.as_view()),

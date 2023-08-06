@@ -3,7 +3,7 @@ import jwt
 from rest_framework import filters
 from rest_framework import status
 from rest_framework.response import Response
-from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails
+from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, ChequeDetails, PaymentDetails,Item
 from distrubutor_salesref_invoice.ReduceDistributorQuantity import ReduceQuantity
 from distrubutor_salesref.models import SalesRefDistributor
 from distributor_inventory.models import DistributorInventoryItems, ItemStock
@@ -29,9 +29,7 @@ class CreateInvoice(generics.CreateAPIView):
         else:
             data['bill_number'] = 1
         try:
-
             serializer = self.get_serializer(data=data)
-
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -135,29 +133,34 @@ class CreateInvoiceItems(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         bill = SalesRefInvoice.objects.get(id=request.data['bill'])
+
         item_objs = []
         inventory_items = []
         try:
             for item in request.data['items']:
-                dist_item = {}
-                dist_item['item'] = ItemStock.objects.get(
-                    id=item['id'])
-                item_objs.append(InvoiceIntem(bill=bill, item_code=item['item_code'], description=item['description'], qty=item['qty'],
-                                 foc=item['foc'], pack_size=item['pack_size'], price=item['price'], extended_price=item['extended_price'], discount=item['discount'], item=dist_item['item']))
+                # dist_item = {}
+                # dist_item['item'] = ItemStock.objects.get(
+                #     id=item['id'])
+                invoice_item = InvoiceIntem(bill=bill, item_code=item['item_code'], description=item['description'], qty=item['qty'],
+                                            foc=item['foc'], price=item['price'], whole_sale_price=item['whole_sale_price'], extended_price=item['extended_price'], discount=item['discount'])
 
-                dist_item['qty'] = item['qty']
-                dist_item['foc'] = item['foc']
-                inventory_items.append(dist_item)
-            InvoiceIntem.objects.bulk_create(item_objs)
-
-            for inv_item in inventory_items:
+                # dist_item['qty'] = item['qty']
+                # dist_item['foc'] = item['foc']
+                invoice_item.save()
                 reduceQty = ReduceQuantity(
-                    inv_item['item'], inv_item['qty'], inv_item['foc'])
+                    invoice_item, item['id'], item['whole_sale_price'], item['price'])
                 reduceQty.reduce_qty()
+            #     inventory_items.append(dist_item)
+            # InvoiceIntem.objects.bulk_create(item_objs)
+
+            # for inv_item in inventory_items:
+            #     reduceQty = ReduceQuantity(
+            #         inv_item['item'], inv_item['qty'], inv_item['foc'])
+            #     reduceQty.reduce_qty()
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
             bill.delete()
-            print(e)
+            print('err:', e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -366,78 +369,207 @@ class ReturnCheque(generics.UpdateAPIView):
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
+from distrubutor_salesref_invoice.EditBillItems import EditBillItems
 
 class InvoiceItemUpdate(APIView):
     def put(self, request, *args, **kwargs):
 
-        item = {
+        item_request = {
             'discount': float(request.data['discount']),
             'qty': float(request.data['qty']),
             'foc': float(request.data['foc']),
             'extended_price': float(request.data['extended_price']),
 
         }
-
-        bill = SalesRefInvoice.objects.get(id=request.data['bill'])
+        print(item_request)
         invoice_item = InvoiceIntem.objects.get(id=request.data['id'])
         prev_qty = invoice_item.qty
         prev_foc = invoice_item.foc
 
-        if invoice_item.qty > item['qty']:
+        items = Item.objects.filter(invoice_item=invoice_item)
+        total_prev_qty = prev_qty+prev_foc
+        total_requested_qty = item_request['qty']+item_request['foc']
+        
+        discount_changed = invoice_item.discount - item_request['discount']
 
-            dis = 0
-            if invoice_item.discount > item['discount']:
-                dis = item['discount'] - invoice_item.discount
+        invoice_item.discount = item_request['discount'] if invoice_item.discount == float(0)  else  invoice_item.discount - discount_changed 
+        invoice_item.bill.total_discount =item_request['discount'] if invoice_item.bill.total_discount == float(0) else invoice_item.bill.total_discount - discount_changed
+        invoice_item.bill.total =invoice_item.bill.total - item_request['discount'] if invoice_item.bill.total_discount == float(0) else invoice_item.bill.total + discount_changed
+        invoice_item.bill.save()
+        invoice_item.save()
 
-            elif invoice_item.discount < item['discount']:
-                dis = item['qty'] * item['discount'] - invoice_item.discount
-            sub_tot = item['extended_price'] - invoice_item.extended_price
-            bill.change_total(sub_tot, dis)
+        """
+        to_add_qty means add to stocks
+        to_remove_qty means remove from stocks
+        """
+        
+        if total_prev_qty > total_requested_qty:
+                """Items removed from Invoice Items"""
+                """Add removed items to inventory"""
+                try:
+                    to_add_qty = prev_qty-item_request['qty']
+                    to_add_foc = prev_foc-item_request['foc']
+                    print('prev_add:',prev_foc)
+
+                    print('to_add:',to_add_foc)
+                    removed_qty=to_add_qty
+                    removed_foc=to_add_foc
+
+                    for item in items:
+                        if to_add_qty > item.qty:
+                            item.item.qty = item.item.qty+item.qty
+                            to_add_qty =  to_add_qty - item.qty
+                            item.qty=0
+                        else:
+                            item.item.qty = item.item.qty+to_add_qty
+                            item.qty=item.qty-to_add_qty
+                            to_add_qty = 0
+
+                        if to_add_foc > item.foc:
+                            if item.foc == 0:
+                                print('1')
+                                item.item.qty = item.item.qty+to_add_foc
+                                to_add_foc =  to_add_foc - to_add_foc
+                                # must cheque
+                                # if item.item.initial_foc != 0:
+                                #     item.item.foc = item.item.foc+to_add_foc
+                            else:
+                                item.item.qty = item.item.qty+item.foc
+                                to_add_foc =  to_add_foc - item.foc
+                            item.foc=0
+                        else:
+                            print('2')
+
+                            item.item.qty = item.item.qty+to_add_foc
+
+                            item.foc=item.foc-to_add_foc
+                            to_add_foc = 0
+                        
+  
+                        
+                        item.item.save()
+                        item.save()
+                        
+                        if to_add_qty ==0:
+
+                            break
+                    invoice_item.qty =  (item_request['qty'])
+                    invoice_item.foc =  (item_request['foc'])
+                    invoice_item.save()
+                    if invoice_item.bill.billing_price_method == '2':
+
+                        invoice_item.extended_price = invoice_item.qty * invoice_item.price
+                        invoice_item.bill.total = invoice_item.bill.total - (removed_qty* invoice_item.price)
+                        invoice_item.bill.sub_total = invoice_item.bill.sub_total - (removed_qty* invoice_item.price)
+
+                    else:
+                        invoice_item.extended_price = invoice_item.qty * invoice_item.whole_sale_price
+                        invoice_item.bill.total = invoice_item.bill.total - (removed_qty* invoice_item.whole_sale_price)
+                        invoice_item.bill.sub_total = invoice_item.bill.sub_total - (removed_qty* invoice_item.whole_sale_price)
+                    invoice_item.bill.save()
+                    invoice_item.save()
+
+                    return Response(status=status.HTTP_200_OK)
+                except Exception as e:
+                    print(e)
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
         else:
+            to_remove_qty = item_request['qty'] - prev_qty
+            to_remove_foc = item_request['foc'] - prev_foc
+            try:
+                reduce_qty = EditBillItems(invoice_item.item_code,invoice_item.whole_sale_price,invoice_item.price,to_remove_qty,to_remove_foc,invoice_item)
+                reduce_qty.reduce_qty()
+                invoice_item.qty =  invoice_item.qty + to_remove_qty
+                invoice_item.foc =  invoice_item.foc + to_remove_foc
+                invoice_item.save()
+                if invoice_item.bill.billing_price_method == '2':
 
-            dis = 0
-            if invoice_item.discount > item['discount']:
-                dis = item['discount'] - invoice_item.discount
+                    invoice_item.extended_price = invoice_item.qty * invoice_item.price
+                    invoice_item.bill.total = invoice_item.bill.total + (to_remove_qty* invoice_item.price)
+                    invoice_item.bill.sub_total = invoice_item.bill.sub_total + (to_remove_qty* invoice_item.price)
 
-            elif invoice_item.discount < item['discount']:
-                dis = item['qty'] * item['discount'] - invoice_item.discount
-            sub_tot = item['extended_price'] - invoice_item.extended_price
-            bill.change_total(sub_tot, dis)
+                else:
+                    invoice_item.extended_price = invoice_item.qty * invoice_item.whole_sale_price
+                    invoice_item.bill.total = invoice_item.bill.total + (to_remove_qty* invoice_item.whole_sale_price)
+                    invoice_item.bill.sub_total = invoice_item.bill.sub_total + (to_remove_qty* invoice_item.whole_sale_price)
 
-        serializer = serializers.UpdateInvoiceItemsSerializer(
-            data=item, instance=invoice_item)
-        if serializer.is_valid():
-            serializer.save()
-            bill.save()
+                invoice_item.bill.save()
+                invoice_item.save()
 
-            reduce_qty = ReduceQuantity(
-                item=invoice_item.item, qty=item['qty'], foc=item['foc'])
-            reduce_qty.edited_details(
-                prev_qty=prev_qty, prev_foc=prev_foc)
-            return Response(status=status.HTTP_200_OK)
-        else:
 
-            print(serializer.errors)
 
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
 
+
+
+
+
+        # if invoice_item.qty > item['qty']:
+
+        #     dis = 0
+        #     if invoice_item.discount > item['discount']:
+        #         dis = item['discount'] - invoice_item.discount
+
+        #     elif invoice_item.discount < item['discount']:
+        #         dis = item['qty'] * item['discount'] - invoice_item.discount
+        #     sub_tot = item['extended_price'] - invoice_item.extended_price
+        #     bill.change_total(sub_tot, dis)
+
+        # else:
+
+        #     dis = 0
+        #     if invoice_item.discount > item['discount']:
+        #         dis = item['discount'] - invoice_item.discount
+
+        #     elif invoice_item.discount < item['discount']:
+        #         dis = item['qty'] * item['discount'] - invoice_item.discount
+        #     sub_tot = item['extended_price'] - invoice_item.extended_price
+        #     bill.change_total(sub_tot, dis)
+
+        # serializer = serializers.UpdateInvoiceItemsSerializer(
+        #     data=item, instance=invoice_item)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     bill.save()
+
+        #     reduce_qty = ReduceQuantity(
+        #         item=invoice_item.item, qty=item['qty'], foc=item['foc'])
+        #     reduce_qty.edited_details(
+        #         prev_qty=prev_qty, prev_foc=prev_foc)
+        #     return Response(status=status.HTTP_200_OK)
+        # else:
+
+        #     print(serializer.errors)
+
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+from distrubutor_salesref_invoice.DeleteBillItems import DeleteBillItems
 
 class InvoiceItemDelete(APIView):
     def delete(self, request, *args, **kwargs):
+        
         bill = SalesRefInvoice.objects.get(id=request.data['bill'])
         invoice_item = InvoiceIntem.objects.get(id=request.data['id'])
+
+        print(request)
         dis = invoice_item.discount
         sub_tot = -(invoice_item.extended_price)
 
         bill.change_total(sub_tot, dis)
-        reduce_qty = ReduceQuantity(
-            item=invoice_item.item, qty=invoice_item.qty, foc=invoice_item.foc)
+        reduce_qty = DeleteBillItems(
+            invoice_item=invoice_item)
+        
+        
         try:
             invoice_item.delete()
             bill.save()
-            reduce_qty.deleted_details()
+            reduce_qty.delete()
             return Response(status=status.HTTP_200_OK)
 
         except:

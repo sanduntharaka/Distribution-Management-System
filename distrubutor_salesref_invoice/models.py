@@ -184,7 +184,7 @@ class ChequeDetails(models.Model):
 class InvoiceIntem(models.Model):
     bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
     item = models.ForeignKey(ItemStock,
-                             on_delete=models.DO_NOTHING, related_name='to_remove_item')
+                             on_delete=models.DO_NOTHING, related_name='to_remove_item',null=True,blank=True)
     discount = models.FloatField(default=0)
     item_code = models.CharField(max_length=50)
     description = models.TextField(null=True)
@@ -192,6 +192,7 @@ class InvoiceIntem(models.Model):
     foc = models.FloatField(blank=False, default=0)
     pack_size = models.IntegerField(default=0)
     price = models.FloatField(blank=False, default=0)
+    whole_sale_price = models.FloatField(blank=False, default=0)
     extended_price = models.FloatField(blank=False, default=0)
 
     def get_addtional_foc(self):
@@ -211,3 +212,4 @@ class Item(models.Model):
                              on_delete=models.DO_NOTHING, related_name='related_item')
     qty = models.IntegerField(default=0)
     foc = models.IntegerField(default=0)
+    from_foc = models.IntegerField(default=0)
