@@ -13,8 +13,8 @@ class SalesReturnSerializer(serializers.ModelSerializer):
 
 
 class SalesReturnItemsSerializer(serializers.ModelSerializer):
-    item = serializers.CharField(source='item.item.item_code')
-    item_description = serializers.CharField(source='item.item.description')
+    item = serializers.CharField(source='inventory_item.item_code')
+    item_description = serializers.CharField(source='inventory_item.description')
     # description = serializers.CharField(source='item.description')
     # date = serializers.CharField(source='salesrefreturn.date')
     # bill = serializers.CharField(source='salesrefreturn.getbillnumber')

@@ -50,4 +50,4 @@ class SalesRefReturnItem(models.Model):
     initial_foc = models.IntegerField(blank=True, default=0)
 
     def total(self):
-        return self.qty*self.item.retail_price
+        return self.qty*self.retail_price

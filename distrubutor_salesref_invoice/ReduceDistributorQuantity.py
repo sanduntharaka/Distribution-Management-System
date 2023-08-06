@@ -36,13 +36,14 @@ class ReduceQuantity:
 
             reduce_qty = 0
             reduce_foc = 0
-
+            from_foc = 0
             if (total_qty) <= stock_qty:
 
                 if total_foc <= stock_foc:
                     reduce_foc = total_foc
                     reduce_qty = total_qty
                     stok.foc = stok.foc - total_foc
+                    from_foc =  total_foc
                     stok.qty = stok.qty - (total_qty)
                     if stok.qty < stok.foc:
                         stok.foc = stok.qty
@@ -54,6 +55,7 @@ class ReduceQuantity:
                     reduce_foc = stok.foc
                     reduce_qty = total_qty
                     total_foc = total_foc - stok.foc
+                    from_foc =  stok.foc
                     stok.qty = stok.qty - (total_qty)
                     if stok.qty == 0:
                         total_foc = 0
@@ -65,6 +67,7 @@ class ReduceQuantity:
 
                 reduce_qty = stok.qty
                 reduce_foc = stok.foc
+                from_foc =  stok.foc
                 total_qty = total_qty - (stok.qty)
                 if total_foc <= stok.foc:
 
@@ -79,7 +82,7 @@ class ReduceQuantity:
             stok.save()
 
             inv_item = Item(invoice_item=InvoiceIntem.objects.get(id=item), item=stok,
-                            qty=reduce_qty, foc=reduce_foc)
+                            qty=reduce_qty, foc=reduce_foc,from_foc=from_foc)
 
             inv_item.save()
 
