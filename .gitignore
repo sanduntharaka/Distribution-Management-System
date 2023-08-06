@@ -7,8 +7,6 @@ db.sqlite3
 settings.py
 core/settings.py
 media
-DeleteBillItems.py
-EditBillItems.py
 0004_salesrefreturnitem_initial_foc_and_more.py
 0004_salesreturnitem_initial_foc_and_more.py
 0008_item_from_foc.py
