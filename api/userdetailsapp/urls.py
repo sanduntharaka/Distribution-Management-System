@@ -24,6 +24,8 @@ urlpatterns = [
 
 
     path('salesrefs/', views.AllSalesRefs.as_view()),
+    path('salesrefs/by/manager/', views.SalesRefsByManager.as_view()),
+
     path('salesrefs/new/', views.AllNewSalesrefs.as_view()),
 
 

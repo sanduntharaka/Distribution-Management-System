@@ -28,4 +28,8 @@ urlpatterns = [
     path('reports/', include('api.reports.urls')),
     path('settings/', include('api.systemsettings.urls')),
     path('pastinv/', include('api.pastinvdata.urls')),
+    path('planing/', include('api.salesroute.urls')),
+
+
+
 ]

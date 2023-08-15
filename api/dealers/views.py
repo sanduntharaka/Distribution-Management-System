@@ -210,3 +210,10 @@ class GetAllByDistributor(generics.ListAPIView):
             added_by__in=salesref_users_id)
         serializer = serializers.GetAllDealersSerializer(dealers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class GetAllByPsa(generics.ListAPIView):
+    serializer_class = serializers.GetAllDealersSerializer
+
+    def get_queryset(self, *args, **kwargs):
+        return get_list_or_404(Dealer, psa=self.kwargs.get('id'))

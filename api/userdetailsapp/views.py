@@ -196,6 +196,20 @@ class AllSalesRefs(generics.ListAPIView):
         return get_list_or_404(queryset)
 
 
+class SalesRefsByManager(generics.ListAPIView):
+
+    serializer_class = serializers.AllDistributorsSerializer
+
+    def get_queryset(self):
+        distributors = list(ManagerDistributor.objects.filter(
+            manager__user=self.request.user.id).values_list('distributor', flat=True))
+        salesrefs = SalesRefDistributor.objects.filter(
+            distributor__in=distributors).values_list('sales_ref', flat=True)
+
+        queryset = UserDetails.objects.filter(id__in=list(salesrefs))
+        return get_list_or_404(queryset)
+
+
 class AllNewSalesrefs(generics.ListAPIView):
 
     serializer_class = serializers.AllDistributorsSerializer
