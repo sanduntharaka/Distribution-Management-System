@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'past_invoice_data',
     'exceutive_manager',
     'executive_distributor',
+    'sales_route',
     # 'api',
     'api',
     'api.userdetailsapp',
@@ -93,6 +94,7 @@ INSTALLED_APPS = [
     'api.user',
     'api.excutivemanager',
     'api.executivedistributor',
+    'api.salesroute',
 
     # reports
     'api.reports.userreport',
