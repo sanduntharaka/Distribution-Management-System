@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    path('create/', views.CreateRoute.as_view())
+    path('create/', views.CreateRoute.as_view()),
+    path('get/<id>', views.GetSavedRoutes.as_view()),
+    path('get/detail/', views.GetDetails.as_view()),
+
+
 ]
-# 'planing/create/'
+# 'planing/get/detail/<id>'

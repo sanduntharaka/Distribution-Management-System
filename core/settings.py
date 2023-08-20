@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'corsheaders',
     'rest_framework',
     'django_crontab',
@@ -69,6 +70,7 @@ INSTALLED_APPS = [
     'exceutive_manager',
     'executive_distributor',
     'sales_route',
+    'targets',
     # 'api',
     'api',
     'api.userdetailsapp',
@@ -95,6 +97,7 @@ INSTALLED_APPS = [
     'api.excutivemanager',
     'api.executivedistributor',
     'api.salesroute',
+    'api.all_targets',
 
     # reports
     'api.reports.userreport',
@@ -153,6 +156,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = "core.routing.application"
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.RedisChannelLayer",  # Or use another backend
+#         "CONFIG": {
+#             # Replace with your Redis configuration
+#             "hosts": [("localhost", 8000)],
+#         },
+#     },
+# }
 
 
 # Database
@@ -166,6 +179,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'bixton_test',
+#         'USER': 'postgres',
+#         'PASSWORD': '6673',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -176,7 +199,6 @@ DATABASES = {
         'PORT': '25060',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -279,6 +301,8 @@ DJOSER = {
 
     }
 }
+
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://bixtonlighting.com:3000",

@@ -7,6 +7,10 @@ db.sqlite3
 settings.py
 core/settings.py
 media
+0002_rename_manager_distributor_salesreftargets_salesrep_distributor.py
+0002_dailystatus.py
+0003_dailystatus_current_plan.py
+0004_alter_dailystatus_current_plan.py
 0004_salesrefreturnitem_initial_foc_and_more.py
 0004_salesreturnitem_initial_foc_and_more.py
 0008_item_from_foc.py

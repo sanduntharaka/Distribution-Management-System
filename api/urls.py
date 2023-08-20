@@ -29,6 +29,8 @@ urlpatterns = [
     path('settings/', include('api.systemsettings.urls')),
     path('pastinv/', include('api.pastinvdata.urls')),
     path('planing/', include('api.salesroute.urls')),
+    path('target/', include('api.all_targets.urls')),
+
 
 
 

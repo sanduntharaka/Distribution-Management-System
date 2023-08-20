@@ -36,4 +36,6 @@ urlpatterns = [
          views.allLawQtyByDistributor),
     path('get/lowqty/by/salesref/<id>',
          views.allLawQtyBySalesref),
+    path('get/next/visit/',
+         views.getNextToVisteDealer),
 ]

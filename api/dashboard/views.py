@@ -1,3 +1,6 @@
+from dealer_details.models import Dealer
+from datetime import datetime
+from sales_route.models import SalesRoute, DailyStatus
 from distrubutor_salesref.models import SalesRefDistributor
 from sales_return.TotalSalesReturn import TotalSalesReturn
 from rest_framework import status
@@ -356,3 +359,21 @@ def allLawQtyBySalesref(request, *args, **kwargs):
 #   { name: 'Group C', value: 300 },
 #   { name: 'Group D', value: 200 },
 # ];
+
+
+@api_view(['GET'])
+def getNextToVisteDealer(request, *args, **kwargs):
+
+    sales_route = SalesRoute.objects.get(salesref__user=request.user)
+    try:
+        today = DailyStatus.objects.get(
+            route=sales_route, date=datetime.today())
+        visited = [d["id"] for d in today.coverd]
+        for item in sales_route.dealers:
+            if item not in visited:
+                dealer = Dealer.objects.get(id=item)
+                break
+
+    except:
+        dealer = Dealer.objects.get(id=sales_route.dealers[0])
+    return Response(data={'dealer': dealer.name}, status=status.HTTP_200_OK)

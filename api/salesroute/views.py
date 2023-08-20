@@ -1,6 +1,6 @@
 from users.models import UserAccount
-from userdetails.models import UserDetails
-from sales_route.models import SalesRoute
+from dealer_details.models import Dealer
+from sales_route.models import SalesRoute, DailyStatus
 from rest_framework import status
 from rest_framework.response import Response
 from . import serializers
@@ -16,12 +16,68 @@ class CreateRoute(APIView):
         request_data = request.data
         salesref = request_data['sales_rep']
         dealers = [i['id'] for i in request_data['dealers']]
+        sales_route = SalesRoute.objects.get(salesref=salesref)
+        if sales_route is not None:
 
-        serializer = serializers.AddRouteSerializer(
-            data={'salesref': salesref, 'dealers': dealers})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=status.HTTP_200_OK)
+            serializer = serializers.AddRouteSerializer(
+                data={'salesref': salesref, 'dealers': dealers}, instance=sales_route)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            print(serializer.errors)
+
+            serializer = serializers.AddRouteSerializer(
+                data={'salesref': salesref, 'dealers': dealers})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                print(serializer.errors)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetSavedRoutes(APIView):
+    def get(self, request, id):
+        sales_routes = SalesRoute.objects.get(salesref=id)
+        data = []
+        for i in sales_routes.dealers:
+            dealer_data = {}
+            dealer = Dealer.objects.get(id=i)
+            dealer_data['id'] = i
+            dealer_data['name'] = dealer.name
+            dealer_data['address'] = dealer.address
+            data.append(dealer_data)
+
+        return Response(data=data, status=status.HTTP_200_OK)
+
+
+class GetDetails(APIView):
+    def post(self, request):
+        try:
+            requested_route = DailyStatus.objects.get(
+                date=request.data['date'], route__salesref=request.data['salesref'])
+
+            plan = []
+            for i in requested_route.current_plan:
+                plan.append({
+                    'name': Dealer.objects.get(id=i).name,
+                    'address': Dealer.objects.get(id=i).address
+                })
+            covered = []
+            for c in requested_route.coverd:
+                covered.append({
+                    'name': Dealer.objects.get(id=c['id']).name,
+                    'address': Dealer.objects.get(id=c['id']).address,
+                    'time': c['time'],
+                    'status': c['status']
+
+                })
+
+            return Response(data={'given': plan, 'coverd': covered}, status=status.HTTP_200_OK)
+        except DailyStatus.DoesNotExist:
+            print('Not exist')
+
             return Response(status=status.HTTP_400_BAD_REQUEST)
