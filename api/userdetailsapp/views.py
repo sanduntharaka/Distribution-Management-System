@@ -1,3 +1,4 @@
+import json
 from executive_distributor.models import ExecutiveDistributor
 from exceutive_manager.models import ExecutiveManager
 from distrubutor_salesref.models import SalesRefDistributor
@@ -239,3 +240,23 @@ class AllNotExecutiveDistributor(generics.ListAPIView):
         new_details = UserDetails.objects.filter(
             user__is_distributor=True).exclude(Exists(linked_distributors))
         return get_list_or_404(new_details)
+
+
+class DistributorsSrepsByManager(generics.ListAPIView):
+
+    def get(self, request, *args, **kwargs):
+        distributors = list(ManagerDistributor.objects.filter(
+            added_by=request.user).values_list('distributor', flat=True))
+
+        sreps = list(SalesRefDistributor.objects.filter(
+            distributor__in=distributors).values_list('sales_ref', flat=True))
+        data = []
+        for i in distributors+sreps:
+            data.append(
+                {
+                    'person': UserDetails.objects.get(id=i).full_name,
+                    'id': i
+
+                }
+            )
+        return Response(data=data, status=status.HTTP_200_OK)

@@ -13,6 +13,10 @@ urlpatterns = [
     path('edit-salesrep/<pk>', views.EditSalesrepTargets.as_view()),
     path('delete-salesrep/<pk>', views.DeleteSalesrepTargets.as_view()),
 
+    path('get-ranges/<id>', views.AllAssignedRanges.as_view()),
+    path('get-details/', views.RangeDetails.as_view()),
+
+
 
 
 
