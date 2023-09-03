@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u
 DEBUG = False
 
 # 'bixtonlighting.com', 'main.bixtonlighting.com'
-ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
+ALLOWED_HOSTS = ['ebrandinginnovations.com',
+                 'distributionback.ebrandinginnovations.com']
 
 
 # Application definition
@@ -192,9 +193,9 @@ ASGI_APPLICATION = "core.routing.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bixtonlightingdb',
-        'USER': 'doadmin',
-        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
+        'NAME': 'testdistributionsystem',
+        'USER': 'testdistriuser',
+        'PASSWORD': 'P2ff3f4dP3a8',
         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
         'PORT': '25060',
     }
@@ -284,8 +285,8 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'https://bixtonlighting.com'
-SITE_NAME = 'Bixton Distribution Management System'
+DOMAIN = 'https://distribution.ebrandinginnovations.com'
+SITE_NAME = 'Ebranding Distribution Management System'
 DJOSER = {
     'LOGIN_FIELD': 'user_name',
     'PASSWORD_RESET_CONFIRM_URL': True,
@@ -305,8 +306,8 @@ DJOSER = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://bixtonlighting.com:3000",
-    "https://bixtonlighting.com:3000",
-    "https://bixtonlighting.com",
-    "http://bixtonlighting.com",
+    "https://distribution.ebrandinginnovations.com:3000",
+    "http://distribution.ebrandinginnovations.com:3000",
+    "https://distribution.ebrandinginnovations.com",
+    "http://distribution.ebrandinginnovations.com",
 ]

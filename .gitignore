@@ -5,6 +5,7 @@
 __pycache__
 db.sqlite3
 settings.py
+sesettings2.py
 core/settings.py
 media
 0002_rename_manager_distributor_salesreftargets_salesrep_distributor.py
