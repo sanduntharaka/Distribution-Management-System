@@ -14,6 +14,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db import transaction
+from dealer_details.models import Dealer
 
 
 class CreateInvoice(generics.CreateAPIView):
@@ -26,7 +27,9 @@ class CreateInvoice(generics.CreateAPIView):
                     inventory=request.data['inventory']).last()
 
                 data = request.data
-
+                data['bill_code'] = 'INV' + \
+                    Dealer.objects.get(
+                        id=data['dealer']).psa.area_name[:3].upper()
                 if last_bill is not None:
                     bill_number = last_bill.bill_number
                     data['bill_number'] = bill_number + 1
@@ -42,7 +45,6 @@ class CreateInvoice(generics.CreateAPIView):
 
         except Exception as e:
             error_message = str(e)
-            print("WWWW", error_message)
             return Response({'error': error_message}, status=status.HTTP_400_BAD_REQUEST)
 
     # Response(status=status.HTTP_200_OK)
@@ -363,19 +365,24 @@ class ReturnCheque(generics.UpdateAPIView):
         if not request.user.is_distributor:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         try:
+
             cheque = ChequeDetails.objects.get(
                 cheque_number=request.data['cheque_number'])
-            cheque.status = 'return'
-            cheque.save()
+            if cheque.status != 'return':
+                cheque.status = 'return'
+                cheque.save()
 
-            bill = cheque.payment_details
-            bill.paid_amount = bill.paid_amount - cheque.amount
-            bill.is_completed = False
-            bill.save()
-            return Response(status=status.HTTP_200_OK)
+                bill = cheque.payment_details
+                bill.paid_amount = bill.paid_amount - cheque.amount
+                bill.is_completed = False
+                bill.save()
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Cheque is alredy returned.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({'error': 'Cannot save cheque as return. Please try again.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InvoiceItemUpdate(APIView):

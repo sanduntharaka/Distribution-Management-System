@@ -9,6 +9,7 @@ from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
 from rest_framework.views import APIView
+from dealer_details.models import Dealer
 
 
 class AddReturn(generics.CreateAPIView):
@@ -17,6 +18,9 @@ class AddReturn(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         last_bill = SalesReturn.objects.all().last()
         data = self.request.data
+        data['bill_code'] = 'SRET' + \
+            Dealer.objects.get(
+            id=data['dealer']).psa.area_name[:3].upper()
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1
@@ -104,14 +108,16 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
                     # i.item.qty = i.item.qty+(i.qty+i.foc)
                     # i.item.foc = i.item.foc+i.foc
                     # i.item.save()
-                    stock = ItemStock(item=i.item.item,
+                    related_stock = ItemStock.objects.filter(
+                        item=i.inventory_item).first()
+                    stock = ItemStock(item=i.inventory_item,
                                       invoice_number=i.salesreturn.getbillnumber(),
                                       from_sales_return=True,
                                       qty=i.qty+i.foc,
-                                      pack_size=i.item.pack_size,
+                                      pack_size=related_stock.pack_size,
                                       foc=i.foc,
-                                      whole_sale_price=i.item.whole_sale_price,
-                                      retail_price=i.item.retail_price,
+                                      whole_sale_price=i.whole_sale_price,
+                                      retail_price=i.retail_price,
                                       added_by=self.request.user,
                                       )
                     stock.save()
@@ -151,7 +157,7 @@ class AddReturnItem(APIView):
             for item in request.data['items']:
 
                 return_items.append(SalesReturnItem(salesreturn=sales_return, inventory_item=DistributorInventoryItems.objects.get(
-                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'],whole_sale_price=item['whole_sale_price'],
+                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'], whole_sale_price=item['whole_sale_price'],
                     retail_price=item['retail_price'],
                     initial_qty=int(item['qty']),
                     initial_foc=int(item['foc'])))

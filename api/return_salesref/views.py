@@ -1,4 +1,7 @@
+from django.db.models import Sum
 from distrubutor_salesref_invoice.ReduceDistributorQuantity import ReduceQuantity
+from distributor_inventory.ReduceMretInventory import ReduceMRetQuantity
+
 from distrubutor_salesref.models import SalesRefDistributor
 from rest_framework import status
 from rest_framework.response import Response
@@ -8,6 +11,7 @@ from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_list_or_404
 from rest_framework.views import APIView
+from dealer_details.models import Dealer
 
 
 class AddReturn(generics.CreateAPIView):
@@ -16,6 +20,10 @@ class AddReturn(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         last_bill = SalesRefReturn.objects.all().last()
         data = self.request.data
+        print(data)
+        data['bill_code'] = 'MRET' + \
+            Dealer.objects.get(
+            id=data['dealer']).psa.area_name[:3].upper()
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1
@@ -94,21 +102,36 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         item = self.kwargs.get('pk')
         return_bill = SalesRefReturn.objects.get(id=item)
+        print(return_bill)
         return_items = SalesRefReturnItem.objects.filter(
             salesrefreturn=return_bill)
+        print(return_items)
         return_bill.status = request.data['status']
+
         try:
             items_status = []
+            print('A:', return_items)
+
             for return_item in return_items:
-                if return_item.qty > return_item.item.qty or return_item.foc > return_item.item.foc:
-                    items_status.append(return_item.item.item.item_code)
+                print('B:', return_item.inventory_item)
+                total_stocks = ItemStock.objects.filter(
+                    item=return_item.inventory_item)
+                total_qty = total_stocks.aggregate(total_qty=Sum('qty'))
+                total_foc = total_stocks.aggregate(total_foc=Sum('foc'))
+                print('B:', total_qty)
+                if return_item.qty > total_qty['total_qty'] or return_item.foc > total_foc['total_foc']:
+                    items_status.append(return_item.inventory_item.item_code)
+                    print('C:')
+
             if len(items_status) > 0:
                 return Response(data={"title": f"Not enough stock for {items_status}", "items": items_status}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return_bill.save()
                 for return_item in return_items:
-                    reduceQty = ReduceQuantity(
-                        return_item.item, return_item.qty, return_item.foc)
+                    print('D:')
+
+                    reduceQty = ReduceMRetQuantity(
+                        return_item, return_item.inventory_item.id, return_item.whole_sale_price, return_item.retail_price)
                     reduceQty.reduce_qty()
                 return Response(status=status.HTTP_200_OK)
 
@@ -135,11 +158,12 @@ class AddReturnItem(APIView):
         print('hi1')
         sales_ref_return = SalesRefReturn.objects.get(id=self.kwargs.get('id'))
         return_items = []
+        print(request.data['items'])
         try:
             for item in request.data['items']:
                 print(item)
                 return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return,  inventory_item=DistributorInventoryItems.objects.get(
-                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'],whole_sale_price=item['whole_sale_price'],
+                    id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'], whole_sale_price=item['whole_sale_price'],
                     retail_price=item['retail_price'],
                     initial_qty=int(item['qty']),
                     initial_foc=int(item['foc'])))

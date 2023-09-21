@@ -57,15 +57,23 @@ class GetSavedRoutes(APIView):
 class GetDetails(APIView):
     def post(self, request):
         try:
-            requested_route = DailyStatus.objects.get(
-                date=request.data['date'], route__salesref=request.data['salesref'])
+            sales_route = SalesRoute.objects.get(
+                salesref=request.data['salesref'])
 
             plan = []
-            for i in requested_route.current_plan:
+            for i in sales_route.dealers:
                 plan.append({
                     'name': Dealer.objects.get(id=i).name,
                     'address': Dealer.objects.get(id=i).address
                 })
+
+        except SalesRoute.DoesNotExist:
+            plan = []
+            print("no")
+        try:
+            print("y")
+            requested_route = DailyStatus.objects.get(
+                date=request.data['date'], route__salesref=request.data['salesref'])
             covered = []
             for c in requested_route.coverd:
                 covered.append({
@@ -76,8 +84,8 @@ class GetDetails(APIView):
 
                 })
 
-            return Response(data={'given': plan, 'coverd': covered}, status=status.HTTP_200_OK)
         except DailyStatus.DoesNotExist:
+            covered = []
             print('Not exist')
 
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(data={'given': plan, 'coverd': covered}, status=status.HTTP_200_OK)

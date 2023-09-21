@@ -62,7 +62,8 @@ class GetByPeriod(APIView):
             range_start = today - timedelta(days=150)
             range_end = today - timedelta(days=121)
             invoices = SalesRefInvoice.objects.filter(
-                date__lt=range_end, dis_sales_ref__in=salesrefs_distributor, payment_type='credit')
+                date__lt=range_end, dis_sales_ref__in=salesrefs_distributor, payment_type=['credit', 'cash-credit',
+                                                                                           'cash-cheque', 'cheque-credit', 'cash-credit-cheque'])
             serializer = serializers.InvoiceSerializer(
                 invoices, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

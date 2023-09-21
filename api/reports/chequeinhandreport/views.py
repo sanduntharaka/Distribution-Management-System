@@ -43,7 +43,7 @@ class GetByDate(APIView):
 
         cheque_filters = {
             'payment_details__in': invoices,
-            # 'status': 'pending',
+            'status__in': ['pending', 'cleared'],
         }
         if by_date:
             cheque_filters['date__range'] = (date_from, date_to)
@@ -58,7 +58,7 @@ class GetByDate(APIView):
 class GetByPeriod(APIView):
     def post(self, request, *args, **kwargs):
         period = int(request.data['period'])
-
+        print('p:', period)
         if request.user.is_salesref:
             salesrefs_distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=request.user.id)
@@ -102,10 +102,12 @@ class GetByPeriod(APIView):
 
         filters['payment_type__in'] = ['cheque', 'cash-cheque',
                                        'cash-credit-cheque', 'cheque-credit']
+        print('str:', range_start)
+        print('end:', range_end)
 
         invoices = PaymentDetails.objects.filter(**filters)
         cheque_details = ChequeDetails.objects.filter(
-            payment_details__in=invoices, status='pending',     payment_details__bill__confirmed_date__lte=range_start, date__lte=range_end)
+            payment_details__in=invoices, status='pending',     payment_details__bill__confirmed_date__range=(range_start, range_end))
 
         serializer = serializers.ChequeDetailsSerializer(
             cheque_details, many=True)

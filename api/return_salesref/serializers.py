@@ -33,7 +33,7 @@ class GetReturnsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesRefReturn
         fields = ('id', 'dealer', 'psa', 'is_return_goods', 'is_deduct_bill',
-                  'bill_code', 'bill_number', 'amount', 'date', 'added_by', 'added_contact', 'dealer_name', 'added_name', 'code', 'psa_name', 'dealer_address', 'contact_number', 'distributor', 'distributor_address', 'distributor_company_number')
+                  'bill_code', 'bill_number', 'amount', 'date', 'added_by', 'status', 'added_contact', 'dealer_name', 'added_name', 'code', 'psa_name', 'dealer_address', 'contact_number', 'distributor', 'distributor_address', 'distributor_company_number')
 
 
 class GetItemsSeraializer(serializers.ModelSerializer):
