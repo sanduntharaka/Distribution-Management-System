@@ -16,8 +16,8 @@ class CreateRoute(APIView):
         request_data = request.data
         salesref = request_data['sales_rep']
         dealers = [i['id'] for i in request_data['dealers']]
-        sales_route = SalesRoute.objects.get(salesref=salesref)
-        if sales_route is not None:
+        try:
+            sales_route = SalesRoute.objects.get(salesref=salesref)
 
             serializer = serializers.AddRouteSerializer(
                 data={'salesref': salesref, 'dealers': dealers}, instance=sales_route)
@@ -27,7 +27,7 @@ class CreateRoute(APIView):
             else:
                 print(serializer.errors)
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        else:
+        except SalesRoute.DoesNotExist:
 
             serializer = serializers.AddRouteSerializer(
                 data={'salesref': salesref, 'dealers': dealers})

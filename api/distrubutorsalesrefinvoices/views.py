@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db import transaction
 from dealer_details.models import Dealer
+from userdetails.models import UserDetails
 
 
 class CreateInvoice(generics.CreateAPIView):
@@ -28,8 +29,8 @@ class CreateInvoice(generics.CreateAPIView):
 
                 data = request.data
                 data['bill_code'] = 'INV' + \
-                    Dealer.objects.get(
-                        id=data['dealer']).psa.area_name[:3].upper()
+                    UserDetails.objects.get(
+                        id=data['added_by']).terriotory[:3].upper()
                 if last_bill is not None:
                     bill_number = last_bill.bill_number
                     data['bill_number'] = bill_number + 1
