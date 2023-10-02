@@ -50,8 +50,7 @@ const BillingTab = () => {
     if (user.is_salesref) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/inventory/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -77,8 +76,7 @@ const BillingTab = () => {
     if (user.is_distributor) {
       axiosInstance
         .get(
-          `/distributor/get/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/get/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -143,14 +141,15 @@ const BillingTab = () => {
           className={`item ${selected === 3 ? 'selected' : ''}`}
           onClick={() => handleSelect(3)}
         >
-          Credit bills
+          Credit Bills
         </div>
-        <div
-          className={`item ${selected === 4 ? 'selected' : ''}`}
-          onClick={() => handleSelect(4)}
-        >
-          Return cheque
-        </div>
+        {user.is_distributor ?
+          <div
+            className={`item ${selected === 4 ? 'selected' : ''}`}
+            onClick={() => handleSelect(4)}
+          >
+            Return cheque
+          </div> : ''}
       </div>
       <div className="tab_page">
         {selected === 0 && isLoading === false && inventory !== undefined ? (
@@ -166,8 +165,9 @@ const BillingTab = () => {
         ) : selected === 3 && user.is_distributor ? (
           <AddCreditDetails />
         ) : selected === 3 ? (
+
           <ViewAllCreditBillsOthers user={user} />
-        ) : selected === 4 && user.is_distributor ? (
+        ) : selected === 4 ? (
           <RejectCheque />
         ) : (
           ''

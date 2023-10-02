@@ -91,11 +91,32 @@ const ConfirmStatus = (props) => {
     setEditDetailsOpen(true);
     handleModalOpen();
   };
+  const handleChequeDate = (e) => {
+    setInvoice({
+      ...invoice,
+      cheque_date: e.target.value,
+    })
+
+    let dateCount = 0;
+
+    const start_date = new Date(props.invoice.date);
+    const endDate = new Date(e.target.value);
+
+
+    while (start_date <= endDate) {
+      dateCount++;
+      start_date.setDate(start_date.getDate() + 1);
+    }
+    setInvoice({
+      ...invoice,
+      number_of_dates: dateCount,
+    })
+  }
   const handleChequePaymentType = (e) => {
     if (
       parseFloat(e.target.value) +
-        parseFloat(invoice.paid_amount) +
-        parseFloat(props.invoice.payed) >
+      parseFloat(invoice.paid_amount) +
+      parseFloat(props.invoice.payed) >
       parseFloat(props.invoice.total)
     ) {
       setExceed(true);
@@ -242,9 +263,9 @@ const ConfirmStatus = (props) => {
                 ''
               )}
               {invoice.payment_type === 'cash' ||
-              invoice.payment_type === 'cash-credit' ||
-              invoice.payment_type === 'cash-cheque' ||
-              invoice.payment_type === 'cash-credit-cheque' ? (
+                invoice.payment_type === 'cash-credit' ||
+                invoice.payment_type === 'cash-cheque' ||
+                invoice.payment_type === 'cash-credit-cheque' ? (
                 <div className="row">
                   <div className="row">
                     <label htmlFor="">Paid</label>
@@ -255,9 +276,9 @@ const ConfirmStatus = (props) => {
                 ''
               )}
               {invoice.payment_type === 'credit' ||
-              invoice.payment_type === 'cash-credit' ||
-              invoice.payment_type == 'cheque-credit' ||
-              invoice.payment_type === 'cash-credit-cheque' ? (
+                invoice.payment_type === 'cash-credit' ||
+                invoice.payment_type == 'cheque-credit' ||
+                invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
                     <p>Add Credit Details</p>
@@ -282,9 +303,9 @@ const ConfirmStatus = (props) => {
                 ''
               )}
               {invoice.payment_type === 'cheque' ||
-              invoice.payment_type === 'cash-cheque' ||
-              invoice.payment_type == 'cheque-credit' ||
-              invoice.payment_type === 'cash-credit-cheque' ? (
+                invoice.payment_type === 'cash-cheque' ||
+                invoice.payment_type == 'cheque-credit' ||
+                invoice.payment_type === 'cash-credit-cheque' ? (
                 <section>
                   <div className="subtitle">
                     <p>Add Cheque Status</p>
@@ -392,10 +413,7 @@ const ConfirmStatus = (props) => {
                         <input
                           type="date"
                           onChange={(e) =>
-                            setInvoice({
-                              ...invoice,
-                              cheque_date: e.target.value,
-                            })
+                            handleChequeDate(e)
                           }
                         />
                       </div>
@@ -407,12 +425,7 @@ const ConfirmStatus = (props) => {
 
                         <input
                           type="number"
-                          onChange={(e) =>
-                            setInvoice({
-                              ...invoice,
-                              number_of_dates: e.target.value,
-                            })
-                          }
+                          value={invoice.number_of_dates}
                         />
                       </div>
                       <div

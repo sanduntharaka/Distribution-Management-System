@@ -66,13 +66,13 @@ const ShowDealers = () => {
       headerStyle: { width: '10px' },
     },
     { title: 'Name', field: 'name' },
-    { title: 'Psa', field: 'psa_name' },
+    { title: 'PSA', field: 'psa_name' },
     { title: 'Category', field: 'category' },
 
     { title: 'No', field: 'contact_number' },
     { title: 'Address', field: 'address' },
     { title: 'Owner', field: 'owner_name' },
-    { title: 'Owner contact', field: 'owner_personal_number' },
+    { title: 'Owner Contact', field: 'owner_personal_number' },
     { title: 'Grade', field: 'grade' },
   ];
 
@@ -288,6 +288,8 @@ const ShowDealers = () => {
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>
+                <option value="D">D</option>
+
               </select>
             </div>
           </div>

@@ -202,6 +202,42 @@ const ViewInventoryOthers = ({ user }) => {
     }
   };
 
+  const handleEditDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      category: value.category,
+      employee: value.added_by,
+    });
+
+    setMessageOpen(false);
+    setDeleteDetailsOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(true);
+    handleModalOpen();
+  };
+  const handleDeleteDetails = (e, value) => {
+    setItemDetails({
+      id: value.id,
+      item_code: value.item_code,
+      description: value.description,
+      base: value.base,
+      qty: value.qty,
+      pack_size: value.pack_size,
+      whole_sale_price: value.whole_sale_price,
+      retail_price: value.retail_price,
+      employee: value.added_by,
+      free_of_charge: value.foc,
+    });
+    setMessageOpen(false);
+    setDetailsOpen(false);
+    setEditDetailsOpen(false);
+    setDeleteDetailsOpen(true);
+    handleModalOpen();
+  };
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
@@ -214,6 +250,30 @@ const ViewInventoryOthers = ({ user }) => {
             closeModal={handleModalClose}
             success={setSuccess}
             user={user}
+          />
+        ) : editdetailsOpen ? (
+          <ProductEdit
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showEdit={setEditDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/distributor/items/edit'}
+          />
+        ) : deletedetailsOpen ? (
+          <ProductDelete
+            data={itemDetails}
+            openMsg={setMessageOpen}
+            msgSuccess={setSuccess}
+            msgErr={setError}
+            msgTitle={setTitle}
+            msg={setMsg}
+            showConfirm={setDeleteDetailsOpen}
+            closeModal={handleModalClose}
+            url={'/distributor/items/delete'}
           />
         ) : messageOpen ? (
           <Message
@@ -287,6 +347,19 @@ const ViewInventoryOthers = ({ user }) => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
+                  {
+                    icon: EditIcon,
+                    tooltip: 'Edit details',
+
+                    onClick: (event, rowData) =>
+                      handleEditDetails(event, rowData),
+                  },
+                  {
+                    icon: DeleteOutline,
+                    tooltip: 'Delete details',
+                    onClick: (event, rowData) =>
+                      handleDeleteDetails(event, rowData),
+                  },
                 ]}
                 components={{
                   Action: (props) => (
@@ -302,6 +375,32 @@ const ViewInventoryOthers = ({ user }) => {
                           aria-label={props.action.tooltip}
                         >
                           <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === EditIcon &&
+                        user.is_company ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      ) : props.action.icon === DeleteOutline &&
+                        user.is_company ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'red' }} // customize the button style
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <DeleteOutline />
                         </IconButton>
                       ) : (
                         ''

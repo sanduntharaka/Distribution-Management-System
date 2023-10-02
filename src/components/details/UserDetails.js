@@ -25,10 +25,10 @@ const UserDetails = (props) => {
         </dib>
         <div className="details__content__body">
           <div className="details__content__row">
-            <div className="details__content__row__col .title">By:</div>
+            {/* <div className="details__content__row__col .title">By:</div>
             <div className="details__content__row__col .detail">
               {data.added}
-            </div>
+            </div> */}
           </div>
           <div className="details__content__row">
             <div className="details__content__row__col .title">Id:</div>

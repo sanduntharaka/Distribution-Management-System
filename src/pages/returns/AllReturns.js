@@ -60,7 +60,10 @@ const AllReturns = () => {
     { title: 'Psa', field: 'psa_name' },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Date', field: 'date' },
-    { title: 'Added by', field: 'added_name' },
+    { title: 'Status', field: 'status' },
+
+    { title: 'Added By', field: 'added_name' },
+
   ];
 
   //modal
@@ -90,8 +93,7 @@ const AllReturns = () => {
 
       axiosInstance
         .get(
-          `/salesref/return/get/salesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/salesref/return/get/salesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -115,8 +117,7 @@ const AllReturns = () => {
 
       axiosInstance
         .get(
-          `/salesref/return/get/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/salesref/return/get/distributor/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -234,7 +235,7 @@ const AllReturns = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Market Returns</p>
+        <p>View all Issued Market Returns</p>
       </div>
       <div className="page__pcont">
         {/* <div className="page__pcont__row">

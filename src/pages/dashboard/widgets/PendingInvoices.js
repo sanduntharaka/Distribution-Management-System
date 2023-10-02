@@ -6,7 +6,7 @@ const PendingInvoices = ({ data }) => {
       <div className="wcontainer__row">
         <div className="wcontainer__row__col">
           <div className="title">
-            <p>Pending invoice summary</p>
+            <p>Pending Invoice Summary</p>
           </div>
         </div>
       </div>

@@ -62,8 +62,7 @@ const AssignSalesRef = () => {
 
     axiosInstance
       .get(
-        `/distributor/get/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/distributor/get/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -213,7 +212,7 @@ const AssignSalesRef = () => {
       </Modal>
 
       <div className="page__title">
-        <p>Assign products</p>
+        <p>Assign Products</p>
       </div>
 
       <div className="page__pcont">
@@ -221,7 +220,7 @@ const AssignSalesRef = () => {
           <form action="">
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Sales ref</div>
+                <div className="form__row__col__label">Sales Rep</div>
 
                 <div className="form__row__col__input">
                   <div

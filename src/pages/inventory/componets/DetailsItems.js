@@ -197,18 +197,18 @@ const DetailsItems = (props) => {
         icons={tableIcons}
         isLoading={loading}
         editable={
-          props.user.is_distributor
+          props.user.is_company
             ? {
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve) => {
-                    handleEdit(newData, oldData, resolve);
-                  }),
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve) => {
+                  handleEdit(newData, oldData, resolve);
+                }),
 
-                onRowDelete: (oldData) =>
-                  new Promise((resolve) => {
-                    handleDelete(oldData, resolve);
-                  }),
-              }
+              onRowDelete: (oldData) =>
+                new Promise((resolve) => {
+                  handleDelete(oldData, resolve);
+                }),
+            }
             : ''
         }
       />

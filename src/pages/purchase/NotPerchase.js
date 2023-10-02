@@ -45,13 +45,13 @@ const NotPerchase = ({ inventory }) => {
   const [valuedealer, setValueDealer] = useState('');
 
   const [searchLoading, setSearchLoading] = useState(false);
+  const [nextDealer, setNextDealer] = useState('')
 
   useEffect(() => {
     setLoading(true);
     axiosInstance
       .get(
-        `/distributor/salesref/get/bysalesref/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -73,7 +73,22 @@ const NotPerchase = ({ inventory }) => {
         setTitle('Error');
         handleOpen();
       });
-  }, []);
+    axiosInstance
+      .get(
+        `/dashboard/get/next/visit/`,
+
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        console.log('next', res.data);
+        setNextDealer(res.data.dealer)
+      });
+  }, [success, setSuccess]);
 
   const filterDealers = (e) => {
     setShowDealers(true);
@@ -112,6 +127,7 @@ const NotPerchase = ({ inventory }) => {
         is_competitor: false,
         is_dealer_not_in: false,
         is_payment_problem: false,
+        is_have_our_brands: false,
       });
     }
     if (e.target.checked === false) {
@@ -129,6 +145,7 @@ const NotPerchase = ({ inventory }) => {
         is_only_our: false,
         is_dealer_not_in: false,
         is_payment_problem: false,
+        is_have_our_brands: false,
       });
     }
     if (e.target.checked === false) {
@@ -146,6 +163,7 @@ const NotPerchase = ({ inventory }) => {
         is_competitor: false,
         is_only_our: false,
         is_dealer_not_in: false,
+        is_have_our_brands: false,
       });
     }
     if (e.target.checked === false) {
@@ -163,12 +181,31 @@ const NotPerchase = ({ inventory }) => {
         is_payment_problem: false,
         is_competitor: false,
         is_only_our: false,
+        is_have_our_brands: false,
       });
     }
     if (e.target.checked === false) {
       setData({
         ...data,
         is_dealer_not_in: false,
+      });
+    }
+  };
+  const handleCheckedOurBrands = (e) => {
+    if (e.target.checked) {
+      setData({
+        ...data,
+        is_have_our_brands: true,
+        is_dealer_not_in: false,
+        is_payment_problem: false,
+        is_competitor: false,
+        is_only_our: false,
+      });
+    }
+    if (e.target.checked === false) {
+      setData({
+        ...data,
+        is_have_our_brands: false,
       });
     }
   };
@@ -225,9 +262,17 @@ const NotPerchase = ({ inventory }) => {
         />
       </Modal>
       <div className="page__title">
-        <p>Non-buying details</p>
+        <p>Non-Buying Details</p>
       </div>
       <div className="page__pcont">
+        <div className="page__pcont__row center">
+          <div className="page__pcont__row__col">
+            <div className="nextVisit" >
+              Next visit : {nextDealer}
+
+            </div>
+          </div>
+        </div>
         <div className="form">
           <form action="" onSubmit={(e) => handleSave(e)}>
             <div className="form__row">
@@ -349,6 +394,15 @@ const NotPerchase = ({ inventory }) => {
                     onChange={(e) => handleCheckedNotIn(e)}
                   />
                   <label htmlFor="">Dealer Not In </label>
+                </div>
+                <div className="form__row__col__input aligned">
+                  <input
+                    type="radio"
+                    name="ourbrands"
+                    checked={data.is_have_our_brands ? true : false}
+                    onChange={(e) => handleCheckedOurBrands(e)}
+                  />
+                  <label htmlFor=""> Has a Few of Our Brands </label>
                 </div>
               </div>
               <div className="form__row__col dontdisp"></div>

@@ -58,8 +58,7 @@ const ReportsTab = () => {
     if (user.is_salesref) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/inventory/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -86,7 +85,7 @@ const ReportsTab = () => {
             className={`item ${selected === 0 ? 'selected' : ''}`}
             onClick={() => handleSelect(0)}
           >
-            Staff details
+            Staff Details Report
           </div>
         ) : (
           ''
@@ -96,86 +95,92 @@ const ReportsTab = () => {
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
         >
-          Current Stock report
+          Current Stock Report
         </div>
         <div
           className={`item ${selected === 2 ? 'selected' : ''}`}
           onClick={() => handleSelect(2)}
         >
-          Dealer list
+          Dealer Information Report
+
         </div>
         <div
           className={`item ${selected === 3 ? 'selected' : ''}`}
           onClick={() => handleSelect(3)}
         >
-          Sales report
+          Sales Report
+
         </div>
         <div
           className={`item ${selected === 4 ? 'selected' : ''}`}
           onClick={() => handleSelect(4)}
         >
-          Market return report
+          Market Return Report
         </div>
         <div
           className={`item ${selected === 5 ? 'selected' : ''}`}
           onClick={() => handleSelect(5)}
         >
-          Sales return report
+          Sales Return Report
         </div>
         <div
           className={`item ${selected === 6 ? 'selected' : ''}`}
           onClick={() => handleSelect(6)}
         >
-          Pending orders report
+          Pending Orders Report
         </div>
         <div
           className={`item ${selected === 7 ? 'selected' : ''}`}
           onClick={() => handleSelect(7)}
         >
-          Payment vs sales report
+          Payments vs Sales Report
+
         </div>
         <div
           className={`item ${selected === 8 ? 'selected' : ''}`}
           onClick={() => handleSelect(8)}
         >
-          Cheque in hand
+          Cheques in Hand Report
+
         </div>
         <div
           className={`item ${selected === 9 ? 'selected' : ''}`}
           onClick={() => handleSelect(9)}
         >
-          Cheque by period
+          Cheques by Period Report
         </div>
         <div
           className={`item ${selected === 10 ? 'selected' : ''}`}
           onClick={() => handleSelect(10)}
         >
-          Market credit bills
+          Market Credit Bills Report
         </div>
         <div
           className={`item ${selected === 11 ? 'selected' : ''}`}
           onClick={() => handleSelect(11)}
         >
-          Cheque returns report
+          Cheque Returns Report
+
         </div>
         <div
           className={`item ${selected === 12 ? 'selected' : ''}`}
           onClick={() => handleSelect(12)}
         >
-          Non buying dealers
+          Non Buying Dealers Report
+
         </div>
         <div
           className={`item ${selected === 13 ? 'selected' : ''}`}
           onClick={() => handleSelect(13)}
         >
-          Psa report
+          PSA Report
         </div>
         {!user.is_salesref ? (
           <div
             className={`item ${selected === 14 ? 'selected' : ''}`}
             onClick={() => handleSelect(14)}
           >
-            Delevery report /value/category/product
+            Delivery Information Report
           </div>
         ) : (
           ''
@@ -184,20 +189,22 @@ const ReportsTab = () => {
           className={`item ${selected === 15 ? 'selected' : ''}`}
           onClick={() => handleSelect(15)}
         >
-          Delevered sales
+          Delivered Sales Report
+
         </div>
         <div
           className={`item ${selected === 16 ? 'selected' : ''}`}
           onClick={() => handleSelect(16)}
         >
-          Credit bills collection
+          Credit Bills Report
+
         </div>
         {!user.is_salesref ? (
           <div
             className={`item ${selected === 23 ? 'selected' : ''}`}
             onClick={() => handleSelect(23)}
           >
-            Old debtors collection
+            Old Debtors Report
           </div>
         ) : (
           ''
@@ -207,7 +214,7 @@ const ReportsTab = () => {
             className={`item ${selected === 17 ? 'selected' : ''}`}
             onClick={() => handleSelect(17)}
           >
-            Collection sheet
+            Collection Sheets
           </div>
         ) : (
           ''
@@ -229,39 +236,41 @@ const ReportsTab = () => {
           className={`item ${selected === 20 ? 'selected' : ''}`}
           onClick={() => handleSelect(20)}
         >
-          Dealer purchase pattern
+          Dealer Purchase Pattern Report
         </div>
         <div
           className={`item ${selected === 21 ? 'selected' : ''}`}
           onClick={() => handleSelect(21)}
         >
-          Dealer payment pattern
+          Dealer Payment Pattern Report
         </div>
         <div
           className={`item ${selected === 22 ? 'selected' : ''}`}
           onClick={() => handleSelect(22)}
         >
-          Foc report
+          FOC Report
+
         </div>
         <div
           className={`item ${selected === 24 ? 'selected' : ''}`}
           onClick={() => handleSelect(24)}
         >
-          Addtional Foc report
+          Additional FOC Report
         </div>
         <div
           className={`item ${selected === 25 ? 'selected' : ''}`}
           onClick={() => handleSelect(25)}
         >
-          Inventory status
+          Inventory Status Report
+
         </div>
       </div>
       <div className="vtab_page">
         {selected === 0 &&
-        (user.is_company ||
-          user.is_distributor ||
-          user.is_manager ||
-          user.is_excecutive) ? (
+          (user.is_company ||
+            user.is_distributor ||
+            user.is_manager ||
+            user.is_excecutive) ? (
           <StaffReport />
         ) : selected === 1 ? (
           <StockReport inventory={inventory} user={user} />

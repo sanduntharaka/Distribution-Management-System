@@ -1,20 +1,24 @@
 .container {
   z-index: 1;
-  width: 300px;
+  width: 15em;
   color: $color-white;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1em;
   height: 100vh;
+  position: relative;
+
   &__logo {
     margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+
     img {
       width: 150px;
     }
   }
+
   &__header {
     display: flex;
     align-items: center;
@@ -24,14 +28,14 @@
     gap: 10px;
     background-color: $color-white-grey;
     height: 20px;
-    width: 250px;
+    width: 13em;
     border-radius: 50px;
     margin-left: auto;
     margin-right: auto;
 
     &__brand {
       color: $color-blue-sidebar-title;
-      font-size: 15px;
+      font-size: 1rem;
       text-transform: capitalize;
       font-weight: bolder;
     }
@@ -44,6 +48,7 @@
     margin-bottom: 150px;
     scrollbar-width: thin;
     scrollbar-color: $color-colum-background #ffffff;
+
     &::-webkit-scrollbar {
       width: 5px;
     }
@@ -56,9 +61,11 @@
       background-color: $color-colum-background;
       border-radius: 25px;
     }
+
     &::-webkit-scrollbar-button {
       height: 50px;
     }
+
     &__item {
       cursor: pointer;
       padding: 10px 20px;
@@ -67,51 +74,60 @@
       justify-content: flex-start;
       text-transform: capitalize;
       color: $color-white;
-      font-size: 15px;
+      font-size: 0.8rem;
       font-weight: 700;
       gap: 10px;
       text-decoration: none;
+
       &__icon {
-        font-size: 25px;
+        font-size: 1.2rem;
+
         &:hover {
           color: $color-underline;
           font-weight: bolder;
         }
       }
-      &__name {
-      }
+
+      &__name {}
+
       &:hover {
         color: $color-underline;
         text-decoration: underline;
       }
     }
   }
+
   &__footer {
     position: absolute;
     background-color: $color-blue-sidebar-title-light;
     bottom: 0;
-    width: 300px;
-    max-height: 250px;
+    width: 100%;
     display: flex;
+
     &__img {
       flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
+
       img {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         border-radius: 50%;
         object-fit: cover;
       }
     }
+
     &__details {
       flex: 2;
       background-color: $color-blue-sidebar-title-dark;
       padding: 5px;
+      box-sizing: border-box;
 
       &__name {
+        font-size: 0.8rem;
       }
+
       &__buttons {
         margin-top: 5px;
         display: flex;
@@ -120,6 +136,7 @@
     }
   }
 }
+
 .active {
   .container__list__item__icon {
     color: $color-btn-warning;

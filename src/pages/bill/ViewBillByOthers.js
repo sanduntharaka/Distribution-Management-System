@@ -56,7 +56,7 @@ const ViewBillByOthers = ({ user }) => {
       field: 'rowIndex',
       render: (rowData) => rowData?.tableData?.id + 1,
     },
-    { title: 'Added_by', field: 'added_by' },
+    { title: 'Added By', field: 'added_by' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
@@ -263,7 +263,7 @@ const ViewBillByOthers = ({ user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Issued Bills</p>
+        <p>View all Issued Bills</p>
       </div>
       <div className="page__pcont">
         <div className="form">

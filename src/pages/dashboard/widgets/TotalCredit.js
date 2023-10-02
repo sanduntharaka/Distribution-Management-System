@@ -6,7 +6,7 @@ const TotalCredit = ({ data }) => {
       <div className="wcontainer__row">
         <div className="wcontainer__row__col">
           <div className="title">
-            <p>Credit summary</p>
+            <p>Credit Summary</p>
           </div>
         </div>
       </div>

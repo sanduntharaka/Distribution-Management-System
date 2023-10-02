@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './confrm_bill.module.scss';
+import styles from '../../../sass/invoice/confrm_bill.module.scss';
+
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
-
+import classNames from 'classnames';
 const ViewBill = (props) => {
   const compoenentRef = useRef();
   const [distributor, setDistributor] = useState({
@@ -26,13 +27,17 @@ const ViewBill = (props) => {
   return (
     <div className={styles.confirmBill}>
       <div className={styles.container}>
-        <div ref={compoenentRef} style={{ fontSize: '12px' }}>
+        <div
+          ref={compoenentRef}
+          style={{ fontSize: '12px' }}
+          className={styles.bill}
+        >
           <div className={styles.row}>
             <div className={styles.heading}>
               <div className={styles.hcol1}>
                 <img src="./images/Bixton_logo.png" alt="" />
               </div>
-              <div className={styles.hcol2}>
+              <div className={classNames(styles.hcol2, styles.title)}>
                 <h2>{props.invoice.full_name}</h2>
                 <p>{props.invoice.address}</p>
                 <p>{props.invoice.company_number}</p>
@@ -48,16 +53,16 @@ const ViewBill = (props) => {
           <div className={styles.row}>
             <div className={styles.col}>
               <p>Customer: {props.data.dealer_name}</p>
-              <p>Customer Id: {props.data.dealer}</p>
+              <p>Customer ID: {props.data.dealer}</p>
               <p>Address: {props.data.dealer_address}</p>
               <p>Telephone: {props.data.contact_number}</p>
             </div>
             <div className={styles.col}>
               <p>Invoice No: {props.invoice.code}</p>
               <p>
-                Invoice Date: {props.data.date} & {props.invoice.time}{' '}
+                Invoice Time: {props.invoice.time}{' '}
               </p>
-              <p>Salesperson: {props.invoice.added_by}</p>
+              <p>Invoiced By (Name): {props.invoice.added_by}</p>
               <p>Telephone: {props.invoice.added_by_contact}</p>
             </div>
           </div>
@@ -86,62 +91,65 @@ const ViewBill = (props) => {
                       {props.invoice.billing_price_method === '1'
                         ? item.wholesale_price
                         : props.invoice.billing_price_method === '2'
-                        ? item.retail_price
-                        : 0}
+                          ? item.retail_price
+                          : 0}
                     </td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot>
-                <tr className={styles.final}>...</tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Total amount:
-                  </td>
-                  <td>{props.data.sub_total}</td>
-                </tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Total dicsount amount:
-                  </td>
-                  <td>{props.data.total_discount}</td>
-                </tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Final amount:
-                  </td>
-                  <td>{props.data.total}</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Invoice by name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+          <div className={styles.bottom}>
+            <div className={styles.amount}>
+              <p className={styles.total}>
+                Total Amount: Rs {props.data.sub_total}
+              </p>
+
+              <p className={styles.total}>
+                Total Dicsount Amount: Rs {props.data.total_discount}
+              </p>
+
+              <p className={styles.total}>
+                Final Amount: Rs {props.data.total}
+              </p>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Invoice by Name </p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p> Date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and Rubber Stamp
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className={styles.row}>
-            <p>Accepted above items in order</p>
-          </div>
+            <div className={styles.row}>
+              <p>Accepted the Items in the Order.</p>
+            </div>
 
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Customer name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Customer Name </p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and Rubber Stamp</p>
+                </div>
               </div>
             </div>
           </div>

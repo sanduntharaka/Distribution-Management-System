@@ -86,8 +86,7 @@ const ShowInvoices = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `/distributor/get/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/distributor/get/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -162,7 +161,7 @@ const ShowInvoices = () => {
     )}
   </Modal> */}
       <div className="page__title">
-        <p>View invoices</p>
+        <p>View Invoices</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

@@ -227,7 +227,7 @@ const ViewAllPendingBillsOthers = ({ user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Pending Bills</p>
+        <p>View all Pending Bills</p>
       </div>
       <div className="page__pcont">
         {!user.is_salesref ? (

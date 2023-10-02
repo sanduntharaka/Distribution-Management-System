@@ -155,9 +155,8 @@ const AddInvoice = ({ user }) => {
           <FileUpload
             close={handleClose}
             ditributor={true}
-            url={`/pastinv/inv/add/excel/${
-              JSON.parse(sessionStorage.getItem('user_details')).id
-            }`}
+            url={`/pastinv/inv/add/excel/${JSON.parse(sessionStorage.getItem('user_details')).id
+              }`}
           />
         </Modal>
       ) : (
@@ -166,7 +165,7 @@ const AddInvoice = ({ user }) => {
       {user.is_distributor ? (
         <>
           <div className="page__title">
-            <p>Add Market credit</p>
+            <p>Add Market Credit</p>
           </div>
           <div className="page__pcont">
             <div className="form">

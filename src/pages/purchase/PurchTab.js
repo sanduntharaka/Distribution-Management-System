@@ -43,8 +43,7 @@ const PurchTab = () => {
     if (user.is_salesref) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/inventory/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -95,7 +94,7 @@ const PurchTab = () => {
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
         >
-          All reasons
+          All Reasons
         </div>
       </div>
       <div className="tab_page">

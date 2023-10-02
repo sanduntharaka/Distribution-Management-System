@@ -21,56 +21,12 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import { styled, alpha } from '@mui/material/styles';
-import Menu from '@mui/material/Menu';
 import EditIcon from '@mui/icons-material/Edit';
 import Message from '../../components/message/Message';
 import UserDetails from '../../components/details/UserDetails';
 import UserDetailsEdit from '../../components/edit/UserDetailsEdit';
 import UserDetailsDelete from '../../components/userComfirm/UserDetailsDelete';
 
-const StyledMenu = styled((props) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === 'light'
-        ? 'rgb(55, 65, 81)'
-        : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 0',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity
-        ),
-      },
-    },
-  },
-}));
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -128,8 +84,6 @@ const AllUsers = (props) => {
   //delete-details
   const [deletedetailsOpen, setDeleteDetailsOpen] = useState(false);
 
-  //item_codes
-  const [itemCodes, setItemCodes] = useState([]);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -138,14 +92,6 @@ const AllUsers = (props) => {
   const [msg, setMsg] = useState('');
   const [title, setTitle] = useState('');
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
@@ -161,11 +107,7 @@ const AllUsers = (props) => {
 
         setData(res.data);
         setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
-          }
-        });
+        console.log(res.data)
       })
       .catch((err) => {
         console.log(err);
@@ -237,17 +179,7 @@ const AllUsers = (props) => {
     setDeleteDetailsOpen(true);
     handleModalOpen();
   };
-  const handleFilter = (i) => {
-    handleClose();
-    console.log(i);
-    if (i === 'all') {
-      setTableData(data);
-    } else {
-      let filteredItems = data.filter((item) => item.item_code === i);
-      console.log(filteredItems);
-      setTableData(filteredItems);
-    }
-  };
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>

@@ -275,35 +275,37 @@ const DistributorInventory = ({ inventory, user }) => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon &&
-                        user.is_distributor ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'orange' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      ) : props.action.icon === DeleteOutline &&
-                        user.is_distributor ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'red' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <DeleteOutline />
-                        </IconButton>
-                      ) : (
-                        ''
-                      )}
+                      )
+                        // : props.action.icon === EditIcon &&
+                        //   user.is_distributor ? (
+                        //   <IconButton
+                        //     onClick={(event) =>
+                        //       props.action.onClick(event, props.data)
+                        //     }
+                        //     color="primary"
+                        //     style={{ color: 'orange' }} // customize the button style
+                        //     size="small"
+                        //     aria-label={props.action.tooltip}
+                        //   >
+                        //     <EditIcon />
+                        //   </IconButton>
+                        // ) : props.action.icon === DeleteOutline &&
+                        //   user.is_distributor ? (
+                        //   <IconButton
+                        //     onClick={(event) =>
+                        //       props.action.onClick(event, props.data)
+                        //     }
+                        //     color="primary"
+                        //     style={{ color: 'red' }} // customize the button style
+                        //     size="small"
+                        //     aria-label={props.action.tooltip}
+                        //   >
+                        //     <DeleteOutline />
+                        //   </IconButton>
+                        // ) 
+                        : (
+                          ''
+                        )}
                     </React.Fragment>
                   ),
                 }}

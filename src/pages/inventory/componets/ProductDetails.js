@@ -67,7 +67,7 @@ const ProductDetails = (props) => {
         </div>
 
         <div className="details__content__row buttons">
-          {props.user.is_distributor ? (
+          {props.user.is_company ? (
             <div className="details__content__row__col">
               <button className="btnDelete" onClick={handleDelete}>
                 Delete

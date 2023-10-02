@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './confrm_bill.module.scss';
+import styles from '../../../sass/invoice/confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
+import classNames from 'classnames';
 
 const ViewBill = (props) => {
   console.log(props);
@@ -75,13 +76,17 @@ const ViewBill = (props) => {
   return (
     <div className={styles.confirmBill}>
       <div className={styles.container}>
-        <div ref={compoenentRef} style={{ fontSize: '12px' }}>
+        <div
+          ref={compoenentRef}
+          style={{ fontSize: '12px' }}
+          className={styles.bill}
+        >
           <div className={styles.row}>
             <div className={styles.heading}>
               <div className={styles.hcol1}>
                 <img src="./images/Bixton_logo.png" alt="" />
               </div>
-              <div className={styles.hcol2}>
+              <div className={classNames(styles.hcol2, styles.title)}>
                 <h2>{props.invoice.distributor}</h2>
                 <p>{props.invoice.distributor_address}</p>
                 <p>{props.invoice.distributor_company_number}</p>
@@ -129,41 +134,37 @@ const ViewBill = (props) => {
                   </tr>
                 ))}
               </tbody>
-              <tfoot>
-                <tr>
-                  <td className={styles.total} colSpan={5}>
-                    Total:
-                  </td>
-                  <td>{0}</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Invoice by name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+          <div className={styles.bottom}>
+            <div className={styles.amount}>
+              <p className={styles.total}>Total:{0}</p>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Invoice by Name and Date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and Rubber Stamp</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className={styles.row}>
-            <p>Accepted above items in order</p>
-          </div>
-
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Customer name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+            <div className={styles.row}>
+              <p>Accepted Above Items in Order.</p>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Customer Name and Date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and Rubber Stamp</p>
+                </div>
               </div>
             </div>
           </div>

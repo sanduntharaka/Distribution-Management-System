@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styles from './confrm_bill.module.scss';
+import styles from '../../../sass/invoice/confrm_bill.module.scss';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
 import Spinner from '../../../components/loadingSpinner/Spinner';
 import BillSuccess from '../../../components/userComfirm/BillSuccess';
 import Modal from '@mui/material/Modal';
+import classNames from 'classnames';
+
 const ConfimBill = (props) => {
   const user = JSON.parse(sessionStorage.getItem('user'));
   const compoenentRef = useRef();
@@ -92,7 +94,6 @@ const ConfimBill = (props) => {
     content: () => compoenentRef.current,
   });
   const [invoice, setInvoice] = useState({
-    bill_code: '',
     bill_number: '',
   });
   // const handlePrint = () => {
@@ -185,7 +186,6 @@ const ConfimBill = (props) => {
       })
       .then((res) => {
         setInvoice({
-          bill_code: res.data.bill_code,
           bill_number: res.data.bill_number,
         });
         const item_data = {
@@ -304,13 +304,17 @@ const ConfimBill = (props) => {
         />
       </Modal>
       <div className={styles.container}>
-        <div ref={compoenentRef} style={{ fontSize: '12px' }}>
+        <div
+          ref={compoenentRef}
+          style={{ fontSize: '12px' }}
+          className={styles.bill}
+        >
           <div className={styles.row}>
             <div className={styles.heading}>
               <div className={styles.hcol1}>
                 <img src="./images/Bixton_logo.png" alt="" />
               </div>
-              <div className={styles.hcol2}>
+              <div className={classNames(styles.hcol2, styles.title)}>
                 <h2>{distributor.full_name}</h2>
                 <p>{distributor.address}</p>
                 <p>{distributor.company_number}</p>
@@ -321,6 +325,7 @@ const ConfimBill = (props) => {
           <div className={styles.row}>
             <div className={styles.right}>
               <p>{props.data.date}</p>
+              <p>{props.data.payment_method}</p>
             </div>
           </div>
           <div className={styles.row}>
@@ -333,7 +338,7 @@ const ConfimBill = (props) => {
             </div>
             <div className={styles.col}>
               <p>
-                Invoice No: {invoice.bill_code}
+                Invoice No: {props.data.bill_code}
                 {invoice.bill_number}
               </p>
               <p>
@@ -367,61 +372,54 @@ const ConfimBill = (props) => {
                       {props.data.billing_price_method === '1'
                         ? item.whole_sale_price
                         : props.data.billing_price_method === '2'
-                        ? item.price
-                        : 0}
+                          ? item.price
+                          : 0}
                     </td>
                     <td>{item.discount}</td>
                     <td>{item.extended_price}</td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot>
-                <tr className={styles.final}>...</tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Total amount:
-                  </td>
-                  <td>{props.data.sub_total}</td>
-                </tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Total dicsount amount:
-                  </td>
-                  <td>{props.data.total_discount}</td>
-                </tr>
-                <tr>
-                  <td className={styles.total} colSpan={6}>
-                    Final amount:
-                  </td>
-                  <td>{props.data.total}</td>
-                </tr>
-              </tfoot>
             </table>
           </div>
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Invoice by name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+          <div className={styles.bottom}>
+            <div className={styles.amount}>
+              <p className={styles.total}>
+                Total Amount: Rs {props.data.sub_total}
+              </p>
+              <p className={styles.total}>
+                Total Dicsount Amount: Rs {props.data.total_discount}
+              </p>
+              <p className={styles.total}>
+                Final Amount: Rs {props.data.total}
+              </p>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Invoice by name and date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and rubber stamp</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className={styles.row}>
-            <p>Accepted above items in order</p>
-          </div>
-          <div className={styles.row}>
-            <div className={styles.two_sides}>
-              <div className="col">
-                <p>...................................</p>
-                <p>Customer name and date</p>
-              </div>
-              <div className="col">
-                <p>...................................</p>
-                <p>Signature and rubber stamp</p>
+            <div className={styles.row}>
+              <p>Accepted above items in order</p>
+            </div>
+            <div className={styles.row}>
+              <div className={styles.two_sides}>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Customer name and date</p>
+                </div>
+                <div className="col">
+                  <p>...................................</p>
+                  <p>Signature and rubber stamp</p>
+                </div>
               </div>
             </div>
           </div>

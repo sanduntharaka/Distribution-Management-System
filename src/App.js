@@ -27,6 +27,9 @@ import SalseReturnTab from './pages/salesreturn/SalseReturnTab';
 import MainSettings from './pages/settings/MainSettings';
 import ConfirmTab from './pages/confirm/ConfirmTab';
 import PastTab from './pages/past/PastTab';
+import PlaningTab from './pages/planing/PlaningTab';
+import TargetTab from './pages/targets/TargetTab';
+import SrepPlaningTab from './pages/planing_srep/SrepPlaningTab';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -46,6 +49,12 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" index element={<Dashboard />} />
+
+          <Route path="/srep-planing" element={<SrepPlaningTab />} />
+
+          <Route path="/planing" element={<PlaningTab />} />
+          <Route path="/targets" element={<TargetTab />} />
+
           <Route path="/user" element={<UserTabs />} />
           <Route path="/inventory" element={<InventoryTabs />} />
           <Route path="/distribution" element={<DistributionTabs />} />
@@ -65,6 +74,8 @@ function App() {
           <Route path="/leave" element={<LeaveTab />} />
           <Route path="/report" element={<ReportsTab />} />
           <Route path="/settings" element={<MainSettings />} />
+
+
         </Routes>
       </Layout>
     );

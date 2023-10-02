@@ -58,7 +58,7 @@ const SalesReturnConfirm = () => {
       width: '10px',
       headerStyle: { width: '10px' },
     },
-    { title: 'Added by', field: 'added_name' },
+    { title: 'Added By', field: 'added_name' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
@@ -89,8 +89,7 @@ const SalesReturnConfirm = () => {
     console.log('run me');
     axiosInstance
       .get(
-        `/salesreturn/return/get/pending/distributor/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/salesreturn/return/get/pending/distributor/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -160,7 +159,7 @@ const SalesReturnConfirm = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Pending Sales Returns</p>
+        <p>View all Pending Sales Returns</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

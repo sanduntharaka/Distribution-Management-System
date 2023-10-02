@@ -62,12 +62,12 @@ const ViewOldCheque = (props) => {
     { title: 'Invoice', field: 'inv_number' },
     { title: 'Date', field: 'inv_date' },
     { title: 'Customer', field: 'customer_name' },
-    { title: 'Cheque number', field: 'cheque_number' },
+    { title: 'Cheque Number', field: 'cheque_number' },
     { title: 'Bank', field: 'bank' },
-    { title: 'Deposited date', field: 'cheque_deposite_date' },
-    { title: 'Original amount', field: 'original_amount' },
-    { title: 'Paid amount', field: 'paid_amount' },
-    { title: 'Balance amount', field: 'balance_amount' },
+    { title: 'Deposited Date', field: 'cheque_deposite_date' },
+    { title: 'Original Amount', field: 'original_amount' },
+    { title: 'Paid Amount', field: 'paid_amount' },
+    { title: 'Balance Amount', field: 'balance_amount' },
   ];
 
   //modal
@@ -182,8 +182,7 @@ const ViewOldCheque = (props) => {
 
       axiosInstance
         .get(
-          `/pastinv/cheque/view/all/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/pastinv/cheque/view/all/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -295,7 +294,7 @@ const ViewOldCheque = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All PD cheques</p>
+        <p>View all PD Cheques</p>
       </div>
       <div className="page__pcont">
         {!user.is_distributor && !user.is_salesref ? (

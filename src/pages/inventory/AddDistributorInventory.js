@@ -37,16 +37,17 @@ const AddDistributorInventory = ({ inventory }) => {
   const [data, setData] = useState({
     inventory: inventory.id,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
+    addedQty: 0,
     category: '',
     item_code: '',
     invoice_number: '',
     description: '',
     base: ' ',
-    qty: '',
+    qty: 0,
     pack_size: 0,
     free_of_charge: 0,
-    whole_sale_price: '',
-    retail_price: '',
+    whole_sale_price: 0,
+    retail_price: 0,
     from_sales_return: false,
   });
   useEffect(() => {
@@ -70,10 +71,14 @@ const AddDistributorInventory = ({ inventory }) => {
         console.log(err);
       });
   }, []);
-
+  useEffect(() => {
+    setData({
+      ...data,
+      qty: parseInt(data.addedQty) + parseInt(data.free_of_charge),
+    });
+  }, [data.addedQty, data.free_of_charge]);
   const handleSubmit = (e) => {
     e.preventDefault();
-
     setLoading(true);
     setShowUplod(false);
     setShowMsg(true);
@@ -114,13 +119,13 @@ const AddDistributorInventory = ({ inventory }) => {
       item_code: '',
       invoice_number: '',
       description: '',
-      foc: '',
-      base: '',
-      qty: '',
-      pack_size: '',
-      free_of_charge: '',
-      whole_sale_price: '',
-      retail_price: '',
+      base: ' ',
+      qty: 0,
+      pack_size: 0,
+      free_of_charge: 0,
+      whole_sale_price: 0,
+      retail_price: 0,
+      from_sales_return: false,
     });
   };
   const hanldeFileUpload = (e) => {
@@ -294,14 +299,30 @@ const AddDistributorInventory = ({ inventory }) => {
                   />
                 </div>
               </div>
+
+              <div className="form__row__col">
+                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    placeholder="Type here"
+                    name="qty"
+                    value={data.addedQty === undefined ? '' : data.addedQty}
+                    onChange={(e) =>
+                      setData({ ...data, addedQty: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Free of Charge</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     placeholder="Type here"
-                    step="0.01"
-                    min="0"
                     name="free_of_charge"
                     value={
                       data.free_of_charge === undefined
@@ -311,21 +332,6 @@ const AddDistributorInventory = ({ inventory }) => {
                     onChange={(e) =>
                       setData({ ...data, free_of_charge: e.target.value })
                     }
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="form__row">
-              <div className="form__row__col">
-                <div className="form__row__col__label">QTY</div>
-                <div className="form__row__col__input">
-                  <input
-                    type="number"
-                    placeholder="Type here"
-                    name="qty"
-                    value={data.qty === undefined ? '' : data.qty}
-                    onChange={(e) => setData({ ...data, qty: e.target.value })}
-                    required
                   />
                 </div>
               </div>

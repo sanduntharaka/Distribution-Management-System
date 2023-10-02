@@ -135,7 +135,7 @@ const ViewAllCreditBillsOthers = ({ user }) => {
 
           setSuccess(false);
           setError(true);
-          setMsg('You have not any distributor assigned');
+          setMsg('You do not have any Distributors assigned');
           setTitle('Error');
           setMessageOpen(true);
           handleModalOpen();
@@ -188,7 +188,7 @@ const ViewAllCreditBillsOthers = ({ user }) => {
 
           setSuccess(false);
           setError(true);
-          setMsg('You have not any distributor assigned');
+          setMsg('You do not have any Distributors assigned');
           setTitle('Error');
           setMessageOpen(true);
           handleModalOpen();
@@ -273,7 +273,7 @@ const ViewAllCreditBillsOthers = ({ user }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Credit Bills</p>
+        <p>View all Credit Bills</p>
       </div>
       <div className="page__pcont">
         {!user.is_salesref ? (

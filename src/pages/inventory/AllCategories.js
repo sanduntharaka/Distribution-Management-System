@@ -1,6 +1,5 @@
 import React, { useEffect, useState, forwardRef } from 'react';
 import { axiosInstance } from '../../axiosInstance';
-import { IconButton } from '@mui/material';
 import Modal from '@mui/material/Modal';
 
 import Message from '../../components/message/Message';
@@ -22,10 +21,6 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import EditIcon from '@mui/icons-material/Edit';
-
-import EditCategory from '../../components/edit/EditCategory';
-import DeleteNotBuy from '../../components/userComfirm/DeleteNotBuy';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -73,7 +68,7 @@ const AllCategories = (props) => {
     },
     { title: 'Category Name', field: 'category_name' },
     { title: 'Details', field: 'description' },
-    { title: 'Foc(%)', field: 'foc_percentage' },
+    { title: 'FOC(%)', field: 'foc_percentage' },
     { title: 'Created', field: 'date', editable: false },
   ];
   //modal
@@ -220,16 +215,16 @@ const AllCategories = (props) => {
                 editable={
                   props.user.is_manager || props.user.is_company
                     ? {
-                        onRowUpdate: (newData, oldData) =>
-                          new Promise((resolve) => {
-                            handleEdit(newData, oldData, resolve);
-                          }),
+                      onRowUpdate: (newData, oldData) =>
+                        new Promise((resolve) => {
+                          handleEdit(newData, oldData, resolve);
+                        }),
 
-                        onRowDelete: (oldData) =>
-                          new Promise((resolve) => {
-                            handleDelete(oldData, resolve);
-                          }),
-                      }
+                      onRowDelete: (oldData) =>
+                        new Promise((resolve) => {
+                          handleDelete(oldData, resolve);
+                        }),
+                    }
                     : ''
                 }
               />

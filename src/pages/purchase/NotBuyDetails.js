@@ -59,7 +59,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
     },
     { title: 'Dealer', field: 'dealer_name' },
     { title: 'Date', field: 'datetime' },
-    { title: 'Added by', field: 'added_name' },
+    { title: 'Added By', field: 'added_name' },
     {
       title: 'Reason',
       render: (rowData) => {
@@ -338,7 +338,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All none-buy details</p>
+        <p>View all None-Buy Details</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">
@@ -366,7 +366,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
           {!user.is_salesref ? (
             <>
               <div className="form__row__col">
-                <div className="form__row__col__label">Salesrefs</div>
+                <div className="form__row__col__label">Sales Rep</div>
                 <div className="form__row__col__input">
                   <select
                     name=""
@@ -439,7 +439,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
                   Action: (props) => (
                     <React.Fragment>
                       {props.action.icon === EditIcon &&
-                      (user.is_company || user.is_manager) ? (
+                        (user.is_company || user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

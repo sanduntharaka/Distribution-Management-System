@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ConfimBill from './confim_bill/ConfimBill';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
-
+import WebSocketInstance from '../../WebSocket';
 import SearchSpinner from '../../components/loadingSpinner/SearchSpinner';
 
 const CreateBill = ({ inventory }) => {
@@ -38,14 +38,14 @@ const CreateBill = ({ inventory }) => {
     dis_sales_ref: '',
     date: currentDate,
     time: currentTime,
-    bill_code: 'INV-',
+    bill_code: '',
     total: 0,
     total_discount: 0,
     payment_type: payment,
     billing_price_method: billingPriceMethod,
     discount_percentage: 0,
     sub_total: 0,
-
+    payment_method: '',
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
   });
 
@@ -99,13 +99,33 @@ const CreateBill = ({ inventory }) => {
   const [showDealers, setShowDealers] = useState(false);
   const [valuedealer, setValueDealer] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
+  const [selectDealer, setSelectDealer] = useState(false)
+
+  const [nextDealer, setNextDealer] = useState('')
+
+  const [updates, setUpdates] = useState([]);
+  const [terriotires, setTerriotories] = useState([])
+
+  // useEffect(() => {
+  //   const websocket = new WebSocketInstance('nextdealer');  // Replace 'route_name' with the actual route name
+  //   websocket.connect();
+  //   websocket.addCallback(handleWebSocketUpdate);
+
+  //   return () => {
+  //     websocket.close();
+  //   };
+  // }, []);
+
+  // const handleWebSocketUpdate = (update) => {
+  //   setUpdates(prevUpdates => [...prevUpdates, update]);
+  // };
+
   useEffect(() => {
     if (user.is_salesref) {
       setLoading(true);
       axiosInstance
         .get(
-          `/distributor/salesref/get/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -127,14 +147,28 @@ const CreateBill = ({ inventory }) => {
           setTitle('Error');
           handleOpen();
         });
+      axiosInstance
+        .get(
+          `/dashboard/get/next/visit/`,
+
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          console.log('next', res.data);
+          setNextDealer(res.data.dealer)
+        });
     }
     if (user.is_distributor) {
       setLoading(true);
 
       axiosInstance
         .get(
-          `distributor/salesref/get/bydistributor/single/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `distributor/salesref/get/bydistributor/single/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -157,6 +191,34 @@ const CreateBill = ({ inventory }) => {
           handleOpen();
         });
     }
+
+    axiosInstance
+      .get(
+        `/users/get/terriotires/${JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        setTerriotories(res.data)
+        if (user.is_salesref) {
+          setData({ ...data, bill_code: 'INV' + res.data[0].code })
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch distrubutor terriotories. Please try again');
+        setTitle('Error');
+        handleOpen();
+      });
   }, []);
   useEffect(() => {
     if (data.sub_total !== undefined && data.discount !== undefined) {
@@ -171,6 +233,7 @@ const CreateBill = ({ inventory }) => {
   const filterDealers = (e) => {
     setShowDealers(true);
     setSearchLoading(true);
+    setSelectDealer(false)
     axiosInstance
       .get(`/dealer/all/search?search=${e.target.value}`, {
         headers: {
@@ -250,6 +313,8 @@ const CreateBill = ({ inventory }) => {
     setQty(0);
     setFoc(0);
     setDiscount(0);
+    setValue2('');
+    setValueDealer('');
     setData({
       ...data,
       dealer: '',
@@ -257,22 +322,23 @@ const CreateBill = ({ inventory }) => {
       dealer_address: '',
       dealer_contact: '',
       inventory: inventory.id,
-      dis_sales_ref: '',
       date: currentDate,
       time: currentTime,
-      bill_code: 'INV-',
+      bill_code: user.is_salesref ? 'INV' + terriotires[0].code : '',
       total: 0,
       total_discount: 0,
       payment_type: payment,
       billing_price_method: billingPriceMethod,
       discount_percentage: 0,
       sub_total: 0,
-
+      payment_method: '',
       added_by: JSON.parse(sessionStorage.getItem('user')).id,
     });
   };
   const handleClearAll = () => {
     setItems([]);
+    setValue2('');
+    setValueDealer('');
     setQty(0);
     setFoc(0);
     setDiscount(0);
@@ -284,17 +350,16 @@ const CreateBill = ({ inventory }) => {
       dealer_address: '',
       dealer_contact: '',
       inventory: inventory.id,
-      dis_sales_ref: '',
       date: currentDate,
       time: currentTime,
-      bill_code: 'INV-',
+      bill_code: user.is_salesref ? 'INV' + terriotires[0].code : '',
       total: 0,
       total_discount: 0,
       payment_type: payment,
       billing_price_method: billingPriceMethod,
       discount_percentage: 0,
       sub_total: 0,
-
+      payment_method: '',
       added_by: JSON.parse(sessionStorage.getItem('user')).id,
     });
   };
@@ -337,7 +402,7 @@ const CreateBill = ({ inventory }) => {
             extended_price:
               billingPriceMethod === '1'
                 ? product.whole_sale_price * parseInt(qty) -
-                  parseFloat(discount)
+                parseFloat(discount)
                 : product.retail_price * parseInt(qty) - parseFloat(discount),
           },
         ]);
@@ -357,9 +422,11 @@ const CreateBill = ({ inventory }) => {
     setExceedQty(false);
     if (e.target.value > product.qty) {
       setExceedQty(true);
+    } else {
+      setQty(e.target.value);
+
     }
 
-    setQty(e.target.value);
     if (billingPriceMethod === '1') {
       setSubTotal(product.whole_sale_price * e.target.value);
     }
@@ -367,6 +434,26 @@ const CreateBill = ({ inventory }) => {
       setSubTotal(product.retail_price * e.target.value);
     }
   };
+
+
+  const handleFoc = (e) => {
+    console.log('ent:', e.target.value)
+    console.log('qty:', qty)
+    console.log('pr:', product.qty)
+
+
+    setExceedQty(false);
+    if (parseInt(e.target.value) + parseInt(qty) > product.qty) {
+      setExceedQty(true);
+    } else {
+      setFoc(e.target.value)
+
+    }
+
+
+  };
+
+
 
   const handleRemove = (e, i) => {
     e.preventDefault();
@@ -413,16 +500,23 @@ const CreateBill = ({ inventory }) => {
   const hadleCreate = (e) => {
     e.preventDefault();
     setIsLoading(false);
+    setSelectDealer(false)
+    if (data.dealer !== '') {
+      setSelectDealer(false)
 
-    setData({
-      ...data,
-      bill_code: 'IN-',
-      date: currentDate,
-      total: data.sub_total - data.total_discount,
-      billing_price_method: billingPriceMethod,
-    });
-    setIsLoading(false);
-    showInvoice();
+      setData({
+        ...data,
+        date: currentDate,
+        total: data.sub_total - data.total_discount,
+        billing_price_method: billingPriceMethod,
+      });
+      setIsLoading(false);
+      showInvoice();
+
+      console.log('cc', data)
+    } else {
+      setSelectDealer(true)
+    }
   };
 
   const MyMessage = React.forwardRef((props, ref) => {
@@ -495,9 +589,67 @@ const CreateBill = ({ inventory }) => {
         <p>Create Bill</p>
       </div>
       <div className="page__pcont">
+        <div className="page__pcont__row center">
+          {
+            user.is_salesref ? (<div className="page__pcont__row__col">
+              <div className="nextVisit" >
+                Next visit : {nextDealer}
+              </div>
+            </div>) : ''
+          }
+
+        </div>
         <div className="form">
           <form action="">
             <div className="form__row">
+              {
+                user.is_distributor ?
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Terriotory</div>
+                    <div className="form__row__col__input">
+                      <select defaultValue={""} name="" id="" onChange={(e) => setData({ ...data, bill_code: 'INV' + e.target.value })}>
+                        <option value="">Select terriotory</option>
+
+                        {
+                          terriotires.map((item, i) => (
+                            <option value={item.code} key={i}>{item.terriotory_name}:{item.code}</option>
+                          ))
+                        }
+
+
+                      </select>
+                    </div>
+                  </div> : ''
+
+              }
+
+              <div className="form__row__col">
+                <div className="form__row__col__label">Payment Method</div>
+                <div className="form__row__col__input">
+                  <select defaultValue={""} name="" id="" onChange={(e) => setData({ ...data, payment_method: e.target.value })}>
+                    <option value="">Select payment method</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Cheque">Cheque</option>
+
+                  </select>
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">
+                  Select Billing Price Method{' '}
+                </div>
+
+                <div className="form__row__col__input">
+                  <select
+                    value={billingPriceMethod}
+                    onChange={(e) => handleBillingPriceMethod(e)}
+                  >
+                    <option value="1">Wholesale Price</option>
+                    <option value="2">Retail Price</option>
+                  </select>
+                </div>
+              </div>
               <div className="form__row__col">
                 <div className="form__row__col__label">Select Dealer</div>
                 <div className="form__row__col__input">
@@ -509,6 +661,7 @@ const CreateBill = ({ inventory }) => {
                     }}
                   >
                     <input
+                      className={selectDealer ? 'err' : ''}
                       type="text"
                       placeholder="Search..."
                       value={valuedealer}
@@ -574,21 +727,13 @@ const CreateBill = ({ inventory }) => {
                         </div>
                       ))}
                   </div>
-                </div>
-              </div>
-              <div className="form__row__col">
-                <div className="form__row__col__label">
-                  Select Billing Price Method{' '}
-                </div>
-
-                <div className="form__row__col__input">
-                  <select
-                    value={billingPriceMethod}
-                    onChange={(e) => handleBillingPriceMethod(e)}
-                  >
-                    <option value="1">Wholesale Price</option>
-                    <option value="2">Retail Price</option>
-                  </select>
+                  {selectDealer ? (
+                    <div className="form__row__col__error">
+                      <p>Please select the dealer</p>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
               </div>
             </div>
@@ -645,6 +790,7 @@ const CreateBill = ({ inventory }) => {
                       <div className="searchContent__row__details">
                         <p>Item Code</p>
                         <p>Qty</p>
+                        <p>Foc</p>
                         <p>Whole sale price</p>
                         <p>Retail price</p>
                         <p>Description</p>
@@ -671,6 +817,7 @@ const CreateBill = ({ inventory }) => {
                           <div className="searchContent__row__details">
                             <p>{item.item_code}</p>
                             <p>{item.qty}</p>
+                            <p>{item.foc}</p>
                             <p>{item.whole_sale_price}</p>
                             <p>{item.retail_price}</p>
                             <p>{item.description}</p>
@@ -711,7 +858,7 @@ const CreateBill = ({ inventory }) => {
                   <input
                     type="number"
                     value={foc}
-                    onChange={(e) => setFoc(e.target.value)}
+                    onChange={handleFoc}
                   />
                 </div>
               </div>

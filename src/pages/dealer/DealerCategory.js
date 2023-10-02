@@ -4,6 +4,7 @@ import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import ViewCategories from './ViewCategories';
+import InventoryCategoryUpload from '../../components/fileupload/InventoryCategoryUpload';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -21,6 +22,9 @@ const DealerCategory = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
+  const [show_message, setShowMsg] = useState(false);
+  const [show_upload, setShowUplod] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -37,6 +41,7 @@ const DealerCategory = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowMsg(true)
     setLoading(true);
     setError(false);
     setSuccess(false);
@@ -69,6 +74,12 @@ const DealerCategory = (props) => {
         handleOpen();
       });
   };
+  const hanldeFileUpload = (e) => {
+    e.preventDefault();
+    setShowMsg(false);
+    setShowUplod(true);
+    handleOpen();
+  };
   return (
     <div className="page">
       {loading ? (
@@ -80,16 +91,30 @@ const DealerCategory = (props) => {
       ) : (
         ''
       )}
-      <Modal open={open} onClose={handleClose}>
-        <ShowMessage
-          ref={inputRef}
-          handleClose={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
+
+      {
+        show_upload ? (
+          <Modal open={open} onClose={handleClose}>
+            <InventoryCategoryUpload
+              close={handleClose}
+              ditributor={true}
+              success={success}
+              set_success={setSuccess}
+              url={'/dealer-category/create/excel/'}
+            />
+          </Modal>
+        ) : show_message ? <Modal open={open} onClose={handleClose}>
+          <ShowMessage
+            ref={inputRef}
+            handleClose={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal> : ''
+      }
+
 
       {props.user.is_manager || props.user.is_company ? (
         <>
@@ -101,11 +126,11 @@ const DealerCategory = (props) => {
               <form action="">
                 <div className="form__row">
                   <div className="form__row__col">
-                    <div className="form__row__col__label">Category title</div>
+                    <div className="form__row__col__label">Category Title</div>
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="type category title"
+                        placeholder="Type category title"
                         onChange={(e) =>
                           setData({ ...data, category_name: e.target.value })
                         }
@@ -117,6 +142,9 @@ const DealerCategory = (props) => {
 
                 <div className="form__btn">
                   <div className="form__btn__container">
+                    <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
+                      import
+                    </button>
                     <button
                       className="btnEdit"
                       onClick={(e) => handleSubmit(e)}

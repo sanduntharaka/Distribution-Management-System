@@ -4,6 +4,11 @@ import Message from '../../components/message/Message';
 
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import {
+  IoIosAddCircle, IoMdRemoveCircle
+} from 'react-icons/io';
+
+
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -32,7 +37,7 @@ const UserDetails = () => {
   const [data, setData] = useState({
     user:
       sessionStorage.getItem('new_user') !== undefined &&
-      sessionStorage.getItem('new_user')
+        sessionStorage.getItem('new_user')
         ? sessionStorage.getItem('new_user')
         : '',
     full_name: '',
@@ -41,7 +46,7 @@ const UserDetails = () => {
     email: '',
     designation:
       sessionStorage.getItem('new_user_designation') !== undefined &&
-      sessionStorage.getItem('new_user_designation')
+        sessionStorage.getItem('new_user_designation')
         ? sessionStorage.getItem('new_user_designation')
         : '',
     dob: '',
@@ -50,9 +55,12 @@ const UserDetails = () => {
     home_number: '',
     immediate_contact_person_name: '',
     immediate_contact_person_number: '',
-    terriotory: '',
   });
   const [users, setUsers] = useState([]);
+
+  const [terriotories, setTerriotories] = useState([])
+
+  const [codeExist, setCodeExist] = useState(null)
   useEffect(() => {
     setLoading(true);
     axiosInstance
@@ -74,12 +82,66 @@ const UserDetails = () => {
         console.log(err);
       });
   }, []);
+
+  const checkCodeExist = (code) => {
+
+  }
+
+  const handleTerriotory = () => {
+    setTerriotories([...terriotories, {
+      terriotory_name: '',
+      code: '',
+      exist: null
+    }])
+  }
+
+  const handleTypeTerriotory = (e, i) => {
+    const { name, value } = e.target;
+
+    if (name === 'code' && value.length > 1) {
+      axiosInstance
+        .get(`/users/search/terriotory/${value}`, {
+          headers: {
+            Authorization: 'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          const onChangeVal = [...terriotories];
+          onChangeVal[i][name] = value;
+
+          if (res.data.exist) {
+            onChangeVal[i]['exist'] = true;
+          } else {
+            onChangeVal[i]['exist'] = false;
+          }
+
+          setTerriotories(onChangeVal);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      const onChangeVal = [...terriotories];
+      onChangeVal[i][name] = value;
+      setTerriotories(onChangeVal);
+    }
+  };
+
+
+
+
+  const handleRemoveTerriotory = (i) => {
+    const updatedTerriotories = [...terriotories];
+    updatedTerriotories.splice(i, 1);
+    setTerriotories(updatedTerriotories);
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
     axiosInstance
-      .post('/users/create/', data, {
+      .post('/users/create/', { data: data, terriotories: terriotories }, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -130,7 +192,6 @@ const UserDetails = () => {
       home_number: '',
       immediate_contact_person_name: '',
       immediate_contact_person_number: '',
-      terriotory: '',
     });
   };
   return (
@@ -277,7 +338,7 @@ const UserDetails = () => {
                   >
                     <option value="">Select Designation</option>
 
-                    {user.is_company ? (
+                    {user.is_company || user.is_superuser ? (
                       <>
                         <option value="Company">Company</option>
                         <option value="Executive">Excecutive</option>
@@ -285,7 +346,7 @@ const UserDetails = () => {
                     ) : (
                       ''
                     )}
-                    {user.is_excecutive || user.is_company ? (
+                    {user.is_excecutive || user.is_company || user.is_superuser ? (
                       <>
                         <option value="Manager">Manager</option>
                       </>
@@ -293,8 +354,8 @@ const UserDetails = () => {
                       ''
                     )}
                     {user.is_excecutive ||
-                    user.is_company ||
-                    user.is_manager ? (
+                      user.is_company ||
+                      user.is_manager || user.is_superuser ? (
                       <>
                         <option value="Distributor">Distributor</option>
                       </>
@@ -401,17 +462,37 @@ const UserDetails = () => {
 
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">Territory </div>
-                <div className="form__row__col__input">
-                  <input
-                    type="text"
-                    placeholder="Type address here"
-                    value={data.terriotory ? data.terriotory : ''}
-                    onChange={(e) =>
-                      setData({ ...data, terriotory: e.target.value })
+                <div className="form__row__col__label" style={{ display: "flex", gap: 5, marginBottom: 5, alignItems: "center" }}> Add Territory With Invoice Code  <IoIosAddCircle className='btn' color='blue' size={25} onClick={handleTerriotory} /> </div>
+
+                {terriotories.map((item, i) => (
+                  <div className="input" style={{ display: "flex", gap: 5, marginBottom: 5, alignItems: "center" }} key={i}>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="Type terriotory here"
+                        name='terriotory_name'
+                        value={item.terriotory_name}
+                        onChange={(e) => handleTypeTerriotory(e, i)}
+                      />
+                    </div>
+                    <div className="form__row__col__input">
+                      <input
+                        type="text"
+                        placeholder="Type code here"
+                        name='code'
+
+                        value={item.code}
+                        onChange={(e) => handleTypeTerriotory(e, i)}
+                      />
+                    </div>
+                    <IoMdRemoveCircle color='red' size={25} onClick={() => handleRemoveTerriotory(i)} />
+                    {
+                      item.exist ? <div style={{ color: 'red' }}>Exist</div> : item.exist === null ? "" : <div style={{ color: 'green' }}>Correct</div>
                     }
-                  />
-                </div>
+
+                  </div>
+                ))}
+
               </div>
               <div className="form__row__col dontdisp"></div>
             </div>
@@ -428,8 +509,8 @@ const UserDetails = () => {
             </div>
           </form>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

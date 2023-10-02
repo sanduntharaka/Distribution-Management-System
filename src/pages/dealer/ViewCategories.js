@@ -63,7 +63,7 @@ const ViewCategories = (props) => {
       headerStyle: { width: '10px' },
       editable: false,
     },
-    { title: 'Category title', field: 'category_name' },
+    { title: 'Category Title', field: 'category_name' },
   ];
   //   created_by
   //   area_name
@@ -199,16 +199,16 @@ const ViewCategories = (props) => {
                 editable={
                   props.user.is_manager || props.user.is_company
                     ? {
-                        onRowUpdate: (newData, oldData) =>
-                          new Promise((resolve) => {
-                            handleRowUpdate(newData, oldData, resolve);
-                          }),
+                      onRowUpdate: (newData, oldData) =>
+                        new Promise((resolve) => {
+                          handleRowUpdate(newData, oldData, resolve);
+                        }),
 
-                        onRowDelete: (oldData) =>
-                          new Promise((resolve) => {
-                            handleRowDelete(oldData, resolve);
-                          }),
-                      }
+                      onRowDelete: (oldData) =>
+                        new Promise((resolve) => {
+                          handleRowDelete(oldData, resolve);
+                        }),
+                    }
                     : ''
                 }
               />

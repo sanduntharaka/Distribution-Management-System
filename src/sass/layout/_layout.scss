@@ -6,6 +6,7 @@
   &__menu {
     display: none;
     z-index: 50;
+
     @include mobile {
       display: block;
       position: absolute;
@@ -23,12 +24,15 @@
       }
     }
   }
+
   &__sidebar {
     background-color: $color-sidebar;
     display: block;
+
     @include mobile {
       display: none;
     }
+
     &.show {
       @include mobile {
         display: block;
@@ -38,15 +42,18 @@
         z-index: 200;
       }
     }
+
     &.hide {
       @include mobile {
         display: none;
       }
     }
+
     @include mobile {
       border-radius: 0px 25px 0px 0px;
     }
   }
+
   &__content {
     overflow-y: scroll;
     flex: 9;
@@ -72,23 +79,26 @@
         padding: 0px 20px 0px 20px;
         box-sizing: border-box;
         width: max-content;
-        font-size: 20px;
+        font-size: 1.3rem;
         height: max-content;
         min-height: 40px;
         border-radius: 50px;
         font-weight: bolder;
         color: $color-white;
         background-color: red;
+
         @include mobile {
           width: 100%;
         }
       }
+
       &__pcont {
         @include mobile {
           width: 100%;
         }
 
         margin-top: 10px;
+
         &__row {
           margin-top: 25px;
           display: flex;
@@ -96,6 +106,7 @@
           // justify-content: space-evenly;
           gap: 25px;
           color: #000;
+
           @include mobile {
             justify-content: center;
             align-items: center;
@@ -103,6 +114,7 @@
             transition: all 0.3s ease;
             gap: 5px;
           }
+
           &__col {
             width: 100%;
             padding: 10px 15px;
@@ -114,6 +126,7 @@
                 width: 400px;
               }
             }
+
             &.total {
               display: flex;
               justify-content: flex-end;
@@ -135,16 +148,20 @@
   justify-content: center;
   align-items: center;
 }
+
 .dataTable {
   width: 100%;
+
   @include mobile {
     margin-left: auto;
     margin-right: auto;
     width: 300px;
   }
+
   .testTbl {
     background-color: $color-blue-sidebar-title-light;
   }
+
   @include screenXXS {
     width: 300px;
     display: block;
@@ -164,6 +181,7 @@
       margin-right: auto;
     }
   }
+
   @include screenSM {
     width: 668px;
     display: block;
@@ -173,6 +191,7 @@
       margin-right: auto;
     }
   }
+
   @include screenMD {
     width: 100%;
   }

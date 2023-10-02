@@ -45,10 +45,11 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
   const [data, setData] = useState({
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     item: '',
+    addedQty: 0,
     invoice_number: '',
-    qty: '',
+    qty: 0,
     pack_size: '',
-    foc: '',
+    foc: 0,
     whole_sale_price: '',
     retail_price: '',
     from_sales_return: false,
@@ -66,7 +67,6 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
       .then((res) => {
         setLoading(false);
         setProducts(res.data);
-        console.log('r', res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -74,7 +74,9 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
         console.log(err);
       });
   }, []);
-
+  useEffect(() => {
+    setData({ ...data, qty: parseInt(data.addedQty) + parseInt(data.foc) });
+  }, [data.addedQty, data.foc]);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -119,8 +121,9 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
       invoice_number: '',
       description: '',
       base: '',
-      qty: '',
-      pack_size: '',
+      qty: 0,
+      addedQty: 0,
+      pack_size: 0,
       free_of_charge: '',
       whole_sale_price: '',
       retail_price: '',
@@ -156,9 +159,9 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
     setValue2(item.item_code);
     setProduct(item);
     setShowProducts(false);
-    console.log(item);
     setData({ ...data, item: item.id });
   };
+
   return (
     <div className="page">
       {loading ? (
@@ -335,16 +338,19 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
                 </div>
               </div>
               <div className="form__row__col">
-                <div className="form__row__col__label">Free of Charge</div>
+                <div className="form__row__col__label">QTY</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     placeholder="Type here"
-                    step="0.01"
-                    min="0"
-                    name="free_of_charge"
-                    value={data.foc === undefined ? '' : data.foc}
-                    onChange={(e) => setData({ ...data, foc: e.target.value })}
+                    name="qty"
+                    value={data.addedQty === undefined ? '' : data.addedQty}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        addedQty: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
@@ -352,14 +358,19 @@ const AddDistributorInventoryStocks = ({ inventory }) => {
             </div>
             <div className="form__row">
               <div className="form__row__col">
-                <div className="form__row__col__label">QTY</div>
+                <div className="form__row__col__label">Free of Charge</div>
                 <div className="form__row__col__input">
                   <input
                     type="number"
                     placeholder="Type here"
-                    name="qty"
-                    value={data.qty === undefined ? '' : data.qty}
-                    onChange={(e) => setData({ ...data, qty: e.target.value })}
+                    name="free_of_charge"
+                    value={data.foc === undefined ? '' : data.foc}
+                    onChange={(e) =>
+                      setData({
+                        ...data,
+                        foc: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>

@@ -61,7 +61,7 @@ const MarketReturnConfirm = () => {
       field: 'rowIndex',
       render: (rowData) => rowData?.tableData?.id + 1,
     },
-    { title: 'Added by', field: 'added_name' },
+    { title: 'Added By', field: 'added_name' },
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
@@ -86,8 +86,7 @@ const MarketReturnConfirm = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `/salesref/return/get/pending/distributor/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/salesref/return/get/pending/distributor/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -155,7 +154,7 @@ const MarketReturnConfirm = () => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Pending Market Returns</p>
+        <p>View all Pending Market Returns</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

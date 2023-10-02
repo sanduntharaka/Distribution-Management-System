@@ -4,6 +4,7 @@ import {
   AiOutlineShop,
   AiOutlineFieldTime,
 } from 'react-icons/ai';
+
 import { MdOutlineInventory, MdRoute } from 'react-icons/md';
 import {
   TbLayoutDashboard,
@@ -13,9 +14,11 @@ import {
   TbReportSearch,
 } from 'react-icons/tb';
 import { TiArrowBackOutline } from 'react-icons/ti';
+import { BsListTask } from 'react-icons/bs';
+
 import { FiSettings } from 'react-icons/fi';
 
-import { BiPurchaseTagAlt, BiHistory } from 'react-icons/bi';
+import { BiPurchaseTagAlt, BiHistory, BiTargetLock } from 'react-icons/bi';
 import { GiCheckedShield } from 'react-icons/gi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -57,11 +60,59 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">Dashboard</div>
           </NavLink>
+          {
+            user.is_manager ? (
+              <NavLink
+                to="/planing"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <BsListTask />
+                </div>
+                <div className="container__list__item__name">planing</div>
+              </NavLink>
+            ) : (
+              ''
+            )}
+          {
+            user.is_salesref ? (
+              <NavLink
+                to="/srep-planing"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <BsListTask />
+                </div>
+                <div className="container__list__item__name">My planing</div>
+              </NavLink>
+            ) : (
+              ''
+            )}
+          {
+            user.is_manager ? (
+              <NavLink
+                to="/targets"
+                className={(isActive, isPending) =>
+                  handleClassname(isActive, isPending)
+                }
+              >
+                <div className="container__list__item__icon">
+                  <BiTargetLock />
+                </div>
+                <div className="container__list__item__name">Targets</div>
+              </NavLink>
+            ) : (
+              ''
+            )}
           {user.is_superuser ||
-          user.is_excecutive ||
-          user.is_manager ||
-          user.is_distributor ||
-          user.is_company ? (
+            user.is_excecutive ||
+            user.is_manager ||
+            user.is_distributor ||
+            user.is_company ? (
             <NavLink
               to="/user"
               className={(isActive, isPending) =>

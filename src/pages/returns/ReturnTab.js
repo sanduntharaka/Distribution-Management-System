@@ -45,8 +45,7 @@ const ReturnTab = () => {
     if (user.is_salesref) {
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/inventory/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -72,8 +71,7 @@ const ReturnTab = () => {
     if (user.is_distributor) {
       axiosInstance
         .get(
-          `/distributor/get/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/get/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -115,7 +113,7 @@ const ReturnTab = () => {
             className={`item ${selected === 0 ? 'selected' : ''}`}
             onClick={() => handleSelect(0)}
           >
-            Add returns
+            Add Returns
           </div>
         ) : (
           ''
@@ -124,14 +122,14 @@ const ReturnTab = () => {
           className={`item ${selected === 1 ? 'selected' : ''}`}
           onClick={() => handleSelect(1)}
         >
-          All returns
+          All Returns
         </div>
 
         <div
           className={`item ${selected === 2 ? 'selected' : ''}`}
           onClick={() => handleSelect(2)}
         >
-          Approve market returns
+          Approve Market Returns
         </div>
       </div>
       <div className="tab_page">

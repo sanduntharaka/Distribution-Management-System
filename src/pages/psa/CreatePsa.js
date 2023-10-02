@@ -4,6 +4,7 @@ import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import InventoryCategoryUpload from '../../components/fileupload/InventoryCategoryUpload';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -21,6 +22,9 @@ const CreatePsa = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
+  const [show_message, setShowMsg] = useState(false);
+  const [show_upload, setShowUplod] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -36,9 +40,11 @@ const CreatePsa = (props) => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
+
     setLoading(true);
     setError(false);
     setSuccess(false);
+    setShowMsg(true)
     axiosInstance
       .post('/psa/create/', data, {
         headers: {
@@ -68,6 +74,12 @@ const CreatePsa = (props) => {
         handleOpen();
       });
   };
+  const hanldeFileUpload = (e) => {
+    e.preventDefault();
+    setShowMsg(false);
+    setShowUplod(true);
+    handleOpen();
+  };
   return (
     <div className="page">
       {loading ? (
@@ -79,16 +91,29 @@ const CreatePsa = (props) => {
       ) : (
         ''
       )}
-      <Modal open={open} onClose={handleClose}>
-        <ShowMessage
-          ref={inputRef}
-          handleClose={handleClose}
-          success={success}
-          error={error}
-          title={title}
-          msg={msg}
-        />
-      </Modal>
+      {
+        show_upload ? (
+          <Modal open={open} onClose={handleClose}>
+            <InventoryCategoryUpload
+              close={handleClose}
+              ditributor={true}
+              success={success}
+              set_success={setSuccess}
+              url={'/psa/create/excel/'}
+            />
+          </Modal>
+        ) : show_message ? <Modal open={open} onClose={handleClose}>
+          <ShowMessage
+            ref={inputRef}
+            handleClose={handleClose}
+            success={success}
+            error={error}
+            title={title}
+            msg={msg}
+          />
+        </Modal> : ''
+      }
+
       {props.user.is_manager ? (
         <>
           <div className="page__title">
@@ -115,6 +140,9 @@ const CreatePsa = (props) => {
 
                 <div className="form__btn">
                   <div className="form__btn__container">
+                    <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
+                      import
+                    </button>
                     <button
                       className="btnEdit"
                       onClick={(e) => handleSubmit(e)}

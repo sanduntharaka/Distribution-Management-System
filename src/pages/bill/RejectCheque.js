@@ -105,7 +105,7 @@ const RejectCheque = () => {
   };
 
   const handleSaveReturn = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     setLoading(true);
     axiosInstance
       .put(`/salesref/invoice/reject/cheque/`, data, {
@@ -115,6 +115,8 @@ const RejectCheque = () => {
         },
       })
       .then((res) => {
+        console.log(res);
+
         setLoading(false);
         setError(false);
         setSuccess(true);
@@ -122,14 +124,17 @@ const RejectCheque = () => {
         setMsg('Successfully saved Your cheque as a return status.');
         setTitle('Success');
         handleOpen();
-        handleClear();
+        handleClear(e);
       })
       .catch((err) => {
-        console.log(err);
+        console.log('er:', err);
         setLoading(false);
         setSuccess(false);
         setError(true);
-        setMsg('Cannot save cheque as return. Please try again');
+
+        setMsg(err.response.data.error);
+
+
         setTitle('Error');
         handleOpen();
       });
@@ -177,6 +182,7 @@ const RejectCheque = () => {
                       placeholder="Search..."
                       value={valuecheque}
                       onChange={(e) => filterCheques(e)}
+                      required
                     />
                     {searchLoading ? (
                       <div
@@ -241,6 +247,7 @@ const RejectCheque = () => {
                     type="number"
                     placeholder="Type cheque number here"
                     value={data.cheque_number ? data.cheque_number : ''}
+                    required
                   />
                 </div>
               </div>
@@ -251,6 +258,7 @@ const RejectCheque = () => {
                     type="text"
                     placeholder="Type bank here"
                     value={data.bank ? data.bank : ''}
+                    required
                   />
                 </div>
               </div>
@@ -261,6 +269,7 @@ const RejectCheque = () => {
                     type="text"
                     placeholder="Type branch name here"
                     value={data.branch ? data.branch : ''}
+                    required
                   />
                 </div>
               </div>
@@ -290,6 +299,7 @@ const RejectCheque = () => {
                     type="number"
                     placeholder="0"
                     value={data.amount ? data.amount : ''}
+                    required
                   />
                 </div>
               </div>
@@ -310,7 +320,7 @@ const RejectCheque = () => {
                 <button
                   className="btnEdit"
                   title="save cheque as return"
-                  onClick={handleSaveReturn}
+                  onClick={(e) => handleSaveReturn(e)}
                 >
                   return cheque
                 </button>

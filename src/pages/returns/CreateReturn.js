@@ -107,8 +107,7 @@ const CreateReturn = ({ inventory }) => {
 
       axiosInstance
         .get(
-          `/distributor/salesref/get/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -136,8 +135,7 @@ const CreateReturn = ({ inventory }) => {
 
       axiosInstance
         .get(
-          `/distributor/salesref/get/bydistributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/get/bydistributor/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -254,6 +252,7 @@ const CreateReturn = ({ inventory }) => {
   const hanldeProductFilter = (e, item) => {
     setValue2(item.item_code);
     setProduct(item);
+    console.log('i:', item)
     setShowProducts(false);
   };
 
@@ -281,6 +280,9 @@ const CreateReturn = ({ inventory }) => {
         item_code: product.item_code,
         qty: qty,
         foc: foc,
+        whole_sale_price: product.whole_sale_price,
+        retail_price: product.retail_price,
+
         reason: reason,
       },
     ]);

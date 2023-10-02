@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { axiosInstance } from '../../axiosInstance';
-
+import Modal from '@mui/material/Modal';
+import EditTerriotory from './EditTerriotory';
 const UserDetailsEdit = (props) => {
   const [editedData, setEditedData] = useState({
     id: props.data.id,
@@ -15,8 +16,12 @@ const UserDetailsEdit = (props) => {
     immediate_contact_person_number: props.data.immediate_contact_person_number,
     terriotory: props.data.terriotory,
   });
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   const handleEdit = (e) => {
+
     e.preventDefault();
     axiosInstance
       .put(`${props.url}/${props.data.id}`, editedData, {
@@ -50,9 +55,19 @@ const UserDetailsEdit = (props) => {
   const handleCancel = () => {
     props.closeModal();
   };
-
+  const handleEditTerriotory = (e, value) => {
+    e.preventDefault();
+    handleModalOpen();
+  };
   return (
     <div className="edit">
+      <Modal open={modalOpen} onClose={handleModalClose}>
+
+        <EditTerriotory
+          closeModal={handleModalClose}
+          user={props.data.id}
+        />
+      </Modal>
       <div className="edit__content">
         <dib className="edit__content__title">
           <h4>Edit Employee Details</h4>
@@ -61,7 +76,7 @@ const UserDetailsEdit = (props) => {
           <div className="form">
             <table>
               <tr>
-                <td>Id</td>
+                <td>Ids</td>
                 <td>
                   <input type="text" value={editedData.id} disabled />
                 </td>
@@ -174,8 +189,8 @@ const UserDetailsEdit = (props) => {
                       ''
                     )}
                     {props.user.is_excecutive ||
-                    props.user.is_company ||
-                    props.user.is_manager ? (
+                      props.user.is_company ||
+                      props.user.is_manager ? (
                       <>
                         <option value="Distributor">Distributor</option>
                       </>
@@ -191,7 +206,7 @@ const UserDetailsEdit = (props) => {
                 <td>Territory</td>
                 <td>
                   {' '}
-                  <input
+                  {/* <input
                     type="text"
                     value={editedData.terriotory}
                     onChange={(e) =>
@@ -200,7 +215,8 @@ const UserDetailsEdit = (props) => {
                         terriotory: e.target.value,
                       })
                     }
-                  />
+                  /> */}
+                  <button className="btnEdit" onClick={handleEditTerriotory}>Change terriotory</button>
                 </td>
               </tr>
               <tr>

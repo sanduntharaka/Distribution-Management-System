@@ -1,0 +1,69 @@
+.pbox-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 5px;
+
+    .pbox {
+
+        gap: 5px;
+
+        &__title {
+            font-weight: 700;
+            color: $color-blue-sidebar-title ;
+            height: max-content;
+        }
+
+        &__box1,
+        &__box2 {
+            height: 450px;
+            border-radius: 15px;
+            box-sizing: content-box;
+            padding: 15px;
+            border: 1px solid $color-colum-background;
+            display: flex;
+            gap: 5px;
+            flex-direction: column;
+            overflow-y: scroll;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+            scrollbar-color: #000f80 #ffffff;
+
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: #000f80;
+                border-radius: 25px;
+            }
+
+            &::-webkit-scrollbar-button {
+                height: 50px;
+            }
+        }
+
+        &:first-child {
+            flex: 1;
+
+
+            .contentItem {
+                box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+
+                padding: 5px;
+
+            }
+        }
+
+        &:last-child {
+            flex: 2;
+        }
+    }
+
+
+}

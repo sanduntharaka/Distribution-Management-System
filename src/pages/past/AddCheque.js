@@ -163,9 +163,8 @@ const AddCheque = ({ user }) => {
           <FileUpload
             close={handleClose}
             ditributor={true}
-            url={`/pastinv/cheque/add/excel/${
-              JSON.parse(sessionStorage.getItem('user_details')).id
-            }`}
+            url={`/pastinv/cheque/add/excel/${JSON.parse(sessionStorage.getItem('user_details')).id
+              }`}
           />
         </Modal>
       ) : (
@@ -174,7 +173,7 @@ const AddCheque = ({ user }) => {
       {user.is_distributor ? (
         <>
           <div className="page__title">
-            <p>Add PD cheques</p>
+            <p>Add PD Cheques</p>
           </div>
           <div className="page__pcont">
             <div className="form">

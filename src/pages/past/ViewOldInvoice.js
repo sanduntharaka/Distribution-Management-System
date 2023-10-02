@@ -63,9 +63,9 @@ const ViewOldInvoice = (props) => {
     { title: 'Date', field: 'inv_date' },
     { title: 'Customer', field: 'customer_name' },
 
-    { title: 'Original amount', field: 'original_amount' },
-    { title: 'Paid amount', field: 'paid_amount' },
-    { title: 'Balance amount', field: 'balance_amount' },
+    { title: 'Original Amount', field: 'original_amount' },
+    { title: 'Paid Amount', field: 'paid_amount' },
+    { title: 'Balance Amount', field: 'balance_amount' },
   ];
 
   //modal
@@ -181,8 +181,7 @@ const ViewOldInvoice = (props) => {
 
       axiosInstance
         .get(
-          `/pastinv/inv/view/all/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/pastinv/inv/view/all/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -291,7 +290,7 @@ const ViewOldInvoice = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View All Market credits</p>
+        <p>View all Market Credits</p>
       </div>
       <div className="page__pcont">
         {!user.is_distributor && !user.is_salesref ? (

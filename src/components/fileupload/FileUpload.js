@@ -98,8 +98,7 @@ const FileUpload = (props) => {
           <div {...getRootProps({ className: 'dropzone' })}>
             <input {...getInputProps()} />
             <p>
-              Drag 'n' drop a file here, or click to select file.Please add
-              Excel file in given format
+              Choose a File or Drag it here. (Use an Excel file in the given format)
             </p>
           </div>
           <aside>

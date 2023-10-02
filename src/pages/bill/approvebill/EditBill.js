@@ -124,8 +124,9 @@ const EditBill = (props) => {
     setLoading(true);
     setError(false);
     setSuccess(false);
+    console.log(oldData)
     axiosInstance
-      .delete(`/salesref/invoice/item/delete/${oldData.id}`, oldData, {
+      .delete(`/salesref/invoice/item/delete/`, { id: 'abc' }, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -234,11 +235,11 @@ const EditBill = (props) => {
                   tooltip: 'Edit',
                   onClick: (event, rowData) => handleEdit(event, rowData),
                 },
-                {
-                  icon: Delete,
-                  tooltip: 'Delete',
-                  onClick: (event, rowData) => handleDelete(event, rowData),
-                },
+                // {
+                //   icon: Delete,
+                //   tooltip: 'Delete',
+                //   onClick: (event, rowData) => handleDelete(event, rowData),
+                // },
               ]}
               components={{
                 Action: (props) => (
@@ -255,21 +256,23 @@ const EditBill = (props) => {
                       >
                         <Edit />
                       </IconButton>
-                    ) : props.action.icon === Delete ? (
-                      <IconButton
-                        onClick={(event) =>
-                          props.action.onClick(event, props.data)
-                        }
-                        color="primary"
-                        style={{ color: 'red' }} // customize the icon color
-                        size="small"
-                        aria-label={props.action.tooltip}
-                      >
-                        <Delete />
-                      </IconButton>
-                    ) : (
-                      ''
-                    )}
+                    )
+                      // : props.action.icon === Delete ? (
+                      //   <IconButton
+                      //     onClick={(event) =>
+                      //       props.action.onClick(event, props.data)
+                      //     }
+                      //     color="primary"
+                      //     style={{ color: 'red' }} // customize the icon color
+                      //     size="small"
+                      //     aria-label={props.action.tooltip}
+                      //   >
+                      //     <Delete />
+                      //   </IconButton>
+                      // ) 
+                      : (
+                        ''
+                      )}
                   </React.Fragment>
                 ),
               }}

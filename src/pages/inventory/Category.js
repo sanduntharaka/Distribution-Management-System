@@ -4,6 +4,7 @@ import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import AllCategories from './AllCategories';
+import InventoryCategoryUpload from '../../components/fileupload/InventoryCategoryUpload';
 const ShowMessage = forwardRef((props, ref) => {
   return (
     <Message
@@ -21,6 +22,9 @@ const Category = (props) => {
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
+  const [show_message, setShowMsg] = useState(false);
+  const [show_upload, setShowUplod] = useState(false);
+
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [msg, setMsg] = useState('');
@@ -37,6 +41,7 @@ const Category = (props) => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowMsg(true)
     setLoading(true);
     setError(false);
     setSuccess(false);
@@ -78,6 +83,13 @@ const Category = (props) => {
       foc_percentage: 0,
     });
   };
+
+  const hanldeFileUpload = (e) => {
+    e.preventDefault();
+    setShowMsg(false);
+    setShowUplod(true);
+    handleOpen();
+  };
   return (
     <div className="page">
       {loading ? (
@@ -86,10 +98,17 @@ const Category = (props) => {
             <Spinner detail={true} />
           </div>
         </div>
-      ) : (
-        ''
-      )}
-      <Modal open={open} onClose={handleClose}>
+      ) : show_upload ? (
+        <Modal open={open} onClose={handleClose}>
+          <InventoryCategoryUpload
+            close={handleClose}
+            ditributor={true}
+            success={success}
+            set_success={setSuccess}
+            url={'/category/create/excel/'}
+          />
+        </Modal>
+      ) : show_message ? <Modal open={open} onClose={handleClose}>
         <ShowMessage
           ref={inputRef}
           handleClose={handleClose}
@@ -98,7 +117,10 @@ const Category = (props) => {
           title={title}
           msg={msg}
         />
-      </Modal>
+      </Modal> : (
+        ''
+      )}
+
 
       {props.user.is_company || props.user.is_manager ? (
         <>
@@ -138,7 +160,7 @@ const Category = (props) => {
                   </div>
                   <div className="form__row__col">
                     <div className="form__row__col__label">
-                      FOC percentage(%)
+                      FOC Percentage(%)
                     </div>
                     <div className="form__row__col__input">
                       <input
@@ -148,6 +170,7 @@ const Category = (props) => {
                         min="0"
                         max="100"
                         step="1"
+                        placeholder="Type percentage"
                         value={data.foc_percentage ? data.foc_percentage : ''}
                         onChange={(e) =>
                           setData({ ...data, foc_percentage: e.target.value })
@@ -159,6 +182,9 @@ const Category = (props) => {
 
                 <div className="form__btn">
                   <div className="form__btn__container">
+                    <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
+                      import
+                    </button>
                     <button
                       className="btnEdit"
                       onClick={(e) => handleSubmit(e)}
