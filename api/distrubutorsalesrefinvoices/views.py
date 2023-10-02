@@ -28,9 +28,6 @@ class CreateInvoice(generics.CreateAPIView):
                     inventory=request.data['inventory']).last()
 
                 data = request.data
-                data['bill_code'] = 'INV' + \
-                    UserDetails.objects.get(
-                        id=data['added_by']).terriotory[:3].upper()
                 if last_bill is not None:
                     bill_number = last_bill.bill_number
                     data['bill_number'] = bill_number + 1

@@ -8,6 +8,8 @@ settings.py
 sesettings2.py
 core/settings.py
 media
+0010_remove_terriotory_user_detail_userterriotory.py
+0009_remove_userdetails_terriotory_terriotory.py
 0002_rename_manager_distributor_salesreftargets_salesrep_distributor.py
 0002_dailystatus.py
 0003_dailystatus_current_plan.py

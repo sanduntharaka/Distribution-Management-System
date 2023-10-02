@@ -33,9 +33,15 @@ urlpatterns = [
 
 
     path('get/<id>', views.getUsersDetails.as_view()),
+    path('get/terriotires/<id>', views.GetUserTerriotories.as_view()),
+
     path('upload/image/<int:pk>', views.ProfilePictureUpload.as_view()),
     path('get/user/<id>', views.getUsersDetailsByMainUser.as_view()),
 
+    path('search/terriotory/<code>', views.CheckTerriotory.as_view()),
+
+    path('add/terriotory/<id>', views.AddTerriotory.as_view()),
+    path('remove/terriotory/<id>', views.RemoveTerriotory.as_view()),
 
 
 ]

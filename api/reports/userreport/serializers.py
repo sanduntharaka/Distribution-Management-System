@@ -4,6 +4,7 @@ from userdetails.models import UserDetails
 
 class AllStaffDetailsSerializer(serializers.ModelSerializer):
     id_number = serializers.CharField(source='nic')
+    terriotory = serializers.CharField(source='getTerrotories')
 
     class Meta:
         model = UserDetails

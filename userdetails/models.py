@@ -33,5 +33,25 @@ class UserDetails(models.Model):
         max_length=150, null=True)
     immediate_contact_person_number = models.CharField(
         max_length=15, null=True)
-    terriotory = models.CharField(max_length=100, null=False)
     photo = models.ImageField(upload_to=user_photo_upload_path, blank=True)
+
+    def getTerrotories(self):
+        terriotories = UserTerriotory.objects.filter(user_detail=self.id)
+        terriotories_list = [i.territory.terriotory_name for i in terriotories]
+        return ', '.join(terriotories_list)
+
+
+class Terriotory(models.Model):
+    terriotory_name = models.CharField(max_length=20)
+    code = models.CharField(max_length=4, blank=True, null=True)
+
+
+class UserTerriotory(models.Model):
+    user_detail = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
+    territory = models.ForeignKey(Terriotory, on_delete=models.CASCADE)
+
+    def isExist(self):
+        return True
+
+    def isOld(self):
+        return True
