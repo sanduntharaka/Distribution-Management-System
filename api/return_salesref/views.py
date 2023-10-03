@@ -12,6 +12,7 @@ from rest_framework import generics
 from django.shortcuts import get_list_or_404
 from rest_framework.views import APIView
 from dealer_details.models import Dealer
+from userdetails.models import UserDetails
 
 
 class AddReturn(generics.CreateAPIView):
@@ -20,10 +21,9 @@ class AddReturn(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         last_bill = SalesRefReturn.objects.all().last()
         data = self.request.data
-        print(data)
-        data['bill_code'] = 'MRET' + \
-            Dealer.objects.get(
-            id=data['dealer']).psa.area_name[:3].upper()
+        terriotory = UserDetails.objects.get(
+            id=data['added_by']).getTerrotoriesList()
+        data['bill_code'] = 'MRET' + terriotory[0][:3].upper()
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1

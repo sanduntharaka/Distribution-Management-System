@@ -40,6 +40,11 @@ class UserDetails(models.Model):
         terriotories_list = [i.territory.terriotory_name for i in terriotories]
         return ', '.join(terriotories_list)
 
+    def getTerrotoriesList(self):
+        terriotories = UserTerriotory.objects.filter(user_detail=self.id)
+        terriotories_list = [i.territory.terriotory_name for i in terriotories]
+        return terriotories_list
+
 
 class Terriotory(models.Model):
     terriotory_name = models.CharField(max_length=20)

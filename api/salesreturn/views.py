@@ -18,9 +18,11 @@ class AddReturn(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         last_bill = SalesReturn.objects.all().last()
         data = self.request.data
+
+        terriotory = UserDetails.objects.get(
+            id=data['added_by']).getTerrotoriesList()
         data['bill_code'] = 'SRET' + \
-            Dealer.objects.get(
-            id=data['dealer']).psa.area_name[:3].upper()
+            terriotory[0][:3].upper()
         if last_bill is not None:
             bill_number = last_bill.bill_number
             data['bill_number'] = bill_number+1
