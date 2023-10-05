@@ -28,6 +28,7 @@ class CreateInvoice(generics.CreateAPIView):
                     inventory=request.data['inventory']).last()
 
                 data = request.data
+                data['total'] = data['sub_total'] - data['total_discount']
                 if last_bill is not None:
                     bill_number = last_bill.bill_number
                     data['bill_number'] = bill_number + 1

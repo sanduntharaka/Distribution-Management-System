@@ -20,9 +20,7 @@ class ByDistributor(APIView):
         manager_name = ManagerDistributor.objects.get(
             distributor=distributor.distributor.id).manager.full_name
         distributor_name = distributor.distributor.full_name
-        terriotory = distributor.distributor.terriotory
-
-        print(distributor.distributor.id)
+        terriotory = distributor.distributor.getTerrotories()
         salesrefs = SalesRefDistributor.objects.filter(
             distributor=item).values('sales_ref')
 
@@ -66,6 +64,8 @@ class ByDistributor(APIView):
             'psas': [area_name['area_name'] for area_name in psa_names],
             'details': details
         }
+
+        print(data)
         return Response(data=data, status=status.HTTP_200_OK)
 
 

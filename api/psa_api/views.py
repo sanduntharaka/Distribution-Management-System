@@ -66,6 +66,8 @@ class AllCreatedPsa(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user.id
         users = []
+
+        show = {}
         if (self.request.user.is_company):
 
             return get_list_or_404(PrimarySalesArea)
@@ -85,6 +87,8 @@ class AllCreatedPsa(generics.ListAPIView):
                 id__in=salesrefs_ids).values_list('user', flat=True)
 
             users.extend(salesref_users_ids)
+
+            show['created_by__in'] = users
         if (self.request.user.is_manager):
             users.append(user)
 
@@ -99,6 +103,7 @@ class AllCreatedPsa(generics.ListAPIView):
                 id__in=salesrefs_ids).values_list('user', flat=True)
 
             users.extend(salesref_users_ids)
+            show['created_by__in'] = users
         if (self.request.user.is_distributor):
             users.append(user)
             manager = ManagerDistributor.objects.get(
@@ -109,23 +114,25 @@ class AllCreatedPsa(generics.ListAPIView):
             salesref_users_ids = UserDetails.objects.filter(
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
+            show['created_by__in'] = users
 
         if (self.request.user.is_salesref):
 
-            distributor = SalesRefDistributor.objects.get(
-                sales_ref__user=user).distributor.user.id
-            users.append(distributor)
-            manager = ManagerDistributor.objects.get(
-                distributor__user=distributor).manager.user.id
-            users.append(manager)
+            # distributor = SalesRefDistributor.objects.get(
+            #     sales_ref__user=user).distributor.user.id
+            # users.append(distributor)
+            # manager = ManagerDistributor.objects.get(
+            #     distributor__user=distributor).manager.user.id
+            # users.append(manager)
 
-            salesrefs = SalesRefDistributor.objects.filter(
-                distributor__user=distributor).values_list('sales_ref', flat=True)
-            salesref_users_ids = UserDetails.objects.filter(
-                id__in=salesrefs).values_list('user', flat=True)
-            users.extend(salesref_users_ids)
+            # salesrefs = SalesRefDistributor.objects.filter(
+            #     distributor__user=distributor).values_list('sales_ref', flat=True)
+            # salesref_users_ids = UserDetails.objects.filter(
+            #     id__in=salesrefs).values_list('user', flat=True)
+            # users.extend(salesref_users_ids)
+            show['sales_ref__user'] = self.request.user
 
-        return get_list_or_404(PrimarySalesArea, created_by__in=users)
+        return get_list_or_404(PrimarySalesArea, **show)
 
 
 class GetAllSearch(generics.ListAPIView):
@@ -136,6 +143,8 @@ class GetAllSearch(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user.id
         users = []
+
+        show = {}
         if (self.request.user.is_company):
 
             return get_list_or_404(PrimarySalesArea)
@@ -155,6 +164,7 @@ class GetAllSearch(generics.ListAPIView):
                 id__in=salesrefs_ids).values_list('user', flat=True)
 
             users.extend(salesref_users_ids)
+            show['created_by__in'] = users
         if (self.request.user.is_manager):
             users.append(user)
 
@@ -169,6 +179,8 @@ class GetAllSearch(generics.ListAPIView):
                 id__in=salesrefs_ids).values_list('user', flat=True)
 
             users.extend(salesref_users_ids)
+            show['created_by__in'] = users
+
         if (self.request.user.is_distributor):
             users.append(user)
             manager = ManagerDistributor.objects.get(
@@ -179,23 +191,25 @@ class GetAllSearch(generics.ListAPIView):
             salesref_users_ids = UserDetails.objects.filter(
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
+            show['created_by__in'] = users
 
         if (self.request.user.is_salesref):
 
-            distributor = SalesRefDistributor.objects.get(
-                sales_ref__user=user).distributor.user.id
-            users.append(distributor)
-            manager = ManagerDistributor.objects.get(
-                distributor__user=distributor).manager.user.id
-            users.append(manager)
+            # distributor = SalesRefDistributor.objects.get(
+            #     sales_ref__user=user).distributor.user.id
+            # users.append(distributor)
+            # manager = ManagerDistributor.objects.get(
+            #     distributor__user=distributor).manager.user.id
+            # users.append(manager)
 
-            salesrefs = SalesRefDistributor.objects.filter(
-                distributor__user=distributor).values_list('sales_ref', flat=True)
-            salesref_users_ids = UserDetails.objects.filter(
-                id__in=salesrefs).values_list('user', flat=True)
-            users.extend(salesref_users_ids)
+            # salesrefs = SalesRefDistributor.objects.filter(
+            #     distributor__user=distributor).values_list('sales_ref', flat=True)
+            # salesref_users_ids = UserDetails.objects.filter(
+            #     id__in=salesrefs).values_list('user', flat=True)
+            # users.extend(salesref_users_ids)
+            show['sales_ref__user'] = self.request.user
 
-        return PrimarySalesArea.objects.filter(created_by__in=users)
+        return PrimarySalesArea.objects.filter(**show)
 
 
 class EditPsa(generics.UpdateAPIView):
