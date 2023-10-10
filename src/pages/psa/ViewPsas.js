@@ -60,6 +60,7 @@ const ViewPsas = (props) => {
       headerStyle: { width: '10px' },
     },
     { title: 'Area Name', field: 'area_name' },
+    { title: 'Sales Rep', field: 'sales_ref' },
   ];
   //   created_by
   //   area_name
@@ -216,19 +217,19 @@ const ViewPsas = (props) => {
                 actions={
                   user.is_manager || user.is_company
                     ? [
-                        {
-                          icon: EditIcon,
-                          tooltip: 'Edit details',
-                          onClick: (event, rowData) =>
-                            handleEditDetails(event, rowData),
-                        },
-                        {
-                          icon: DeleteOutline,
-                          tooltip: 'Delete details',
-                          onClick: (event, rowData) =>
-                            handleDeleteDetails(event, rowData),
-                        },
-                      ]
+                      {
+                        icon: EditIcon,
+                        tooltip: 'Edit details',
+                        onClick: (event, rowData) =>
+                          handleEditDetails(event, rowData),
+                      },
+                      {
+                        icon: DeleteOutline,
+                        tooltip: 'Delete details',
+                        onClick: (event, rowData) =>
+                          handleDeleteDetails(event, rowData),
+                      },
+                    ]
                     : ''
                 }
                 components={{

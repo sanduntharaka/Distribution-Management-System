@@ -55,7 +55,6 @@ const CretePlaning = () => {
                 },
             })
             .then((res) => {
-                console.log(res.data);
 
                 setSalesrefs(res.data);
 
@@ -202,26 +201,6 @@ const CretePlaning = () => {
                     <form action="">
                         <div className="form__row">
                             <div className="form__row__col">
-                                <div className="form__row__col__label">Select PSA</div>
-                                <div className="form__row__col__input">
-                                    <select
-                                        type="text"
-                                        placeholder="Select psa"
-                                        onChange={(e) =>
-                                            handlePsa(e)
-                                        }
-                                        required
-                                    >
-                                        <option>Select PSA</option>
-                                        {
-                                            psas.map((item, i) => (
-                                                <option value={item.id} key={i}>{item.area_name}</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="form__row__col">
                                 <div className="form__row__col__label">Select Sales Rep</div>
                                 <div className="form__row__col__input">
                                     <select
@@ -241,6 +220,27 @@ const CretePlaning = () => {
                                     </select>
                                 </div>
                             </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select PSA</div>
+                                <div className="form__row__col__input">
+                                    <select
+                                        type="text"
+                                        placeholder="Select psa"
+                                        onChange={(e) =>
+                                            handlePsa(e)
+                                        }
+                                        required
+                                    >
+                                        <option>Select PSA</option>
+                                        {
+                                            psas.map((item, i) => (
+                                                <option value={item.id} key={i}>{item.area_name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
                         <div className="form__row">
                             <div className="form__row__col">

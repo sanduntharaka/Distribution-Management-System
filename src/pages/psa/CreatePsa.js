@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useRef } from 'react';
+import React, { useState, forwardRef, useRef, useEffect } from 'react';
 import ViewPsas from './ViewPsas';
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
@@ -36,8 +36,28 @@ const CreatePsa = (props) => {
   const [data, setData] = useState({
     created_by: JSON.parse(sessionStorage.getItem('user')).id,
     area_name: '',
+    sales_ref: '',
     more_details: 'No details',
   });
+  const [salesrefs, setSalesrefs] = useState([])
+  useEffect(() => {
+    axiosInstance
+      .get(`/users/salesrefs/by/manager/`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        setSalesrefs(res.data);
+
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -123,6 +143,26 @@ const CreatePsa = (props) => {
             <div className="form">
               <form action="">
                 <div className="form__row">
+                  <div className="form__row__col">
+                    <div className="form__row__col__label">Sales Rep</div>
+                    <div className="form__row__col__input">
+                      <select
+                        type="text"
+                        placeholder="Select sales rep"
+                        onChange={(e) =>
+                          setData({ ...data, sales_ref: e.target.value })
+                        }
+                        required
+                      >
+                        <option>Select salesref</option>
+                        {
+                          salesrefs.map((item, i) => (
+                            <option value={item.id} key={i}>{item.full_name}</option>
+                          ))
+                        }
+                      </select>
+                    </div>
+                  </div>
                   <div className="form__row__col">
                     <div className="form__row__col__label">Area Name</div>
                     <div className="form__row__col__input">

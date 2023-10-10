@@ -634,15 +634,8 @@ const CreateReturn = ({ inventory }) => {
                 <button
                   className="btnSave"
                   style={{
-                    width: '250px',
-                    height: '50px',
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    borderRadius: '25px',
-                    fontSize: '20px',
-                    color: 'white',
+                    paddingLeft: 15,
+                    paddingRight: 15,
                   }}
                   onClick={(e) => handleAdd(e)}
                 >

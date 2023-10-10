@@ -24,6 +24,8 @@ const ConfimBill = (props) => {
     props.close();
     props.clear();
   };
+
+  console.log(props)
   useEffect(() => {
     if (user.is_salesref) {
       axiosInstance
@@ -177,6 +179,8 @@ const ConfimBill = (props) => {
 
   const handleSaveBill = () => {
     isLoading(true);
+
+    console.log('rsdaa:', props.data)
     axiosInstance
       .post('/salesref/invoice/create/invoice/', props.data, {
         headers: {
@@ -391,7 +395,7 @@ const ConfimBill = (props) => {
                 Total Dicsount Amount: Rs {props.data.total_discount}
               </p>
               <p className={styles.total}>
-                Final Amount: Rs {props.data.total}
+                Final Amount: Rs {props.data.sub_total - props.data.total_discount}
               </p>
             </div>
 

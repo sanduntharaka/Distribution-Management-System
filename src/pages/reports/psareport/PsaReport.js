@@ -81,8 +81,7 @@ const PsaReport = (props) => {
     if (JSON.parse(sessionStorage.getItem('user')).is_distributor) {
       axiosInstance
         .get(
-          `/reports/psadetails/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/reports/psadetails/distributor/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -199,7 +198,7 @@ const PsaReport = (props) => {
         console.log(err);
       });
   };
-
+  console.log("EXPD:", expData)
   const exportByCategory = (e) => {
     e.preventDefault();
     const file_name = 'psa_report.xlsx';
@@ -241,8 +240,8 @@ const PsaReport = (props) => {
       </div>
       <div className="page__pcont">
         {props.user.is_manager ||
-        props.user.is_company ||
-        props.user.is_excecutive ? (
+          props.user.is_company ||
+          props.user.is_excecutive ? (
           <div className="form">
             <div className="form__row">
               <div className="form__row__col">

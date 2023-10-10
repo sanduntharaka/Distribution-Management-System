@@ -119,34 +119,100 @@ const CreateBill = ({ inventory }) => {
   // const handleWebSocketUpdate = (update) => {
   //   setUpdates(prevUpdates => [...prevUpdates, update]);
   // };
+  useEffect(() => {
+    // if (user.is_salesref) {
+    //   setLoading(true);
+    //   axiosInstance
+    //     .get(
+    //       `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
+    //       }`,
+    //       {
+    //         headers: {
+    //           Authorization:
+    //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+    //         },
+    //       }
+    //     )
+    //     .then((res) => {
+    //       setLoading(false);
+    //       console.log('asdasd:', res.data.id)
+    //       setData({ ...data, dis_sales_ref: res.data.id });
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       setIsLoading(false);
+    //       setSuccess(false);
+    //       setError(true);
+    //       setMsg('Cannot fetch distrubutor relationship. Please try again');
+    //       setTitle('Error');
+    //       handleOpen();
+    //     });
+    // }
+    axiosInstance
+      .get(
+        `/users/get/terriotires/${JSON.parse(sessionStorage.getItem('user_details')).id
+        }`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+      .then((res) => {
+        setLoading(false);
+        setTerriotories(res.data)
+        if (user.is_salesref) {
+          console.log('cde:', res.data[0].code)
+          setData({ ...data, bill_code: 'INV' + res.data[0].code })
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot fetch distrubutor terriotories. Please try again');
+        setTitle('Error');
+        handleOpen();
+      });
+  }, [])
+
+  // useEffect(() => {
+  //   axiosInstance
+  //     .get(
+  //       `/users/get/terriotires/${JSON.parse(sessionStorage.getItem('user_details')).id
+  //       }`,
+  //       {
+  //         headers: {
+  //           Authorization:
+  //             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+  //         },
+  //       }
+  //     )
+  //     .then((res) => {
+  //       setLoading(false);
+  //       setTerriotories(res.data)
+  //       if (user.is_salesref) {
+  //         console.log('cde:', res.data[0].code)
+  //         setData({ ...data, bill_code: 'INV' + res.data[0].code })
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setIsLoading(false);
+  //       setSuccess(false);
+  //       setError(true);
+  //       setMsg('Cannot fetch distrubutor terriotories. Please try again');
+  //       setTitle('Error');
+  //       handleOpen();
+  //     });
+  // }, [])
+
+
 
   useEffect(() => {
     if (user.is_salesref) {
-      setLoading(true);
-      axiosInstance
-        .get(
-          `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
-          }`,
-          {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          }
-        )
-        .then((res) => {
-          setLoading(false);
-          setData({ ...data, dis_sales_ref: res.data.id });
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-          setSuccess(false);
-          setError(true);
-          setMsg('Cannot fetch distrubutor relationship. Please try again');
-          setTitle('Error');
-          handleOpen();
-        });
       axiosInstance
         .get(
           `/dashboard/get/next/visit/`,
@@ -163,6 +229,7 @@ const CreateBill = ({ inventory }) => {
           setNextDealer(res.data.dealer)
         });
     }
+
     if (user.is_distributor) {
       setLoading(true);
 
@@ -192,33 +259,7 @@ const CreateBill = ({ inventory }) => {
         });
     }
 
-    axiosInstance
-      .get(
-        `/users/get/terriotires/${JSON.parse(sessionStorage.getItem('user_details')).id
-        }`,
-        {
-          headers: {
-            Authorization:
-              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-          },
-        }
-      )
-      .then((res) => {
-        setLoading(false);
-        setTerriotories(res.data)
-        if (user.is_salesref) {
-          setData({ ...data, bill_code: 'INV' + res.data[0].code })
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-        setSuccess(false);
-        setError(true);
-        setMsg('Cannot fetch distrubutor terriotories. Please try again');
-        setTitle('Error');
-        handleOpen();
-      });
+
   }, []);
   useEffect(() => {
     if (data.sub_total !== undefined && data.discount !== undefined) {
@@ -229,6 +270,8 @@ const CreateBill = ({ inventory }) => {
       }));
     }
   }, [data.sub_total, data.discount]);
+
+
 
   const filterDealers = (e) => {
     setShowDealers(true);
@@ -324,7 +367,6 @@ const CreateBill = ({ inventory }) => {
       inventory: inventory.id,
       date: currentDate,
       time: currentTime,
-      bill_code: user.is_salesref ? 'INV' + terriotires[0].code : '',
       total: 0,
       total_discount: 0,
       payment_type: payment,
@@ -352,7 +394,6 @@ const CreateBill = ({ inventory }) => {
       inventory: inventory.id,
       date: currentDate,
       time: currentTime,
-      bill_code: user.is_salesref ? 'INV' + terriotires[0].code : '',
       total: 0,
       total_discount: 0,
       payment_type: payment,
@@ -419,6 +460,7 @@ const CreateBill = ({ inventory }) => {
   };
 
   const handleQty = (e) => {
+    console.log(e.target.value)
     setExceedQty(false);
     if (e.target.value > product.qty) {
       setExceedQty(true);
@@ -497,28 +539,62 @@ const CreateBill = ({ inventory }) => {
     }
   };
 
+
+  const disStefTempory = () => {
+    if (user.is_salesref) {
+      setLoading(true);
+      axiosInstance
+        .get(
+          `/distributor/salesref/get/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          console.log('asdasd:', res.data.id)
+          setData({ ...data, dis_sales_ref: res.data.id });
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+          setSuccess(false);
+          setError(true);
+          setMsg('Cannot fetch distrubutor relationship. Please try again');
+          setTitle('Error');
+          handleOpen();
+        });
+    }
+
+
+  }
+
+
   const hadleCreate = (e) => {
     e.preventDefault();
+    disStefTempory()
+
     setIsLoading(false);
     setSelectDealer(false)
+
     if (data.dealer !== '') {
       setSelectDealer(false)
 
       setData({
         ...data,
-        date: currentDate,
         total: data.sub_total - data.total_discount,
-        billing_price_method: billingPriceMethod,
       });
       setIsLoading(false);
       showInvoice();
 
-      console.log('cc', data)
     } else {
       setSelectDealer(true)
     }
   };
-
   const MyMessage = React.forwardRef((props, ref) => {
     return (
       <Message
@@ -891,15 +967,9 @@ const CreateBill = ({ inventory }) => {
                 <button
                   className="btnSave"
                   style={{
-                    width: '250px',
-                    height: '50px',
-                    marginTop: 'auto',
-                    marginBottom: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    borderRadius: '25px',
-                    fontSize: '20px',
-                    color: 'white',
+                    paddingLeft: 15,
+                    paddingRight: 15,
+
                   }}
                   onClick={(e) => handleAdd(e)}
                 >
