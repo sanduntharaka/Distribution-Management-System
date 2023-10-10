@@ -105,16 +105,13 @@ class AllCreatedPsa(generics.ListAPIView):
             users.extend(salesref_users_ids)
             show['created_by__in'] = users
         if (self.request.user.is_distributor):
-            users.append(user)
-            manager = ManagerDistributor.objects.get(
-                distributor__user=user).manager.user.id
-            users.append(manager)
+
             salesrefs = SalesRefDistributor.objects.filter(
                 distributor__user=user).values_list('sales_ref', flat=True)
             salesref_users_ids = UserDetails.objects.filter(
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
-            show['created_by__in'] = users
+            show['sales_ref__in'] = users
 
         if (self.request.user.is_salesref):
 
