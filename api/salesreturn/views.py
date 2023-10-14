@@ -50,8 +50,10 @@ class GetReturnsByDistributor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-
-        return get_list_or_404(SalesReturn, dis_sales_ref__distributor=item)
+        queryset = SalesReturn.objects.filter(
+            dis_sales_ref__distributor=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturnsByDSalesref(generics.ListAPIView):
@@ -59,8 +61,10 @@ class GetReturnsByDSalesref(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-
-        return get_list_or_404(SalesReturn, dis_sales_ref__sales_ref=item)
+        queryset = SalesReturn.objects.filter(
+            dis_sales_ref__sales_ref=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturnsByOthers(generics.ListAPIView):
@@ -68,8 +72,10 @@ class GetReturnsByOthers(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        print('called')
-        return get_list_or_404(SalesReturn, dis_sales_ref__distributor=item)
+        queryset = SalesReturn.objects.filter(
+            dis_sales_ref__distributor=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturn(generics.RetrieveAPIView):
@@ -81,8 +87,10 @@ class GetPendingReturns(generics.ListAPIView):
     serializer_class = serializers.GetReturnsSerializer
 
     def get_queryset(self):
-
-        return get_list_or_404(SalesReturn, status='pending')
+        queryset = SalesReturn.objects.filter(
+            status='pending')
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetPendingReturnsByDistributor(generics.ListAPIView):
@@ -93,7 +101,10 @@ class GetPendingReturnsByDistributor(generics.ListAPIView):
             distributor=self.kwargs.get('id')).values('id')
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
-        return get_list_or_404(SalesReturn, status='pending', dis_sales_ref__in=distributorsrf_ids)
+        queryset = SalesReturn.objects.filter(
+            status='pending', dis_sales_ref__in=distributorsrf_ids)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class UpdateStatusPendingReturns(generics.UpdateAPIView):

@@ -51,8 +51,10 @@ class GetReturnsByDistributor(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        print(item)
-        return get_list_or_404(SalesRefReturn, dis_sales_ref__distributor=item)
+        queryset = SalesRefReturn.objects.filter(
+            dis_sales_ref__distributor=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturnsByDSalesref(generics.ListAPIView):
@@ -60,8 +62,10 @@ class GetReturnsByDSalesref(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        print(item)
-        return get_list_or_404(SalesRefReturn, dis_sales_ref__sales_ref=item)
+        queryset = SalesRefReturn.objects.filter(
+            dis_sales_ref__distributor=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturnsByOthers(generics.ListAPIView):
@@ -69,7 +73,10 @@ class GetReturnsByOthers(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        return get_list_or_404(SalesRefReturn, dis_sales_ref__distributor=item)
+        queryset = SalesRefReturn.objects.filter(
+            dis_sales_ref__distributor=item)
+        queryset = queryset.order_by('-date')
+        return get_list_or_404(queryset)
 
 
 class GetReturn(generics.RetrieveAPIView):
@@ -81,7 +88,9 @@ class GetPendingReturns(generics.ListAPIView):
     serializer_class = serializers.GetReturnsSerializer
 
     def get_queryset(self):
-
+        queryset = SalesRefReturn.objects.filter(
+            status='pending')
+        queryset = queryset.order_by('-date')
         return get_list_or_404(SalesRefReturn, status='pending')
 
 
@@ -93,7 +102,9 @@ class GetPendingReturnsByDistributor(generics.ListAPIView):
             distributor=self.kwargs.get('id')).values('id')
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
-        return get_list_or_404(SalesRefReturn, status='pending', dis_sales_ref__in=distributorsrf_ids)
+        queryset = SalesRefReturn.objects.filter(
+            status='pending', dis_sales_ref__in=distributorsrf_ids)
+        return get_list_or_404(queryset)
 
 
 class UpdateStatusPendingReturns(generics.UpdateAPIView):
@@ -102,33 +113,30 @@ class UpdateStatusPendingReturns(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         item = self.kwargs.get('pk')
         return_bill = SalesRefReturn.objects.get(id=item)
-        print(return_bill)
+
         return_items = SalesRefReturnItem.objects.filter(
             salesrefreturn=return_bill)
-        print(return_items)
+
         return_bill.status = request.data['status']
 
         try:
             items_status = []
-            print('A:', return_items)
 
             for return_item in return_items:
-                print('B:', return_item.inventory_item)
+
                 total_stocks = ItemStock.objects.filter(
                     item=return_item.inventory_item)
                 total_qty = total_stocks.aggregate(total_qty=Sum('qty'))
                 total_foc = total_stocks.aggregate(total_foc=Sum('foc'))
-                print('B:', total_qty)
+
                 if return_item.qty > total_qty['total_qty'] or return_item.foc > total_foc['total_foc']:
                     items_status.append(return_item.inventory_item.item_code)
-                    print('C:')
 
             if len(items_status) > 0:
                 return Response(data={"title": f"Not enough stock for {items_status}", "items": items_status}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return_bill.save()
                 for return_item in return_items:
-                    print('D:')
 
                     reduceQty = ReduceMRetQuantity(
                         return_item, return_item.inventory_item.id, return_item.whole_sale_price, return_item.retail_price)
@@ -155,19 +163,18 @@ class DeleteReturn(APIView):
 class AddReturnItem(APIView):
 
     def post(self, request, *args, **kwargs):
-        print('hi1')
+
         sales_ref_return = SalesRefReturn.objects.get(id=self.kwargs.get('id'))
         return_items = []
-        print(request.data['items'])
+
         try:
             for item in request.data['items']:
-                print(item)
+
                 return_items.append(SalesRefReturnItem(salesrefreturn=sales_ref_return,  inventory_item=DistributorInventoryItems.objects.get(
                     id=item['id']), qty=int(item['qty']), foc=int(item['foc']), reason=item['reason'], whole_sale_price=item['whole_sale_price'],
                     retail_price=item['retail_price'],
                     initial_qty=int(item['qty']),
                     initial_foc=int(item['foc'])))
-            print(return_items)
 
             SalesRefReturnItem.objects.bulk_create(return_items)
             return Response(status=status.HTTP_200_OK)
