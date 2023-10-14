@@ -68,10 +68,17 @@ class AllInvoiceByDistributor(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
 
     def get_queryset(self, *args, **kwargs):
+        distributor_id = self.kwargs.get('id')
 
-        invs = SalesRefInvoice.objects.filter(
-            dis_sales_ref__distributor=self.kwargs.get('id'))
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
+        # Filter the invoices for the given distributor
+        queryset = SalesRefInvoice.objects.filter(
+            dis_sales_ref__distributor=distributor_id)
+
+        # Order the queryset by date and time
+        queryset = queryset.order_by('-date', '-time')
+
+        # Use get_list_or_404 to return the ordered queryset
+        return get_list_or_404(queryset)
 
 
 class AllInvoiceByOthers_Distributor(generics.ListAPIView):
@@ -90,7 +97,11 @@ class AllPendingInvoice(generics.ListAPIView):
 
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
-        return get_list_or_404(SalesRefInvoice, status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+
+        queryset = SalesRefInvoice.objects.filter(
+            status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = queryset.order_by('-date', '-time')
+        return get_list_or_404(queryset)
 
 
 class AllPendingInvoiceByOthers(generics.ListAPIView):
@@ -102,7 +113,10 @@ class AllPendingInvoiceByOthers(generics.ListAPIView):
 
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
-        return get_list_or_404(SalesRefInvoice, status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = SalesRefInvoice.objects.filter(
+            status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = queryset.order_by('-date', '-time')
+        return get_list_or_404(queryset)
 
 
 class AllCreditInvoice(generics.ListAPIView):
