@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, InvoiceIntem
+from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, InvoiceIntem, Item
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -11,9 +11,11 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
-    date = serializers.CharField(source='bill.date')
+    date = serializers.CharField(source='invoice_item.bill.date')
     category = serializers.CharField(source='item.item.category.category_name')
+    extended_price = serializers.FloatField(
+        source='invoice_item.extended_price')
 
     class Meta:
-        model = InvoiceIntem
+        model = Item
         fields = ('id', 'qty', 'extended_price', 'date', 'category')
