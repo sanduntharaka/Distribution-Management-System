@@ -277,7 +277,7 @@ const ReportsTab = () => {
         ) : selected === 2 ? (
           <DealerReport user={user} />
         ) : selected === 3 ? (
-          <SalesReport inventory={inventory} user={user} />
+          <SalesReport inventory={inventory} user={user} user_details={user_details} />
         ) : selected === 4 ? (
           <MarketReturnReport user={user} />
         ) : selected === 5 ? (
@@ -295,7 +295,7 @@ const ReportsTab = () => {
         ) : selected === 11 ? (
           <ChqueReturnsReport user={user} />
         ) : selected === 12 ? (
-          <NonBuyingDealerReport user={user} />
+          <NonBuyingDealerReport user={user} user_details={user_details} />
         ) : selected === 13 ? (
           <PsaReport user={user} />
         ) : selected === 14 ? (

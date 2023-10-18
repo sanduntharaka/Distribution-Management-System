@@ -8,6 +8,7 @@ import { axiosInstance } from '../../axiosInstance';
 import Category from './Category';
 import AddDistributorInventoryStocks from './AddDistributorInventoryStocks';
 import ViewInventoryOthers from './ViewInventoryOthers';
+import AddInvoice from './AddInvoice';
 
 const InventoryTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -18,8 +19,7 @@ const InventoryTabs = () => {
       setIsLoading(true);
       axiosInstance
         .get(
-          `/distributor/salesref/inventory/bysalesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/salesref/inventory/bysalesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -42,8 +42,7 @@ const InventoryTabs = () => {
       setIsLoading(true);
       axiosInstance
         .get(
-          `/distributor/get/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/distributor/get/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -68,10 +67,10 @@ const InventoryTabs = () => {
     user.is_manager || user.is_superuser
       ? 0
       : user.is_distributor
-      ? 5
-      : user.is_salesref
-      ? 4
-      : 0
+        ? 5
+        : user.is_salesref
+          ? 4
+          : 0
   );
   const handleSelect = (i) => {
     setSelected(i);
@@ -134,6 +133,12 @@ const InventoryTabs = () => {
         >
           Distributor inventory
         </div>
+        <div
+          className={`item ${selected === 6 ? 'selected' : ''}`}
+          onClick={() => handleSelect(6)}
+        >
+          Add Invoice
+        </div>
       </div>
       <div className="tab_page">
         {selected === 0 ? (
@@ -153,9 +158,13 @@ const InventoryTabs = () => {
           <ViewInventoryOthers user={user} />
         ) : loading === false && selected === 5 && inventory !== undefined ? (
           <AddDistributorInventoryStocks inventory={inventory} />
-        ) : (
-          ''
-        )}
+        )
+          // : loading === false && selected === 6 && inventory !== undefined ? (
+          //   <AddInvoice inventory={inventory} />
+          // ) 
+          : (
+            ''
+          )}
       </div>
     </div>
   );

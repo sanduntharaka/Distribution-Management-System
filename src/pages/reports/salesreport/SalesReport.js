@@ -31,19 +31,24 @@ const SalesReport = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
-
+    status: 'confirmed',
+    sales_ref: '',
     distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [categoryBy, setCategoryBy] = useState({
     category: '-1',
     date_from: '',
     date_to: '',
+    status: 'confirmed',
+    sales_ref: '',
     distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [productBy, setProductBy] = useState({
     product: '-1',
     date_from: '',
     date_to: '',
+    status: 'confirmed',
+    sales_ref: '',
     distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
@@ -54,6 +59,8 @@ const SalesReport = (props) => {
   const [categoryByData, setCategoryByData] = useState([]);
   const [productByData, setProdctByData] = useState([]);
   const [distributors, setDistributors] = useState([]);
+  const [salesrefs, setSalesrefs] = useState([]);
+
   useEffect(() => {
     if (props.user.is_manager) {
       setLoading(true);
@@ -72,6 +79,8 @@ const SalesReport = (props) => {
         .catch((err) => {
           console.log(err);
         });
+
+
     }
     if (props.user.is_company) {
       setLoading(true);
@@ -90,6 +99,8 @@ const SalesReport = (props) => {
         .catch((err) => {
           console.log(err);
         });
+
+
     }
     if (props.user.is_excecutive) {
       setLoading(true);
@@ -103,9 +114,23 @@ const SalesReport = (props) => {
         .then((res) => {
           setLoading(false);
 
-          setDistributors(res.data);
+          setSalesrefs(res.data);
         })
         .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    if (props.user.is_distributor) {
+      axiosInstance.get(`/distributor/salesrefs/${props.user_details.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+        .then((res) => {
+          setSalesrefs(res.data);
+        }).catch((err) => {
           console.log(err);
         });
     }
@@ -152,6 +177,17 @@ const SalesReport = (props) => {
       distributor: e.target.value,
     });
     setDateByData([]);
+    axiosInstance.get(`/distributor/salesrefs/${e.target.value}`, {
+      headers: {
+        Authorization:
+          'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+      },
+    })
+      .then((res) => {
+        setSalesrefs(res.data);
+      }).catch((err) => {
+        console.log(err);
+      });
   };
   const handleDateByFilter = (e) => {
     e.preventDefault();
@@ -265,6 +301,8 @@ const SalesReport = (props) => {
         setLoading(false);
         console.log(err);
       });
+
+
   };
   const handleProductByFilter = (e) => {
     e.preventDefault();
@@ -300,8 +338,8 @@ const SalesReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -343,6 +381,44 @@ const SalesReport = (props) => {
                     setDateBy({ ...dateBy, date_to: e.target.value })
                   }
                 />
+              </div>
+            </div>
+
+            {
+              !props.user.is_salesref ? (
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__input">
+                    <select name="" id="" onChange={(e) =>
+                      setDateBy({ ...dateBy, sales_ref: e.target.value })}>
+
+                      <option value="">Select sales rep</option>
+
+                      {
+                        salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
+                      }
+
+                    </select>
+                  </div>
+                </div>
+              ) : ''
+            }
+
+
+            <div className="form__row__col">
+              <div className="form__row__col__label">Status</div>
+              <div className="form__row__col__input">
+                <select name="" id="" onChange={(e) =>
+                  setDateBy({ ...dateBy, status: e.target.value })}>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="all">All</option>
+
+
+
+
+                </select>
               </div>
             </div>
             <div
@@ -387,8 +463,8 @@ const SalesReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -452,6 +528,41 @@ const SalesReport = (props) => {
                 </select>
               </div>
             </div>
+            {
+              !props.user.is_salesref ? (
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__input">
+                    <select name="" id="" onChange={(e) =>
+                      setCategoryBy({ ...categoryBy, sales_ref: e.target.value })}>
+
+                      <option value="">Select sales rep</option>
+
+                      {
+                        salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
+                      }
+
+                    </select>
+                  </div>
+                </div>
+              ) : ''
+            }
+            <div className="form__row__col">
+              <div className="form__row__col__label">Status</div>
+              <div className="form__row__col__input">
+                <select name="" id="" onChange={(e) =>
+                  setCategoryBy({ ...categoryBy, status: e.target.value })}>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="all">All</option>
+
+
+
+
+                </select>
+              </div>
+            </div>
             <div
               className="form__row__col dontdisp"
               style={{ display: 'flex', alignItems: 'center' }}
@@ -500,8 +611,8 @@ const SalesReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -562,6 +673,41 @@ const SalesReport = (props) => {
                       {item.item_code} | {item.description} | {item.date}
                     </option>
                   ))}
+                </select>
+              </div>
+            </div>
+            {
+              !props.user.is_salesref ? (
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__input">
+                    <select name="" id="" onChange={(e) =>
+                      setProductBy({ ...productBy, sales_ref: e.target.value })}>
+
+                      <option value="">Select sales rep</option>
+
+                      {
+                        salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
+                      }
+
+                    </select>
+                  </div>
+                </div>
+              ) : ''
+            }
+            <div className="form__row__col">
+              <div className="form__row__col__label">Status</div>
+              <div className="form__row__col__input">
+                <select name="" id="" onChange={(e) =>
+                  setProductBy({ ...productBy, status: e.target.value })}>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="pending">Pending</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="all">All</option>
+
+
+
+
                 </select>
               </div>
             </div>

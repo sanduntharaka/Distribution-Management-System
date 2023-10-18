@@ -72,7 +72,6 @@ const AddCreditDetails = () => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => {
     setModalOpen(false);
-    window.location.reload();
   };
 
   //edit-details
@@ -88,8 +87,7 @@ const AddCreditDetails = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `/salesref/invoice/all/credit/invoices/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/salesref/invoice/all/credit/invoices/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -104,7 +102,7 @@ const AddCreditDetails = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [success]);
+  }, [success, modalOpen]);
 
   const [invoice, setInvoice] = useState();
 
@@ -181,6 +179,8 @@ const AddCreditDetails = () => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
                 }}
                 icons={tableIcons}
                 actions={[

@@ -70,7 +70,7 @@ const BillConfirm = () => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => {
     setModalOpen(false);
-    window.location.reload();
+    // window.location.reload();
   };
 
   //details
@@ -95,8 +95,7 @@ const BillConfirm = () => {
   useEffect(() => {
     axiosInstance
       .get(
-        `/salesref/invoice/all/pending/invoices/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/salesref/invoice/all/pending/invoices/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {
@@ -111,7 +110,7 @@ const BillConfirm = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [messageOpen, success]);
+  }, [messageOpen, success, modalOpen]);
 
   const handleConfirmDetails = (e, value) => {
     setInvoice(value);
@@ -217,6 +216,8 @@ const BillConfirm = () => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
                 }}
                 icons={tableIcons}
                 actions={[

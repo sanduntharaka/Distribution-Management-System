@@ -373,9 +373,10 @@ const ConfimBill = (props) => {
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
                     <td>
-                      {props.data.billing_price_method === '1'
+                      {console.log('bbm:', props.data.billing_price_method)}
+                      {props.data.billing_price_method == 1
                         ? item.whole_sale_price
-                        : props.data.billing_price_method === '2'
+                        : props.data.billing_price_method == 2
                           ? item.price
                           : 0}
                     </td>

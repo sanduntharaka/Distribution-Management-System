@@ -7,12 +7,15 @@ const NonBuyingDealerReport = (props) => {
   const [dateBy, setDateBy] = useState({
     date_from: '',
     date_to: '',
+    sales_ref: '',
     distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
   });
   const [loading, setLoading] = useState(false);
 
   const [dateByData, setDateByData] = useState([]);
   const [distributors, setDistributors] = useState([]);
+  const [salesrefs, setSalesrefs] = useState([]);
+
   useEffect(() => {
     if (props.user.is_manager) {
       setLoading(true);
@@ -68,6 +71,19 @@ const NonBuyingDealerReport = (props) => {
           console.log(err);
         });
     }
+    if (props.user.is_distributor) {
+      axiosInstance.get(`/distributor/salesrefs/${props.user_details.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+        .then((res) => {
+          setSalesrefs(res.data);
+        }).catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
   const handleDistributor = (e) => {
     setDateBy({
@@ -75,6 +91,17 @@ const NonBuyingDealerReport = (props) => {
       distributor: e.target.value,
     });
     setDateByData([]);
+    axiosInstance.get(`/distributor/salesrefs/${e.target.value}`, {
+      headers: {
+        Authorization:
+          'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+      },
+    })
+      .then((res) => {
+        setSalesrefs(res.data);
+      }).catch((err) => {
+        console.log(err);
+      });
   };
   const handleDateByFilter = (e) => {
     e.preventDefault();
@@ -146,8 +173,8 @@ const NonBuyingDealerReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -191,6 +218,25 @@ const NonBuyingDealerReport = (props) => {
                 />
               </div>
             </div>
+            {
+              !props.user.is_salesref ? (
+                <div className="form__row__col">
+                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__input">
+                    <select name="" id="" onChange={(e) =>
+                      setDateBy({ ...dateBy, sales_ref: e.target.value })}>
+
+                      <option value="">Select sales rep</option>
+
+                      {
+                        salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
+                      }
+
+                    </select>
+                  </div>
+                </div>
+              ) : ''
+            }
             <div
               className="form__row__col dontdisp"
               style={{ display: 'flex', alignItems: 'center' }}

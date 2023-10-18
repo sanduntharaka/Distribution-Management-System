@@ -177,6 +177,8 @@ const MarketReturnConfirm = () => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
                 }}
                 icons={tableIcons}
                 actions={[

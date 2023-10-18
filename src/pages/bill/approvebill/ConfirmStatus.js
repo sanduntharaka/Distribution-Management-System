@@ -54,7 +54,7 @@ const ConfirmStatus = (props) => {
     props.showRejected(false);
     props.msgErr(false);
     props.msgSuccess(false);
-
+    console.log('innn:', invoice)
     axiosInstance
       .put(
         `/salesref/invoice/create/invoice/confirm/${props.invoice.id}`,
@@ -121,11 +121,8 @@ const ConfirmStatus = (props) => {
   };
 
   const handleChequeDate = (e) => {
-    setInvoice({
-      ...invoice,
-      cheque_date: e.target.value,
-    })
 
+    console.log('ddd:', e.target.value)
     let dateCount = 0;
 
     const start_date = new Date(props.invoice.date);
@@ -138,6 +135,7 @@ const ConfirmStatus = (props) => {
     }
     setInvoice({
       ...invoice,
+      cheque_date: e.target.value,
       number_of_dates: dateCount,
     })
   }

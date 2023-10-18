@@ -408,6 +408,7 @@ const CreateBill = ({ inventory }) => {
     handleClear(e);
 
     setBillingPriceMethod(e.target.value);
+    setData({ ...data, billing_price_method: e.target.value })
   };
   const handleAdd = (e) => {
     e.preventDefault();
@@ -441,7 +442,7 @@ const CreateBill = ({ inventory }) => {
             discount: parseFloat(discount),
             pack_size: product.pack_size,
             extended_price:
-              billingPriceMethod === '1'
+              billingPriceMethod == '1'
                 ? product.whole_sale_price * parseInt(qty) -
                 parseFloat(discount)
                 : product.retail_price * parseInt(qty) - parseFloat(discount),
@@ -479,11 +480,6 @@ const CreateBill = ({ inventory }) => {
 
 
   const handleFoc = (e) => {
-    console.log('ent:', e.target.value)
-    console.log('qty:', qty)
-    console.log('pr:', product.qty)
-
-
     setExceedQty(false);
     if (parseInt(e.target.value) + parseInt(qty) > product.qty) {
       setExceedQty(true);

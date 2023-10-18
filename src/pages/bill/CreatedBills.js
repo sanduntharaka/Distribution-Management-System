@@ -88,8 +88,7 @@ const CreatedBills = () => {
       setLoading(true);
       axiosInstance
         .get(
-          `/salesref/invoice/all/invoice/by/salesref/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/salesref/invoice/all/invoice/by/salesref/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -111,8 +110,7 @@ const CreatedBills = () => {
       setLoading(true);
       axiosInstance
         .get(
-          `/salesref/invoice/all/invoice/by/distributor/${
-            JSON.parse(sessionStorage.getItem('user_details')).id
+          `/salesref/invoice/all/invoice/by/distributor/${JSON.parse(sessionStorage.getItem('user_details')).id
           }`,
           {
             headers: {
@@ -224,6 +222,9 @@ const CreatedBills = () => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
+
                 }}
                 icons={tableIcons}
                 actions={[
