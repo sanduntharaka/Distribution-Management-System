@@ -82,6 +82,7 @@ class GeTAllNotBuyBysSalesRefFilter(APIView):
             else:
                 data = NotBuyDetails.objects.filter(
                     dis_sales_ref__sales_ref=salesref)
+                data = data.order_by('-datetime')
                 serializer = serializers.GetNotBuySerializer(
                     data, many=True)
 

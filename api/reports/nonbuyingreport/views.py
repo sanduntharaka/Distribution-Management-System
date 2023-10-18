@@ -19,18 +19,21 @@ class GetByData(APIView):
     def post(self, request, *args, **kwargs):
         #
         # if request.data['date_from'] != '' and request.data['date_to'] != '':
+        print(request.data)
         date_from = request.data['date_from']
         # timezone.make_aware(datetime.strptime(
         # request.data['date_from'], "%Y-%m-%d"))
         date_to = request.data['date_to']
+        sales_ref = request.data['sales_ref']
         # timezone.make_aware(datetime.strptime(
         #     request.data['date_to'], "%Y-%m-%d"))
         by_date = bool(date_from and date_to)
-
+        filters = {}
+        if sales_ref != '':
+            filters['dis_sales_ref__sales_ref'] = sales_ref
         if request.user.is_salesref:
-            filters = {
-                'added_by_id': request.user.id,
-            }
+            filters['added_by_id'] = request.user.id
+
             distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=request.user.id).distributor
 
@@ -42,16 +45,14 @@ class GetByData(APIView):
                 id__in=salesrefs).values_list('user', flat=True)
             distributor = UserDetails.objects.get(
                 id=request.data['distributor'])
-            filters = {
-                'added_by__in': user_ids,
-            }
+            filters['added_by__in'] = user_ids
 
         if by_date:
             filters['datetime__range'] = (date_from, date_to)
 
         not_buy = NotBuyDetails.objects.filter(**filters)
         data = {
-            'terriotory': distributor.terriotory,
+            # 'terriotory': distributor.terriotory,
             'Distributor': distributor.full_name
         }
         serializer = serializers.NonBuyDetailsSerializer(not_buy, many=True)
