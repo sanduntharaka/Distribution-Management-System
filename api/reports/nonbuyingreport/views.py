@@ -56,6 +56,7 @@ class GetByData(APIView):
         }
         serializer = serializers.NonBuyDetailsSerializer(not_buy, many=True)
         data['details'] = serializer.data
+        print(data)
         return Response(data, status=status.HTTP_200_OK)
 
 
