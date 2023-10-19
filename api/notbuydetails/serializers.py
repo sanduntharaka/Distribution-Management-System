@@ -11,7 +11,6 @@ class AddNotBuySerializer(serializers.ModelSerializer):
 class GetNotBuySerializer(serializers.ModelSerializer):
     dealer_name = serializers.CharField(source='dealer.name')
     added_name = serializers.CharField(source='get_added_by_name')
-    datetime = serializers.CharField(source='get_date_time')
 
     class Meta:
         model = NotBuyDetails

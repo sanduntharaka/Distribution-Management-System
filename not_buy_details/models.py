@@ -41,9 +41,3 @@ class NotBuyDetails(models.Model):
 
     def get_added_by_name(self):
         return UserDetails.objects.get(user=self.added_by).full_name
-
-    def get_date_time(self):
-        date = self.datetime.date()
-
-        time = self.datetime.strftime("%I:%M %p")
-        return f"{date} at {time}"
