@@ -1,14 +1,14 @@
 from rest_framework import serializers
-from distrubutor_salesref_invoice.models import InvoiceIntem
+from distrubutor_salesref_invoice.models import InvoiceIntem,Item
 
 
 class FocSerializer(serializers.ModelSerializer):
-    date = serializers.CharField(source='bill.date')
+    date = serializers.CharField(source='invoice_item.bill.date')
     invoice_number = serializers.CharField(
-        source='bill.get_bill_code_number_combine')
+        source='invoice_item.bill.get_bill_code_number_combine')
 
     class Meta:
-        model = InvoiceIntem
+        model = Item
         fields = ('foc', 'qty',
                   'date', 'invoice_number')
 

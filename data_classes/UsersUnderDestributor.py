@@ -21,16 +21,26 @@ class UsersUnderDestributor:
 
     def get_users_under_to_me_with_me_ids(self):
         self.users.append(self.id)
-        manager_id = ManagerDistributor.objects.get(
-            distributor=self.id).manager.id
-        self.users.append(manager_id)
-        executive = ExecutiveDistributor.objects.get(
-            distributor=self.id).executive.id
-        self.users.append(executive)
 
-        salesrefs = SalesRefDistributor.objects.filter(
+        try:
+            manager_id = ManagerDistributor.objects.get(
+            distributor=self.id).manager.id
+            self.users.append(manager_id)
+        except:
+            pass
+        try:
+            executive = ExecutiveDistributor.objects.get(
+            distributor=self.id).executive.id
+            self.users.append(executive)
+        except:
+            pass
+        try:
+            salesrefs = SalesRefDistributor.objects.filter(
             distributor=self.id).values_list('sales_ref', flat=True)
-        self.users.extend(salesrefs)
+            self.users.extend(salesrefs)
+        except:
+            pass
+    
         return self.users
 
     # def get_users_my_cluster_ids(self):

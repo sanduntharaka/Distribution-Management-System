@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.response import Response
-from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, InvoiceIntem
+from distrubutor_salesref_invoice.models import SalesRefInvoice, ChequeDetails, InvoiceIntem,Item
 from distrubutor_salesref.models import SalesRefDistributor
 from . import serializers
 from rest_framework import generics
@@ -37,7 +37,7 @@ class FilterByCategory(APIView):
             dis_sales_ref__distributor=request.data['distributor'], status='confirmed')
 
         filters = {
-            'bill__in': invoices,
+            'invoice_item__bill__in': invoices,
 
         }
         if category != -1:
@@ -45,7 +45,7 @@ class FilterByCategory(APIView):
         if description != -1:
             filters['item__item__id'] = description
         if by_date:
-            filters['confirmed_date__range'] = (date_from, date_to)
-        items = InvoiceIntem.objects.filter(**filters)
+            filters['invoice_item__bill__confirmed_date__range'] = (date_from, date_to)
+        items = Item.objects.filter(**filters)
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

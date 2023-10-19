@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from distrubutor_salesref.models import SalesRefDistributor
-from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem
+from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem,Item
 from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -37,13 +37,13 @@ class GetFocReport(APIView):
         invoices = SalesRefInvoice.objects.filter(**filters).values('id')
         invoice_ids = [inv['id'] for inv in invoices]
         items_filter = {
-            'bill__in': invoice_ids,
+            'invoice_item__bill__in': invoice_ids,
         }
         if category != -1:
             items_filter['item__item__category'] = category
         if description != -1:
             items_filter['item__item__id'] = description
-        items = InvoiceIntem.objects.filter(**items_filter)
+        items = Item.objects.filter(**items_filter)
         serializer = serializers.FocSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #

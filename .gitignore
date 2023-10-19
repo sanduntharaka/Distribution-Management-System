@@ -6,6 +6,7 @@ __pycache__
 db.sqlite3
 core/settings.py
 settings.py
+settings copy.py
 sesettings2.py
 core/settings.py
 media
