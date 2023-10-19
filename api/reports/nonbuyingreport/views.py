@@ -51,7 +51,7 @@ class GetByData(APIView):
 
         not_buy = NotBuyDetails.objects.filter(**filters)
         data = {
-            'terriotory': distributor.terriotory,
+            'terriotory': distributor.getTerrotories(),
             'Distributor': distributor.full_name
         }
         serializer = serializers.NonBuyDetailsSerializer(not_buy, many=True)
