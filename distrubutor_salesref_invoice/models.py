@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db.models import Q
 from django.db.models import Sum
 from django.db import models
@@ -8,6 +9,10 @@ from dealer_details.models import Dealer
 from primary_sales_area.models import PrimarySalesArea
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
+
+
+# Get the current date
+current_date = timezone.now().date()
 
 
 class SalesRefInvoice(models.Model):
@@ -77,6 +82,12 @@ class SalesRefInvoice(models.Model):
             return PaymentDetails.objects.filter(bill=self.id).last().due_date
         except:
             return ' '
+
+    def is_cheques(self):
+        return bool(PaymentDetails.objects.filter(bill=self.id, payment_type__in=['cash-cheque', 'cheque-credit', 'cash-credit-cheque']))
+
+    def is_overdue(self):
+        return bool(PaymentDetails.objects.filter(bill=self.id, payment_type__in=['credit', 'cash-credit', 'cash-cheque', 'cheque-credit', 'cash-credit-cheque'], due_date__lt=current_date))
 
 
 class PaymentDetails(models.Model):
@@ -184,7 +195,7 @@ class ChequeDetails(models.Model):
 class InvoiceIntem(models.Model):
     bill = models.ForeignKey(SalesRefInvoice, on_delete=models.CASCADE)
     item = models.ForeignKey(ItemStock,
-                             on_delete=models.DO_NOTHING, related_name='to_remove_item',null=True,blank=True)
+                             on_delete=models.DO_NOTHING, related_name='to_remove_item', null=True, blank=True)
     discount = models.FloatField(default=0)
     item_code = models.CharField(max_length=50)
     description = models.TextField(null=True)
@@ -204,7 +215,8 @@ class InvoiceIntem(models.Model):
 
     def get_value(self):
         return self.qty+self.foc
-    
+
+
 class Item(models.Model):
     invoice_item = models.ForeignKey(InvoiceIntem,
                                      on_delete=models.CASCADE, null=True, blank=True, related_name='related_main_item')

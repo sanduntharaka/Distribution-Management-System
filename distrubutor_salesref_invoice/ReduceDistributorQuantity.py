@@ -1,5 +1,6 @@
 from distributor_inventory.models import ItemStock
 from distrubutor_salesref_invoice.models import Item, InvoiceIntem
+from django.db.models import Q
 
 
 class ReduceQuantity:
@@ -28,22 +29,27 @@ class ReduceQuantity:
         total_foc = self.item.foc
 
         stoks = ItemStock.objects.filter(
-            qty__gt=0, item_id=self.id, whole_sale_price=self.wholesale, retail_price=self.price).order_by('date')
+            Q(qty__gt=0) | Q(foc__gt=0), item_id=self.id, whole_sale_price=self.wholesale, retail_price=self.price).order_by('date')
+        print('inish')
 
         for stok in stoks:
+
             stock_qty = stok.qty
             stock_foc = stok.foc
 
             reduce_qty = 0
             reduce_foc = 0
             from_foc = 0
+            print('1')
+            print('totq:', total_qty)
+            print('totaf:', total_foc)
             if (total_qty) <= stock_qty:
-
+                print('2')
                 if total_foc <= stock_foc:
                     reduce_foc = total_foc
                     reduce_qty = total_qty
                     stok.foc = stok.foc - total_foc
-                    from_foc =  total_foc
+                    from_foc = total_foc
                     stok.qty = stok.qty - (total_qty)
                     if stok.qty < stok.foc:
                         stok.foc = stok.qty
@@ -55,7 +61,7 @@ class ReduceQuantity:
                     reduce_foc = stok.foc
                     reduce_qty = total_qty
                     total_foc = total_foc - stok.foc
-                    from_foc =  stok.foc
+                    from_foc = stok.foc
                     stok.qty = stok.qty - (total_qty)
                     if stok.qty == 0:
                         total_foc = 0
@@ -64,10 +70,11 @@ class ReduceQuantity:
                     stok.foc = 0
 
             else:
+                print('3')
 
                 reduce_qty = stok.qty
                 reduce_foc = stok.foc
-                from_foc =  stok.foc
+                from_foc = stok.foc
                 total_qty = total_qty - (stok.qty)
                 if total_foc <= stok.foc:
 
@@ -82,7 +89,7 @@ class ReduceQuantity:
             stok.save()
 
             inv_item = Item(invoice_item=InvoiceIntem.objects.get(id=item), item=stok,
-                            qty=reduce_qty, foc=reduce_foc,from_foc=from_foc)
+                            qty=reduce_qty, foc=reduce_foc, from_foc=from_foc)
 
             inv_item.save()
 
@@ -122,5 +129,3 @@ class ReduceQuantity:
         self.item.foc = self.item.foc + (self.foc)
 
         self.item.save()
-
-        

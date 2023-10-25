@@ -169,6 +169,7 @@ class CreateInvoiceItems(generics.CreateAPIView):
                 # dist_item['qty'] = item['qty']
                 # dist_item['foc'] = item['foc']
                 invoice_item.save()
+                print('calling1')
                 reduceQty = ReduceQuantity(
                     invoice_item, item['id'], item['whole_sale_price'], item['price'])
                 reduceQty.reduce_qty()

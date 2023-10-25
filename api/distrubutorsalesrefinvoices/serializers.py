@@ -82,11 +82,13 @@ class GetInvoiceWithPaymentSerializer(serializers.ModelSerializer):
         source='get_payed')
     due_date = serializers.CharField(
         source='get_due_date')
+    is_cheque = serializers.BooleanField(source='is_cheques')
+    is_overdued = serializers.BooleanField(source='is_overdue')
 
     class Meta:
         model = SalesRefInvoice
         fields = ('id', 'dis_sales_ref', 'date', 'bill_code', 'bill_number',
-                  'dealer', 'total', 'total_discount', 'dealer_address', 'contact_number', 'due_date', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled', 'payed')
+                  'dealer', 'total', 'total_discount', 'dealer_address', 'contact_number', 'due_date', 'status', 'added_by', 'code', 'distributor', 'dealer_name', 'billing_price_method', 'sub_total', 'is_settiled', 'payed', 'is_cheque', 'is_overdued')
 
 
 class AddChequeDetailsSerialzer(serializers.ModelSerializer):

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework.views import APIView
 from itertools import chain
 from django.db.models import Sum, F, Q
@@ -52,8 +53,8 @@ class GetinventoryItemsSearch (APIView):
     def get(self, request, *args, **kwargs):
         # Retrieve ItemStock data for the specific distributor inventory
         inventory_id = kwargs.get('pk')
-        queryset = ItemStock.objects.filter(
-            item__inventory=inventory_id, qty__gt=0)
+        queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
+                                            item__inventory=inventory_id)
 
         # Separate data for the same price and different prices
         same_price_data = queryset.values('whole_sale_price', 'retail_price', 'item__id', 'item__item_code', 'item__description').annotate(
