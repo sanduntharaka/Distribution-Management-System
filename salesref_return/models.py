@@ -38,16 +38,22 @@ class SalesRefReturnItem(models.Model):
     salesrefreturn = models.ForeignKey(SalesRefReturn,
                                        on_delete=models.CASCADE)
     item = models.ForeignKey(ItemStock,
-                             on_delete=models.CASCADE,blank=True,null=True)
+                             on_delete=models.CASCADE, blank=True, null=True)
     inventory_item = models.ForeignKey(DistributorInventoryItems,
-                             on_delete=models.CASCADE,blank=True,null=True)
+                                       on_delete=models.CASCADE, blank=True, null=True)
     qty = models.IntegerField()
     foc = models.IntegerField()
     reason = models.TextField()
-    whole_sale_price = models.FloatField(blank=True,null=True)
-    retail_price = models.FloatField(blank=True,null=True)
+    whole_sale_price = models.FloatField(blank=True, null=True)
+    retail_price = models.FloatField(blank=True, null=True)
     initial_qty = models.IntegerField(blank=True, default=0)
     initial_foc = models.IntegerField(blank=True, default=0)
 
     def total(self):
         return self.qty*self.retail_price
+
+    def item_category(self):
+        # Item.objects.filter(invoice_item=self.id).first()
+        category = self.item
+        if category is not None:
+            return category.item.item.category.category_name

@@ -12,7 +12,7 @@ class ChequeDetailsSerializer(serializers.ModelSerializer):
     psa = serializers.CharField(
         source='payment_details.bill.dealer.psa.area_name')
     banking_date = serializers.CharField(
-        source='deposited_at')
+        source='date')
 
     class Meta:
         model = ChequeDetails

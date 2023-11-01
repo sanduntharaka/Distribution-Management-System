@@ -89,6 +89,24 @@ class SalesRefInvoice(models.Model):
     def is_overdue(self):
         return bool(PaymentDetails.objects.filter(bill=self.id, payment_type__in=['credit', 'cash-credit', 'cash-cheque', 'cheque-credit', 'cash-credit-cheque'], due_date__lt=current_date))
 
+    def get_bill_items_with_categories(self):
+        items = Item.objects.filter(invoice_item__bill=self.id)
+        return_data = []
+        category_list = [item.item.item.category.id for item in items]
+        unique_set = set(category_list)
+        unique_list = list(unique_set)
+        for category in unique_list:
+            item_by_category = Item.objects.filter(
+                invoice_item__bill=self.id, item__item__category=category)
+
+            data = {
+
+                'category': item_by_category.first().item.item.category.category_name,
+                'total': sum([i.invoice_item.extended_price for i in item_by_category])
+            }
+            return_data.append(data)
+        return return_data
+
 
 class PaymentDetails(models.Model):
     PAYMENT_TYPE = (
@@ -215,6 +233,12 @@ class InvoiceIntem(models.Model):
 
     def get_value(self):
         return self.qty+self.foc
+
+    def item_category(self):
+
+        category = Item.objects.filter(invoice_item=self.id).first()
+        if category is not None:
+            return category.item.item.category.category_name
 
 
 class Item(models.Model):

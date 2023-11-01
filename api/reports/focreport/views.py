@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from distrubutor_salesref.models import SalesRefDistributor
-from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem,Item
+from distrubutor_salesref_invoice.models import SalesRefInvoice, InvoiceIntem, Item
 from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -47,3 +47,9 @@ class GetFocReport(APIView):
         serializer = serializers.FocSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 #
+
+
+class GetFreeIssuesReport(APIView):
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        return Response(status=status.HTTP_200_OK)

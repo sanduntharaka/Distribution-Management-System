@@ -28,7 +28,7 @@ urlpatterns = [
     path('delevered-sales/', include('api.reports.deleveredsalesreport.urls')),
     path('foc-normal/', include('api.reports.normalfocreport.urls')),
     path('dealer-pattern/', include('api.reports.dealerpattern.urls')),
-
+    path('daily-report/', include('api.reports.dailyreport.urls')),
 
 ]
 
