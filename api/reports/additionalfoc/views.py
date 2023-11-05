@@ -19,6 +19,7 @@ class GetFocReport(APIView):
         if request.user.is_salesref:
             distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=request.user.id).distributor
+
             filters = {
                 'dis_sales_ref__distributor': distributor,
                 'added_by': UserDetails.objects.get(user=request.user.id)
@@ -38,7 +39,7 @@ class GetFocReport(APIView):
             'invoice_item__bill__in': invoice_ids,
         }
         data = {
-            'territory': invoices.first().dis_sales_ref.distributor.getTerrotories(),
+            'territory': invoices.first().dis_sales_ref.sales_ref.getTerrotories() if request.user.is_salesref else invoices.first().dis_sales_ref.distributor.getTerrotories(),
             'distributor': invoices.first().dis_sales_ref.distributor.full_name,
         }
         items = Item.objects.filter(**items_filter)

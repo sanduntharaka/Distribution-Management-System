@@ -739,16 +739,10 @@ workbook = xlsxwriter.Workbook('demo.xlsx')
 worksheet = workbook.add_worksheet()
 
 # Widen the first column to make the text clearer.
-worksheet.set_column('A:A', 20)
+
 
 # Add a bold format to use to highlight cells.
-bold = workbook.add_format({'bold': True})
 
-
-worksheet.write('A2', 'No')
-worksheet.write('B2', 'Name of outlet')
-worksheet.write('C2', 'Location/Town')
-worksheet.write('D2', 'Time')
 
 column = 5
 for category, column_index in category_column_mapping.items():

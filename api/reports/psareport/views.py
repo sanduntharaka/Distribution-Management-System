@@ -69,6 +69,56 @@ class ByDistributor(APIView):
         return Response(data=data, status=status.HTTP_200_OK)
 
 
+class BySalesref(APIView):
+    def get(self, request, *args, **kwargs):
+        item = self.kwargs.get('id')
+
+        distributor = SalesRefDistributor.objects.filter(
+            sales_ref=item).first()
+        manager_name = ManagerDistributor.objects.get(
+            distributor=distributor.distributor.id).manager.full_name
+        distributor_name = distributor.distributor.full_name
+        terriotory = distributor.sales_ref.getTerrotories()
+
+        user = UserDetails.objects.get(
+            id=distributor.sales_ref.id).id
+
+        dealers = Dealer.objects.filter(
+            added_by=user, psa__sales_ref=user).all()
+        psas = dealers.values('psa').distinct()
+        psa_ids = [psa['psa'] for psa in psas]
+        categories = dealers.values('category').distinct()
+        category_ids = [category['category'] for category in categories]
+
+        psa_names = PrimarySalesArea.objects.filter(
+            id__in=psa_ids).values('area_name')
+        category_names = DealerCategory.objects.filter(
+            id__in=category_ids).values('category_name')
+
+        details = {}
+        for psa in psa_ids:
+            cats = {}
+            for i in category_ids:
+                category_name = DealerCategory.objects.get(
+                    id=i).category_name
+                cats[category_name] = Dealer.objects.filter(
+                    category_id=i, psa=psa).count()
+            psa_name = PrimarySalesArea.objects.get(
+                id=psa).area_name
+            details[psa_name] = cats
+        data = {
+            'manager_name': manager_name,
+            'distributor_name': distributor_name,
+            'terriotory': terriotory,
+            'category_names': [category_name['category_name'] for category_name in category_names],
+            'psas': [area_name['area_name'] for area_name in psa_names],
+            'details': details
+        }
+
+        print(data)
+        return Response(data=data, status=status.HTTP_200_OK)
+
+#
 # class FilterByCategoryDistributor(APIView):
 #     def post(self, request, *args, **kwargs):
 #         item = self.kwargs.get('id')
