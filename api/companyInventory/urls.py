@@ -8,6 +8,4 @@ urlpatterns = [
     path('edit/<pk>', views.EditProduct.as_view()),
     path('delete/<pk>', views.DeleteProduct.as_view()),
 
-
-
 ]

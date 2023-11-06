@@ -331,3 +331,13 @@ class AllSalesrefsByDistributor(generics.ListAPIView):
     def get_queryset(self):
         item = self.kwargs.get('id')
         return get_list_or_404(SalesRefDistributor, distributor=item)
+
+
+class GetProductDetails(generics.RetrieveAPIView):
+    serializer_class = serializers.GetInventoryItemsStoks
+
+    def get(self, queryset=None, **kwargs):
+        code = self.kwargs.get('code')
+        data = ItemStock.objects.filter(item__item_code=code).last()
+        serializer = serializers.GetInventoryItemsStoks(data)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

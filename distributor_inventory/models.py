@@ -27,6 +27,8 @@ class DistributorInventoryItems(models.Model):
 
     def get_total_foc(self):
         return self.itemstock_set.aggregate(total_foc=models.Sum('foc'))['total_foc'] or 0
+# class ItemInvoice(models.Model):
+#     invoice_number = models.CharField(max_length=15, default='INV-0000')
 
 
 class ItemStock(models.Model):

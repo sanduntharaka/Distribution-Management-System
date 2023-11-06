@@ -22,7 +22,7 @@ urlpatterns = [
     path('stoks/delete/<int:pk>', views.DeleteDistributorStock.as_view()),
     path('salesrefs/<id>', views.AllSalesrefsByDistributor.as_view()),
 
-
+    path('details/<code>', views.GetProductDetails.as_view()),
 
 ]
 # distributor/get
