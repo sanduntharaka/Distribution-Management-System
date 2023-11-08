@@ -28,9 +28,13 @@ class GetDailyReport(APIView):
                 id__in=[sales_ref, distributor]).values('user')
             filters = {}
             filters['dis_sales_ref__sales_ref'] = sales_ref
+            filters['date__range'] = (date_from, date_to)
 
-            dealers = Dealer.objects.filter(
-                added_by__in=[i['user'] for i in users])
+            invoice_list = SalesRefInvoice.objects.filter(
+                **filters)
+            # dealers = Dealer.objects.filter(
+            #     id__in=[i['dealer'] for i in dealer_list])
+            # print('dd:', dealers)
 
             categories = Category.objects.all()
 
@@ -44,16 +48,16 @@ class GetDailyReport(APIView):
             }
 
             dealer_data = []
-            for dealer in dealers:
+            for invoice in invoice_list:
                 pay_details = PaymentDetails.objects.filter(
-                    bill__dealer=dealer, is_completed=False, bill__dis_sales_ref__sales_ref=sales_ref)
+                    bill=invoice, is_completed=False)
                 total_amount = sum(
                     [pay.bill.total - pay.paid_amount for pay in pay_details])
                 details = {
-                    'dealer': dealer.name,
-                    'address': dealer.address,
-                    'amount': total_amount,
-                    'since': pay_details.first().date if pay_details.first() is not None else ' ',
+                    'dealer': invoice.dealer.name,
+                    'address': invoice.dealer.address,
+                    'amount': invoice.total,
+                    'since': pay_details.last().bill.date if pay_details.last() is not None else ' ',
                 }
                 sales_list = []
                 foc_list = []
@@ -62,41 +66,55 @@ class GetDailyReport(APIView):
                     sales_data = {}
                     foc_data = {}
                     market_return_data = {}
-                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__dis_sales_ref__sales_ref=sales_ref, invoice_item__bill__date__range=(date_from, date_to), invoice_item__bill__dealer=dealer
+                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__dis_sales_ref__sales_ref=sales_ref, invoice_item__bill__date__range=(date_from, date_to), invoice_item__bill=invoice
                                                      )
-
-                    sales_data[category.category_name] = sum(
+                    sale_sum = sum(
                         [bil_item.foc+bil_item.qty for bil_item in bill_items])
+                    sales_data[category.category_name] = sale_sum if sale_sum > 0 else ' '
                     sales_list.append(sales_data)
 
-                    foc_data[category.category_name] = sum(
+                    foc_sum = sum(
                         [bil_item.foc for bil_item in bill_items])
+                    foc_data[category.category_name] = foc_sum if foc_sum > 0 else ' '
                     foc_list.append(foc_data)
 
                     maket_return_items = SalesRefReturnItem.objects.filter(
-                        item__item__category=category, salesrefreturn__dis_sales_ref__sales_ref=sales_ref, salesrefreturn__date__range=(date_from, date_to), salesrefreturn__dealer=dealer)
-                    market_return_data[category.category_name] = sum(
+                        item__item__category=category, salesrefreturn__dis_sales_ref__sales_ref=sales_ref, salesrefreturn__date__range=(date_from, date_to), salesrefreturn__dealer=invoice.dealer)
+
+                    mret_sum = sum(
                         [mk_item.foc+mk_item.qty for mk_item in maket_return_items])
+                    market_return_data[category.category_name] = mret_sum if mret_sum > 0 else ' '
 
                     market_return.append(market_return_data)
 
                 details['sales'] = sales_list
                 details['foc'] = foc_list
                 details['market_return'] = market_return
-                details['cash'] = sum([pay.total for pay in pay_details.filter(
-                    date__range=(date_from, date_to)) if pay.payment_type == 'cash'])
-                details['cheque'] = sum([pay.total for pay in pay_details.filter(
-                    date__range=(date_from, date_to)) if pay.payment_type == 'cheque'])
-                details['credit'] = sum(
-                    [pay.bill.total for pay in pay_details.filter(date__range=(date_from, date_to))]) - sum(
-                    [pay.total for pay in pay_details.filter(date__range=(date_from, date_to))])
+                print(
+                    'cash:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'cash'])
+                details['cash'] = sum(
+                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'cash'])
+                print(
+                    'cheque:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'cheque'])
+                details['cheque'] = sum(
+                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'cheque'])
 
+                # sum([pay.total for pay in pay_details.filter(
+                #     date__range=(date_from, date_to)) if pay.payment_type == 'cheque'])
+                print(
+                    'credit:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'credit'])
+                details['credit'] = sum(
+                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'credit'])
+                # sum(
+                #     [pay.bill.total for pay in pay_details.filter(date__range=(date_from, date_to))]) - sum(
+                #     [pay.total for pay in pay_details.filter(date__range=(date_from, date_to))])
                 dealer_data.append(details)
             data['category_details'] = dealer_data
-
+            # print(data)
             file_genearte = GenerateDailyReportExcell(data)
 
             return file_genearte.generate()
+            # return Response(data='c', status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -25,6 +25,9 @@ class GenerateDailyReportExcell:
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
         worksheet = workbook.add_worksheet()
+        f1 = workbook.add_format(
+            {'bold': True, 'border': 2, 'border_color': 'black'})
+        f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
@@ -47,82 +50,84 @@ class GenerateDailyReportExcell:
         worksheet.write('A6', 'Sales Rep')
         worksheet.write('B6', self.main_details['sales_rep'])
 
-        worksheet.write('A8', 'Name of outlet')
-        worksheet.write('B8', 'Location/Town')
         worksheet.merge_range(
-            6, 2, 6, 3, "Present O/S")
+            6, 0, 7, 0, "Name of outlet", f1)
+        worksheet.merge_range(
+            6, 1, 7, 1, "Location/Town", f1)
+        worksheet.merge_range(
+            6, 2, 6, 3, "Present O/S", f1)
 
-        worksheet.write('C8', 'Amount')
-        worksheet.write('D8', 'Since When')
+        worksheet.write('C8', 'Amount', f1)
+        worksheet.write('D8', 'Since When', f1)
 
         column = 5
         start_col = column
 
         sale_list = self.item_details[0]['sales']
-        print(self.item_details)
+
         for item in sale_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey)
+                worksheet.write(7, column-1, salekey, f1)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Sales Made")
+            6, start_col-1, 6, column-2, "Sales Made", f1)
 
         foc_list = self.item_details[0]['foc']
 
         start_col = column
         for item in foc_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey)
+                worksheet.write(7, column-1, salekey, f1)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "FOC")
+            6, start_col-1, 6, column-2, "FOC", f1)
 
         mret_list = self.item_details[0]['market_return']
 
         start_col = column
         for item in mret_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey)
+                worksheet.write(7, column-1, salekey, f1)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Market returns")
+            6, start_col-1, 6, column-2, "Market returns", f1)
 
         start_col = column-1
 
         worksheet.merge_range(
-            6, start_col, 6, start_col+2, "Mode of Payment")
-        worksheet.write(7, start_col, 'cash')
-        worksheet.write(7, start_col+1, 'cheque')
-        worksheet.write(7, start_col+2, 'credit')
+            6, start_col, 6, start_col+2, "Mode of Payment", f1)
+        worksheet.write(7, start_col, 'cash', f1)
+        worksheet.write(7, start_col+1, 'cheque', f1)
+        worksheet.write(7, start_col+2, 'credit', f1)
 
         for row, item in enumerate(self.item_details, start=1):
-            worksheet.write(row+7, 0, item['dealer'])
-            worksheet.write(row+7, 1, item['address'])
-            worksheet.write(row+7, 2, item['amount'])
-            worksheet.write(row+7, 3, item['since'])
+            worksheet.write(row+7, 0, item['dealer'], f2)
+            worksheet.write(row+7, 1, item['address'], f2)
+            worksheet.write(row+7, 2, item['amount'], f2)
+            worksheet.write(row+7, 3, f"{item['since']}", f2)
             i = 0
             for saleitem in item['sales']:
                 for key, qty in saleitem.items():
                     i = i+1
-                    worksheet.write(row+7, 3+i, qty)
+                    worksheet.write(row+7, 3+i, qty, f2)
 
             j = 0
             for focitem in item['foc']:
                 for key, qty in focitem.items():
                     j = j+1
-                    worksheet.write(row+7, i+j+3, qty)
+                    worksheet.write(row+7, i+j+3, qty, f2)
 
             k = 0
             for mretitem in item['market_return']:
                 for key, qty in mretitem.items():
                     k = k+1
-                    worksheet.write(row+7, i+j+k+3, qty)
-            worksheet.write(row+7, i+j+k+4, item['cash'])
-            worksheet.write(row+7, i+j+k+5, item['cheque'])
-            worksheet.write(row+7, i+j+k+6, item['credit'])
+                    worksheet.write(row+7, i+j+k+3, qty, f2)
+            worksheet.write(row+7, i+j+k+4, item['cash'], f2)
+            worksheet.write(row+7, i+j+k+5, item['cheque'], f2)
+            worksheet.write(row+7, i+j+k+6, item['credit'], f2)
 
         workbook.close()
         response = HttpResponse(output.getvalue(
