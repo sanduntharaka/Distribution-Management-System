@@ -51,14 +51,13 @@ class GetDailyReport(APIView):
             for invoice in invoice_list:
                 pay_details = PaymentDetails.objects.filter(
                     bill=invoice, is_completed=False)
-                total_amount = sum(
-                    [pay.bill.total - pay.paid_amount for pay in pay_details])
                 details = {
                     'dealer': invoice.dealer.name,
                     'address': invoice.dealer.address,
-                    'amount': invoice.total,
-                    'since': pay_details.last().bill.date if pay_details.last() is not None else ' ',
+                    'amount': invoice.total if invoice.is_settiled is not True else ' ',
+                    'since': pay_details.last().bill.date if pay_details.last() is not None and invoice.is_settiled is not True else ' ',
                 }
+
                 sales_list = []
                 foc_list = []
                 market_return = []
@@ -90,24 +89,30 @@ class GetDailyReport(APIView):
                 details['sales'] = sales_list
                 details['foc'] = foc_list
                 details['market_return'] = market_return
-                print(
-                    'cash:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'cash'])
-                details['cash'] = sum(
-                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'cash'])
-                print(
-                    'cheque:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'cheque'])
-                details['cheque'] = sum(
-                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'cheque'])
+                cash = []
+                cheque = []
+                credit = []
+                for pay in pay_details:
+                    if pay.payment_type == 'cash':
+                        cash.append(pay.paid_amount)
+                    if pay.payment_type == 'cheque':
+                        cheque.append(pay.paid_amount)
+                    if pay.payment_type == 'credit':
+                        credit.append(pay.paid_amount)
+                    if pay.payment_type == 'cash-credit':
+                        cash.append(pay.paid_amount)
+                        credit.append(pay.bill.total - sum(cash))
+                    if pay.payment_type == 'cash-cheque':
+                        cash.append(pay.paid_amount-pay.get_cheque_amount())
+                        cheque.append(pay.get_cheque_amount())
+                    if pay.payment_type == 'cash-credit-cheque':
+                        cash.append(pay.paid_amount-pay.get_cheque_amount())
+                        cheque.append(pay.get_cheque_amount())
+                        credit.append(pay.bill.total - (sum(cash)+sum(cheque)))
+                details['cash'] = sum(cash)
+                details['cheque'] = sum(cheque)
+                details['credit'] = sum(credit)
 
-                # sum([pay.total for pay in pay_details.filter(
-                #     date__range=(date_from, date_to)) if pay.payment_type == 'cheque'])
-                print(
-                    'credit:', [pay.paid_amount for pay in pay_details if pay.payment_type == 'credit'])
-                details['credit'] = sum(
-                    [pay.paid_amount for pay in pay_details if pay.payment_type == 'credit'])
-                # sum(
-                #     [pay.bill.total for pay in pay_details.filter(date__range=(date_from, date_to))]) - sum(
-                #     [pay.total for pay in pay_details.filter(date__range=(date_from, date_to))])
                 dealer_data.append(details)
             data['category_details'] = dealer_data
             # print(data)
