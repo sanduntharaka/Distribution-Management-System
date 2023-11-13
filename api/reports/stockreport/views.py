@@ -1,3 +1,5 @@
+from reportclasses.distributor_performance import DistributorPerformanceReportExcell
+from datetime import date, timedelta, datetime
 from userdetails.models import UserDetails
 from distributor_inventory.models import DistributorInventoryItems
 from reportclasses.stock_report import GenerateStockReportExcell
@@ -67,7 +69,6 @@ class GetInventoryReport(APIView):
 
 class GetInventoryReportByDate(APIView):
     def post(self, request, *args, **kwargs):
-        print(request.data)
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
@@ -107,7 +108,79 @@ class GetInventoryReportByDate(APIView):
                 [mr['qty']+mr['foc'] for mr in return_items])
             data.append(details)
         all_data = {'main_details': main_details, 'category_details': data}
-        print(all_data)
         file_genearte = GenerateStockReportExcell(all_data)
 
         return file_genearte.generate()
+
+
+class GetDistributorPerformance(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            today = date.today()
+            now = datetime.now()
+            current_month_name = now.strftime('%B')
+            distributor = request.data['distributor']
+            inventory_items = DistributorInventoryItems.objects.filter(
+                inventory__distributor=distributor)
+            main_details = {
+                'name': UserDetails.objects.get(user=request.user).full_name,
+                'distributor': UserDetails.objects.get(id=request.data['distributor']).full_name,
+                'month': current_month_name,
+                'current_dsr': ' ',
+
+                #                 Date of Commencement
+
+                # Total Amount Dealt (Rs.) todate
+
+                # Average DCP
+
+                # Dishonoured Cheques (Value/No)
+
+
+            }
+            data = []
+            for product in inventory_items:
+                details = {}
+
+                details['product_name'] = product.description
+                stock_items = ItemStock.objects.filter(
+                    item=product, date__month=today.month)
+                details['mqty'] = sum([
+                    item.qty for item in stock_items])
+
+                details['mfoc'] = sum([
+                    item.foc for item in stock_items])
+
+                details['mgp'] = ' '
+
+                details['mvalue'] = sum([
+                    item.whole_sale_price * (item.qty-item.foc) for item in stock_items])
+
+                details['mmret'] = sum([
+                    item.qty+item.foc for item in SalesRefReturnItem.objects.filter(inventory_item=product, salesrefreturn__date__month=today.month)])
+
+                stock_items_test = ItemStock.objects.filter(
+                    item=product)
+
+                details['cqty'] = sum([
+                    item.qty for item in stock_items_test])
+                details['cfoc'] = sum([
+                    item.foc for item in stock_items])
+
+                details['cgp'] = ' '
+
+                details['cvalue'] = sum([
+                    item.whole_sale_price * (item.qty-item.foc) for item in stock_items])
+
+                details['cmret'] = sum([
+                    item.qty+item.foc for item in SalesRefReturnItem.objects.filter(inventory_item=product)])
+
+                data.append(details)
+                # Quantity	Value	GP	Free Issues	Market Ret.
+            all_data = {'main_details': main_details, 'category_details': data}
+            file_genearte = DistributorPerformanceReportExcell(all_data)
+
+            return file_genearte.generate()
+        except Exception as e:
+
+            return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

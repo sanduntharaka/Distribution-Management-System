@@ -24,8 +24,6 @@ class GetDailyReport(APIView):
 
             sales_ref = request.data['sales_ref']
             distributor = request.data['distributor']
-            users = UserDetails.objects.filter(
-                id__in=[sales_ref, distributor]).values('user')
             filters = {}
             filters['dis_sales_ref__sales_ref'] = sales_ref
             filters['date__range'] = (date_from, date_to)
