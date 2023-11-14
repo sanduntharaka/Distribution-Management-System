@@ -25,6 +25,8 @@ class ProductiveReportExcell:
         f1 = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black'})
         f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+        f3 = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': 'yellow'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
@@ -58,40 +60,73 @@ class ProductiveReportExcell:
         worksheet.write(7, 4, 'Varience %', f1)
         worksheet.merge_range(6, 3, 6, 4, "Cumulative", f1)
 
-        column = 3
-        start_col = column
+        worksheet.write(8, 0, 'Days Worked', f2)
+        worksheet.write(8, 1, self.days_worked['month']['this_actual'], f2)
+        worksheet.write(8, 2,  self.days_worked['month']['last_actual'], f2)
+        worksheet.write(
+            8, 3,  self.days_worked['cumulative']['this_actual'], f2)
+        worksheet.write(8, 4,  ' ', f2)
 
-        # sale_list = self.item_details[0]['sales']
+        worksheet.write(9, 0, 'Turnover', f3)
+        worksheet.write(10, 0, 'Cash Sales', f2)
+        worksheet.write(10, 1, self.turnover_cash['month']['this_actual'], f2)
+        worksheet.write(10, 2,  self.turnover_cash['month']['last_actual'], f2)
+        worksheet.write(
+            10, 3,  self.turnover_cash['cumulative']['this_actual'], f2)
+        worksheet.write(10, 4,  ' ', f2)
 
-        # for item in sale_list:
-        #     for salekey, saleqty in item.items():
-        #         worksheet.write(7, column-1, salekey, f1)
-        #         column += 1
+        worksheet.write(11, 0, 'Cheques', f2)
+        worksheet.write(
+            11, 1, self.turnover_cheque['month']['this_actual'], f2)
+        worksheet.write(
+            11, 2,  self.turnover_cheque['month']['last_actual'], f2)
+        worksheet.write(
+            11, 3,  self.turnover_cheque['cumulative']['this_actual'], f2)
+        worksheet.write(11, 4,  ' ', f2)
 
-        # worksheet.merge_range(
-        #     6, start_col-1, 6, column-2, "Past 3 months Sales", f1)
+        worksheet.write(12, 0, 'Credit Sales', f2)
+        worksheet.write(
+            12, 1, self.turnover_credit['month']['this_actual'], f2)
+        worksheet.write(
+            12, 2,  self.turnover_credit['month']['last_actual'], f2)
+        worksheet.write(
+            12, 3,  self.turnover_credit['cumulative']['this_actual'], f2)
+        worksheet.write(12, 4,  ' ', f2)
 
-        # start_col = column-1
+        worksheet.write(13, 0, 'Callage', f3)
+        worksheet.write(14, 0, 'Total Calls', f2)
+        worksheet.write(
+            14, 1, self.callage_tot_calls['month']['this_actual'], f2)
+        worksheet.write(
+            14, 2,  self.callage_tot_calls['month']['last_actual'], f2)
+        worksheet.write(
+            14, 3,  self.callage_tot_calls['cumulative']['this_actual'], f2)
+        worksheet.write(14, 4,  ' ', f2)
 
-        # worksheet.merge_range(
-        #     6, start_col, 6, start_col+2, "Payments", f1)
-        # worksheet.write(7, start_col, 'cash', f1)
-        # worksheet.write(7, start_col+1, 'cheque', f1)
-        # worksheet.write(7, start_col+2, 'credit', f1)
+        worksheet.write(14, 0, 'Total Productive Calls', f2)
+        worksheet.write(
+            14, 1, self.callage_tot_productive['month']['this_actual'], f2)
+        worksheet.write(
+            14, 2,  self.callage_tot_productive['month']['last_actual'], f2)
+        worksheet.write(
+            14, 3,  self.callage_tot_productive['cumulative']['this_actual'], f2)
+        worksheet.write(14, 4,  ' ', f2)
 
-        # for row, item in enumerate(self.item_details, start=1):
-        #     worksheet.write(row+7, 0, item['psa'], f2)
-        #     worksheet.write(row+7, 1, item['visited'], f2)
-        #     i = 0
-        #     for saleitem in item['sales']:
-        #         for key, qty in saleitem.items():
-        #             i = i+1
-        #             worksheet.write(row+7, 1+i, qty, f2)
+        row = 1
+        for i in self.product_categories:
+            worksheet.write(
+                14+row, 0, i, f2)
 
-        #     worksheet.write(row+7, i+2, item['cash'], f2)
-        #     worksheet.write(row+7, i+3, item['cheque'], f2)
-        #     worksheet.write(row+7, i+4, item['credit'], f2)
+            worksheet.write(
+                14+row, 1, self.callage_tot_products[row-1][row]['month']['this_actual'], f2)
+            worksheet.write(
+                14+row, 2,  self.callage_tot_products[row-1][row]['month']['last_actual'], f2)
+            worksheet.write(
+                14+row, 3,  self.callage_tot_products[row-1][row]['cumulative']['this_actual'], f2)
+            worksheet.write(14+row, 4,  ' ', f2)
+            row += 1
 
+        worksheet.write(row, 0, 'Average Productivity per call', f3)
         workbook.close()
         response = HttpResponse(output.getvalue(
         ), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8')

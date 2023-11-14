@@ -455,7 +455,6 @@ class ProductivityReport(APIView):
                 }
                 category_details.append(details)
             row_data['product_categories_collage'] = category_details
-            print(row_data)
             file_genearte = ProductiveReportExcell(row_data)
 
             return file_genearte.generate()
