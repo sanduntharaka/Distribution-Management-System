@@ -184,4 +184,4 @@ class GetDistributorPerformance(APIView):
             return file_genearte.generate()
         except Exception as e:
 
-            return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
