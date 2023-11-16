@@ -103,4 +103,5 @@ class DistributorPerformanceReportExcell:
 
             return response
         except Exception as e:
+            print('excel:', e)
             return Response(data={'error': e, 'msg': 'excell error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

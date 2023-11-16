@@ -185,5 +185,5 @@ class GetDistributorPerformance(APIView):
         except DistributorInventoryItems.DoesNotExist:
             return Response(data={'error': "Items not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-
+            print(e)
             return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
