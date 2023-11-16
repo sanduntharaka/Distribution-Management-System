@@ -65,7 +65,7 @@ const ViewAllMarketReturnsConfimsByOthers = () => {
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'psa_name' },
+    { title: 'Psa', field: 'psa_name' },
   ];
 
   //modal
