@@ -75,6 +75,7 @@ class GetFreeIssuesReport(APIView):
         filters = {
             'dis_sales_ref__distributor': request.data['distributor'],
             'added_by': request.data['sales_ref'],
+            'status': 'confirmed'
         }
 
         if by_date:
@@ -99,7 +100,6 @@ class GetFreeIssuesReport(APIView):
                 details['invoice'] = i.bill.bill_code+str(i.bill.bill_number)
                 details['date'] = i.bill.date
                 foc_with_category.append(details)
-
             grouped_data = defaultdict(list)
 
             for item in foc_with_category:

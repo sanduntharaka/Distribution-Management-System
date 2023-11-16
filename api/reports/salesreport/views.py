@@ -154,9 +154,15 @@ class IteneryReport(APIView):
             psa_data = []
 
             for psa in psas:
+
+                try:
+                    visited = SalesRefInvoice.objects.filter(
+                        dis_sales_ref__sales_ref=sales_ref, dealer__psa=psa).first().date
+                except:
+                    visited = 'No'
                 row_data = {}
                 row_data['psa'] = psa.area_name
-                row_data['visited'] = 'ss'
+                row_data['visited'] = visited
 
                 sales_list = []
                 for category in categories:
@@ -172,32 +178,12 @@ class IteneryReport(APIView):
                 row_data['sales'] = sales_list
                 psa_data.append(row_data)
 
-                pay_details = PaymentDetails.objects.filter(
-                    bill__dis_sales_ref__sales_ref=sales_ref, bill__date__range=(three_months_ago, today), bill__dealer__psa=psa)
-                cash = []
-                cheque = []
-                credit = []
-                for pay in pay_details:
-                    if pay.payment_type == 'cash':
-                        cash.append(pay.paid_amount)
-                    if pay.payment_type == 'cheque':
-                        cheque.append(pay.paid_amount)
-                    if pay.payment_type == 'credit':
-                        credit.append(pay.paid_amount)
-                    if pay.payment_type == 'cash-credit':
-                        cash.append(pay.paid_amount)
-                        credit.append(pay.bill.total - sum(cash))
-                    if pay.payment_type == 'cash-cheque':
-                        cash.append(pay.paid_amount-pay.get_cheque_amount())
-                        cheque.append(pay.get_cheque_amount())
-                    if pay.payment_type == 'cash-credit-cheque':
-                        cash.append(pay.paid_amount-pay.get_cheque_amount())
-                        cheque.append(pay.get_cheque_amount())
-                        credit.append(pay.bill.total - (sum(cash)+sum(cheque)))
+                invoices = SalesRefInvoice.objects.filter(
+                    dis_sales_ref__sales_ref=sales_ref, date__range=(three_months_ago, today), dealer__psa=psa)
 
-                row_data['cash'] = sum(cash)
-                row_data['cheque'] = sum(cheque)
-                row_data['credit'] = sum(credit)
+                row_data['cash'] = sum([i.total_cash() for i in invoices])
+                row_data['cheque'] = sum([i.total_cheques() for i in invoices])
+                row_data['credit'] = sum([i.total_credit() for i in invoices])
 
             data['category_details'] = psa_data
             file_genearte = IteneryReportExcell(data)
@@ -297,34 +283,36 @@ class ProductivityReport(APIView):
             }
 
             # cash sales this month
-            pay_details_cash = PaymentDetails.objects.filter(bill__in=created_invoices_this_month, payment_type__in=[
-                                                             'cash', 'cash-credit', 'cash-cheque', 'cash-credit-cheque'])
+            invoices_this = created_invoices_this_month
             total_this_cash = 0
-            for pd_cash in pay_details_cash:
-                if pd_cash.payment_type == 'cash' or pd_cash.payment_type == 'cash-credit':
-                    total_this_cash += pd_cash.paid_amount
-                if pd_cash.payment_type == 'cash-cheque' or pd_cash.payment_type == 'cash-credit-cheque':
-                    total_this_cash += pd_cash.paid_amount - pd_cash.get_cheque_amount()
+            total_this_credit = 0
+            total_this_cheque = 0
+            for inv in invoices_this:
+                total_this_cash += inv.total_cash()
+                total_this_credit += inv.total_credit()
+                total_this_cheque += inv.total_cheques()
 
             # cash sales last month
-            pay_details_cash = PaymentDetails.objects.filter(bill__in=created_invoices_last_month, payment_type__in=[
-                                                             'cash', 'cash-credit', 'cash-cheque', 'cash-credit-cheque'])
+            invoices_last = created_invoices_last_month
+
             total_last_cash = 0
-            for pd_cash in pay_details_cash:
-                if pd_cash.payment_type == 'cash' or pd_cash.payment_type == 'cash-credit':
-                    total_last_cash += pd_cash.paid_amount
-                if pd_cash.payment_type == 'cash-cheque' or pd_cash.payment_type == 'cash-credit-cheque':
-                    total_last_cash += pd_cash.paid_amount - pd_cash.get_cheque_amount()
+            total_last_credit = 0
+            total_last_cheque = 0
+            for inv in invoices_last:
+                total_last_cash += inv.total_cash()
+                total_last_credit += inv.total_credit()
+                total_last_cheque += inv.total_cheques()
 
             # cash sales cumulative
-            pay_details_cash = PaymentDetails.objects.filter(bill__in=created_invoices_cumulative, payment_type__in=[
-                                                             'cash', 'cash-credit', 'cash-cheque', 'cash-credit-cheque'])
+            invoices_all = created_invoices_cumulative
+
             total_cumulative_cash = 0
-            for pd_cash in pay_details_cash:
-                if pd_cash.payment_type == 'cash' or pd_cash.payment_type == 'cash-credit':
-                    total_cumulative_cash += pd_cash.paid_amount
-                if pd_cash.payment_type == 'cash-cheque' or pd_cash.payment_type == 'cash-credit-cheque':
-                    total_cumulative_cash += pd_cash.paid_amount - pd_cash.get_cheque_amount()
+            total_cumulative_credit = 0
+            total_cumulative_cheque = 0
+            for inv in invoices_all:
+                total_cumulative_cash += inv.total_cash()
+                total_cumulative_credit += inv.total_credit()
+                total_cumulative_cheque += inv.total_cheques()
 
             ######
 
@@ -339,68 +327,16 @@ class ProductivityReport(APIView):
                 }
             }
 
-            # credit sales this month
-            pay_details_credit = PaymentDetails.objects.filter(bill__in=created_invoices_this_month, payment_type__in=[
-                                                               'credit', 'cash-credit', 'cheque-credit', 'cash-credit-cheque'])
-            total_this_credit = 0
-            for pd_credit in pay_details_credit:
-
-                total_this_credit += pd_credit.get_credit()
-
-            # credit sales last month
-            pay_details_credit = PaymentDetails.objects.filter(bill__in=created_invoices_last_month, payment_type__in=[
-                                                               'credit', 'cash-credit', 'cheque-credit', 'cash-credit-cheque'])
-            total_last_credit = 0
-            for pd_credit in pay_details_credit:
-
-                total_last_credit += pd_credit.get_credit()
-
-            # credit sales cumulative
-            pay_details_credit = PaymentDetails.objects.filter(bill__in=created_invoices_cumulative, payment_type__in=[
-                                                               'credit', 'cash-credit', 'cheque-credit', 'cash-credit-cheque'])
-            total_cumulative_credit = 0
-            for pd_credit in pay_details_credit:
-
-                total_cumulative_credit += pd_credit.get_credit()
-
-            ######
-
             row_data['turnover_credit'] = {
                 'month': {
-                    'this_actual': total_this_cash,
-                    'last_actual': total_last_cash
+                    'this_actual': total_this_credit,
+                    'last_actual': total_last_credit
                 },
                 'cumulative': {
-                    'this_actual': total_cumulative_cash,
+                    'this_actual': total_cumulative_credit,
 
                 }
             }
-
-            # cheque sales this month
-            pay_details_cheque = ChequeDetails.objects.filter(
-                payment_details__bill__in=created_invoices_this_month)
-            total_this_cheque = 0
-            for pd_cheque in pay_details_cheque:
-
-                total_this_cheque += pd_cheque.amount
-
-            # cheque sales last month
-            pay_details_cheque = ChequeDetails.objects.filter(
-                payment_details__bill__in=created_invoices_last_month)
-            total_last_cheque = 0
-            for pd_cheque in pay_details_cheque:
-
-                total_last_cheque += pd_cheque.amount
-
-            # cash sales cumulative
-            pay_details_cheque = ChequeDetails.objects.filter(
-                payment_details__bill__in=created_invoices_cumulative)
-            total_cumulative_cheque = 0
-            for pd_cheque in pay_details_cheque:
-
-                total_cumulative_cheque += pd_cheque.amount
-
-            ######
 
             row_data['turnover_cheque'] = {
                 'month': {
@@ -445,11 +381,11 @@ class ProductivityReport(APIView):
                 details = {}
                 details[category.id] = {
                     'month': {
-                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month)]),
-                        'last_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_last_month)])
+                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month, item__item__category=category)]),
+                        'last_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_last_month, item__item__category=category)])
                     },
                     'cumulative': {
-                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_cumulative)]),
+                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_cumulative, item__item__category=category)]),
 
                     }
                 }

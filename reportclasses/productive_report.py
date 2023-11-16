@@ -36,7 +36,7 @@ class ProductiveReportExcell:
             'font_size': 18
         })
         worksheet.merge_range(
-            1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Productive Report", merge_format)
+            1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Sales Productivity Report", merge_format)
         worksheet.write('A3', 'As at')
         worksheet.write('B3', self.main_details['as_at'])
 

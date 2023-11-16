@@ -67,7 +67,7 @@ class IteneryReportExcell:
 
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+7, 0, item['psa'], f2)
-            worksheet.write(row+7, 1, item['visited'], f2)
+            worksheet.write(row+7, 1, f"{item['visited']}", f2)
             i = 0
             for saleitem in item['sales']:
                 for key, qty in saleitem.items():

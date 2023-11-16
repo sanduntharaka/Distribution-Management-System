@@ -87,29 +87,10 @@ class GetDailyReport(APIView):
                 details['sales'] = sales_list
                 details['foc'] = foc_list
                 details['market_return'] = market_return
-                cash = []
-                cheque = []
-                credit = []
-                for pay in pay_details:
-                    if pay.payment_type == 'cash':
-                        cash.append(pay.paid_amount)
-                    if pay.payment_type == 'cheque':
-                        cheque.append(pay.paid_amount)
-                    if pay.payment_type == 'credit':
-                        credit.append(pay.paid_amount)
-                    if pay.payment_type == 'cash-credit':
-                        cash.append(pay.paid_amount)
-                        credit.append(pay.bill.total - sum(cash))
-                    if pay.payment_type == 'cash-cheque':
-                        cash.append(pay.paid_amount-pay.get_cheque_amount())
-                        cheque.append(pay.get_cheque_amount())
-                    if pay.payment_type == 'cash-credit-cheque':
-                        cash.append(pay.paid_amount-pay.get_cheque_amount())
-                        cheque.append(pay.get_cheque_amount())
-                        credit.append(pay.bill.total - (sum(cash)+sum(cheque)))
-                details['cash'] = sum(cash)
-                details['cheque'] = sum(cheque)
-                details['credit'] = sum(credit)
+
+                details['cash'] = invoice.total_cash()
+                details['cheque'] = invoice.total_cheques()
+                details['credit'] = invoice.total_credit()
 
                 dealer_data.append(details)
             data['category_details'] = dealer_data

@@ -89,11 +89,8 @@ class AllDealerDetailsByManager(APIView):
 class RetailerPerformanceReport(APIView):
     def post(self, request):
         try:
-            print(request.data)
             today = date.today()
             now = datetime.now()
-
-            current_month_name = now.strftime('%B')
             first_day_of_current_month = today.replace(day=1)
             last_day_of_last_month = first_day_of_current_month - \
                 timedelta(days=1)

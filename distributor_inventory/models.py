@@ -47,4 +47,4 @@ class ItemStock(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     def get_qty_wholesale_multiple(self):
-        return self.qty*self.whole_sale_price
+        return (self.qty-self.foc)*self.whole_sale_price

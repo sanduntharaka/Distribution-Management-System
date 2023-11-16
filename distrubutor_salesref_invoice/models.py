@@ -107,6 +107,32 @@ class SalesRefInvoice(models.Model):
             return_data.append(data)
         return return_data
 
+    def total_cash(self):
+        payments = PaymentDetails.objects.filter(bill=self.id)
+
+        total = 0
+        for pay in payments:
+            try:
+                cheque = ChequeDetails.objects.get(payment_details=pay.id)
+                cash = pay.paid_amount-cheque.amount
+                total += cash
+            except:
+                total += pay.paid_amount
+        return total
+
+    def total_credit(self):
+        payments = PaymentDetails.objects.filter(bill=self.id)
+        total = self.total - sum([pay.paid_amount for pay in payments])
+
+        return abs(total)
+
+    def total_cheques(self):
+        payments = ChequeDetails.objects.filter(payment_details__bill=self.id)
+
+        total = sum([pay.amount for pay in payments])
+
+        return total
+
 
 class PaymentDetails(models.Model):
     PAYMENT_TYPE = (

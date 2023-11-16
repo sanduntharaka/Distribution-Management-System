@@ -9,22 +9,15 @@ class GenerateFocExcell:
         self.main_details = data['main_details']
         self.item_details = data['category_details']
 
-    # def clean_data(self):
-    #     grouped_data = defaultdict(list)
-
-    #     for item in self.item_details:
-    #         key = (item['category'], item['invoice'], item['date'])
-    #         grouped_data[key].append(item)
-
-    #     result = [grouped_items[-1] for grouped_items in grouped_data.values()]
-
-    #     return result
-
     def generate(self):
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
         worksheet = workbook.add_worksheet()
+
+        f1 = workbook.add_format(
+            {'bold': True, 'border': 2, 'border_color': 'black'})
+        f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
@@ -49,24 +42,28 @@ class GenerateFocExcell:
         unique_categories = list(
             set(item['category'] for item in self.item_details))
 
-        worksheet.write('A8', 'Date')
-        worksheet.write('B8', 'Inv. No')
+        worksheet.write('A8', 'Date', f1)
+        worksheet.write('B8', 'Inv. No', f1)
         for index, category in enumerate(unique_categories, start=2):
-            worksheet.write(7, index, category)
+            worksheet.write(7, index, category, f1)
 
         for row, item in enumerate(self.item_details, start=1):
-            worksheet.write(row+7, 0, item['date'].isoformat())
-            worksheet.write(row+7, 1, item['invoice'])
+            worksheet.write(row+7, 0, item['date'].isoformat(), f2)
+            worksheet.write(row+7, 1, item['invoice'], f2)
             for index, category in enumerate(unique_categories, start=2):
                 if item['category'] == category:
-                    worksheet.write(row+7, index, item['foc'])
+                    worksheet.write(row+7, index, item['foc'], f2)
+                else:
+                    worksheet.write(row+7, index, 0, f2)
         last_row = row+7
 
-        worksheet.write(last_row+1, 0, 'Total')
+        worksheet.write(last_row+1, 0, 'Total', f2)
+        worksheet.write(last_row+1, 1, ' ', f2)
 
         category_sums = {}
 
         # Calculate the sum of 'foc' for each category
+
         for item in self.item_details:
             category = item['category']
             foc = item['foc']
@@ -74,11 +71,10 @@ class GenerateFocExcell:
                 category_sums[category] += foc
             else:
                 category_sums[category] = foc
-        for row, item in enumerate(category_sums, start=1):
 
-            for index, category in enumerate(unique_categories, start=2):
-                if item == category:
-                    worksheet.write(last_row+1, index, category_sums[item])
+        for index, category in enumerate(unique_categories, start=2):
+            worksheet.write(last_row+1, index, category_sums[category], f2)
+
         workbook.close()
         response = HttpResponse(output.getvalue(
         ), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8')

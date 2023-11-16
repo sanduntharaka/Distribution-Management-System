@@ -43,7 +43,7 @@ class DistributorPerformanceReportExcell:
             6, 0, 7, 0, "Product Description", f1)
 
         worksheet.merge_range(
-            6, 1, 6, 5, "Past 3 months Sales", f1)
+            6, 1, 6, 5, "month", f1)
         worksheet.write(7, 1, "Quantity", f1)
         worksheet.write(7, 2, "Value", f1)
         worksheet.write(7, 3, "GP", f1)
@@ -73,6 +73,26 @@ class DistributorPerformanceReportExcell:
             worksheet.write(row+7, 8, item['cgp'], f2)
             worksheet.write(row+7, 9, item['cfoc'], f2)
             worksheet.write(row+7, 10, item['cmret'], f2)
+
+        worksheet.write(row+8, 0, 'Total', f2)
+        worksheet.write(row+8, 1, sum([i['mqty']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 2, sum([i['mvalue']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 3, ' ', f2)
+        worksheet.write(row+8, 4, sum([i['mfoc']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 5, sum([i['mmret']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 6, sum([i['cqty']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 7, sum([i['cvalue']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 8, ' ', f2)
+        worksheet.write(row+8, 9, sum([i['cfoc']
+                        for i in self.item_details]), f2)
+        worksheet.write(row+8, 10, sum([i['cmret']
+                        for i in self.item_details]), f2)
 
         workbook.close()
         response = HttpResponse(output.getvalue(

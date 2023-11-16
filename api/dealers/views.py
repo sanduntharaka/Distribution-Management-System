@@ -130,7 +130,7 @@ class GetAllSearch(generics.ListAPIView):
         users = []
         if (self.request.user.is_company):
 
-            return get_list_or_404(Dealer)
+            return Dealer.objects.all()
 
         if (self.request.user.is_excecutive):
             manager = ExecutiveManager.objects.get(

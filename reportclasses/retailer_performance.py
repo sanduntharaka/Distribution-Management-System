@@ -67,12 +67,13 @@ class RetailerPerformanceReportExcell:
         worksheet.write(13, 4, 'Last Purchase date', f2)
 
         row = 14
+
         for i in self.item_details:
             worksheet.write(row, 0, i['category'], f2)
             worksheet.write(row, 1, i['this_month'], f2)
             worksheet.write(row, 2, i['last_month'], f2)
             worksheet.write(row, 3, i['previous'], f2)
-            worksheet.write(row, 4, i['last_p_date'], f2)
+            worksheet.write(row, 4, f"{i['last_p_date']}", f2)
 
             row += 1
         # worksheet.write(row+7, i+4, item['credit'], f2)

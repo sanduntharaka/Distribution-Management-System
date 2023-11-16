@@ -157,7 +157,6 @@ class GetDataByDate(APIView):
 
             data['category_details'] = result
 
-            print(data)
             file_genearte = GenerateMarketReturnExcell(data)
 
             return file_genearte.generate()

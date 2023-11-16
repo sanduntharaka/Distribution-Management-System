@@ -95,14 +95,14 @@ class GetInventoryReportByDate(APIView):
             details['product_name'] = product.description
 
             stock_items = ItemStock.objects.filter(
-                item__category=product.category, **filters).values('qty')
+                item=product, **filters).values('qty')
             details['purchase'] = sum([si['qty'] for si in stock_items])
-            inv_items = Item.objects.filter(item__item__category=product.category, invoice_item__bill__date__range=(
+            inv_items = Item.objects.filter(item__item=product, invoice_item__bill__date__range=(
                 date_from, date_to), invoice_item__bill__dis_sales_ref__distributor=request.data['distributor']).values('qty', 'foc')
             details['sales'] = sum([sl['qty']+sl['foc'] for sl in inv_items])
             details['free_issues'] = sum([fi['foc'] for fi in inv_items])
 
-            return_items = SalesRefReturnItem.objects.filter(item__item__category=product.category, salesrefreturn__date__range=(
+            return_items = SalesRefReturnItem.objects.filter(item__item=product, salesrefreturn__date__range=(
                 date_from, date_to),  salesrefreturn__dis_sales_ref__distributor=request.data['distributor']).values('qty', 'foc')
             details['market_returns'] = sum(
                 [mr['qty']+mr['foc'] for mr in return_items])
@@ -154,7 +154,7 @@ class GetDistributorPerformance(APIView):
                 details['mgp'] = ' '
 
                 details['mvalue'] = sum([
-                    item.whole_sale_price * (item.qty-item.foc) for item in stock_items])
+                    item.get_qty_wholesale_multiple() for item in stock_items])
 
                 details['mmret'] = sum([
                     item.qty+item.foc for item in SalesRefReturnItem.objects.filter(inventory_item=product, salesrefreturn__date__month=today.month)])
@@ -165,17 +165,18 @@ class GetDistributorPerformance(APIView):
                 details['cqty'] = sum([
                     item.qty for item in stock_items_test])
                 details['cfoc'] = sum([
-                    item.foc for item in stock_items])
+                    item.foc for item in stock_items_test])
 
                 details['cgp'] = ' '
 
                 details['cvalue'] = sum([
-                    item.whole_sale_price * (item.qty-item.foc) for item in stock_items])
+                    item.get_qty_wholesale_multiple() for item in stock_items_test])
 
                 details['cmret'] = sum([
                     item.qty+item.foc for item in SalesRefReturnItem.objects.filter(inventory_item=product)])
 
                 data.append(details)
+
                 # Quantity	Value	GP	Free Issues	Market Ret.
             all_data = {'main_details': main_details, 'category_details': data}
             file_genearte = DistributorPerformanceReportExcell(all_data)
