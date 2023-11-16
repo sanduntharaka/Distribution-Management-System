@@ -46,7 +46,7 @@ class RetailerPerformanceReportExcell:
         worksheet.write('B8', self.main_details['pay_mode'])
 
         worksheet.write('A9', 'Last Transaction Date')
-        worksheet.write('B9', self.main_details['last_pay_date'])
+        worksheet.write('B9', f"{self.main_details['last_pay_date']}")
 
         worksheet.write('A10', 'Current Outstanding')
         worksheet.write('B10', self.main_details['outstanding'])
