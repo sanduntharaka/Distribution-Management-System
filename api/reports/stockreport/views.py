@@ -179,7 +179,6 @@ class GetDistributorPerformance(APIView):
 
                 # Quantity	Value	GP	Free Issues	Market Ret.
             all_data = {'main_details': main_details, 'category_details': data}
-            print('addperfor:', all_data)
             file_genearte = DistributorPerformanceReportExcell(all_data)
 
             return file_genearte.generate()
