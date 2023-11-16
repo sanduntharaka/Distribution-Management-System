@@ -48,8 +48,7 @@ class ItemStock(models.Model):
 
     def get_qty_wholesale_multiple(self):
         value = (self.qty-self.foc)*self.whole_sale_price
-        print('cccc:', value)
-        if value.isdigit():
-            return value
-        else:
+        if isinstance(value, str):
             return 0
+        else:
+            return value
