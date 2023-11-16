@@ -1,3 +1,4 @@
+import math
 from django.db import models
 from django.conf import settings
 from userdetails.models import UserDetails
@@ -49,7 +50,7 @@ class ItemStock(models.Model):
     def get_qty_wholesale_multiple(self):
         value = (self.qty-self.foc)*self.whole_sale_price
         print(value, ':type:', type(value))
-        if isinstance(value, str):
+        if math.isnan(value):
             return 0
         else:
             return value
