@@ -48,7 +48,8 @@ class ItemStock(models.Model):
 
     def get_qty_wholesale_multiple(self):
         value = (self.qty-self.foc)*self.whole_sale_price
-        if value is not None:
+        print('cccc:', value)
+        if value != None:
             return value
         else:
             return 0
