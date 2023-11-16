@@ -52,7 +52,7 @@ class RetailerPerformanceReportExcell:
         worksheet.write('B10', self.main_details['outstanding'])
 
         worksheet.write('A11', 'Since when is the outstanding')
-        worksheet.write('B11', self.main_details['outstanding_when'])
+        worksheet.write('B11', f"{self.main_details['outstanding_when']}")
 
         worksheet.write('A12', 'Any Return Cheques')
         worksheet.write('B12', self.main_details['return_cheques'])
