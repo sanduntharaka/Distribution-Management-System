@@ -219,7 +219,7 @@ const ShowPaymentDetails = (props) => {
                 <div className="col">{invoice.payment_type}</div>
               </div>
               <div className="row info">
-                <div className="col">Due date:</div>
+                <div className="col">Payment Due date:</div>
                 <div className="col">{invoice.due_date}</div>
               </div>
             </section>

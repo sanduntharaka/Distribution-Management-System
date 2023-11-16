@@ -106,6 +106,34 @@ const PsaReport = (props) => {
           console.log(err);
         });
     }
+    if (JSON.parse(sessionStorage.getItem('user')).is_salesref) {
+      axiosInstance
+        .get(
+          `/reports/psadetails/salesref/${JSON.parse(sessionStorage.getItem('user_details')).id
+          }`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+          setExpData(res.data);
+          let res_data = res.data;
+          const result = res_data.psas.flatMap((psa) =>
+            res_data.category_names.map((category) => ({
+              psa,
+              category,
+              count: res_data.details[psa][category],
+            }))
+          );
+          setData(result);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
   const [distributors, setDistributors] = useState([]);
   useEffect(() => {

@@ -108,7 +108,6 @@ const ViewPsas = (props) => {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {

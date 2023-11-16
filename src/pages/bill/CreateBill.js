@@ -413,7 +413,7 @@ const CreateBill = ({ inventory }) => {
   const handleAdd = (e) => {
     e.preventDefault();
     if (addedsameItem === false) {
-      if (product.qty >= qty) {
+      if (product.qty + product.foc >= qty) {
         if (billingPriceMethod === '1') {
           setData({
             ...data,
@@ -463,7 +463,7 @@ const CreateBill = ({ inventory }) => {
   const handleQty = (e) => {
     console.log(e.target.value)
     setExceedQty(false);
-    if (e.target.value > product.qty) {
+    if (e.target.value > product.qty + product.foc) {
       setExceedQty(true);
     } else {
       setQty(e.target.value);

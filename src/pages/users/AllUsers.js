@@ -107,7 +107,6 @@ const AllUsers = (props) => {
 
         setData(res.data);
         setTableData(res.data);
-        console.log(res.data)
       })
       .catch((err) => {
         console.log(err);

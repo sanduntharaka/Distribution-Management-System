@@ -338,6 +338,8 @@ const ViewInventoryOthers = ({ user }) => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
                 }}
                 icons={tableIcons}
                 actions={[
@@ -376,35 +378,37 @@ const ViewInventoryOthers = ({ user }) => {
                         >
                           <CgDetailsMore />
                         </IconButton>
-                      ) : props.action.icon === EditIcon &&
-                        user.is_company ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'orange' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      ) : props.action.icon === DeleteOutline &&
-                        user.is_company ? (
-                        <IconButton
-                          onClick={(event) =>
-                            props.action.onClick(event, props.data)
-                          }
-                          color="primary"
-                          style={{ color: 'red' }} // customize the button style
-                          size="small"
-                          aria-label={props.action.tooltip}
-                        >
-                          <DeleteOutline />
-                        </IconButton>
-                      ) : (
-                        ''
-                      )}
+                      )
+                        // : props.action.icon === EditIcon &&
+                        //   user.is_company ? (
+                        //   <IconButton
+                        //     onClick={(event) =>
+                        //       props.action.onClick(event, props.data)
+                        //     }
+                        //     color="primary"
+                        //     style={{ color: 'orange' }} // customize the button style
+                        //     size="small"
+                        //     aria-label={props.action.tooltip}
+                        //   >
+                        //     <EditIcon />
+                        //   </IconButton>
+                        // ) : props.action.icon === DeleteOutline &&
+                        //   user.is_company ? (
+                        //   <IconButton
+                        //     onClick={(event) =>
+                        //       props.action.onClick(event, props.data)
+                        //     }
+                        //     color="primary"
+                        //     style={{ color: 'red' }} // customize the button style
+                        //     size="small"
+                        //     aria-label={props.action.tooltip}
+                        //   >
+                        //     <DeleteOutline />
+                        //   </IconButton>
+                        // ) 
+                        : (
+                          ''
+                        )}
                     </React.Fragment>
                   ),
                 }}

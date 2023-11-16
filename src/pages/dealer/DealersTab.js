@@ -27,9 +27,7 @@ const DealersTab = () => {
         </div>
 
         {user.is_distributor ||
-        user.is_salesref ||
-        user.is_manager ||
-        user.is_superuser ? (
+          user.is_salesref ? (
           <div
             className={`item ${selected === 1 ? 'selected' : ''}`}
             onClick={() => handleSelect(1)}

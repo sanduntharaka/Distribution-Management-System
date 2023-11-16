@@ -64,8 +64,9 @@ const AddCreditDetails = () => {
     { title: 'Total', field: 'total' },
     { title: 'Payed', field: 'payed' },
     { title: 'Due date', field: 'due_date' },
-
+    { title: 'Cheque recieved', field: 'is_cheque', render: (rowData) => rowData.is_cheque ? 'Yes' : '' },
     { title: 'Status', field: 'status' },
+    // { title: 'Overdue', field: 'is_overdued', render: (rowData) => rowData.is_overdued ? 'Yes' : 'No' },
   ];
   //modal
   const [modalOpen, setModalOpen] = useState(false);
@@ -98,6 +99,7 @@ const AddCreditDetails = () => {
       )
       .then((res) => {
         setTableData(res.data);
+        console.log('dd:', res.data)
       })
       .catch((err) => {
         console.log(err);
@@ -176,11 +178,13 @@ const AddCreditDetails = () => {
                   // customize the actions cell style
                   background: '#fde',
                 }}
+
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
                   pageSize: 50,
                   pageSizeOptions: [50, 75, 100],
+                  rowStyle: (rowData) => (rowData.is_overdued ? { backgroundColor: 'red' } : '')
                 }}
                 icons={tableIcons}
                 actions={[
@@ -211,7 +215,9 @@ const AddCreditDetails = () => {
                       )}
                     </React.Fragment>
                   ),
+
                 }}
+
               />
             </div>
           </div>
