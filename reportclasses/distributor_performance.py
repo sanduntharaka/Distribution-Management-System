@@ -105,3 +105,5 @@ class DistributorPerformanceReportExcell:
         except Exception as e:
             print('excel:', e)
             return Response(data={'error': e, 'msg': 'excell error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# NAN/INF not supported in write_number() without 'nan_inf_to_errors' Workbook() option
