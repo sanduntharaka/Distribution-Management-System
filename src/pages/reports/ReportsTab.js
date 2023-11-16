@@ -26,6 +26,8 @@ import FocReport from './focreport/FocReport';
 import OldCreditBillsCollection from './oldbillsreport/OldCreditBillsCollection';
 import AddtionalFocReport from './additionalfoc/AddtionalFocReport';
 import DaylyInventoryPeriod from './dailyInventoryreport/DaylyInventoryPeriod';
+import DailyReport from './dailyreport/DailyReport';
+import QuickReports from './quickReports/QuickReports';
 const ReportsTab = () => {
   const user_details = JSON.parse(sessionStorage.getItem('user_details'));
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -264,6 +266,22 @@ const ReportsTab = () => {
           Inventory Status Report
 
         </div>
+        {/* <div
+          className={`item ${selected === 26 ? 'selected' : ''}`}
+          onClick={() => handleSelect(26)}
+        >
+          Daily Report
+
+        </div> */}
+        {!user.is_salesref ? (
+          <div
+            className={`item ${selected === 27 ? 'selected' : ''}`}
+            onClick={() => handleSelect(27)}
+          >
+            Quick Reports
+
+          </div>
+        ) : ''}
       </div>
       <div className="vtab_page">
         {selected === 0 &&
@@ -320,11 +338,18 @@ const ReportsTab = () => {
           <OldCreditBillsCollection user={user} />
         ) : selected === 24 ? (
           <AddtionalFocReport user={user} />
-        ) : selected === 25 ? (
-          <DaylyInventoryPeriod user={user} />
-        ) : (
-          ''
-        )}
+        )
+          : selected === 25 ? (
+            <DaylyInventoryPeriod user={user} />
+          )
+            //  : selected === 26 ? (
+            //   <DailyReport user={user} user_details={user_details} />
+            // ) 
+            : selected === 27 ? (
+              <QuickReports user={user} user_details={user_details} />
+            ) : (
+              ''
+            )}
       </div>
     </div>
   );

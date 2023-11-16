@@ -41,22 +41,24 @@ const CreatePsa = (props) => {
   });
   const [salesrefs, setSalesrefs] = useState([])
   useEffect(() => {
-    axiosInstance
-      .get(`/users/salesrefs/by/manager/`, {
-        headers: {
-          Authorization:
-            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
+    if (props.user.is_manager) {
+      axiosInstance
+        .get(`/users/salesrefs/by/manager/`, {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
 
-        setSalesrefs(res.data);
+          setSalesrefs(res.data);
 
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();

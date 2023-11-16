@@ -197,7 +197,7 @@ const DetailsItems = (props) => {
         icons={tableIcons}
         isLoading={loading}
         editable={
-          props.user.is_company
+          props.user.is_distributor
             ? {
               onRowUpdate: (newData, oldData) =>
                 new Promise((resolve) => {

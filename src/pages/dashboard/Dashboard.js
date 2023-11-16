@@ -152,7 +152,6 @@ const Dashboard = () => {
           }
         )
         .then((res) => {
-          console.log(res.data);
           setData({
             ...data,
             sales: res.data.sales,
@@ -242,7 +241,6 @@ const Dashboard = () => {
       .then((res) => {
 
         setRanges(res.data)
-        console.log('ddd:', res.data)
 
       })
       .catch((err) => {

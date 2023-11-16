@@ -31,12 +31,13 @@ const ConfirmStatus = (props) => {
     bank: '',
     amount: 0,
     cheque_date: '',
-    deposited_at: currentDate,
+    deposited_at: '',
     cheque_status: 'pending',
   });
   const handleConfirm = (e) => {
     e.preventDefault();
     setLoading(true);
+    console.log('invv:', invoice)
     axiosInstance
       .put(
         `/salesref/invoice/create/invoice/credit/${props.invoice.id}`,
@@ -92,10 +93,10 @@ const ConfirmStatus = (props) => {
     handleModalOpen();
   };
   const handleChequeDate = (e) => {
-    setInvoice({
-      ...invoice,
-      cheque_date: e.target.value,
-    })
+    // setInvoice({
+    //   ...invoice,
+
+    // })
 
     let dateCount = 0;
 
@@ -109,6 +110,8 @@ const ConfirmStatus = (props) => {
     }
     setInvoice({
       ...invoice,
+      cheque_date: e.target.value,
+      deposited_at: e.target.value,
       number_of_dates: dateCount,
     })
   }

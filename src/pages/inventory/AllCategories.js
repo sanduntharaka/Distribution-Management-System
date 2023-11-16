@@ -103,7 +103,6 @@ const AllCategories = (props) => {
       })
       .then((res) => {
         setLoading(false);
-        console.log(res.data);
         setData(res.data);
         setTableData(res.data);
         res.data.forEach((item) => {

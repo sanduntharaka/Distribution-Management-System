@@ -187,8 +187,8 @@ const CollectionsReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -274,7 +274,7 @@ const CollectionsReport = (props) => {
             </div>
           </div>
         </div>
-        <div className="page__pcont__row">
+        {/* <div className="page__pcont__row">
           <div className="page__pcont__row__col total">
             <p>Total</p>
             <p>
@@ -286,7 +286,7 @@ const CollectionsReport = (props) => {
               /-
             </p>
           </div>
-        </div>
+        </div> */}
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <button className="btnSave" onClick={(e) => exportByDate(e)}>

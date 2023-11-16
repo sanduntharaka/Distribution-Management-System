@@ -52,7 +52,6 @@ const InventoryTabs = () => {
           }
         )
         .then((res) => {
-          console.log('dis:', res.data);
           setIsLoading(false);
           setInventory(res.data);
         })
@@ -159,12 +158,12 @@ const InventoryTabs = () => {
         ) : loading === false && selected === 5 && inventory !== undefined ? (
           <AddDistributorInventoryStocks inventory={inventory} />
         )
-          // : loading === false && selected === 6 && inventory !== undefined ? (
-          //   <AddInvoice inventory={inventory} />
-          // ) 
-          : (
-            ''
-          )}
+          : loading === false && selected === 6 && inventory !== undefined ? (
+            <AddInvoice inventory={inventory} />
+          )
+            : (
+              ''
+            )}
       </div>
     </div>
   );

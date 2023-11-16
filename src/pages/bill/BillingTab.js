@@ -165,7 +165,6 @@ const BillingTab = () => {
         ) : selected === 3 && user.is_distributor ? (
           <AddCreditDetails />
         ) : selected === 3 ? (
-
           <ViewAllCreditBillsOthers user={user} />
         ) : selected === 4 ? (
           <RejectCheque />
