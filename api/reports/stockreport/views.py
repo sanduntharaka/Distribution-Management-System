@@ -179,9 +179,10 @@ class GetDistributorPerformance(APIView):
 
                 # Quantity	Value	GP	Free Issues	Market Ret.
             all_data = {'main_details': main_details, 'category_details': data}
-            # file_genearte = DistributorPerformanceReportExcell(all_data)
+            print('addperfor:', all_data)
+            file_genearte = DistributorPerformanceReportExcell(all_data)
 
-            return Response(data={'data': all_data}, status=status.HTTP_200_OK)
+            return file_genearte.generate()
         except DistributorInventoryItems.DoesNotExist:
             return Response(data={'error': "Items not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
