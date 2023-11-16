@@ -182,6 +182,8 @@ class GetDistributorPerformance(APIView):
             file_genearte = DistributorPerformanceReportExcell(all_data)
 
             return file_genearte.generate()
+        except DistributorInventoryItems.DoesNotExist:
+            return Response(data={'error': "Items not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
 
             return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
