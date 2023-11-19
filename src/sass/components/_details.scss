@@ -1,9 +1,9 @@
 .details {
   &__content {
     width: 50%;
+    height: 75%;
     overflow-y: scroll;
     scrollbar-gutter: stable;
-    height: max-content;
     background-color: white;
     border-radius: 25px;
     padding: 50px;

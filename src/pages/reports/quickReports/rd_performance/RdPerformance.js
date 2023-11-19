@@ -23,14 +23,13 @@ const ShowMessage = forwardRef((props, ref) => {
 
 
 
-const IteneryReport = (props) => {
+const RdPerformanceReport = (props) => {
     const inputRef = useRef(null);
     const [dateBy, setDateBy] = useState({
         date_from: '',
         date_to: '',
         status: 'confirmed',
-        sales_ref:'',
-        psa: '',
+        sales_ref: '',
         distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
     });
 
@@ -46,16 +45,10 @@ const IteneryReport = (props) => {
 
     const distributors = props.distributors;
     const [salesrefs, setSalesrefs] = useState(props.salesrefs);
-    const [psas, setPsas] = useState(props.psas);
-
 
     const [file, setFile] = useState(null)
     const [file_name, setFileName] = useState('')
 
-    useEffect(() => {
-        // Update the state when props change
-        setPsas(props.psas);
-    }, [props.psas])
 
     useEffect(() => {
         // Update the state when props change
@@ -85,7 +78,7 @@ const IteneryReport = (props) => {
         setError(false);
         setSuccess(false);
         axiosInstance
-            .post(`/reports/salesdetails/itenery/`, dateBy, {
+            .post(`/reports/stockdetails/get/rdperformance/`, dateBy, {
                 headers: {
                     Authorization:
                         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -98,7 +91,7 @@ const IteneryReport = (props) => {
                 setFile(res.data)
                 setError(false);
                 setSuccess(true);
-                setFileName(`itenery_${dateBy.date_to}`)
+                setFileName(`distributor_performance`)
                 setTitle('Your file is ready');
                 setMsg('Click download button to download');
                 handleOpen();
@@ -143,7 +136,7 @@ const IteneryReport = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>Itenery report</p>
+                <p>RD Performance report</p>
             </div>
             <div className="page__pcont">
 
@@ -174,41 +167,8 @@ const IteneryReport = (props) => {
                             ''
                         )}
 
-           
-{
-                            !props.user.is_salesref ? (
-                                <div className="form__row__col">
-                                    <div className="form__row__col__label">Sales ref</div>
-                                    <div className="form__row__col__input">
-                                        <select name="" id="" onChange={(e) =>
-                                            setDateBy({ ...dateBy, sales_ref: e.target.value })}>
+                        <div className="form__row__col dontdisp"></div>
 
-                                            <option value="">Select sales rep</option>
-
-                                            {
-                                                salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
-                                            }
-
-                                        </select>
-                                    </div>
-                                </div>
-                            ) : ''
-                        }
-                        <div className="form__row__col">
-                                    <div className="form__row__col__label">Psa</div>
-                                    <div className="form__row__col__input">
-                                        <select name="" id="" onChange={(e) =>
-                                            setDateBy({ ...dateBy, psa: e.target.value })}>
-
-                                            <option value="">Select psa</option>
-
-                                            {
-                                                psas.map((item, i) => (<option value={item.id} key={i}>{item.area_name}</option>))
-                                            }
-
-                                        </select>
-                                    </div>
-                                </div>
                         <div className="form__row__col dontdisp"></div>
 
                         <div className="form__row__col dontdisp"></div>
@@ -230,4 +190,4 @@ const IteneryReport = (props) => {
     )
 }
 
-export default IteneryReport
+export default RdPerformanceReport
