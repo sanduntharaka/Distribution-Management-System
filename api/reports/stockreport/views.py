@@ -66,12 +66,21 @@ class GetInventoryReport(APIView):
         except Exception as e:
             return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+from datetime import datetime, timedelta
+from inventory_history.models import DistributorHistoryItem
 class GetInventoryReportByDate(APIView):
     def post(self, request, *args, **kwargs):
         date_from = request.data['date_from']
         date_to = request.data['date_to']
         by_date = bool(date_from and date_to)
+
+        given_date = datetime.strptime(date_from, "%Y-%m-%d")
+
+        # Calculate the previous date
+        previous_date = given_date - timedelta(days=1)
+
+        # Convert the result back to a string if needed
+        previous_date_str = previous_date.strftime("%Y-%m-%d")
 
         main_details = {
             'distributor': UserDetails.objects.get(id=request.data['distributor']).full_name,
@@ -96,6 +105,13 @@ class GetInventoryReportByDate(APIView):
 
             stock_items = ItemStock.objects.filter(
                 item=product, **filters).values('qty')
+            
+            try:
+                history_item = DistributorHistoryItem.objects.get(date=previous_date_str,item_item=product)
+                history_item_total = history_item.qty+ history_item.foc
+            except:
+                history_item_total = 0
+            details['os'] = history_item_total
             details['purchase'] = sum([si['qty'] for si in stock_items])
             inv_items = Item.objects.filter(item__item=product, invoice_item__bill__date__range=(
                 date_from, date_to), invoice_item__bill__dis_sales_ref__distributor=request.data['distributor']).values('qty', 'foc')
@@ -106,6 +122,7 @@ class GetInventoryReportByDate(APIView):
                 date_from, date_to),  salesrefreturn__dis_sales_ref__distributor=request.data['distributor']).values('qty', 'foc')
             details['market_returns'] = sum(
                 [mr['qty']+mr['foc'] for mr in return_items])
+            details['cs'] = (details['os'] + details['purchase'] ) -  (details['sales']+details['free_issues']+details['market_returns'])
             data.append(details)
         all_data = {'main_details': main_details, 'category_details': data}
         file_genearte = GenerateStockReportExcell(all_data)
@@ -179,9 +196,56 @@ class GetDistributorPerformance(APIView):
 
                 # Quantity	Value	GP	Free Issues	Market Ret.
             all_data = {'main_details': main_details, 'category_details': data}
+      
             file_genearte = DistributorPerformanceReportExcell(all_data)
 
             return file_genearte.generate()
+        except DistributorInventoryItems.DoesNotExist:
+            return Response(data={'error': "Items not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(e)
+            return Response(data={'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GetDistributorRDPerformance(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            today = date.today()
+            now = datetime.now()
+            current_month_name = now.strftime('%B')
+            first_day_of_current_month = today.replace(day=1)
+            last_day_of_last_month = first_day_of_current_month - \
+                timedelta(days=1)
+
+            # Get the date for the last month
+            last_month_date = last_day_of_last_month.replace(day=1)
+            distributor = request.data['distributor']
+            inventory_items = DistributorInventoryItems.objects.filter(
+                inventory__distributor=distributor)
+            main_details = {
+                'name': UserDetails.objects.get(user=request.user).full_name,
+                'distributor': UserDetails.objects.get(id=request.data['distributor']).full_name,
+                'month': current_month_name,
+                'current_dsr': ' ',
+            }
+            data = []
+            for product in inventory_items:
+                details = {}
+                details['product_name'] = product.description
+                stock_items_this = ItemStock.objects.filter(
+                    item=product, date__month=today.month)
+                stock_items_last = ItemStock.objects.filter(
+                    item=product, date__month=last_month_date.month)
+                details['this_vol_qty'] = sum([
+                    item.qty for item in stock_items_this])
+                details['last_vol_qty'] = sum([
+                    item.qty for item in stock_items_last])
+                details['vol_var'] = (details['this_vol_qty']-details['last_vol_qty'])/100
+
+                data.append(details)
+
+            all_data = {'main_details': main_details, 'category_details': data}
+            print(all_data)
+            return Response(status=status.HTTP_200_OK)
         except DistributorInventoryItems.DoesNotExist:
             return Response(data={'error': "Items not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:

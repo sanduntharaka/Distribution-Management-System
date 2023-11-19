@@ -17,7 +17,13 @@ class IteneryReportExcell:
         f1 = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black'})
         f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+        f1_payments = workbook.add_format(
+            {'bold': True,'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97'})
+        f2_payments = workbook.add_format({'border': 2, 'border_color': 'black','bg_color': '#C4BD97'})
 
+        f1_sales = workbook.add_format(
+            {'bold': True,'border': 2, 'border_color': 'black', 'bg_color': '#FFFF00'})
+        f2_sales = workbook.add_format({'border': 2, 'border_color': 'black','bg_color': '#FFFF00'})
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
             'bold': 1,
@@ -51,19 +57,21 @@ class IteneryReportExcell:
 
         for item in sale_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1)
+                worksheet.write(7, column-1, salekey, f1_sales)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Past 3 months Sales", f1)
+            6, start_col-1, 6, column-2, "Past 3 months Sales", f1_sales)
 
         start_col = column-1
 
         worksheet.merge_range(
-            6, start_col, 6, start_col+2, "Payments", f1)
-        worksheet.write(7, start_col, 'cash', f1)
-        worksheet.write(7, start_col+1, 'cheque', f1)
-        worksheet.write(7, start_col+2, 'credit', f1)
+            6, start_col, 6, start_col+3, "Payments", f1_payments)
+        worksheet.write(7, start_col, 'cash', f1_payments)
+        worksheet.write(7, start_col+1, 'cheque', f1_payments)
+        worksheet.write(7, start_col+2, 'credit', f1_payments)
+        worksheet.write(7, start_col+3, 'since when', f1_payments)
+
 
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+7, 0, item['psa'], f2)
@@ -72,11 +80,13 @@ class IteneryReportExcell:
             for saleitem in item['sales']:
                 for key, qty in saleitem.items():
                     i = i+1
-                    worksheet.write(row+7, 1+i, qty, f2)
+                    worksheet.write(row+7, 1+i, qty, f2_sales)
 
-            worksheet.write(row+7, i+2, item['cash'], f2)
-            worksheet.write(row+7, i+3, item['cheque'], f2)
-            worksheet.write(row+7, i+4, item['credit'], f2)
+            worksheet.write(row+7, i+2, item['cash'], f2_payments)
+            worksheet.write(row+7, i+3, item['cheque'], f2_payments)
+            worksheet.write(row+7, i+4, item['credit'], f2_payments)
+            worksheet.write(row+7, i+5, f"{item['not_settled_date']}", f2_payments)
+
 
         workbook.close()
         response = HttpResponse(output.getvalue(

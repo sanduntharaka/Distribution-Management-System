@@ -39,27 +39,22 @@ class DistributorPerformanceReportExcell:
             worksheet.write('A5', 'month')
             worksheet.write('B5', self.main_details['month'])
 
-            worksheet.write('A6', 'Current DSR')
-            worksheet.write('B6', self.main_details['current_dsr'])
-
             worksheet.merge_range(
                 6, 0, 7, 0, "Product Description", f1)
 
             worksheet.merge_range(
-                6, 1, 6, 5, "month", f1)
+                6, 1, 6, 4, "month", f1)
             worksheet.write(7, 1, "Quantity", f1)
             worksheet.write(7, 2, "Value", f1)
-            worksheet.write(7, 3, "GP", f1)
-            worksheet.write(7, 4, "Free Issues", f1)
-            worksheet.write(7, 5, "Market Ret.", f1)
+            worksheet.write(7, 3, "Free Issues", f1)
+            worksheet.write(7, 4, "Market Ret.", f1)
 
             worksheet.merge_range(
-                6, 6, 6, 10, "Cumulative", f1)
-            worksheet.write(7, 6, "Quantity", f1)
-            worksheet.write(7, 7, "Value", f1)
-            worksheet.write(7, 8, "GP", f1)
-            worksheet.write(7, 9, "Free Issues", f1)
-            worksheet.write(7, 10, "Market Ret.", f1)
+                6, 5, 6, 8, "Cumulative", f1)
+            worksheet.write(7, 5, "Quantity", f1)
+            worksheet.write(7, 6, "Value", f1)
+            worksheet.write(7, 7, "Free Issues", f1)
+            worksheet.write(7, 8, "Market Ret.", f1)
 
     #
 
@@ -67,33 +62,29 @@ class DistributorPerformanceReportExcell:
                 worksheet.write(row+7, 0, item['product_name'], f2)
                 worksheet.write(row+7, 1, item['mqty'], f2)
                 worksheet.write(row+7, 2, item['mvalue'], f2)
-                worksheet.write(row+7, 3, item['mgp'], f2)
-                worksheet.write(row+7, 4, item['mfoc'], f2)
-                worksheet.write(row+7, 5, item['mmret'], f2)
-                worksheet.write(row+7, 6, item['cqty'], f2)
-                worksheet.write(row+7, 7, item['cvalue'], f2)
-                worksheet.write(row+7, 8, item['cgp'], f2)
-                worksheet.write(row+7, 9, item['cfoc'], f2)
-                worksheet.write(row+7, 10, item['cmret'], f2)
+                worksheet.write(row+7, 3, item['mfoc'], f2)
+                worksheet.write(row+7, 4, item['mmret'], f2)
+                worksheet.write(row+7, 5, item['cqty'], f2)
+                worksheet.write(row+7, 6, item['cvalue'], f2)
+                worksheet.write(row+7, 7, item['cfoc'], f2)
+                worksheet.write(row+7, 8, item['cmret'], f2)
 
             worksheet.write(row+8, 0, 'Total', f2)
             worksheet.write(row+8, 1, sum([i['mqty']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 2, sum([i['mvalue']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 3, ' ', f2)
-            worksheet.write(row+8, 4, sum([i['mfoc']
+            worksheet.write(row+8, 3, sum([i['mfoc']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 5, sum([i['mmret']
+            worksheet.write(row+8, 4, sum([i['mmret']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 6, sum([i['cqty']
+            worksheet.write(row+8, 5, sum([i['cqty']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 7, sum([i['cvalue']
+            worksheet.write(row+8, 6, sum([i['cvalue']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 8, ' ', f2)
-            worksheet.write(row+8, 9, sum([i['cfoc']
+            worksheet.write(row+8, 7, sum([i['cfoc']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 10, sum([i['cmret']
+            worksheet.write(row+8, 8, sum([i['cmret']
                             for i in self.item_details]), f2)
 
             workbook.close()

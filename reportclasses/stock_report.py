@@ -33,18 +33,24 @@ class GenerateStockReportExcell:
 
         worksheet.write('A5', 'Date', f1)
         worksheet.write('B5', 'Prodcut/Item', f1)
-        worksheet.write('C5', 'Purchases', f1)
-        worksheet.write('D5', 'Sales', f1)
-        worksheet.write('E5', 'Free Issues', f1)
-        worksheet.write('F5', 'Market Returns', f1)
+        worksheet.write('C5', 'Opening Stock', f1)
+        worksheet.write('D5', 'Purchases', f1)
+        worksheet.write('E5', 'Sales', f1)
+        worksheet.write('F5', 'Free Issues', f1)
+        worksheet.write('G5', 'Market Returns', f1)
+        worksheet.write('H5', 'Closing Stock', f1)
+
 
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+4, 0,  self.main_details['date'], f2)
             worksheet.write(row+4, 1, item['product_name'], f2)
-            worksheet.write(row+4, 2, item['purchase'], f2)
-            worksheet.write(row+4, 3, item['sales'], f2)
-            worksheet.write(row+4, 4, item['free_issues'], f2)
-            worksheet.write(row+4, 5, item['market_returns'], f2)
+            worksheet.write(row+4, 2, item['os'], f2)
+            worksheet.write(row+4, 3, item['purchase'], f2)
+            worksheet.write(row+4, 4, item['sales'], f2)
+            worksheet.write(row+4, 5, item['free_issues'], f2)
+            worksheet.write(row+4, 6, item['market_returns'], f2)
+            worksheet.write(row+4, 7, item['cs'], f2)
+
 
         workbook.close()
         response = HttpResponse(output.getvalue(

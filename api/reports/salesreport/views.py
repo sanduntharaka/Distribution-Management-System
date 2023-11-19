@@ -128,7 +128,7 @@ class FilterByProduct(APIView):
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
+from dealer_details.models import Dealer
 class IteneryReport(APIView):
     def post(self, request):
 
@@ -137,6 +137,7 @@ class IteneryReport(APIView):
             now = datetime.now()
             current_month_name = now.strftime('%B')
             three_months_ago = today - timedelta(days=30 * 3)
+            psa = request.data['psa']
             sales_ref = request.data['sales_ref']
             distributor = request.data['distributor']
             categories = Category.objects.all()
@@ -144,30 +145,30 @@ class IteneryReport(APIView):
                 'main_details': {
                     'month': current_month_name,
                     'sales_rep': UserDetails.objects.get(id=sales_ref).full_name,
-                    'area': UserDetails.objects.get(id=sales_ref).getTerrotories(),
+                    'area': PrimarySalesArea.objects.get(id=psa).area_name,
                     'distributor': UserDetails.objects.get(id=distributor).full_name,
 
                 }
             }
-
+            dealers = Dealer.objects.filter(psa=psa)
             psas = PrimarySalesArea.objects.filter(sales_ref=sales_ref)
             psa_data = []
 
-            for psa in psas:
+            for dealer in dealers:
 
                 try:
                     visited = SalesRefInvoice.objects.filter(
-                        dis_sales_ref__sales_ref=sales_ref, dealer__psa=psa).first().date
+                        dis_sales_ref__sales_ref=sales_ref, dealer=dealer).first().date
                 except:
                     visited = 'No'
                 row_data = {}
-                row_data['psa'] = psa.area_name
+                row_data['psa'] = dealer.name
                 row_data['visited'] = visited
 
                 sales_list = []
                 for category in categories:
                     sales_data = {}
-                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__date__range=(three_months_ago, today), invoice_item__bill__dealer__psa=psa
+                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__date__range=(three_months_ago, today), invoice_item__bill__dealer=dealer
                                                      )
 
 # invoice_item__bill__dis_sales_ref__sales_ref=sales_ref,
@@ -179,11 +180,20 @@ class IteneryReport(APIView):
                 psa_data.append(row_data)
 
                 invoices = SalesRefInvoice.objects.filter(
-                    dis_sales_ref__sales_ref=sales_ref, date__range=(three_months_ago, today), dealer__psa=psa)
+                    dis_sales_ref__sales_ref=sales_ref, date__range=(three_months_ago, today), dealer=dealer)
 
                 row_data['cash'] = sum([i.total_cash() for i in invoices])
                 row_data['cheque'] = sum([i.total_cheques() for i in invoices])
                 row_data['credit'] = sum([i.total_credit() for i in invoices])
+                
+                try: 
+                    not_settle_date = SalesRefInvoice.objects.filter(
+                    dis_sales_ref__sales_ref=sales_ref, is_settiled=False, dealer=dealer,status='confirmed').first().date
+                except:
+                    not_settle_date= ' '
+                row_data['not_settled_date'] = not_settle_date
+                
+                
 
             data['category_details'] = psa_data
             file_genearte = IteneryReportExcell(data)

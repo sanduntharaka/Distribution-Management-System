@@ -4,6 +4,7 @@
 *.pyc
 __pycache__
 db.sqlite3
+/core/settings.py
 core/settings.py
 settings.py
 settings copy.py

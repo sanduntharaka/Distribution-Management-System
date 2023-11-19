@@ -62,8 +62,9 @@ class GetReturnsByDSalesref(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
+        print(item)
         queryset = SalesRefReturn.objects.filter(
-            dis_sales_ref__distributor=item)
+            dis_sales_ref__sales_ref=item)
         queryset = queryset.order_by('-date')
         return get_list_or_404(queryset)
 
