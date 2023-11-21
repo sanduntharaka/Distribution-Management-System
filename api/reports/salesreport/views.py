@@ -1,3 +1,5 @@
+from targets.models import SalesrefTargets
+from dealer_details.models import Dealer
 from reportclasses.productive_report import ProductiveReportExcell
 from not_buy_details.models import NotBuyDetails
 from reportclasses.itenery_report import IteneryReportExcell
@@ -128,7 +130,7 @@ class FilterByProduct(APIView):
         serializer = serializers.InvoiceItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-from dealer_details.models import Dealer
+
 class IteneryReport(APIView):
     def post(self, request):
 
@@ -185,15 +187,13 @@ class IteneryReport(APIView):
                 row_data['cash'] = sum([i.total_cash() for i in invoices])
                 row_data['cheque'] = sum([i.total_cheques() for i in invoices])
                 row_data['credit'] = sum([i.total_credit() for i in invoices])
-                
-                try: 
+
+                try:
                     not_settle_date = SalesRefInvoice.objects.filter(
-                    dis_sales_ref__sales_ref=sales_ref, is_settiled=False, dealer=dealer,status='confirmed').first().date
+                        dis_sales_ref__sales_ref=sales_ref, is_settiled=False, dealer=dealer, status='confirmed').first().date
                 except:
-                    not_settle_date= ' '
+                    not_settle_date = ' '
                 row_data['not_settled_date'] = not_settle_date
-                
-                
 
             data['category_details'] = psa_data
             file_genearte = IteneryReportExcell(data)
@@ -227,7 +227,6 @@ class ProductivityReport(APIView):
                 'sales_ref': UserDetails.objects.get(id=sales_ref).full_name,
                 'month': current_month_name,
                 'date': today,
-
             }
             ## actual working ##
             created_invoices_this_month = SalesRefInvoice.objects.filter(
@@ -283,6 +282,7 @@ class ProductivityReport(APIView):
 
             row_data['days_worked'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual': total_unique_days_this_month,
                     'last_actual': total_unique_days_last_month
                 },
@@ -328,6 +328,7 @@ class ProductivityReport(APIView):
 
             row_data['turnover_cash'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual': total_this_cash,
                     'last_actual': total_last_cash
                 },
@@ -339,6 +340,7 @@ class ProductivityReport(APIView):
 
             row_data['turnover_credit'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual': total_this_credit,
                     'last_actual': total_last_credit
                 },
@@ -350,6 +352,7 @@ class ProductivityReport(APIView):
 
             row_data['turnover_cheque'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual': total_this_cheque,
                     'last_actual': total_last_cheque
                 },
@@ -359,9 +362,22 @@ class ProductivityReport(APIView):
                 }
             }
 
+            # row_data['turnover_total'] = {
+            #     'month': {
+            #         'this_target':'',
+            #         'this_actual': total_this_cheque,
+            #         'last_actual': total_last_cheque
+            #     },
+            #     'cumulative': {
+            #         'this_actual': total_cumulative_cheque,
+
+            #     }
+            # }
+
             # total invoices
             row_data['callage_tot_calls'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual': created_invoices_this_month.count(),
                     'last_actual': created_invoices_last_month.count()
                 },
@@ -374,6 +390,7 @@ class ProductivityReport(APIView):
             # total productive calls
             row_data['callage_tot_productive_calls'] = {
                 'month': {
+                    'this_target': '',
                     'this_actual':  InvoiceIntem.objects.filter(bill__in=created_invoices_this_month).count(),
                     'last_actual': InvoiceIntem.objects.filter(bill__in=created_invoices_last_month).count()
                 },
@@ -389,8 +406,11 @@ class ProductivityReport(APIView):
             category_details = []
             for category in categories:
                 details = {}
+                targets = SalesrefTargets.objects.filter(
+                    target_person=sales_ref, date_form__month=today.month, date_to__month=today.month, category=category)
                 details[category.id] = {
                     'month': {
+                        'this_target': sum([i.qty+i.foc for i in targets]),
                         'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month, item__item__category=category)]),
                         'last_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_last_month, item__item__category=category)])
                     },

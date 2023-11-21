@@ -47,7 +47,8 @@ class ShowSalesrepTargetsSerializer(serializers.ModelSerializer):
                   'date_form',
                   'date_to',
                   'category',
-                  'amount',
+                  'foc',
+                  'qty',
                   'added_by', 'salesrep_name',
                   'category_name', 'id')
 
@@ -55,4 +56,4 @@ class ShowSalesrepTargetsSerializer(serializers.ModelSerializer):
 class EditSalesrepTargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesrefTargets
-        fields = ('date_form', 'date_to', 'amount')
+        fields = ('date_form', 'date_to', 'foc', 'qty')

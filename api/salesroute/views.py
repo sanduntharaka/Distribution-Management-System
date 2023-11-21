@@ -69,9 +69,9 @@ class GetDetails(APIView):
 
         except SalesRoute.DoesNotExist:
             plan = []
-            print("no")
+
         try:
-            print("y")
+
             requested_route = DailyStatus.objects.get(
                 date=request.data['date'], route__salesref=request.data['salesref'])
             covered = []
@@ -86,6 +86,5 @@ class GetDetails(APIView):
 
         except DailyStatus.DoesNotExist:
             covered = []
-            print('Not exist')
 
         return Response(data={'given': plan, 'coverd': covered}, status=status.HTTP_200_OK)

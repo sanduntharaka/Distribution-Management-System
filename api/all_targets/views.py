@@ -52,6 +52,7 @@ class AddSalesrepTargets(generics.CreateAPIView):
         salesrep_distributor = SalesRefDistributor.objects.get(
             sales_ref=data['salesrep'])
         data['salesrep_distributor'] = salesrep_distributor.id
+        data['target_person'] = data['salesrep']
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

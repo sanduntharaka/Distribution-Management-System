@@ -14,11 +14,15 @@ from dealer_details.models import Dealer
 from item_category.models import Category
 from reportclasses.daily_report import GenerateDailyReportExcell
 
+from sales_route.models import SalesRoute, DailyStatus
+
+from datetime import date, timedelta
+
 
 class GetDailyReport(APIView):
     def post(self, request):
-        print(request.data)
         try:
+            today = date.today()
             date_from = request.data['date_from']
             date_to = request.data['date_to']
 
@@ -28,8 +32,6 @@ class GetDailyReport(APIView):
             filters['dis_sales_ref__sales_ref'] = sales_ref
             filters['date__range'] = (date_from, date_to)
 
-            invoice_list = SalesRefInvoice.objects.filter(
-                **filters)
             # dealers = Dealer.objects.filter(
             #     id__in=[i['dealer'] for i in dealer_list])
             # print('dd:', dealers)
@@ -44,26 +46,62 @@ class GetDailyReport(APIView):
                     'distributor': UserDetails.objects.get(id=distributor).full_name,
                 }
             }
+            try:
+                planing_route_currunt = DailyStatus.objects.get(
+                    date=date_from, route__salesref=sales_ref)
+                planned_dealers = planing_route_currunt.current_plan
+                print('pd:', planned_dealers)
+
+            except:
+                pass
+
+            try:
+                planing_route_month = DailyStatus.objects.filter(
+                    date__month=today.month, route__salesref=sales_ref)
+                visits_list = [i.coverd for i in planing_route_month]
+                total_vists = []
+                for i in visits_list:
+                    for j in i:
+                        total_vists.append(j['id'])
+                print(total_vists)
+            except:
+                pass
+
+            data['sub_detail_1'] = {
+                'no_calls_p_day': len(planing_route_currunt.coverd),
+                'no_productive_calls_p_day': SalesRefInvoice.objects.filter(**filters, status='confirmed').count(),
+                'no_calls_p_month': len(total_vists),
+                'no_productive_calls_p_month': SalesRefInvoice.objects.filter(dealer__in=total_vists, date__month=today.month, dis_sales_ref__sales_ref=sales_ref, status='confirmed').count(),
+
+            }
 
             dealer_data = []
-            for invoice in invoice_list:
+            dealer_list = combined_list = list(
+                set(planned_dealers + total_vists))
+            dealers = Dealer.objects.filter(id__in=dealer_list)
+            for dealer in dealers:
+                invoice_list = SalesRefInvoice.objects.filter(
+                    **filters, dealer=dealer)
+
                 pay_details = PaymentDetails.objects.filter(
-                    bill=invoice, is_completed=False)
+                    bill__in=invoice_list, is_completed=False)
+
                 details = {
-                    'dealer': invoice.dealer.name,
-                    'address': invoice.dealer.address,
-                    'amount': invoice.total if invoice.is_settiled is not True else ' ',
-                    'since': pay_details.last().bill.date if pay_details.last() is not None and invoice.is_settiled is not True else ' ',
+                    'dealer': dealer.name,
+                    'address': dealer.address,
+                    'amount': sum([invoice.total if invoice.is_settiled is not True else 0 for invoice in invoice_list]),
+                    'since': pay_details.last().bill.date if pay_details.last() is not None else ' ',
                 }
 
                 sales_list = []
                 foc_list = []
                 market_return = []
+
                 for category in categories:
                     sales_data = {}
                     foc_data = {}
                     market_return_data = {}
-                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__dis_sales_ref__sales_ref=sales_ref, invoice_item__bill__date__range=(date_from, date_to), invoice_item__bill=invoice
+                    bill_items = Item.objects.filter(item__item__category=category, invoice_item__bill__dis_sales_ref__sales_ref=sales_ref, invoice_item__bill__date__range=(date_from, date_to), invoice_item__bill__in=invoice_list
                                                      )
                     sale_sum = sum(
                         [bil_item.foc+bil_item.qty for bil_item in bill_items])
@@ -76,7 +114,7 @@ class GetDailyReport(APIView):
                     foc_list.append(foc_data)
 
                     maket_return_items = SalesRefReturnItem.objects.filter(
-                        item__item__category=category, salesrefreturn__dis_sales_ref__sales_ref=sales_ref, salesrefreturn__date__range=(date_from, date_to), salesrefreturn__dealer=invoice.dealer)
+                        item__item__category=category, salesrefreturn__dis_sales_ref__sales_ref=sales_ref, salesrefreturn__date__range=(date_from, date_to), salesrefreturn__dealer=dealer)
 
                     mret_sum = sum(
                         [mk_item.foc+mk_item.qty for mk_item in maket_return_items])
@@ -88,16 +126,21 @@ class GetDailyReport(APIView):
                 details['foc'] = foc_list
                 details['market_return'] = market_return
 
-                details['cash'] = invoice.total_cash()
-                details['cheque'] = invoice.total_cheques()
-                details['credit'] = invoice.total_credit()
+                details['total'] = sum([i.total for i in invoice_list])
+                try:
+                    reason = NotBuyDetails.objects.filter(
+                        dis_sales_ref__sales_ref=sales_ref, dealer=dealer, datetime__date__range=(date_from, date_to)).first().get_reson()
 
+                except Exception as e:
+                    reason = ' '
+                details['not_buy_reason'] = reason
                 dealer_data.append(details)
             data['category_details'] = dealer_data
             # print(data)
             file_genearte = GenerateDailyReportExcell(data)
 
             return file_genearte.generate()
+
             # return Response(data='c', status=status.HTTP_200_OK)
         except Exception as e:
             print(e)

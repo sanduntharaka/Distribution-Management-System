@@ -8,6 +8,7 @@ class GenerateDailyReportExcell:
     def __init__(self, data) -> None:
         self.main_details = data['main_details']
         self.item_details = data['category_details']
+        self.sub_details_calls = data['sub_detail_1']
 
     # def clean_data(self):
     #     grouped_data = defaultdict(list)
@@ -49,6 +50,19 @@ class GenerateDailyReportExcell:
 
         worksheet.write('A6', 'Sales Rep')
         worksheet.write('B6', self.main_details['sales_rep'])
+
+        # H,I
+
+        worksheet.write('H3', 'No of Calls for the Day')
+        worksheet.write('I3', self.sub_details_calls['no_calls_p_day'])
+        worksheet.write('H4', 'Total Productive Calls for the Day')
+        worksheet.write(
+            'I4', self.sub_details_calls['no_productive_calls_p_day'])
+        worksheet.write('H5', 'Total Calls to date')
+        worksheet.write('I5', self.sub_details_calls['no_calls_p_month'])
+        worksheet.write('H6', 'Total Productive Calls todate')
+        worksheet.write(
+            'I6', self.sub_details_calls['no_productive_calls_p_month'])
 
         worksheet.merge_range(
             6, 0, 7, 0, "Name of outlet", f1)
@@ -98,10 +112,9 @@ class GenerateDailyReportExcell:
         start_col = column-1
 
         worksheet.merge_range(
-            6, start_col, 6, start_col+2, "Mode of Payment", f1)
-        worksheet.write(7, start_col, 'cash', f1)
-        worksheet.write(7, start_col+1, 'cheque', f1)
-        worksheet.write(7, start_col+2, 'credit', f1)
+            6, start_col, 7, start_col, "Total", f1)
+        worksheet.merge_range(
+            6, start_col+1, 7, start_col+1, "Not buy Reason", f1)
 
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+7, 0, item['dealer'], f2)
@@ -125,9 +138,8 @@ class GenerateDailyReportExcell:
                 for key, qty in mretitem.items():
                     k = k+1
                     worksheet.write(row+7, i+j+k+3, qty, f2)
-            worksheet.write(row+7, i+j+k+4, item['cash'], f2)
-            worksheet.write(row+7, i+j+k+5, item['cheque'], f2)
-            worksheet.write(row+7, i+j+k+6, item['credit'], f2)
+            worksheet.write(row+7, i+j+k+4, item['total'], f2)
+            worksheet.write(row+7, i+j+k+5, item['not_buy_reason'], f2)
 
         workbook.close()
         response = HttpResponse(output.getvalue(

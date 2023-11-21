@@ -11,6 +11,8 @@ settings copy.py
 sesettings2.py
 core/settings.py
 media
+0004_remove_salesreftargets_amount_salesreftargets_foc_and_more.py
+0003_salesreftargets_target_person.py
 0003_primarysalesarea_sales_ref.py
 0010_remove_terriotory_user_detail_userterriotory.py
 0009_remove_userdetails_terriotory_terriotory.py
