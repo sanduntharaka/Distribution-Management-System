@@ -45,7 +45,8 @@ const CreteTarget = ({ user }) => {
         date_form: '',
         date_to: '',
         category: '',
-        amount: 0,
+        qty: 0,
+        foc: 0,
         added_by: user.id,
 
 
@@ -377,12 +378,23 @@ const CreteTarget = ({ user }) => {
                                 </div>
                             </div>
                             <div className="form__row__col">
-                                <div className="form__row__col__label">Type Target Amount (Rs)</div>
+                                <div className="form__row__col__label">Qty (Rs)</div>
                                 <div className="form__row__col__input">
 
 
                                     <input type="number" placeholder='0' onChange={(e) =>
-                                        setSalesrepData({ ...salesrepData, amount: e.target.value })
+                                        setSalesrepData({ ...salesrepData, qty: e.target.value })
+                                    } required />
+
+                                </div>
+                            </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Foc (Rs)</div>
+                                <div className="form__row__col__input">
+
+
+                                    <input type="number" placeholder='0' onChange={(e) =>
+                                        setSalesrepData({ ...salesrepData, foc: e.target.value })
                                     } required />
 
                                 </div>

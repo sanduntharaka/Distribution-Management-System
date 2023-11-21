@@ -90,7 +90,9 @@ const ViewTargets = (props) => {
         { title: 'Category Name', field: 'category_name', editable: false, },
         { title: 'Date From', field: 'date_form' },
         { title: 'Date To', field: 'date_to' },
-        { title: 'Amount(Rs)', field: 'amount' },
+        { title: 'Qty', field: 'qty' },
+        { title: 'Foc)', field: 'foc' },
+
     ];
 
 

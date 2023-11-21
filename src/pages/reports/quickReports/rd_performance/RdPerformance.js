@@ -91,7 +91,7 @@ const RdPerformanceReport = (props) => {
                 setFile(res.data)
                 setError(false);
                 setSuccess(true);
-                setFileName(`distributor_performance`)
+                setFileName(`rd_performance`)
                 setTitle('Your file is ready');
                 setMsg('Click download button to download');
                 handleOpen();
