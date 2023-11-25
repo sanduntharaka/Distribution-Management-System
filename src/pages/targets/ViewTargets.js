@@ -57,6 +57,9 @@ const tableIcons = {
 const ViewTargets = (props) => {
     const [distributorData, setDistributorData] = useState([]);
     const [salesrepData, setSalesrepData] = useState([]);
+    const [salesrepValueData, setSalesrepValueData] = useState([]);
+
+    
 
 
     const [tblData, setTableData] = useState([]);
@@ -93,6 +96,23 @@ const ViewTargets = (props) => {
         { title: 'Qty', field: 'qty' },
         { title: 'Foc)', field: 'foc' },
 
+    ];
+
+    const columns_val_salesrep = [
+        {
+            title: 'ID',
+            field: 'id',
+            cellStyle: { width: '10px' },
+            width: '10px',
+            headerStyle: { width: '10px' },
+            editable: false,
+        },
+        { title: 'Salesrep Name', field: 'salesrep_name', editable: false, },
+
+        
+        { title: 'Date From', field: 'date_form' },
+        { title: 'Date To', field: 'date_to' },
+        { title: 'Value', field: 'value' },
     ];
 
 
@@ -142,6 +162,23 @@ const ViewTargets = (props) => {
             });
         setSrepLoading(true)
         axiosInstance
+            .get(`/target/value-show-salesrep/`, {
+                headers: {
+                    Authorization:
+                        'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+                },
+            })
+            .then((res) => {
+                setSrepLoading(false);
+                setSalesrepValueData(res.data);
+
+            })
+            .catch((err) => {
+                setSrepLoading(false);
+                console.log(err);
+            });
+
+            axiosInstance
             .get(`/target/show-salesrep/`, {
                 headers: {
                     Authorization:
@@ -346,6 +383,41 @@ const ViewTargets = (props) => {
                                 title={false}
                                 columns={columns_salesrep}
                                 data={salesrepData}
+                                icons={tableIcons}
+                                editable={
+                                    props.user.is_manager || props.user.is_company
+                                        ? {
+                                            onRowUpdate: (newData, oldData) =>
+                                                new Promise((resolve) => {
+                                                    handleEditSalesrep(newData, oldData, resolve);
+                                                }),
+
+                                            onRowDelete: (oldData) =>
+                                                new Promise((resolve) => {
+                                                    handleDeleteSalesrep(oldData, resolve);
+                                                }),
+                                        }
+                                        : ''
+                                }
+                            />
+                            {/* </section> */}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="page__title">
+                <p>View Salesrep Value Targets</p>
+            </div>
+            <div className="page__pcont">
+                <div className="page__pcont__row">
+                    <div className="page__pcont__row__col">
+                        <div className="dataTable">
+                            <MaterialTable
+                                isLoading={srepLoading}
+                                title={false}
+                                columns={columns_val_salesrep}
+                                data={salesrepValueData}
                                 icons={tableIcons}
                                 editable={
                                     props.user.is_manager || props.user.is_company

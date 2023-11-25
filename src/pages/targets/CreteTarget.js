@@ -52,6 +52,14 @@ const CreteTarget = ({ user }) => {
 
     })
 
+    const [salesrepValData, setSalesrepValData] = useState({
+        target_person: '',
+        date_form: '',
+        date_to: '',
+        value:'',
+        added_by: user.id,
+    })
+
 
 
     const [dealers, setDealers] = useState([])
@@ -183,6 +191,40 @@ const CreteTarget = ({ user }) => {
                 handleOpen();
             });
     }
+    const handleSubmitValSalesrep = (e) => {
+        e.preventDefault();
+
+        axiosInstance
+            .post(
+                `/target/value-add-salesrep/`,
+                salesrepValData,
+
+                {
+                    headers: {
+                        Authorization:
+                            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+                    },
+                }
+            )
+            .then((res) => {
+                console.log(res);
+                setError(false)
+                setSuccess(true)
+                setMsg('Your data saved successfully.');
+                setTitle('Success');
+                handleOpen();
+            })
+            .catch((err) => {
+                console.log(err);
+                setSuccess(false);
+                setError(true);
+                setMsg('Cannot save your data. Please try again');
+                setTitle('Error');
+                handleOpen();
+            });
+    }
+
+    
 
     return (
         <div className="page">
@@ -301,7 +343,7 @@ const CreteTarget = ({ user }) => {
 
 
             <div className="page__title">
-                <p>Target for Sales Rep</p>
+                <p>By Category Target  for Sales Rep</p>
             </div>
             <div className="page__pcont">
                 <div className="form">
@@ -378,7 +420,7 @@ const CreteTarget = ({ user }) => {
                                 </div>
                             </div>
                             <div className="form__row__col">
-                                <div className="form__row__col__label">Qty (Rs)</div>
+                                <div className="form__row__col__label">Qty</div>
                                 <div className="form__row__col__input">
 
 
@@ -389,7 +431,7 @@ const CreteTarget = ({ user }) => {
                                 </div>
                             </div>
                             <div className="form__row__col">
-                                <div className="form__row__col__label">Foc (Rs)</div>
+                                <div className="form__row__col__label">Foc</div>
                                 <div className="form__row__col__input">
 
 
@@ -414,6 +456,86 @@ const CreteTarget = ({ user }) => {
                         </div>
                     </form>
                 </div>
+                
+            </div>
+            <div className="page__title">
+                <p>By Value Target  for Sales Rep</p>
+            </div>
+            <div className="page__pcont">
+                <div className="form">
+                    <form action="">
+                        <div className="form__row">
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select Sales Rep</div>
+                                <div className="form__row__col__input">
+                                    <select
+                                        type="text"
+                                        placeholder="Select Sales Rep"
+                                        onChange={(e) =>
+                                            setSalesrepValData({ ...salesrepValData, target_person: e.target.value })
+                                        }
+                                        required
+                                    >
+                                        <option>Select sales rep</option>
+                                        {
+                                            salesrefs.map((item, i) => (
+                                                <option value={item.id} key={i}>{item.full_name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select Date From</div>
+                                <div className="form__row__col__input">
+
+                                    <input type="date" onChange={(e) =>
+                                        setSalesrepValData({ ...salesrepValData, date_form: e.target.value })
+                                    }
+                                        required />
+
+                                </div>
+                            </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select Date To</div>
+                                <div className="form__row__col__input">
+
+
+                                    <input type="date" onChange={(e) =>
+                                        setSalesrepValData({ ...salesrepValData, date_to: e.target.value })
+                                    }
+                                        required />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form__row">
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Type Value</div>
+                                <div className="form__row__col__input">
+                                <input type="number" placeholder='0' onChange={(e) =>
+                                        setSalesrepValData({ ...salesrepValData, value: e.target.value })
+                                    } required />
+                                   
+                                </div>
+                            </div>
+                            
+
+                        </div>
+
+                        <div className="form__btn">
+                            <div className="form__btn__container">
+                                <button
+                                    className="btnEdit"
+                                    onClick={(e) => handleSubmitValSalesrep(e)}
+                                >
+                                    save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
             </div>
 
         </div>

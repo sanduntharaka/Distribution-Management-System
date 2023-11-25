@@ -68,6 +68,8 @@ const AllCategories = (props) => {
     },
     { title: 'Category Name', field: 'category_name' },
     { title: 'Details', field: 'description' },
+    { title: 'Short Code', field: 'short_code' },
+  
     { title: 'FOC(%)', field: 'foc_percentage' },
     { title: 'Created', field: 'date', editable: false },
   ];

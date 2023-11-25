@@ -164,7 +164,7 @@ const CreateBill = ({ inventory }) => {
         setTerriotories(res.data)
         if (user.is_salesref) {
           console.log('cde:', res.data[0].code)
-          setData({ ...data, bill_code: 'INV' + res.data[0].code })
+          setData({ ...data, bill_code: 'INV-' + res.data[0].code })
         }
       })
       .catch((err) => {
