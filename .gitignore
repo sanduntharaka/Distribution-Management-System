@@ -7,10 +7,15 @@ db.sqlite3
 /core/settings.py
 core/settings.py
 settings.py
+settings.py
 settings copy.py
 sesettings2.py
 core/settings.py
 media
+core/settings.py
+0004_salesrefvaluetarget_added_by.py
+0003_salesrefvaluetarget.py
+0003_category_short_code.py
 0004_remove_salesreftargets_amount_salesreftargets_foc_and_more.py
 0003_salesreftargets_target_person.py
 0003_primarysalesarea_sales_ref.py

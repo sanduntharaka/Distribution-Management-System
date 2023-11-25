@@ -7,5 +7,6 @@ class Category(models.Model):
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     category_name = models.CharField(max_length=50, null=False)
     description = models.TextField(null=True, blank=True)
+    short_code = models.CharField(max_length=50,null=True,blank=True)
     foc_percentage = models.IntegerField(default=10)
     date = models.DateField(auto_now=True)

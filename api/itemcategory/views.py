@@ -39,6 +39,7 @@ class CreateCategoryFromExcell(APIView):
                 'description': row[1],
                 'foc_percentage': row[2],
                 'date': row[3],
+                'short_code':row[4],
                 'added_by': user,
             }
 

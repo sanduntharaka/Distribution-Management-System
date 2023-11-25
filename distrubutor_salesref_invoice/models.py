@@ -42,7 +42,7 @@ class SalesRefInvoice(models.Model):
     confirmed_date = models.DateField(blank=True, null=True)
 
     def get_bill_code_number_combine(self):
-        return self.bill_code + str(self.bill_number)
+        return f"{self.bill_code}-{str(self.bill_number)}"
 
     def change_total(self, subtotal, discount):
 
@@ -264,7 +264,7 @@ class InvoiceIntem(models.Model):
 
         category = Item.objects.filter(invoice_item=self.id).first()
         if category is not None:
-            return category.item.item.category.category_name
+            return category.item.item.category.short_code
 
 
 class Item(models.Model):

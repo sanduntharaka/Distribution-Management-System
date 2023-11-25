@@ -5,7 +5,7 @@ from item_category.models import Category
 class CreateCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('added_by', 'category_name', 'description', 'foc_percentage')
+        fields = ('added_by', 'category_name','short_code', 'description', 'foc_percentage')
 
 
 class GetCategorySerializer(serializers.ModelSerializer):

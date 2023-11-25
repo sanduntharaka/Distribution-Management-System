@@ -105,12 +105,12 @@ class GetDailyReport(APIView):
                                                      )
                     sale_sum = sum(
                         [bil_item.foc+bil_item.qty for bil_item in bill_items])
-                    sales_data[category.category_name] = sale_sum if sale_sum > 0 else ' '
+                    sales_data[category.short_code] = sale_sum if sale_sum > 0 else ' '
                     sales_list.append(sales_data)
 
                     foc_sum = sum(
                         [bil_item.foc for bil_item in bill_items])
-                    foc_data[category.category_name] = foc_sum if foc_sum > 0 else ' '
+                    foc_data[category.short_code] = foc_sum if foc_sum > 0 else ' '
                     foc_list.append(foc_data)
 
                     maket_return_items = SalesRefReturnItem.objects.filter(
@@ -118,7 +118,7 @@ class GetDailyReport(APIView):
 
                     mret_sum = sum(
                         [mk_item.foc+mk_item.qty for mk_item in maket_return_items])
-                    market_return_data[category.category_name] = mret_sum if mret_sum > 0 else ' '
+                    market_return_data[category.short_code] = mret_sum if mret_sum > 0 else ' '
 
                     market_return.append(market_return_data)
 

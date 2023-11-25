@@ -29,3 +29,11 @@ class SalesrefTargets(models.Model):
     qty = models.IntegerField(blank=True, null=True)
 
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+class SalesrefValueTarget(models.Model):
+    target_person = models.ForeignKey(
+        UserDetails, on_delete=models.CASCADE, null=True, blank=True)
+    date_form = models.DateField()
+    date_to = models.DateField()
+    value = models.FloatField()
+    added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True,blank=True)

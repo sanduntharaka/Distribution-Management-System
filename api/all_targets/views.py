@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_list_or_404, get_object_or_404
 from manager_distributor.models import ManagerDistributor
 from distrubutor_salesref.models import SalesRefDistributor
-from targets.models import DistributorTargets, SalesrefTargets
+from targets.models import DistributorTargets, SalesrefTargets,SalesrefValueTarget
 
 
 class AddDistributorTargets(generics.CreateAPIView):
@@ -143,3 +143,14 @@ class RangeDetails(APIView):
             })
 
         return Response(data=data, status=status.HTTP_200_OK)
+
+
+class AddSalesrepValueTargets(generics.CreateAPIView):
+    serializer_class = serializers.AddSalesrefValueTargetsSerializer
+    queryset = SalesrefValueTarget.objects.all()
+
+class ViewSalesrepValueTargets(generics.ListAPIView):
+    serializer_class = serializers.ShowSalesrepValueTargetsSerializer
+    queryset = SalesrefValueTarget.objects.all()
+
+

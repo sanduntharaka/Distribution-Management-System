@@ -56,4 +56,4 @@ class SalesRefReturnItem(models.Model):
         # Item.objects.filter(invoice_item=self.id).first()
         category = self.inventory_item
         if category is not None:
-            return category.category.category_name
+            return category.category.short_code
