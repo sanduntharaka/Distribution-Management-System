@@ -29,7 +29,7 @@ const IteneryReport = (props) => {
         date_from: '',
         date_to: '',
         status: 'confirmed',
-        sales_ref:'',
+        sales_ref: '',
         psa: '',
         distributor: JSON.parse(sessionStorage.getItem('user_details')).id,
     });
@@ -174,8 +174,8 @@ const IteneryReport = (props) => {
                             ''
                         )}
 
-           
-{
+
+                        {
                             !props.user.is_salesref ? (
                                 <div className="form__row__col">
                                     <div className="form__row__col__label">Sales ref</div>
@@ -195,21 +195,21 @@ const IteneryReport = (props) => {
                             ) : ''
                         }
                         <div className="form__row__col">
-                                    <div className="form__row__col__label">Psa</div>
-                                    <div className="form__row__col__input">
-                                        <select name="" id="" onChange={(e) =>
-                                            setDateBy({ ...dateBy, psa: e.target.value })}>
+                            <div className="form__row__col__label">Psa</div>
+                            <div className="form__row__col__input">
+                                <select name="" id="" onChange={(e) =>
+                                    setDateBy({ ...dateBy, psa: e.target.value })}>
 
-                                            <option value="">Select psa</option>
+                                    <option value="">Select psa</option>
 
-                                            {
-                                                psas.map((item, i) => (<option value={item.id} key={i}>{item.area_name}</option>))
-                                            }
+                                    {
+                                        psas.map((item, i) => (<option value={item.id} key={i}>{item.area_name}</option>))
+                                    }
 
-                                        </select>
-                                    </div>
-                                </div>
-                        <div className="form__row__col dontdisp"></div>
+                                </select>
+                            </div>
+                        </div>
+
 
                         <div className="form__row__col dontdisp"></div>
                         <div

@@ -77,6 +77,7 @@ const AddInvoice = ({ inventory }) => {
         due_date: '',
         from_sales_return: false,
         from_market_return: false,
+        inventory: inventory.id
 
 
     });
@@ -90,6 +91,7 @@ const AddInvoice = ({ inventory }) => {
         whole_sale_price: '',
         retail_price: '',
         item_code: '',
+        id: '',
     });
 
 
@@ -109,7 +111,7 @@ const AddInvoice = ({ inventory }) => {
                     console.log(res.data)
                     setCurrentItem((prevItems) => ({
                         ...prevItems,
-                        id: res.data.id,
+
                         whole_sale_price: res.data.whole_sale_price,
                         retail_price: res.data.retail_price,
                         pack_size: res.data.pack_size,
@@ -148,9 +150,11 @@ const AddInvoice = ({ inventory }) => {
     };
     const hanldeProductFilter = (e, item) => {
         setValue2(item.item_code);
+        console.log('iii:', item)
         setCurrentItem((prevItems) => ({
             ...prevItems,
             item_code: item.item_code,
+            id: item.id,
         }))
         setProduct(item);
         setShowProducts(false);
@@ -228,6 +232,7 @@ const AddInvoice = ({ inventory }) => {
     const hadleCreate = (e) => {
         e.preventDefault();
         setData({ ...data, pay_total: finalTotal - data.discount })
+
         setIsLoading(false);
         showInvoice();
     };

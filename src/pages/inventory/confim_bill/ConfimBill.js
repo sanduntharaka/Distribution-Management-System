@@ -54,92 +54,35 @@ const ConfimBill = (props) => {
 
     console.log('rsdaa:', props.data)
     axiosInstance
-      .post('/salesref/invoice/create/invoice/', props.data, {
+      .post('/distributor/stoks/add/', { 'invoice': props.data, 'items': props.items }, {
         headers: {
           Authorization:
             'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
         },
       })
       .then((res) => {
-        setInvoice({
-          bill_number: res.data.bill_number,
-        });
-        const item_data = {
-          bill: res.data.id,
-          items: props.items,
-        };
-        let cheque_details = {
-          bill: res.data.id,
-          date: props.cheque_detail.date,
-          cheque_number: props.cheque_detail.cheque_number,
-          account_number: props.cheque_detail.account_number,
-          payee_name: props.cheque_detail.payee_name,
-          amount: props.cheque_detail.amount,
-        };
-        axiosInstance
-          .post('/salesref/invoice/create/invoice/items/', item_data, {
-            headers: {
-              Authorization:
-                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-            },
-          })
-          .then((res) => {
-            if (props.cheque) {
-              axiosInstance
-                .post(
-                  '/salesref/invoice/create/invoice/cheque/',
-                  cheque_details,
-                  {
-                    headers: {
-                      Authorization:
-                        'JWT ' +
-                        JSON.parse(sessionStorage.getItem('userInfo')).access,
-                    },
-                  }
-                )
-                .then((res) => {
-                  isLoading(false);
-                  setSuccessBill(true);
-                  setErrorBill(false);
-                  setTitle('Success');
-                  setMsg(
-                    'Your bill saved successfully. If you want to get print, please click print button'
-                  );
-                  handleOpen();
-                })
-                .catch((err) => {
-                  isLoading(false);
-                  setErrorBill(true);
-                  setSuccessBill(false);
-                  setTitle('Error');
-                  setMsg(
-                    'Your bill cannot save right now. Please try again later'
-                  );
-                  handleOpen();
-                  console.log(err);
-                });
-            } else {
-              isLoading(false);
-              setSuccessBill(true);
-              setErrorBill(false);
-              setTitle('Success');
-              setMsg(
-                'Your bill saved successfully. If you want to get print, please click print button'
-              );
-              handleOpen();
-            }
-          })
-          .catch((err) => {
-            isLoading(false);
-            setErrorBill(true);
-            setSuccessBill(false);
-            setTitle('Error');
-            setMsg('Your bill cannot save right now. Please try again later');
-            handleOpen();
-            console.log(err);
-          });
+        console.log('res:', res)
+
+        isLoading(false);
+        setSuccessBill(true);
+        setErrorBill(false);
+        setTitle('Success');
+        setMsg(
+          'Your bill saved successfully. If you want to get print, please click print button'
+        );
+        handleOpen();
+
       })
       .catch((err) => {
+        console.log(err);
+        isLoading(false);
+        setErrorBill(true);
+        setSuccessBill(false);
+        setTitle('Error');
+        setMsg(
+          'Your bill cannot save right now. Please try again later'
+        );
+        handleOpen();
         console.log(err);
       });
   };

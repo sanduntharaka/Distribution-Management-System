@@ -69,7 +69,7 @@ const AllCategories = (props) => {
     { title: 'Category Name', field: 'category_name' },
     { title: 'Details', field: 'description' },
     { title: 'Short Code', field: 'short_code' },
-  
+
     { title: 'FOC(%)', field: 'foc_percentage' },
     { title: 'Created', field: 'date', editable: false },
   ];
@@ -120,6 +120,7 @@ const AllCategories = (props) => {
   }, [success, props.success]);
 
   const handleEdit = (newData, oldData, resolve) => {
+    console.log(newData);
     setLoading(true);
     setError(false);
     setSuccess(false);
