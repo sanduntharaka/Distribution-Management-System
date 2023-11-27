@@ -40,17 +40,21 @@ class GenerateStockReportExcell:
         worksheet.write('G5', 'Market Returns', f1)
         worksheet.write('H5', 'Closing Stock', f1)
 
-
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+4, 0,  self.main_details['date'], f2)
             worksheet.write(row+4, 1, item['product_name'], f2)
-            worksheet.write(row+4, 2, item['os'], f2)
-            worksheet.write(row+4, 3, item['purchase'], f2)
-            worksheet.write(row+4, 4, item['sales'], f2)
-            worksheet.write(row+4, 5, item['free_issues'], f2)
-            worksheet.write(row+4, 6, item['market_returns'], f2)
-            worksheet.write(row+4, 7, item['cs'], f2)
-
+            worksheet.write(row+4, 2, item['os']
+                            if item['os'] != 0 else ' ', f2)
+            worksheet.write(
+                row+4, 3, item['purchase'] if item['purchase'] != 0 else ' ', f2)
+            worksheet.write(row+4, 4, item['sales']
+                            if item['sales'] != 0 else ' ', f2)
+            worksheet.write(
+                row+4, 5, item['free_issues'] if item['free_issues'] != 0 else ' ', f2)
+            worksheet.write(
+                row+4, 6, item['market_returns'] if item['market_returns'] != 0 else ' ', f2)
+            worksheet.write(row+4, 7, item['cs']
+                            if item['cs'] != 0 else ' ', f2)
 
         workbook.close()
         response = HttpResponse(output.getvalue(

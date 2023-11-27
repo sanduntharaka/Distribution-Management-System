@@ -52,9 +52,10 @@ class GenerateFocExcell:
             worksheet.write(row+7, 1, item['invoice'], f2)
             for index, category in enumerate(unique_categories, start=2):
                 if item['category'] == category:
-                    worksheet.write(row+7, index, item['foc'], f2)
+                    worksheet.write(
+                        row+7, index, item['foc'] if item['foc'] != 0 else ' ', f2)
                 else:
-                    worksheet.write(row+7, index, 0, f2)
+                    worksheet.write(row+7, index, ' ', f2)
         last_row = row+7
 
         worksheet.write(last_row+1, 0, 'Total', f2)
