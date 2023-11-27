@@ -28,7 +28,19 @@ class GenerateDailyReportExcell:
         worksheet = workbook.add_worksheet()
         f1 = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black'})
+        f1_sales = workbook.add_format(
+            {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#bfff00'})
+        f1_foc = workbook.add_format(
+            {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#00bfff'})
+        f1_mret = workbook.add_format(
+            {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#ff00ff'})
         f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+        f2_sales = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': '#bfff00'})
+        f2_foc = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': '#00bfff'})
+        f2_mret = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': '#ff00ff'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
@@ -81,33 +93,33 @@ class GenerateDailyReportExcell:
 
         for item in sale_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1)
+                worksheet.write(7, column-1, salekey, f1_sales)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Sales Made", f1)
+            6, start_col-1, 6, column-2, "Sales Made", f1_sales)
 
         foc_list = self.item_details[0]['foc']
 
         start_col = column
         for item in foc_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1)
+                worksheet.write(7, column-1, salekey, f1_foc)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "FOC", f1)
+            6, start_col-1, 6, column-2, "FOC", f1_foc)
 
         mret_list = self.item_details[0]['market_return']
 
         start_col = column
         for item in mret_list:
             for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1)
+                worksheet.write(7, column-1, salekey, f1_mret)
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Market returns", f1)
+            6, start_col-1, 6, column-2, "Market returns", f1_mret)
 
         start_col = column-1
 
@@ -125,19 +137,19 @@ class GenerateDailyReportExcell:
             for saleitem in item['sales']:
                 for key, qty in saleitem.items():
                     i = i+1
-                    worksheet.write(row+7, 3+i, qty, f2)
+                    worksheet.write(row+7, 3+i, qty, f2_sales)
 
             j = 0
             for focitem in item['foc']:
                 for key, qty in focitem.items():
                     j = j+1
-                    worksheet.write(row+7, i+j+3, qty, f2)
+                    worksheet.write(row+7, i+j+3, qty, f2_foc)
 
             k = 0
             for mretitem in item['market_return']:
                 for key, qty in mretitem.items():
                     k = k+1
-                    worksheet.write(row+7, i+j+k+3, qty, f2)
+                    worksheet.write(row+7, i+j+k+3, qty, f2_mret)
             worksheet.write(row+7, i+j+k+4, item['total'], f2)
             worksheet.write(row+7, i+j+k+5, item['not_buy_reason'], f2)
 

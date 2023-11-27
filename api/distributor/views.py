@@ -5,14 +5,16 @@ from rest_framework.views import APIView
 import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
-from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock
+from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock, DistributorItemsInvoice
 from . import serializers
 from rest_framework import generics
 from django.shortcuts import get_object_or_404, get_list_or_404
-from users.models import UserAccount
+# from users.models import UserAccount
 from userdetails.models import UserDetails
 from tablib import Dataset
 import json
+
+from users.models import UserAccount
 
 
 class AddNewItems(generics.CreateAPIView):
@@ -48,8 +50,86 @@ class AddNewItems(generics.CreateAPIView):
 
 
 class AddExistingItems(generics.CreateAPIView):
-    queryset = ItemStock.objects.all()
-    serializer_class = serializers.AddItemDetailsSerializer
+    # queryset = ItemStock.objects.all()
+    # serializer_class = serializers.AddItemDetailsSerializer
+
+    def create(self, request, *args, **kwargs):
+        inv_data = request.data['invoice']
+        items_data = request.data['items']
+
+        print('data:', inv_data)
+        # item_serializer.is_valid(raise_exception=True)
+        # item = item_serializer.save()
+
+        try:
+            invoice_obj = DistributorItemsInvoice.objects.get(
+                invoice_number=inv_data['invoice_number'])
+            invoice = invoice_obj.id
+        except Exception as e:
+            bill_data = {
+                'inventory': inv_data['inventory'],
+                'invoice_number': inv_data.get('invoice_number', 'INV-0000'),
+            }
+            invoice_add = serializers.AddInvoiceDetailsSerializer(
+                data=bill_data)
+            if invoice_add.is_valid():
+                saved = invoice_add.save()
+                invoice = saved.id
+
+            else:
+                print('err', invoice_add.errors)
+        print('inv:', invoice)
+        print(items_data)
+        bulk_items = []
+        try:
+            for item in items_data:
+
+                # print(DistributorItemsInvoice.objects.get(id=invoice))
+                # print(DistributorInventoryItems.objects.get(id=item['id']))
+                # print(item['qty'])
+                # print(item.get('pack_size', 0))
+                # print(inv_data['from_sales_return'])
+                # print(item['foc'])
+                # print(item['whole_sale_price'])
+                # print(item['retail_price'])
+                # print(inv_data['date'])
+                # print(DistributorInventoryItems.objects.get(
+                #     id=item['id']).get_total_qty())
+                # print(DistributorInventoryItems.objects.get(
+                #     id=item['id']).get_total_foc())
+                # print(UserAccount.objects.get(id=inv_data['added_by']))
+
+                # bulk_items.append()
+                print(item)
+                obj = {
+                    'invoice': invoice,
+                    'item': item['id'],
+                    'qty': item['qty'],
+                    'pack_size': item.get('pack_size', 0),
+                    'from_sales_return': inv_data['from_sales_return'],
+                    'foc': item['foc'],
+                    'whole_sale_price': item['whole_sale_price'],
+                    'retail_price': item['retail_price'],
+                    'date': inv_data['date'],
+                    'initial_qty': DistributorInventoryItems.objects.get(
+                        id=item['id']).get_total_qty(),
+                    'initial_foc': DistributorInventoryItems.objects.get(
+                        id=item['id']).get_total_foc(),
+                    'added_by': inv_data['added_by'],
+                }
+                serializer = serializers.AddItemDetailsSerializer(data=obj)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(serializer.errors)
+
+            print(bulk_items)
+            ItemStock.objects.bulk_create(bulk_items)
+
+            return Response(status=status.HTTP_201_CREATED)
+        except Exception as e:
+            print(e)
+            return Response(data={'error': e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetDistributorInventoryItems(generics.ListAPIView):

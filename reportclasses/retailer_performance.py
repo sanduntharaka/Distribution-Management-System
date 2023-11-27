@@ -70,9 +70,12 @@ class RetailerPerformanceReportExcell:
 
         for i in self.item_details:
             worksheet.write(row, 0, i['category'], f2)
-            worksheet.write(row, 1, i['this_month'], f2)
-            worksheet.write(row, 2, i['last_month'], f2)
-            worksheet.write(row, 3, i['previous'], f2)
+            worksheet.write(row, 1, i['this_month']
+                            if i['this_month'] != 0 else '', f2)
+            worksheet.write(row, 2, i['last_month']
+                            if i['last_month'] != 0 else '', f2)
+            worksheet.write(row, 3, i['previous']
+                            if i['previous'] != 0 else '', f2)
             worksheet.write(row, 4, f"{i['last_p_date']}", f2)
 
             row += 1

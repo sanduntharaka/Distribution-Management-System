@@ -18,7 +18,6 @@ class ProductiveReportExcell:
         self.callage_tot_products = data['product_categories_collage']
         self.avg_productive_calls = data['product_categories_average']
 
-        
         # self.credit_sales = data['product_categories']
 
     def generate(self):
@@ -103,7 +102,6 @@ class ProductiveReportExcell:
             12, 4,  self.turnover_credit['cumulative']['this_actual'], f2)
         worksheet.write(12, 5,  ' ', f2)
 
-
         worksheet.write(13, 0, 'Total Sales', f2)
         worksheet.write(
             13, 1, self.turnover_total['month']['this_target'], f2)
@@ -114,7 +112,6 @@ class ProductiveReportExcell:
         worksheet.write(
             13, 4,  self.turnover_total['cumulative']['this_actual'], f2)
         worksheet.write(13, 5,  ' ', f2)
-
 
         worksheet.write(14, 0, 'Callage', f3)
         worksheet.write(15, 0, 'Total Calls', f2)
@@ -143,32 +140,33 @@ class ProductiveReportExcell:
         for i in self.product_categories:
             worksheet.write(
                 15+row, 0, i, f2)
-            worksheet.write(
-                15+row, 1, self.callage_tot_products[row-1][row]['month']['this_target'], f2)
 
             worksheet.write(
-                15+row, 2, self.callage_tot_products[row-1][row]['month']['this_actual'], f2)
+                15+row, 1, self.callage_tot_products[row-1]['month']['this_target'], f2)
+
             worksheet.write(
-                15+row, 3,  self.callage_tot_products[row-1][row]['month']['last_actual'], f2)
+                15+row, 2, self.callage_tot_products[row-1]['month']['this_actual'], f2)
             worksheet.write(
-                15+row, 4,  self.callage_tot_products[row-1][row]['cumulative']['this_actual'], f2)
+                15+row, 3,  self.callage_tot_products[row-1]['month']['last_actual'], f2)
+            worksheet.write(
+                15+row, 4,  self.callage_tot_products[row-1]['cumulative']['this_actual'], f2)
             worksheet.write(15+row, 5,  ' ', f2)
             row += 1
-        new_row =  row+15
+        new_row = row+15
         worksheet.write(new_row, 0, 'Average Productivity per call', f3)
-        row =1
+        row = 1
         for i in self.product_categories:
             worksheet.write(
                 new_row+row, 0, i, f2)
             worksheet.write(
-                new_row+row, 1, self.avg_productive_calls[row-1][row]['month']['this_target'], f2)
+                new_row+row, 1, self.avg_productive_calls[row-1]['month']['this_target'], f2)
 
             worksheet.write(
-                new_row+row, 2, self.avg_productive_calls[row-1][row]['month']['this_actual'], f2)
+                new_row+row, 2, self.avg_productive_calls[row-1]['month']['this_actual'], f2)
             worksheet.write(
-                new_row+row, 3,  self.avg_productive_calls[row-1][row]['month']['last_actual'], f2)
+                new_row+row, 3,  self.avg_productive_calls[row-1]['month']['last_actual'], f2)
             worksheet.write(
-                new_row+row, 4,  self.avg_productive_calls[row-1][row]['cumulative']['this_actual'], f2)
+                new_row+row, 4,  self.avg_productive_calls[row-1]['cumulative']['this_actual'], f2)
             worksheet.write(new_row+row, 5,  ' ', f2)
             row += 1
         workbook.close()

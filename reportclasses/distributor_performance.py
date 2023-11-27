@@ -60,14 +60,22 @@ class DistributorPerformanceReportExcell:
 
             for row, item in enumerate(self.item_details, start=1):
                 worksheet.write(row+7, 0, item['product_name'], f2)
-                worksheet.write(row+7, 1, item['mqty'], f2)
-                worksheet.write(row+7, 2, item['mvalue'], f2)
-                worksheet.write(row+7, 3, item['mfoc'], f2)
-                worksheet.write(row+7, 4, item['mmret'], f2)
-                worksheet.write(row+7, 5, item['cqty'], f2)
-                worksheet.write(row+7, 6, item['cvalue'], f2)
-                worksheet.write(row+7, 7, item['cfoc'], f2)
-                worksheet.write(row+7, 8, item['cmret'], f2)
+                worksheet.write(
+                    row+7, 1, item['mqty'] if item['mqty'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 2, item['mvalue'] if item['mvalue'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 3, item['mfoc'] if item['mfoc'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 4, item['mmret'] if item['mmret'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 5, item['cqty'] if item['cqty'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 6, item['cvalue'] if item['cvalue'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 7, item['cfoc'] if item['cfoc'] != 0 else ' ', f2)
+                worksheet.write(
+                    row+7, 8, item['cmret'] if item['cmret'] != 0 else ' ', f2)
 
             worksheet.write(row+8, 0, 'Total', f2)
             worksheet.write(row+8, 1, sum([i['mqty']

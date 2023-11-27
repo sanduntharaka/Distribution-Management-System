@@ -17,8 +17,19 @@ class RDPerformanceReportExcell:
             workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
             worksheet = workbook.add_worksheet()
+            f1_month = workbook.add_format(
+                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': 'red'})
+            f2_month = workbook.add_format(
+                {'border': 2, 'border_color': 'black', 'bg_color': 'red'})
+
+            f1_cumulative = workbook.add_format(
+                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': 'yellow'})
+            f2_cumulative = workbook.add_format(
+                {'border': 2, 'border_color': 'black', 'bg_color': 'yellow'})
+
             f1 = workbook.add_format(
                 {'bold': True, 'border': 2, 'border_color': 'black'})
+
             f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
 
             worksheet.set_column('A:A', 20)
@@ -45,100 +56,100 @@ class RDPerformanceReportExcell:
             worksheet.merge_range(
                 6, 1, 6, 12, "Month's Perfromance", f1)
             worksheet.merge_range(
-                7, 1, 7, 3, "Volume Performance", f1)
-            worksheet.write(8, 1, "Current Month", f1)
-            worksheet.write(8, 2, "Last Month", f1)
-            worksheet.write(8, 3, "% Change", f1)
+                7, 1, 7, 3, "Volume Performance", f1_month)
+            worksheet.write(8, 1, "Current Month", f1_month)
+            worksheet.write(8, 2, "Last Month", f1_month)
+            worksheet.write(8, 3, "% Change", f1_month)
 
             worksheet.merge_range(
-                7, 4, 7, 6, "Value Performance", f1)
-            worksheet.write(8, 4, "Current Month", f1)
-            worksheet.write(8, 5, "Last Month", f1)
-            worksheet.write(8, 6, "% Change", f1)
+                7, 4, 7, 6, "Value Performance", f1_month)
+            worksheet.write(8, 4, "Current Month", f1_month)
+            worksheet.write(8, 5, "Last Month", f1_month)
+            worksheet.write(8, 6, "% Change", f1_month)
 
             worksheet.merge_range(
-                7, 7, 7, 9, "Free Issues", f1)
-            worksheet.write(8, 7, "Current Month", f1)
-            worksheet.write(8, 8, "Last Month", f1)
-            worksheet.write(8, 9, "% Change", f1)
+                7, 7, 7, 9, "Free Issues", f1_month)
+            worksheet.write(8, 7, "Current Month", f1_month)
+            worksheet.write(8, 8, "Last Month", f1_month)
+            worksheet.write(8, 9, "% Change", f1_month)
 
             worksheet.merge_range(
-                7, 10, 7, 12, "Market returns", f1)
-            worksheet.write(8, 10, "Current Month", f1)
-            worksheet.write(8, 11, "Last Month", f1)
-            worksheet.write(8, 12, "% Change", f1)
+                7, 10, 7, 12, "Market returns", f1_month)
+            worksheet.write(8, 10, "Current Month", f1_month)
+            worksheet.write(8, 11, "Last Month", f1_month)
+            worksheet.write(8, 12, "% Change", f1_month)
 
             worksheet.merge_range(
                 6, 13, 6, 16, "YTD  Perfromance", f1)
             worksheet.write(
-                7, 13, "Volume Performance", f1)
-            worksheet.write(8, 13, "for the period", f1)
+                7, 13, "Volume Performance", f1_cumulative)
+            worksheet.write(8, 13, "for the period", f1_cumulative)
             worksheet.write(
-                7, 14, "Value Performance", f1)
-            worksheet.write(8, 14, "for the period", f1)
+                7, 14, "Value Performance", f1_cumulative)
+            worksheet.write(8, 14, "for the period", f1_cumulative)
             worksheet.write(
-                7, 15, "Free Issues", f1)
-            worksheet.write(8, 15, "for the period", f1)
+                7, 15, "Free Issues", f1_cumulative)
+            worksheet.write(8, 15, "for the period", f1_cumulative)
             worksheet.write(
-                7, 16, "Market returns", f1)
-            worksheet.write(8, 16, "for the period", f1)
+                7, 16, "Market returns", f1_cumulative)
+            worksheet.write(8, 16, "for the period", f1_cumulative)
 
             for row, item in enumerate(self.item_details, start=1):
                 worksheet.write(row+8, 0, item['product_name'], f2)
                 worksheet.write(
-                    row+8, 1, '-' if item['this_vol_qty'] == 0 else item['this_vol_qty'], f2)
+                    row+8, 1, ' ' if item['this_vol_qty'] == 0 else item['this_vol_qty'], f2_month)
                 worksheet.write(
-                    row+8, 2, '-' if item['last_vol_qty'] == 0 else item['last_vol_qty'], f2)
+                    row+8, 2, ' ' if item['last_vol_qty'] == 0 else item['last_vol_qty'], f2_month)
                 worksheet.write(
-                    row+8, 3, '-' if item['vol_var'] == 0 else item['vol_var'], f2)
+                    row+8, 3, ' ' if item['vol_var'] == 0 else item['vol_var'], f2_month)
                 worksheet.write(
-                    row+8, 4, '-' if item['this_val_qty'] == 0 else item['this_val_qty'], f2)
+                    row+8, 4, ' ' if item['this_val_qty'] == 0 else item['this_val_qty'], f2_month)
                 worksheet.write(
-                    row+8, 5, '-' if item['last_val_qty'] == 0 else item['last_val_qty'], f2)
+                    row+8, 5, ' ' if item['last_val_qty'] == 0 else item['last_val_qty'], f2_month)
                 worksheet.write(
-                    row+8, 6, '-' if item['val_var'] == 0 else item['val_var'], f2)
+                    row+8, 6, ' ' if item['val_var'] == 0 else item['val_var'], f2_month)
                 worksheet.write(
-                    row+8, 7, '-' if item['this_vol_foc'] == 0 else item['this_vol_foc'], f2)
+                    row+8, 7, ' ' if item['this_vol_foc'] == 0 else item['this_vol_foc'], f2_month)
                 worksheet.write(
-                    row+8, 8, '-' if item['last_vol_foc'] == 0 else item['last_vol_foc'], f2)
+                    row+8, 8, ' ' if item['last_vol_foc'] == 0 else item['last_vol_foc'], f2_month)
                 worksheet.write(
-                    row+8, 9, '-' if item['foc_var'] == 0 else item['foc_var'], f2)
+                    row+8, 9, ' ' if item['foc_var'] == 0 else item['foc_var'], f2_month)
                 worksheet.write(
-                    row+8, 10, '-' if item['this_vol_mret'] == 0 else item['this_vol_mret'], f2)
+                    row+8, 10, ' ' if item['this_vol_mret'] == 0 else item['this_vol_mret'], f2_month)
                 worksheet.write(
-                    row+8, 11, '-' if item['last_vol_mret'] == 0 else item['last_vol_mret'], f2)
+                    row+8, 11, ' ' if item['last_vol_mret'] == 0 else item['last_vol_mret'], f2_month)
                 worksheet.write(
-                    row+8, 12, '-' if item['mret_var'] == 0 else item['mret_var'], f2)
+                    row+8, 12, ' ' if item['mret_var'] == 0 else item['mret_var'], f2_month)
                 worksheet.write(
-                    row+8, 13, '-' if item['year_vol_qty'] == 0 else item['year_vol_qty'], f2)
+                    row+8, 13, ' ' if item['year_vol_qty'] == 0 else item['year_vol_qty'], f2_cumulative)
                 worksheet.write(
-                    row+8, 14, '-' if item['year_val_qty'] == 0 else item['year_val_qty'], f2)
+                    row+8, 14, ' ' if item['year_val_qty'] == 0 else item['year_val_qty'], f2_cumulative)
                 worksheet.write(
-                    row+8, 15, '-' if item['year_vol_foc'] == 0 else item['year_vol_foc'], f2)
+                    row+8, 15, ' ' if item['year_vol_foc'] == 0 else item['year_vol_foc'], f2_cumulative)
                 worksheet.write(
-                    row+8, 16, '-' if item['year_vol_mret'] == 0 else item['year_vol_mret'], f2)
+                    row+8, 16, ' ' if item['year_vol_mret'] == 0 else item['year_vol_mret'], f2_cumulative)
 
             worksheet.write(row+8, 0, 'Total', f2)
             worksheet.write(row+8, 1, sum([i['this_vol_qty']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 2, sum([i['last_vol_qty']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 3, '-', f2)
+            worksheet.write(row+8, 3, ' ', f2)
             worksheet.write(row+8, 4, sum([i['this_val_qty']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 5, sum([i['last_val_qty']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 6,  '-', f2)
+            worksheet.write(row+8, 6,  ' ', f2)
             worksheet.write(row+8, 7, sum([i['this_vol_foc']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 8, sum([i['last_vol_foc']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 9, '-', f2)
+            worksheet.write(row+8, 9, ' ', f2)
             worksheet.write(row+8, 10, sum([i['this_vol_mret']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 11, sum([i['last_vol_mret']
                             for i in self.item_details]), f2)
-            worksheet.write(row+8, 12, '-', f2)
+            worksheet.write(row+8, 12, ' ', f2)
             worksheet.write(row+8, 13, sum([i['year_vol_qty']
                             for i in self.item_details]), f2)
             worksheet.write(row+8, 14, sum([i['year_val_qty']

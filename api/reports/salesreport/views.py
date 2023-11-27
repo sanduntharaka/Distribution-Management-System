@@ -1,3 +1,4 @@
+from targets.models import SalesrefValueTarget
 from targets.models import SalesrefTargets
 from dealer_details.models import Dealer
 from reportclasses.productive_report import ProductiveReportExcell
@@ -160,7 +161,7 @@ class IteneryReport(APIView):
 
                 try:
                     visited = SalesRefInvoice.objects.filter(
-                        dis_sales_ref__sales_ref=sales_ref, dealer=dealer).first().date
+                        dis_sales_ref__sales_ref=sales_ref, dealer=dealer).last().date
                 except:
                     visited = 'No'
                 row_data = {}
@@ -176,7 +177,7 @@ class IteneryReport(APIView):
 # invoice_item__bill__dis_sales_ref__sales_ref=sales_ref,
                     sale_sum = sum(
                         [bil_item.foc+bil_item.qty for bil_item in bill_items])
-                    sales_data[category.category_name] = sale_sum if sale_sum > 0 else ' '
+                    sales_data[category.short_code] = sale_sum if sale_sum > 0 else ' '
                     sales_list.append(sales_data)
                 row_data['sales'] = sales_list
                 psa_data.append(row_data)
@@ -203,7 +204,6 @@ class IteneryReport(APIView):
         except Exception as e:
             return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-from targets.models import SalesrefValueTarget
 
 class ProductivityReport(APIView):
     def post(self, request):
@@ -363,16 +363,16 @@ class ProductivityReport(APIView):
                 }
             }
 
-
-            target_value = SalesrefValueTarget.objects.get(target_person=sales_ref, date_form__month=today.month,date_to__month=today.month)
+            target_value = SalesrefValueTarget.objects.get(
+                target_person=sales_ref, date_form__month=today.month, date_to__month=today.month)
             row_data['turnover_total'] = {
                 'month': {
-                    'this_target':target_value.value,
-                    'this_actual': sum([row_data['turnover_cash']['month']['this_actual'],row_data['turnover_credit']['month']['this_actual'],row_data['turnover_cheque']['month']['this_actual']]),
-                    'last_actual': sum([row_data['turnover_cash']['month']['last_actual'],row_data['turnover_credit']['month']['last_actual'],row_data['turnover_cheque']['month']['last_actual']]),
+                    'this_target': target_value.value,
+                    'this_actual': sum([row_data['turnover_cash']['month']['this_actual'], row_data['turnover_credit']['month']['this_actual'], row_data['turnover_cheque']['month']['this_actual']]),
+                    'last_actual': sum([row_data['turnover_cash']['month']['last_actual'], row_data['turnover_credit']['month']['last_actual'], row_data['turnover_cheque']['month']['last_actual']]),
                 },
                 'cumulative': {
-                    'this_actual':sum([row_data['turnover_cash']['cumulative']['this_actual'],row_data['turnover_credit']['cumulative']['this_actual'],row_data['turnover_cheque']['cumulative']['this_actual']]),
+                    'this_actual': sum([row_data['turnover_cash']['cumulative']['this_actual'], row_data['turnover_credit']['cumulative']['this_actual'], row_data['turnover_cheque']['cumulative']['this_actual']]),
 
                 }
             }
@@ -407,11 +407,12 @@ class ProductivityReport(APIView):
             row_data['product_categories'] = [
                 i.short_code for i in categories]
             category_details = []
+
             for category in categories:
-                details = {}
+                # details = {}
                 targets = SalesrefTargets.objects.filter(
                     target_person=sales_ref, date_form__month=today.month, date_to__month=today.month, category=category)
-                details[category.id] = {
+                details = {
                     'month': {
                         'this_target': sum([i.qty+i.foc for i in targets]),
                         'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month, item__item__category=category)]),
@@ -423,26 +424,26 @@ class ProductivityReport(APIView):
                     }
                 }
                 category_details.append(details)
+
             row_data['product_categories_collage'] = category_details
 
             category_avg_details = []
-            
-            for category in categories:
-                val_details = {}
 
-                val_details[category.id] = {
+            for category in categories:
+
+                val_details = {
                     'month': {
                         'this_target': ' ',
-                            'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month, item__item__category=category)]) / row_data['callage_tot_productive_calls']['month']['this_actual'] if  row_data['callage_tot_productive_calls']['month']['this_actual'] !=0 else 1,
-                            'last_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_last_month, item__item__category=category)])/row_data['callage_tot_productive_calls']['month']['last_actual']  if row_data['callage_tot_productive_calls']['month']['last_actual'] !=0 else 1
+                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_this_month, item__item__category=category)]) / row_data['callage_tot_productive_calls']['month']['this_actual'] if row_data['callage_tot_productive_calls']['month']['this_actual'] != 0 else 1,
+                        'last_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_last_month, item__item__category=category)])/row_data['callage_tot_productive_calls']['month']['last_actual'] if row_data['callage_tot_productive_calls']['month']['last_actual'] != 0 else 1
                     },
                     'cumulative': {
-                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_cumulative, item__item__category=category)])/row_data['callage_tot_productive_calls']['cumulative']['this_actual'] if row_data['callage_tot_productive_calls']['cumulative']['this_actual'] !=0 else 1,
+                        'this_actual': sum([itm.qty + itm.foc for itm in Item.objects.filter(invoice_item__bill__in=created_invoices_cumulative, item__item__category=category)])/row_data['callage_tot_productive_calls']['cumulative']['this_actual'] if row_data['callage_tot_productive_calls']['cumulative']['this_actual'] != 0 else 1,
 
                     }
                 }
                 category_avg_details.append(val_details)
-        
+
             row_data['product_categories_average'] = category_avg_details
 
             file_genearte = ProductiveReportExcell(row_data)
@@ -450,4 +451,5 @@ class ProductivityReport(APIView):
             return file_genearte.generate()
             # return Response(status=status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

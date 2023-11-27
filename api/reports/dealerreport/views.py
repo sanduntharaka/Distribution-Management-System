@@ -118,7 +118,7 @@ class RetailerPerformanceReport(APIView):
             data = []
             for itm in item_categories:
                 details = {}
-                details['category'] = itm.category_name
+                details['category'] = itm.short_code
                 details['this_month'] = sum([i.qty + i.foc for i in Item.objects.filter(
                     item__item__category=itm, invoice_item__bill__date__month=today.month, invoice_item__bill__status='confirmed')])
                 details['last_month'] = sum([i.qty + i.foc for i in Item.objects.filter(

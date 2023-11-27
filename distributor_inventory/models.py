@@ -32,11 +32,21 @@ class DistributorInventoryItems(models.Model):
 #     invoice_number = models.CharField(max_length=15, default='INV-0000')
 
 
+class DistributorItemsInvoice(models.Model):
+    inventory = models.ForeignKey(
+        DistributorInventory, on_delete=models.CASCADE)
+    invoice_number = models.CharField(max_length=15, default='INV-0000')
+    date = models.DateField(auto_now_add=True)
+
+
 class ItemStock(models.Model):
+    invoice = models.ForeignKey(
+        DistributorItemsInvoice, on_delete=models.CASCADE, blank=True, null=True)
     item = models.ForeignKey(DistributorInventoryItems,
                              on_delete=models.CASCADE)
     from_sales_return = models.BooleanField(default=False)
-    invoice_number = models.CharField(max_length=15, default='INV-0000')
+    invoice_number = models.CharField(
+        max_length=15, default='INV-0000', blank=True, null=True)
     qty = models.IntegerField(blank=False)
     pack_size = models.IntegerField(default=0)
     foc = models.IntegerField(blank=False, default=0)

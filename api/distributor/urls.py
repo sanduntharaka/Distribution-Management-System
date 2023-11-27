@@ -25,4 +25,4 @@ urlpatterns = [
     path('details/<code>', views.GetProductDetails.as_view()),
 
 ]
-# distributor/get
+# distributor/items/add/

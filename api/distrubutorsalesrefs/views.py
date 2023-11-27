@@ -52,42 +52,47 @@ class GetinventoryItemsSearch (APIView):
 
     def get(self, request, *args, **kwargs):
         # Retrieve ItemStock data for the specific distributor inventory
-        inventory_id = kwargs.get('pk')
-        queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
-                                            item__inventory=inventory_id)
+        try:
+            inventory_id = kwargs.get('pk')
+            queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
+                                                item__inventory=inventory_id)
 
-        # Separate data for the same price and different prices
-        same_price_data = queryset.values('whole_sale_price', 'retail_price', 'item__id', 'item__item_code', 'item__description').annotate(
-            total_qty=Sum('qty'), total_foc=Sum('foc')
-        )
+            # Separate data for the same price and different prices
+            same_price_data = queryset.values('whole_sale_price', 'retail_price', 'item__id', 'item__item_code', 'item__description').annotate(
+                total_qty=Sum('qty'), total_foc=Sum('foc')
+            )
 
-        # Retrieve data for different prices
-        different_price_data = queryset.exclude(
-            Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
-            Q(retail_price__in=same_price_data.values('retail_price'))
-        )
+            # Retrieve data for different prices
+            different_price_data = queryset.exclude(
+                Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
+                Q(retail_price__in=same_price_data.values('retail_price'))
+            )
 
-        # Combine data for same price and different prices
-        combined_queryset = list(chain(same_price_data, different_price_data))
+            # Combine data for same price and different prices
+            combined_queryset = list(
+                chain(same_price_data, different_price_data))
 
-        # Get the search term from the request
-        search_term = self.request.GET.get('search', '')
+            # Get the search term from the request
+            search_term = self.request.GET.get('search', '')
 
-        # Manually filter based on the search term
-        filtered_queryset = [
-            {
-                'item_code': item['item__item_code'],
-                'description': item['item__description'],
-                'id':item['item__id'],
-                'whole_sale_price': item['whole_sale_price'],
-                'retail_price': item['retail_price'],
-                'qty': item['total_qty'],
-                'foc': item['total_foc']
-            }
-            for item in combined_queryset
-            if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
-        ]
-        return Response(data=filtered_queryset, status=status.HTTP_200_OK)
+            # Manually filter based on the search term
+            filtered_queryset = [
+                {
+                    'item_code': item['item__item_code'],
+                    'description': item['item__description'],
+                    'id': item['item__id'],
+                    'whole_sale_price': item['whole_sale_price'],
+                    'retail_price': item['retail_price'],
+                    'qty': item['total_qty'],
+                    'foc': item['total_foc']
+                }
+                for item in combined_queryset
+                if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
+            ]
+            return Response(data=filtered_queryset, status=status.HTTP_200_OK)
+        except Exception as e:
+            print('ii', e)
+            return Response(data=[], status=status.HTTP_200_OK)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):

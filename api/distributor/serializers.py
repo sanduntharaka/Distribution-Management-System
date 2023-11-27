@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock
+from distributor_inventory.models import DistributorInventoryItems, DistributorInventory, ItemStock, DistributorItemsInvoice
 from distrubutor_salesref.models import SalesRefDistributor
 
 
 class AddItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = DistributorInventoryItems
+        fields = ('__all__')
+
+
+class AddInvoiceDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DistributorItemsInvoice
         fields = ('__all__')
 
 
