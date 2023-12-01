@@ -24,10 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # 'bixtonlighting.com', 'main.bixtonlighting.com'
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
 
 
 # Application definition
@@ -182,13 +182,23 @@ ASGI_APPLICATION = "core.routing.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bixton_test',
-        'USER': 'postgres',
-        'PASSWORD': '6673',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': 'bixtonlightingdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
+        'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+        'PORT': '25060',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'testdistributionsystem',
+#         'USER': 'testdistriuser',
+#         'PASSWORD': 'P2ff3f4dP3a8',
+#         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+#         'PORT': '25060',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
