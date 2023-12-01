@@ -19,34 +19,34 @@ from users.models import UserAccount
 
 class AddNewItems(generics.CreateAPIView):
     serializer_class = serializers.AddItemsSerializer
+    queryset = DistributorInventoryItems.objects.all()
+    # def create(self, request, *args, **kwargs):
+    #     item_serializer = self.get_serializer(data=request.data)
+    #     item_serializer.is_valid(raise_exception=True)
+    #     item = item_serializer.save()
 
-    def create(self, request, *args, **kwargs):
-        item_serializer = self.get_serializer(data=request.data)
-        item_serializer.is_valid(raise_exception=True)
-        item = item_serializer.save()
+    #     item_details = {
+    #         'item': item.id,
+    #         'qty': request.data['qty'],
+    #         'pack_size': request.data.get('pack_size', 0),
+    #         'foc': request.data['free_of_charge'],
+    #         'whole_sale_price': request.data['whole_sale_price'],
+    #         'retail_price': request.data['retail_price'],
+    #         'from_sales_return': request.data.get('from_sales_return', False),
+    #         'invoice_number': request.data.get('invoice_number', 'INV-0000'),
+    #         'added_by': request.data['added_by']
+    #     }
+    #     item_details_serializer = serializers.AddItemDetailsSerializer(
+    #         data=item_details)
+    #     try:
+    #         item_details_serializer.is_valid(raise_exception=True)
+    #         item_details_serializer.save()
+    #     except Exception as e:
+    #         print(e)
+    #         item.delete()
+    #         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        item_details = {
-            'item': item.id,
-            'qty': request.data['qty'],
-            'pack_size': request.data.get('pack_size', 0),
-            'foc': request.data['free_of_charge'],
-            'whole_sale_price': request.data['whole_sale_price'],
-            'retail_price': request.data['retail_price'],
-            'from_sales_return': request.data.get('from_sales_return', False),
-            'invoice_number': request.data.get('invoice_number', 'INV-0000'),
-            'added_by': request.data['added_by']
-        }
-        item_details_serializer = serializers.AddItemDetailsSerializer(
-            data=item_details)
-        try:
-            item_details_serializer.is_valid(raise_exception=True)
-            item_details_serializer.save()
-        except Exception as e:
-            print(e)
-            item.delete()
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(status=status.HTTP_201_CREATED)
+    #     return Response(status=status.HTTP_201_CREATED)
 
 
 class AddExistingItems(generics.CreateAPIView):
@@ -57,7 +57,6 @@ class AddExistingItems(generics.CreateAPIView):
         inv_data = request.data['invoice']
         items_data = request.data['items']
 
-        print('data:', inv_data)
         # item_serializer.is_valid(raise_exception=True)
         # item = item_serializer.save()
 
@@ -69,6 +68,11 @@ class AddExistingItems(generics.CreateAPIView):
             bill_data = {
                 'inventory': inv_data['inventory'],
                 'invoice_number': inv_data.get('invoice_number', 'INV-0000'),
+                'page_number': inv_data.get('page_number', 0),
+                'total': inv_data.get('pay_total', 0),
+                'discount': inv_data.get('discount', 0),
+                'due_date': inv_data.get('due_date', 0),
+
             }
             invoice_add = serializers.AddInvoiceDetailsSerializer(
                 data=bill_data)
@@ -78,39 +82,22 @@ class AddExistingItems(generics.CreateAPIView):
 
             else:
                 print('err', invoice_add.errors)
-        print('inv:', invoice)
-        print(items_data)
+
         bulk_items = []
         try:
             for item in items_data:
-
-                # print(DistributorItemsInvoice.objects.get(id=invoice))
-                # print(DistributorInventoryItems.objects.get(id=item['id']))
-                # print(item['qty'])
-                # print(item.get('pack_size', 0))
-                # print(inv_data['from_sales_return'])
-                # print(item['foc'])
-                # print(item['whole_sale_price'])
-                # print(item['retail_price'])
-                # print(inv_data['date'])
-                # print(DistributorInventoryItems.objects.get(
-                #     id=item['id']).get_total_qty())
-                # print(DistributorInventoryItems.objects.get(
-                #     id=item['id']).get_total_foc())
-                # print(UserAccount.objects.get(id=inv_data['added_by']))
-
-                # bulk_items.append()
-                print(item)
                 obj = {
                     'invoice': invoice,
                     'item': item['id'],
-                    'qty': item['qty'],
+                    'qty': int(item['qty'])+int(item['foc']),
                     'pack_size': item.get('pack_size', 0),
                     'from_sales_return': inv_data['from_sales_return'],
                     'foc': item['foc'],
                     'whole_sale_price': item['whole_sale_price'],
                     'retail_price': item['retail_price'],
                     'date': inv_data['date'],
+                    'bill_qty': item['qty'],
+                    'bill_foc': item['foc'],
                     'initial_qty': DistributorInventoryItems.objects.get(
                         id=item['id']).get_total_qty(),
                     'initial_foc': DistributorInventoryItems.objects.get(
@@ -123,13 +110,81 @@ class AddExistingItems(generics.CreateAPIView):
                 else:
                     print(serializer.errors)
 
-            print(bulk_items)
             ItemStock.objects.bulk_create(bulk_items)
 
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
             print(e)
             return Response(data={'error': e}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CheckInvoiceDetails(APIView):
+    def get(self, request, *args, **kwargs):
+        code = self.kwargs.get('code')
+        user = self.request.user
+        try:
+            invoices = DistributorItemsInvoice.objects.filter(
+                invoice_number=code, inventory__distributor__user=user)
+            pages = [invoice.page_number for invoice in invoices]
+            return Response(data={'invoice': True, 'pages': pages}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(data={'invoice': False}, status=status.HTTP_200_OK)
+
+
+class GetAllInvoices(generics.ListAPIView):
+    serializer_class = serializers.GetDinstributorInvoicesSeralizer
+
+    def get_queryset(self, *args, **kwargs):
+        inventory = self.kwargs.get('id')
+
+        return get_list_or_404(DistributorItemsInvoice, inventory=inventory)
+
+
+class ViewInvoice(APIView):
+    def post(self, request, *args, **kwargs):
+        inventory = self.kwargs.get('id')
+        inv_number = request.data['invoice_number']
+        page_number = request.data['page_number']
+        date = request.data['date']
+        due_date = request.data['due_date']
+
+        invoice = DistributorItemsInvoice.objects.get(
+            inventory=inventory,
+            invoice_number=inv_number,
+            page_number=page_number,
+            due_date=due_date,
+            date=date
+        )
+
+        inv_items = ItemStock.objects.filter(invoice=invoice)
+        main_details = {
+            'distributor': invoice.inventory.distributor.full_name,
+            'invoice_number': invoice.invoice_number,
+            'date': invoice.date,
+            'due_date': invoice.due_date,
+            'total': invoice.total,
+            'discount': invoice.discount,
+            'dealer_name': invoice.inventory.distributor.full_name,
+            'dealer': invoice.inventory.distributor.id,
+            'dealer_address': invoice.inventory.distributor.address,
+            'contact_number': invoice.inventory.distributor.company_number,
+        }
+        items = []
+        for item in inv_items:
+            item_details = {
+                'item_code': item.item.item_code,
+                'description': item.item.description,
+                'qty': item.bill_qty,
+                'pack_size': item.pack_size,
+                'foc': item.bill_foc,
+                'whole_sale_price': item.whole_sale_price,
+                'retail_price': item.retail_price,
+                'date': item.date,
+                'extended_price': item.whole_sale_price*(item.bill_qty)
+            }
+            items.append(item_details)
+
+        return Response(data={'invoice': main_details, 'items': items}, status=status.HTTP_200_OK)
 
 
 class GetDistributorInventoryItems(generics.ListAPIView):
@@ -308,6 +363,11 @@ class AddItemsExcel(APIView):
         i = 1
         for row in dataset:
             try:
+                invoice = DistributorItemsInvoice(inventory=inventory, invoice_number=row[10], page_number=row[11],
+                                                  total=row[12],
+                                                  discount=row[13],
+                                                  due_date=row[14])
+                invoice.sa
 
                 item = DistributorInventoryItems.objects.get(
                     category__id=row[0], item_code=row[1], inventory=inventory, description=row[2])

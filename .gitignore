@@ -13,6 +13,9 @@ sesettings2.py
 core/settings.py
 media
 core/settings.py
+0009_itemstock_bill_foc_itemstock_bill_qty.py
+0008_distributoritemsinvoice_discount_and_more.py
+0007_distributoritemsinvoice_page_number.py
 0005_salesrefvaluetarget.py
 0006_alter_itemstock_invoice_number.py
 0005_distributoritemsinvoice_itemstock_invoice.py

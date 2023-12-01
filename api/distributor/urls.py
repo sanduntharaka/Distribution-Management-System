@@ -23,6 +23,11 @@ urlpatterns = [
     path('salesrefs/<id>', views.AllSalesrefsByDistributor.as_view()),
 
     path('details/<code>', views.GetProductDetails.as_view()),
+    path('invoice/check/<str:code>', views.CheckInvoiceDetails.as_view()),
+    path('invoice/all/<int:id>', views.GetAllInvoices.as_view()),
+    path('invoice/view/<int:id>', views.ViewInvoice.as_view()),
+
+
 
 ]
-# distributor/items/add/
+# distributor/invoice/invoice/check/

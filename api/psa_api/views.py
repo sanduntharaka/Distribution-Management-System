@@ -217,3 +217,11 @@ class EditPsa(generics.UpdateAPIView):
 class DeletePsa(generics.DestroyAPIView):
     serializer_class = serializers.CreatePSASerializer
     queryset = PrimarySalesArea.objects.all()
+
+
+class GetBySalesref(generics.ListAPIView):
+    serializer_class = serializers.GetAllPSASerializer
+
+    def get_queryset(self):
+        user = self.kwargs['id']
+        return get_list_or_404(PrimarySalesArea, sales_ref=user)

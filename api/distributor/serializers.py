@@ -67,6 +67,7 @@ class GetInventoryItemsStoks(serializers.ModelSerializer):
     item_code = serializers.CharField(source='item.item_code')
     description = serializers.CharField(source='item.description')
     base = serializers.CharField(source='item.base')
+    invoice_number = serializers.CharField(source='invoice.invoice_number')
 
     class Meta:
         model = ItemStock
@@ -92,3 +93,9 @@ class MySalesrefs(serializers.ModelSerializer):
     class Meta:
         model = SalesRefDistributor
         fields = ('id', 'full_name', 'salesref_id')
+
+
+class GetDinstributorInvoicesSeralizer(serializers.ModelSerializer):
+    class Meta:
+        model = DistributorItemsInvoice
+        fields = ('__all__')

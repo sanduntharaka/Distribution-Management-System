@@ -15,7 +15,6 @@ from . import serializers
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
-
 from userdetails.models import UserDetails
 
 
@@ -162,11 +161,19 @@ class IteneryReport(APIView):
                 try:
                     visited = SalesRefInvoice.objects.filter(
                         dis_sales_ref__sales_ref=sales_ref, dealer=dealer).last().date
+                    inv_date = visited
                 except:
-                    visited = 'No'
+                    inv_date = ' '
+                    try:
+                        visited = NotBuyDetails.objects.filter(
+                            dis_sales_ref__sales_ref=sales_ref, dealer=dealer).last().datetime.date()
+                    except:
+                        visited = ' '
+
                 row_data = {}
                 row_data['psa'] = dealer.name
                 row_data['visited'] = visited
+                row_data['last_inv_date'] = inv_date
 
                 sales_list = []
                 for category in categories:
@@ -188,6 +195,7 @@ class IteneryReport(APIView):
                 row_data['cash'] = sum([i.total_cash() for i in invoices])
                 row_data['cheque'] = sum([i.total_cheques() for i in invoices])
                 row_data['credit'] = sum([i.total_credit() for i in invoices])
+                row_data['total'] = sum([i.total for i in invoices])
 
                 try:
                     not_settle_date = SalesRefInvoice.objects.filter(

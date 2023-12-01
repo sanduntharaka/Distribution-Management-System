@@ -36,6 +36,10 @@ class DistributorItemsInvoice(models.Model):
     inventory = models.ForeignKey(
         DistributorInventory, on_delete=models.CASCADE)
     invoice_number = models.CharField(max_length=15, default='INV-0000')
+    page_number = models.IntegerField(default=0)
+    total = models.FloatField(default=0)
+    discount = models.FloatField(default=0)
+    due_date = models.DateField(blank=True, null=True)
     date = models.DateField(auto_now_add=True)
 
 
@@ -53,6 +57,11 @@ class ItemStock(models.Model):
     whole_sale_price = models.FloatField(blank=False)
     retail_price = models.FloatField(blank=False)
     date = models.DateField(auto_now_add=True)
+    # bill values when initially creating
+    bill_qty = models.IntegerField(blank=True, default=0)
+    bill_foc = models.IntegerField(blank=True, default=0)
+
+    # distributor stocks count when creating a bill
     initial_qty = models.IntegerField(blank=True, default=0)
     initial_foc = models.IntegerField(blank=True, default=0)
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)

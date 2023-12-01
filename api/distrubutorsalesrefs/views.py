@@ -1,3 +1,4 @@
+from django.db.models import Subquery, OuterRef
 from django.db.models import Q
 from rest_framework.views import APIView
 from itertools import chain
@@ -53,6 +54,7 @@ class GetinventoryItemsSearch (APIView):
     def get(self, request, *args, **kwargs):
         # Retrieve ItemStock data for the specific distributor inventory
         try:
+
             inventory_id = kwargs.get('pk')
             queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
                                                 item__inventory=inventory_id)
@@ -89,6 +91,24 @@ class GetinventoryItemsSearch (APIView):
                 for item in combined_queryset
                 if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
             ]
+
+            item_stock_ids = ItemStock.objects.values('item').distinct()
+
+            # Query DistributorInventoryItems excluding those in ItemStock
+            items_not_in_stock = DistributorInventoryItems.objects.exclude(
+                id__in=Subquery(item_stock_ids))
+
+            for item in items_not_in_stock:
+                filtered_queryset.append({
+                    'item_code': item.item_code,
+                    'description': item.description,
+                    'id': item.id,
+                    'whole_sale_price': 0,
+                    'retail_price': 0,
+                    'qty': 0,
+                    'foc': 0
+                })
+
             return Response(data=filtered_queryset, status=status.HTTP_200_OK)
         except Exception as e:
             print('ii', e)
