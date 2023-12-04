@@ -93,11 +93,13 @@ class GetinventoryItemsSearch (APIView):
                 if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
             ]
             try:
+                print(4)
                 item_stock_ids = ItemStock.objects.values('item').distinct()
 
                 # Query DistributorInventoryItems excluding those in ItemStock
                 items_not_in_stock = DistributorInventoryItems.objects.exclude(
                     id__in=Subquery(item_stock_ids))
+                print(5)
 
                 for item in items_not_in_stock:
                     filtered_queryset.append({
@@ -109,8 +111,8 @@ class GetinventoryItemsSearch (APIView):
                         'qty': 0,
                         'foc': 0
                     })
-            except Exception as e:
-                print(e)
+            except Exception as k:
+                print('ne:', k)
 
             return Response(data=filtered_queryset, status=status.HTTP_200_OK)
         except Exception as e:
