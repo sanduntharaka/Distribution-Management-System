@@ -113,11 +113,11 @@ class GetinventoryItemsSearch (APIView):
                     })
             except Exception as k:
                 print('ne:', k)
-
+            print(filtered_queryset)
             return Response(data=filtered_queryset, status=status.HTTP_200_OK)
         except Exception as e:
             print('ii', e)
-            return Response(data={'error': e}, status=status.HTTP_200_OK)
+            return Response(data={'error': e}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):
