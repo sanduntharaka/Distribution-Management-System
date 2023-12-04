@@ -54,7 +54,6 @@ class GetinventoryItemsSearch (APIView):
     def get(self, request, *args, **kwargs):
         # Retrieve ItemStock data for the specific distributor inventory
         try:
-            print(1)
             inventory_id = kwargs.get('pk')
             queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
                                                 item__inventory=inventory_id)
@@ -64,8 +63,6 @@ class GetinventoryItemsSearch (APIView):
                 total_qty=Sum('qty'), total_foc=Sum('foc')
             )
 
-            # Retrieve data for different prices
-            print(2)
             different_price_data = queryset.exclude(
                 Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
                 Q(retail_price__in=same_price_data.values('retail_price'))
@@ -77,47 +74,44 @@ class GetinventoryItemsSearch (APIView):
 
             # Get the search term from the request
             search_term = self.request.GET.get('search', '')
-            print(3)
+
             # Manually filter based on the search term
             filtered_queryset = [
+
                 {
                     'item_code': item['item__item_code'],
                     'description': item['item__description'],
                     'id': item['item__id'],
-                    'whole_sale_price': item['whole_sale_price'],
-                    'retail_price': item['retail_price'],
+                    'whole_sale_price': 0 if str(item['whole_sale_price']) == 'nan' else item['whole_sale_price'],
+                    'retail_price':  0 if str(item['retail_price']) == 'nan' else item['retail_price'],
                     'qty': item['total_qty'],
                     'foc': item['total_foc']
                 }
                 for item in combined_queryset
                 if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
             ]
-            # try:
-            #     print(4)
-            #     item_stock_ids = ItemStock.objects.values('item').distinct()
 
-            #     # Query DistributorInventoryItems excluding those in ItemStock
-            #     items_not_in_stock = DistributorInventoryItems.objects.exclude(
-            #         id__in=Subquery(item_stock_ids))
-            #     print(5)
+            item_stock_ids = ItemStock.objects.values('item').distinct()
 
-            #     for item in items_not_in_stock:
-            #         filtered_queryset.append({
-            #             'item_code': item.item_code,
-            #             'description': item.description,
-            #             'id': item.id,
-            #             'whole_sale_price': 0,
-            #             'retail_price': 0,
-            #             'qty': 0,
-            #             'foc': 0
-            #         })
-            # except Exception as k:
-            #     print('ne:', k)
-            print(filtered_queryset)
+            # Query DistributorInventoryItems excluding those in ItemStock
+            items_not_in_stock = DistributorInventoryItems.objects.exclude(
+                id__in=Subquery(item_stock_ids))
+
+            for item in items_not_in_stock:
+                filtered_queryset.append({
+                    'item_code': item.item_code,
+                    'description': item.description,
+                    'id': item.id,
+                    'whole_sale_price': 0,
+                    'retail_price': 0,
+                    'qty': 0,
+                    'foc': 0
+                })
+
             return Response(data=filtered_queryset, status=status.HTTP_200_OK)
         except Exception as e:
             print('ii', e)
-            return Response(data={'error': e}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'error'}, status=status.HTTP_200_OK)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):
