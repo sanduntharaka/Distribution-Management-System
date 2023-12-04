@@ -363,15 +363,28 @@ class AddItemsExcel(APIView):
         i = 1
         for row in dataset:
             try:
-                invoice = DistributorItemsInvoice(inventory=inventory, invoice_number=row[10], page_number=row[11],
-                                                  total=row[12],
+                invoice = DistributorItemsInvoice.objects.get(
+                    invoice_number=row[10], inventory=inventory, due_date=row[11])
+                inv_id = invoice.id
+            except DistributorItemsInvoice.DoesNotExist:
+                invoice = DistributorItemsInvoice(inventory=DistributorInventory.objects.get(id=inventory),
+                                                  invoice_number=row[10],
+                                                  page_number=row[12],
+                                                  total=row[14],
                                                   discount=row[13],
-                                                  due_date=row[14])
-                invoice.sa
+                                                  due_date=row[11])
+                invoice.save()
+                inv_id = invoice.id
 
+            try:
                 item = DistributorInventoryItems.objects.get(
-                    category__id=row[0], item_code=row[1], inventory=inventory, description=row[2])
+                    category__id=row[0],
+                    item_code=row[1],
+                    inventory=inventory,
+                    description=row[2])
+
                 stock_data = {
+                    'invoice': inv_id,
                     'item': item.id,
                     'pack_size': 0 if math.isnan(row[4]) else row[4],
                     'qty': int(row[5])+int(row[6]),
@@ -381,6 +394,13 @@ class AddItemsExcel(APIView):
                     'added_by': user,
                     'date': row[9],
                     'invoice_number': row[10],
+                    'from_sales_return': False,
+                    'from_market_return': False,
+                    'bill_qty': row[5],
+                    'bill_foc': row[6],
+                    'initial_qty': 0,
+                    'initial_foc': 0,
+
                 }
 
                 yield 'stock', item, stock_data, i
@@ -398,6 +418,7 @@ class AddItemsExcel(APIView):
 
                 }
                 stock_data = {
+                    'invoice': inv_id,
                     'pack_size': row[4] if row[4] is not None else 0,
                     'qty': int(row[5])+int(row[6]),
                     'foc': row[6],
@@ -406,6 +427,12 @@ class AddItemsExcel(APIView):
                     'added_by': user,
                     'date': row[9],
                     'invoice_number': row[10],
+                    'from_sales_return': False,
+                    'from_market_return': False,
+                    'bill_qty': row[5],
+                    'bill_foc': row[6],
+                    'initial_qty': 0,
+                    'initial_foc': 0,
 
                 }
 

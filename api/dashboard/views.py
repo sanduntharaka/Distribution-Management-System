@@ -14,7 +14,7 @@ from django.utils import timezone
 from users.models import UserAccount
 from distrubutor_salesref_invoice.CountSalesInvoice import CountSalesInvoiceAll
 from distrubutor_salesref_invoice.models import SalesRefInvoice
-from company_inventory.CountCompanyInventory import CountCompanyInventory
+# from company_inventory.CountCompanyInventory import CountCompanyInventory
 from salesref_return.TotalMarketReturn import TotalMarketReturn
 from distrubutor_salesref_invoice.SalesData import SalesData
 from distributor_inventory.LowQty import LowQty
@@ -239,10 +239,10 @@ def today_as_executive(request, *args, **kwargs):
     return Response(data, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def today_company_inventory_status(request):
-    total = CountCompanyInventory(date=request.data['date'])
-    return Response(data={'count': total.getCountWthoutZero()}, status=status.HTTP_200_OK)
+# @api_view(['POST'])
+# def today_company_inventory_status(request):
+#     total = CountCompanyInventory(date=request.data['date'])
+#     return Response(data={'count': total.getCountWthoutZero()}, status=status.HTTP_200_OK)
 
 
 # @api_view(['POST'])

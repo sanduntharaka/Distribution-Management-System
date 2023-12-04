@@ -3,7 +3,7 @@ import pandas as pd
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from company_inventory.models import CompanyInventory
+from company_inventory.models import CompanyProducts
 from . import serializers
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -12,13 +12,13 @@ from item_category.models import Category
 
 
 class AddInventory(generics.CreateAPIView):
-    queryset = CompanyInventory.objects.all()
+    queryset = CompanyProducts.objects.all()
     serializer_class = serializers.CompanyInventorySerializer
 
 
 class ListProducts(APIView):
     def get(self, request):
-        products = CompanyInventory.objects.all()
+        products = CompanyProducts.objects.all()
         serializer = serializers.GetCompanyInventory(products, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -29,17 +29,17 @@ class Getproduct(generics.RetrieveAPIView):
     def get_object(self, queryset=None, **kwargs):
         item = self.kwargs.get('id')
 
-        return get_object_or_404(CompanyInventory, id=item)
+        return get_object_or_404(CompanyProducts, id=item)
 
 
 class EditProduct(generics.UpdateAPIView):
     serializer_class = serializers.CompanyProductEditSerializer
-    queryset = CompanyInventory.objects.all()
+    queryset = CompanyProducts.objects.all()
 
 
 class DeleteProduct(generics.DestroyAPIView):
     serializer_class = serializers.CompanyInventorySerializer
-    queryset = CompanyInventory.objects.all()
+    queryset = CompanyProducts.objects.all()
 
 
 class AddInventoryFromExcel(APIView):

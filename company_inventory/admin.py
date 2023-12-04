@@ -1,15 +1,13 @@
 from django.contrib import admin
-from .models import CompanyInventory
+from .models import CompanyProducts
 
 
-class CompanyInventoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'employee', 'item_code', 'qty',
-                    'whole_sale_price', 'retail_price')
+class CompanyProductsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'item_code', 'base', 'description')
     list_display_links = ('id', 'item_code')
-    list_filter = ('item_code', 'employee',
-                   'whole_sale_price', 'retail_price')
-    search_fields = ('item_code', 'employee')
+    list_filter = ('item_code', )
+    search_fields = ('item_code', 'description')
     list_per_page = 25
 
 
-admin.site.register(CompanyInventory, CompanyInventoryAdmin)
+admin.site.register(CompanyProducts, CompanyProductsAdmin)

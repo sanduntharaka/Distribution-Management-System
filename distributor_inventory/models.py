@@ -49,6 +49,7 @@ class ItemStock(models.Model):
     item = models.ForeignKey(DistributorInventoryItems,
                              on_delete=models.CASCADE)
     from_sales_return = models.BooleanField(default=False)
+    from_market_return = models.BooleanField(default=False)
     invoice_number = models.CharField(
         max_length=15, default='INV-0000', blank=True, null=True)
     qty = models.IntegerField(blank=False)
