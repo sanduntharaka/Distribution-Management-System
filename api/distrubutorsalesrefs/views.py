@@ -54,7 +54,7 @@ class GetinventoryItemsSearch (APIView):
     def get(self, request, *args, **kwargs):
         # Retrieve ItemStock data for the specific distributor inventory
         try:
-
+            print(1)
             inventory_id = kwargs.get('pk')
             queryset = ItemStock.objects.filter(Q(qty__gt=0) | Q(foc__gt=0),
                                                 item__inventory=inventory_id)
@@ -65,6 +65,7 @@ class GetinventoryItemsSearch (APIView):
             )
 
             # Retrieve data for different prices
+            print(2)
             different_price_data = queryset.exclude(
                 Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
                 Q(retail_price__in=same_price_data.values('retail_price'))
@@ -76,7 +77,7 @@ class GetinventoryItemsSearch (APIView):
 
             # Get the search term from the request
             search_term = self.request.GET.get('search', '')
-
+            print(3)
             # Manually filter based on the search term
             filtered_queryset = [
                 {
@@ -112,7 +113,7 @@ class GetinventoryItemsSearch (APIView):
             return Response(data=filtered_queryset, status=status.HTTP_200_OK)
         except Exception as e:
             print('ii', e)
-            return Response(data=[], status=status.HTTP_200_OK)
+            return Response(data={'error': e}, status=status.HTTP_200_OK)
 
 
 class GetAlldistributorSalesRef(generics.ListAPIView):
