@@ -177,10 +177,10 @@ class ViewInvoice(APIView):
                 'qty': item.bill_qty,
                 'pack_size': item.pack_size,
                 'foc': item.bill_foc,
-                'whole_sale_price': item.whole_sale_price,
-                'retail_price': item.retail_price,
+                'whole_sale_price': 0 if str(item.whole_sale_price) == 'nan' else item.whole_sale_price,
+                'retail_price': 0 if str(item.retail_price) == 'nan' else item.retail_price,
                 'date': item.date,
-                'extended_price': item.whole_sale_price*(item.bill_qty)
+                'extended_price': 0 if str(item.whole_sale_price) == 'nan' else item.whole_sale_price*(item.bill_qty)
             }
             items.append(item_details)
 

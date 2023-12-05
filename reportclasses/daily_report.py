@@ -49,6 +49,7 @@ class GenerateDailyReportExcell:
             'valign': 'vcenter',
             'font_size': 18
         })
+        worksheet.freeze_panes(8, 0)
         worksheet.merge_range(
             1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Sales Reps Daily Report", merge_format)
         worksheet.write('A3', 'Distributor')

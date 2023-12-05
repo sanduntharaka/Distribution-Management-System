@@ -18,21 +18,23 @@ class RDPerformanceReportExcell:
 
             worksheet = workbook.add_worksheet()
             f1_month = workbook.add_format(
-                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': 'red'})
+                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#c2aa99', 'align': 'center', 'valign': 'vcenter'})
             f2_month = workbook.add_format(
-                {'border': 2, 'border_color': 'black', 'bg_color': 'red'})
+                {'border': 2, 'border_color': 'black', 'bg_color': 'c2aa99', 'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0'})
 
             f1_cumulative = workbook.add_format(
-                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': 'yellow'})
+                {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#ebffba', 'align': 'center', 'valign': 'vcenter'})
             f2_cumulative = workbook.add_format(
-                {'border': 2, 'border_color': 'black', 'bg_color': 'yellow'})
+                {'border': 2, 'border_color': 'black', 'bg_color': '#ebffba', 'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0'})
 
             f1 = workbook.add_format(
-                {'bold': True, 'border': 2, 'border_color': 'black'})
+                {'bold': True, 'border': 2, 'border_color': 'black', 'align': 'center', 'valign': 'vcenter'})
 
-            f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+            f2 = workbook.add_format({'border': 2, 'border_color': 'black',
+                                     'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0'})
 
             worksheet.set_column('A:A', 20)
+            worksheet.freeze_panes(9, 0)
             merge_format = workbook.add_format({
                 'bold': 1,
                 'align': 'center',
@@ -54,7 +56,7 @@ class RDPerformanceReportExcell:
                 6, 0, 8, 0, "Product Description", f1)
 
             worksheet.merge_range(
-                6, 1, 6, 12, "Month's Perfromance", f1)
+                6, 1, 6, 12, "Month's Perfromance", f1_month)
             worksheet.merge_range(
                 7, 1, 7, 3, "Volume Performance", f1_month)
             worksheet.write(8, 1, "Current Month", f1_month)
@@ -80,7 +82,7 @@ class RDPerformanceReportExcell:
             worksheet.write(8, 12, "% Change", f1_month)
 
             worksheet.merge_range(
-                6, 13, 6, 16, "YTD  Perfromance", f1)
+                6, 13, 6, 16, "YTD  Perfromance", f1_cumulative)
             worksheet.write(
                 7, 13, "Volume Performance", f1_cumulative)
             worksheet.write(8, 13, "for the period", f1_cumulative)
@@ -131,33 +133,33 @@ class RDPerformanceReportExcell:
 
             worksheet.write(row+8, 0, 'Total', f2)
             worksheet.write(row+8, 1, sum([i['this_vol_qty']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_month)
             worksheet.write(row+8, 2, sum([i['last_vol_qty']
-                            for i in self.item_details]), f2)
-            worksheet.write(row+8, 3, ' ', f2)
+                            for i in self.item_details]), f2_month)
+            worksheet.write(row+8, 3, ' ', f2_month)
             worksheet.write(row+8, 4, sum([i['this_val_qty']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_month)
             worksheet.write(row+8, 5, sum([i['last_val_qty']
-                            for i in self.item_details]), f2)
-            worksheet.write(row+8, 6,  ' ', f2)
+                            for i in self.item_details]), f2_month)
+            worksheet.write(row+8, 6,  ' ', f2_month)
             worksheet.write(row+8, 7, sum([i['this_vol_foc']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_month)
             worksheet.write(row+8, 8, sum([i['last_vol_foc']
-                            for i in self.item_details]), f2)
-            worksheet.write(row+8, 9, ' ', f2)
+                            for i in self.item_details]), f2_month)
+            worksheet.write(row+8, 9, ' ', f2_month)
             worksheet.write(row+8, 10, sum([i['this_vol_mret']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_month)
             worksheet.write(row+8, 11, sum([i['last_vol_mret']
-                            for i in self.item_details]), f2)
-            worksheet.write(row+8, 12, ' ', f2)
+                            for i in self.item_details]), f2_month)
+            worksheet.write(row+8, 12, ' ', f2_month)
             worksheet.write(row+8, 13, sum([i['year_vol_qty']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_cumulative)
             worksheet.write(row+8, 14, sum([i['year_val_qty']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_cumulative)
             worksheet.write(row+8, 15, sum([i['year_vol_foc']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_cumulative)
             worksheet.write(row+8, 16, sum([i['year_vol_mret']
-                            for i in self.item_details]), f2)
+                            for i in self.item_details]), f2_cumulative)
 
             workbook.close()
             response = HttpResponse(output.getvalue(
