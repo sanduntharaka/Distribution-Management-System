@@ -160,11 +160,7 @@ const ViewInventory = () => {
         console.log(res.data);
         setData(res.data);
         setTableData(res.data);
-        res.data.forEach((item) => {
-          if (!itemCodes.includes(item.item_code)) {
-            itemCodes.push(item.item_code);
-          }
-        });
+
       })
       .catch((err) => {
         console.log(err);

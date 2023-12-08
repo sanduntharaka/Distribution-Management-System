@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { axiosInstance } from '../../axiosInstance';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const MyMessage = React.forwardRef((props, ref) => {
     return (
@@ -114,25 +115,37 @@ const CretePlaning = () => {
     const dragItem = React.useRef(null);
     const dragOverItem = React.useRef(null);
 
-    const handleSort = () => {
-        if (dragItem.current === dragOverItem.current) {
-            return; // No change needed if the dragged item is dropped on itself
+    // const handleSort = () => {
+    //     if (dragItem.current === dragOverItem.current) {
+    //         return; // No change needed if the dragged item is dropped on itself
+    //     }
+
+    //     const _testItems = [...items];
+    //     const draggedItemContent = _testItems[dragItem.current];
+    //     _testItems.splice(dragItem.current, 1); // Remove the item from the original position
+
+    //     if (dragItem.current < dragOverItem.current) {
+    //         // If the item was dragged from a lower index to a higher index
+    //         _testItems.splice(dragOverItem.current, 0, draggedItemContent); // Insert the dragged item before the overed item
+    //     } else {
+    //         // If the item was dragged from a higher index to a lower index
+    //         _testItems.splice(dragOverItem.current + 0, 0, draggedItemContent); // Insert the dragged item after the overed item
+    //     }
+
+    //     dragItem.current = null;
+    //     dragOverItem.current = null;
+    //     setItems(_testItems);
+    // };
+    const handleSort = (result) => {
+        if (!result.destination) {
+            return;
         }
 
         const _testItems = [...items];
-        const draggedItemContent = _testItems[dragItem.current];
-        _testItems.splice(dragItem.current, 1); // Remove the item from the original position
+        const draggedItemContent = _testItems[result.source.index];
+        _testItems.splice(result.source.index, 1); // Remove the item from the original position
+        _testItems.splice(result.destination.index, 0, draggedItemContent); // Insert the dragged item at the new position
 
-        if (dragItem.current < dragOverItem.current) {
-            // If the item was dragged from a lower index to a higher index
-            _testItems.splice(dragOverItem.current, 0, draggedItemContent); // Insert the dragged item before the overed item
-        } else {
-            // If the item was dragged from a higher index to a lower index
-            _testItems.splice(dragOverItem.current + 0, 0, draggedItemContent); // Insert the dragged item after the overed item
-        }
-
-        dragItem.current = null;
-        dragOverItem.current = null;
         setItems(_testItems);
     };
 
@@ -271,18 +284,37 @@ const CretePlaning = () => {
                             <div className="form__row__col">
                                 <div className="dragcomponent">
 
-                                    {
-                                        items.map((itm, i) => (
-                                            <div className="dragcomponent__item" draggable onDragStart={(e) => dragItem.current = i}
-                                                onDragEnter={(e) => dragOverItem.current = i}
-                                                onDragEnd={handleSort}
-                                            >   <div>{i + 1}</div>
-                                                <div>{itm.name}</div>
-                                                <div className='dragcomponent__item__close' onClick={() => handleRemove(i)}>X</div>
-
-                                            </div>
-                                        ))
-                                    }
+                                    <DragDropContext onDragEnd={handleSort}>
+                                        <Droppable droppableId="droppable">
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    {...provided.droppableProps}
+                                                    ref={provided.innerRef}
+                                                    className="dragcomponent__container"
+                                                >
+                                                    {items.map((itm, i) => (
+                                                        <Draggable key={i} draggableId={i.toString()} index={i}>
+                                                            {(provided, snapshot) => (
+                                                                <div
+                                                                    ref={provided.innerRef}
+                                                                    {...provided.draggableProps}
+                                                                    {...provided.dragHandleProps}
+                                                                    className="dragcomponent__item"
+                                                                >
+                                                                    <div>{i + 1}</div>
+                                                                    <div>{itm.name}</div>
+                                                                    <div className="dragcomponent__item__close" onClick={() => handleRemove(i)}>
+                                                                        X
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </Draggable>
+                                                    ))}
+                                                    {provided.placeholder}
+                                                </div>
+                                            )}
+                                        </Droppable>
+                                    </DragDropContext>
 
                                 </div>
                             </div>

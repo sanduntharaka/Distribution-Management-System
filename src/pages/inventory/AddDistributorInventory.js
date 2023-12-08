@@ -238,7 +238,7 @@ const AddDistributorInventory = ({ inventory }) => {
                   />
                 </div>
               </div>
-              <div className="form__row__col">
+              {/* <div className="form__row__col">
                 <div className="form__row__col__label">Invoice</div>
                 <div className="form__row__col__input">
                   <input
@@ -255,10 +255,10 @@ const AddDistributorInventory = ({ inventory }) => {
                     }
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
 
-            <div className="form__row">
+            {/* <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Wholesale Price</div>
                 <div className="form__row__col__input">
@@ -315,8 +315,8 @@ const AddDistributorInventory = ({ inventory }) => {
                   />
                 </div>
               </div>
-            </div>
-            <div className="form__row">
+            </div> */}
+            {/* <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">Free of Charge</div>
                 <div className="form__row__col__input">
@@ -349,7 +349,7 @@ const AddDistributorInventory = ({ inventory }) => {
                   />
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="form__row">
               <div className="form__row__col">
@@ -372,7 +372,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 </div>
               </div>
             </div>
-            <div className="form__row">
+            {/* <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
                   <p>Choose if From Sales Return</p>
@@ -390,12 +390,12 @@ const AddDistributorInventory = ({ inventory }) => {
               </div>
               <div className="form__row__col dontdisp"></div>
               <div className="form__row__col dontdisp"></div>
-            </div>
+            </div> */}
 
             <div className="form__btn">
               <div className="form__btn__container">
                 <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
-                  import
+                  Add from exell
                 </button>
                 <button className="btnEdit" type="submit">
                   save

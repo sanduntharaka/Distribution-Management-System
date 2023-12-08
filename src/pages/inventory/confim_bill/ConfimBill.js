@@ -151,7 +151,7 @@ const ConfimBill = (props) => {
             <div className={styles.col}>
               {/* <p>method: {props.data.payment_type}</p> */}
               <p>Customer: {JSON.parse(sessionStorage.getItem('user_details')).full_name}</p>
-              <p>Customer Id: {JSON.parse(sessionStorage.getItem('user_details')).id}</p>
+              <p>Customer ID: {JSON.parse(sessionStorage.getItem('user_details')).id}</p>
               <p>Address: {JSON.parse(sessionStorage.getItem('user_details')).address}</p>
               <p>Telephone: {JSON.parse(sessionStorage.getItem('user_details')).company_number}</p>
             </div>
@@ -162,17 +162,21 @@ const ConfimBill = (props) => {
               <p>
                 Due Date: {props.data.due_date}
               </p>
+              <p>Invoiced By (Name): {"Bixton pvt Ltd"}</p>
+              <p>Telephone: {""}</p>
             </div>
           </div>
           <div className={styles.row}>
             <table>
               <thead>
                 <tr>
-                  <th> Item Code</th>
-                  <th>Qty</th>
-                  <th>FOC</th>
-                  <th>Unit price</th>
-                  <th>Extended price</th>
+                  <th>Item Code</th>
+                  <th>Description</th>
+                  <th>Unit Qty</th>
+                  <th>Free Qty</th>
+                  <th>Wholesale Price</th>
+                  <th>Retail Price</th>
+                  <th>Value</th>
 
                 </tr>
               </thead>
@@ -180,9 +184,11 @@ const ConfimBill = (props) => {
                 {props.items.map((item, i) => (
                   <tr key={i}>
                     <td>{item.item_code}</td>
+                    <td>{item.description}</td>
                     <td>{item.qty}</td>
                     <td>{item.foc}</td>
                     <td>{item.whole_sale_price}</td>
+                    <td>{item.retail_price}</td>
                     <td>{item.whole_sale_price * item.qty}</td>
                   </tr>
                 ))}
@@ -191,9 +197,7 @@ const ConfimBill = (props) => {
           </div>
           <div className={styles.bottom}>
             <div className={styles.amount}>
-              <p className={styles.total}>
-                Total Amount: Rs {props.data.pay_total + props.data.discount}
-              </p>
+
               <p className={styles.total}>
                 Total Dicsount Amount: Rs {props.data.discount}
               </p>

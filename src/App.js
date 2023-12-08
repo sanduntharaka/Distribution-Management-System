@@ -30,6 +30,7 @@ import PastTab from './pages/past/PastTab';
 import PlaningTab from './pages/planing/PlaningTab';
 import TargetTab from './pages/targets/TargetTab';
 import SrepPlaningTab from './pages/planing_srep/SrepPlaningTab';
+import ExpencesTab from './pages/expences/ExpencesTab';
 
 function App() {
   const userLogin = useSelector((state) => state.userLogin);
@@ -74,6 +75,8 @@ function App() {
           <Route path="/leave" element={<LeaveTab />} />
           <Route path="/report" element={<ReportsTab />} />
           <Route path="/settings" element={<MainSettings />} />
+          <Route path="/expences" element={<ExpencesTab />} />
+
 
 
         </Routes>

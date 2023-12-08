@@ -9,6 +9,7 @@ import Category from './Category';
 import AddDistributorInventoryStocks from './AddDistributorInventoryStocks';
 import ViewInventoryOthers from './ViewInventoryOthers';
 import AddInvoice from './AddInvoice';
+import AllInvoices from './AllInvoices';
 
 const InventoryTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -66,7 +67,7 @@ const InventoryTabs = () => {
     user.is_manager || user.is_superuser
       ? 0
       : user.is_distributor
-        ? 5
+        ? 6
         : user.is_salesref
           ? 4
           : 0
@@ -105,7 +106,7 @@ const InventoryTabs = () => {
         ) : (
           ''
         )} */}
-        {user.is_distributor ? (
+        {/* {user.is_distributor ? (
           <div
             className={`item ${selected === 5 ? 'selected' : ''}`}
             onClick={() => handleSelect(5)}
@@ -114,7 +115,7 @@ const InventoryTabs = () => {
           </div>
         ) : (
           ''
-        )}
+        )} */}
         {user.is_distributor ? (
           <div
             className={`item ${selected === 3 ? 'selected' : ''}`}
@@ -132,12 +133,22 @@ const InventoryTabs = () => {
         >
           Distributor inventory
         </div>
-        <div
-          className={`item ${selected === 6 ? 'selected' : ''}`}
-          onClick={() => handleSelect(6)}
-        >
-          Add Invoice
-        </div>
+        {user.is_distributor ? (
+          <>
+            <div
+              className={`item ${selected === 6 ? 'selected' : ''}`}
+              onClick={() => handleSelect(6)}
+            >
+              Add Invoice
+            </div>
+            <div
+              className={`item ${selected === 7 ? 'selected' : ''}`}
+              onClick={() => handleSelect(7)}
+            >
+              Show Invoice
+            </div>
+          </>
+        ) : ""}
       </div>
       <div className="tab_page">
         {selected === 0 ? (
@@ -157,13 +168,13 @@ const InventoryTabs = () => {
           <ViewInventoryOthers user={user} />
         ) : loading === false && selected === 5 && inventory !== undefined ? (
           <AddDistributorInventoryStocks inventory={inventory} />
-        )
-          : loading === false && selected === 6 && inventory !== undefined ? (
-            <AddInvoice inventory={inventory} />
-          )
-            : (
-              ''
-            )}
+        ) : loading === false && selected === 6 && inventory !== undefined ? (
+          <AddInvoice inventory={inventory} />
+        ) : loading === false && selected === 7 && inventory !== undefined ? (
+          <AllInvoices inventory={inventory} />
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );

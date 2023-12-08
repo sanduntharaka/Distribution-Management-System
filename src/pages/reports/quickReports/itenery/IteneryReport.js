@@ -54,13 +54,27 @@ const IteneryReport = (props) => {
 
     useEffect(() => {
         // Update the state when props change
-        setPsas(props.psas);
-    }, [props.psas])
-
-    useEffect(() => {
-        // Update the state when props change
         setSalesrefs(props.salesrefs);
     }, [props.salesrefs])
+
+    const handleSalesref = (e) => {
+        setDateBy({
+            ...dateBy,
+            sales_ref: e.target.value,
+        });
+        axiosInstance.get(`/psa/get/srep/${e.target.value}`, {
+            headers: {
+                Authorization:
+                    'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+        })
+            .then((res) => {
+                setPsas(res.data);
+            }).catch((err) => {
+                console.log(err);
+            });
+    }
+
     const handleDistributor = (e) => {
         setDateBy({
             ...dateBy,
@@ -180,8 +194,7 @@ const IteneryReport = (props) => {
                                 <div className="form__row__col">
                                     <div className="form__row__col__label">Sales ref</div>
                                     <div className="form__row__col__input">
-                                        <select name="" id="" onChange={(e) =>
-                                            setDateBy({ ...dateBy, sales_ref: e.target.value })}>
+                                        <select name="" id="" onChange={(e) => handleSalesref(e)}>
 
                                             <option value="">Select sales rep</option>
 

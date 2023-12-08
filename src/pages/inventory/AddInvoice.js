@@ -77,7 +77,8 @@ const AddInvoice = ({ inventory }) => {
         due_date: '',
         from_sales_return: false,
         from_market_return: false,
-        inventory: inventory.id
+        inventory: inventory.id,
+        page_number: ''
 
 
     });
@@ -122,6 +123,28 @@ const AddInvoice = ({ inventory }) => {
                 });
         }
     }, [setValue2, value2])
+
+    const [pages, setPages] = useState([])
+    const handleInvoiceNumber = (e) => {
+        setData({ ...data, invoice_number: e.target.value })
+        axiosInstance
+            .get(
+                `/distributor/invoice/check/${e.target.value}`,
+                {
+                    headers: {
+                        Authorization:
+                            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+                    },
+                }
+            )
+            .then((res) => {
+                console.log(res.data)
+                setPages(res.data.pages)
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
 
     const filterProducts = (e) => {
@@ -241,6 +264,20 @@ const AddInvoice = ({ inventory }) => {
 
     }
 
+    const handleMret = (e) => {
+        console.log('mret')
+        if (e.target.checked) {
+            setData({ ...data, from_sales_return: false, from_market_return: true })
+        }
+    }
+    const handleSret = (e) => {
+        console.log('sret')
+
+        if (e.target.checked) {
+            setData({ ...data, from_market_return: false, from_sales_return: true })
+        }
+    }
+
 
 
     return (
@@ -288,12 +325,29 @@ const AddInvoice = ({ inventory }) => {
                                 <div className="form__row__col__label">Invoie Number</div>
                                 <div className="form__row__col__input">
                                     <input type="text" value={data.invoice_number}
-                                        onChange={(e) => setData({ ...data, invoice_number: e.target.value })} />
+                                        onChange={(e) => handleInvoiceNumber(e)} />
                                 </div>
                             </div>
-                            <div className="form__row__col dontdisp">
-
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Page Number</div>
+                                <div className="form__row__col__input">
+                                    <input type="text" value={data.page_number}
+                                        onChange={(e) => setData({ ...data, page_number: e.target.value })} />
+                                </div>
                             </div>
+                            {
+                                pages.length > 0 ? (<div className="form__row__col ">
+                                    <p>You have previously saved page count.</p>
+                                    {
+                                        pages.map((item, i) => (
+                                            <p>{1}</p>
+                                        ))
+                                    }
+                                </div>) : <div className="form__row__col dontdisp">
+
+                                </div>
+                            }
+
                         </div>
 
                         <div className="form__row">
@@ -433,7 +487,7 @@ const AddInvoice = ({ inventory }) => {
                                     <input
                                         type="number"
                                         value={currentItem.whole_sale_price}
-                                        onChange={''}
+                                        onChange={(e) => setCurrentItem({ ...currentItem, whole_sale_price: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -443,7 +497,7 @@ const AddInvoice = ({ inventory }) => {
                                     <input
                                         type="number"
                                         value={currentItem.retail_price}
-                                        onChange={''}
+                                        onChange={(e) => setCurrentItem({ ...currentItem, retail_price: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -453,7 +507,7 @@ const AddInvoice = ({ inventory }) => {
                                     <input
                                         type="number"
                                         value={currentItem.pack_size}
-                                        onChange={''}
+                                        onChange={(e) => setCurrentItem({ ...currentItem, pack_size: e.target.value })}
                                     />
                                 </div>
                             </div>
@@ -583,7 +637,7 @@ const AddInvoice = ({ inventory }) => {
                             <div className="form__row__col__input aligned">
                                 <div className="form__row__col__label" style={{ width: 150 }}>From market return</div>
                                 <div className="form__row__col__input">
-                                    <input type="radio" onChange={(e) => setData({ ...data, from_market_return: true })} />
+                                    <input type="radio" checked={data.from_market_return ? true : false} onChange={(e) => handleMret(e)} />
                                 </div>
                             </div>
                             <div className="form__row__col dontdisp">
@@ -596,7 +650,7 @@ const AddInvoice = ({ inventory }) => {
                             <div className="form__row__col__input aligned">
                                 <div className="form__row__col__label" style={{ width: 150 }}>From sales return</div>
                                 <div className="form__row__col__input">
-                                    <input type="radio" onChange={(e) => setData({ ...data, from_sales_return: true })} />
+                                    <input type="radio" checked={data.from_sales_return ? true : false} onChange={(e) => handleSret(e)} />
                                 </div>
                             </div>
                             <div className="form__row__col dontdisp">

@@ -50,6 +50,7 @@ const tableIcons = {
 };
 
 const ViewAllManagerDistributors = (props) => {
+  const user = props.user
   const [data, setData] = useState([]);
   const [tblData, setTableData] = useState([]);
   const columns = [
@@ -106,8 +107,7 @@ const ViewAllManagerDistributors = (props) => {
     if (props.user.is_manager) {
       axiosInstance
         .get(
-          `/manager/distributor/by/manager/${
-            JSON.parse(sessionStorage.getItem('user')).id
+          `/manager/distributor/by/manager/${JSON.parse(sessionStorage.getItem('user')).id
           }`,
           {
             headers: {
@@ -229,14 +229,15 @@ const ViewAllManagerDistributors = (props) => {
                   actionsColumnIndex: 0,
                 }}
                 icons={tableIcons}
-                actions={[
+
+                actions={user.is_manager ? [
                   {
                     icon: DeleteOutline,
                     tooltip: 'Delete details',
                     onClick: (event, rowData) =>
                       handleDeleteDetails(event, rowData),
                   },
-                ]}
+                ] : ''}
                 components={{
                   Action: (props) => (
                     <React.Fragment>

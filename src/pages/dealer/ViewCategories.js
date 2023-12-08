@@ -204,10 +204,10 @@ const ViewCategories = (props) => {
                           handleRowUpdate(newData, oldData, resolve);
                         }),
 
-                      onRowDelete: (oldData) =>
-                        new Promise((resolve) => {
-                          handleRowDelete(oldData, resolve);
-                        }),
+                      // onRowDelete: (oldData) =>
+                      //   new Promise((resolve) => {
+                      //     handleRowDelete(oldData, resolve);
+                      //   }),
                     }
                     : ''
                 }

@@ -214,7 +214,7 @@ const ViewPsas = (props) => {
                 }}
                 icons={tableIcons}
                 actions={
-                  user.is_manager || user.is_company
+                  user.is_manager
                     ? [
                       {
                         icon: EditIcon,

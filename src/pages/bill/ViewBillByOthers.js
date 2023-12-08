@@ -22,6 +22,9 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ViewBill from './confim_bill/ViewBill';
 import RecommendIcon from '@mui/icons-material/Recommend';
+import PaymentDetails from './confim_bill/PaymentDetails';
+import { MdOutlinePayment } from "react-icons/md";
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -72,6 +75,8 @@ const ViewBillByOthers = ({ user }) => {
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
+  //payment
+  const [paymentOpen, setPaymentOpen] = useState(false);
 
   const [distributors, setDistributors] = useState([]);
 
@@ -224,6 +229,34 @@ const ViewBillByOthers = ({ user }) => {
         });
     }
   };
+  const handleViewPayments = (e, value) => {
+    e.preventDefault();
+    setLoading(true);
+    setInvoice(value);
+    setSataSingle(value);
+    console.log('inv:', value)
+    axiosInstance
+      .get(`/salesref/invoice/items/${value.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setItems(res.data);
+        setDetailsOpen(false);
+        setMessageOpen(false);
+        setPaymentOpen(true);
+
+        handleModalOpen();
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+
+  }
   const MyInvoice = React.forwardRef((props, ref) => {
     return (
       <ViewBill
@@ -250,7 +283,14 @@ const ViewBillByOthers = ({ user }) => {
             user={user}
             handleClose={handleModalClose}
           />
-        ) : messageOpen ? (
+        ) : paymentOpen ? <PaymentDetails
+          invoice={invoice}
+          selected={invoice}
+          showEditCheques={false}
+          paymentOpen={setPaymentOpen}
+          setPaymentId={''}
+          closeModal={handleModalClose}
+        /> : messageOpen ? (
           <Message
             hide={handleModalClose}
             success={success}
@@ -315,6 +355,8 @@ const ViewBillByOthers = ({ user }) => {
                 options={{
                   exportButton: true,
                   actionsColumnIndex: 0,
+                  pageSize: 50,
+                  pageSizeOptions: [50, 75, 100],
                 }}
                 icons={tableIcons}
                 actions={[
@@ -323,6 +365,12 @@ const ViewBillByOthers = ({ user }) => {
                     tooltip: 'View details',
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
+                  },
+                  {
+                    icon: MdOutlinePayment,
+                    tooltip: 'View payments',
+                    onClick: (event, rowData) =>
+                      handleViewPayments(event, rowData),
                   },
                 ]}
                 components={{
@@ -339,6 +387,18 @@ const ViewBillByOthers = ({ user }) => {
                           aria-label={props.action.tooltip}
                         >
                           <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === MdOutlinePayment && props.data.status == 'confirmed' ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the icon color
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <MdOutlinePayment />
                         </IconButton>
                       ) : (
                         ''

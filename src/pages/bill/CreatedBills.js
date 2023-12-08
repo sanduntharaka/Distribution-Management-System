@@ -23,6 +23,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import ViewBill from './confim_bill/ViewBill';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import Spinner from '../../components/loadingSpinner/Spinner';
+import { MdOutlinePayment } from "react-icons/md";
+import PaymentDetails from './confim_bill/PaymentDetails';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -75,6 +77,9 @@ const CreatedBills = () => {
 
   //details
   const [detailsOpen, setDetailsOpen] = useState(false);
+
+  //payment
+  const [paymentOpen, setPaymentOpen] = useState(false);
 
   //mesage show
   const [messageOpen, setMessageOpen] = useState(false);
@@ -149,6 +154,7 @@ const CreatedBills = () => {
       .then((res) => {
         setItems(res.data);
         setMessageOpen(false);
+        setPaymentOpen(false);
         setDetailsOpen(true);
         handleModalOpen();
         setLoading(false);
@@ -158,6 +164,35 @@ const CreatedBills = () => {
         setLoading(false);
       });
   };
+  const handleViewPayments = (e, value) => {
+    e.preventDefault();
+    setLoading(true);
+    setInvoice(value);
+    setSataSingle(value);
+    console.log('inv:', value)
+    axiosInstance
+      .get(`/salesref/invoice/items/${value.id}`, {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+        setItems(res.data);
+        setDetailsOpen(false);
+        setMessageOpen(false);
+        setPaymentOpen(true);
+
+        handleModalOpen();
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
+
+  }
+
 
   const MyInvoice = React.forwardRef((props, ref) => {
     return (
@@ -185,7 +220,14 @@ const CreatedBills = () => {
             user={user}
             handleClose={handleModalClose}
           />
-        ) : messageOpen ? (
+        ) : paymentOpen ? <PaymentDetails
+          invoice={invoice}
+          selected={invoice}
+          showEditCheques={false}
+          paymentOpen={setPaymentOpen}
+          setPaymentId={''}
+          closeModal={handleModalClose}
+        /> : messageOpen ? (
           <Message
             hide={handleModalClose}
             success={success}
@@ -197,6 +239,7 @@ const CreatedBills = () => {
           <p>No modal</p>
         )}
       </Modal>
+
       <div className="page__title">
         <p>View All Issued Bills</p>
       </div>
@@ -234,6 +277,13 @@ const CreatedBills = () => {
                     onClick: (event, rowData) =>
                       handleViewDetails(event, rowData),
                   },
+
+                  {
+                    icon: MdOutlinePayment,
+                    tooltip: 'View payments',
+                    onClick: (event, rowData) =>
+                      handleViewPayments(event, rowData),
+                  },
                 ]}
                 components={{
                   Action: (props) => (
@@ -249,6 +299,18 @@ const CreatedBills = () => {
                           aria-label={props.action.tooltip}
                         >
                           <CgDetailsMore />
+                        </IconButton>
+                      ) : props.action.icon === MdOutlinePayment && props.data.status == 'confirmed' ? (
+                        <IconButton
+                          onClick={(event) =>
+                            props.action.onClick(event, props.data)
+                          }
+                          color="primary"
+                          style={{ color: 'orange' }} // customize the icon color
+                          size="small"
+                          aria-label={props.action.tooltip}
+                        >
+                          <MdOutlinePayment />
                         </IconButton>
                       ) : (
                         ''
@@ -266,3 +328,4 @@ const CreatedBills = () => {
 };
 
 export default CreatedBills;
+

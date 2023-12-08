@@ -26,6 +26,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import EditIcon from '@mui/icons-material/Edit';
 
+
+
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -101,7 +103,8 @@ const DistributorInventory = ({ inventory, user }) => {
         },
       })
       .then((res) => {
-        setTableData(res.data);
+        console.log(res.data)
+        setTableData(res.data.results);
         setLoading(false);
       })
       .catch((err) => {
@@ -165,6 +168,10 @@ const DistributorInventory = ({ inventory, user }) => {
     handleModalOpen();
   };
 
+  const handleNextPage = (e) => {
+    console.log('nxt:')
+  }
+
   return (
     <div className="page">
       <Modal open={modalOpen} onClose={handleModalClose}>
@@ -224,6 +231,8 @@ const DistributorInventory = ({ inventory, user }) => {
         <div className="page__pcont__row">
           <div className="page__pcont__row__col">
             <div className="dataTable">
+
+
               <MaterialTable
                 title={false}
                 columns={columns}
@@ -239,8 +248,10 @@ const DistributorInventory = ({ inventory, user }) => {
                   actionsColumnIndex: 0,
                   pageSize: 50,
                   pageSizeOptions: [50, 75, 100],
+                  paginationType: 'stepped',
                 }}
                 icons={tableIcons}
+                // 
                 actions={[
                   {
                     icon: CgDetailsMore,
@@ -261,7 +272,9 @@ const DistributorInventory = ({ inventory, user }) => {
                     onClick: (event, rowData) =>
                       handleDeleteDetails(event, rowData),
                   },
+
                 ]}
+
                 components={{
                   Action: (props) => (
                     <React.Fragment>
@@ -311,6 +324,7 @@ const DistributorInventory = ({ inventory, user }) => {
                     </React.Fragment>
                   ),
                 }}
+
               />
             </div>
           </div>

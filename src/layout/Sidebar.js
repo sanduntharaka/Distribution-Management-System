@@ -19,7 +19,7 @@ import { BsListTask } from 'react-icons/bs';
 import { FiSettings } from 'react-icons/fi';
 
 import { BiPurchaseTagAlt, BiHistory, BiTargetLock } from 'react-icons/bi';
-import { GiCheckedShield } from 'react-icons/gi';
+import { GiExpense } from 'react-icons/gi';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../redux/actions/UserActions';
@@ -242,6 +242,19 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">sales return</div>
           </NavLink>
+          {user.is_distributor ? (
+            <NavLink
+              to="/expences"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <GiExpense />
+              </div>
+              <div className="container__list__item__name">Expences</div>
+            </NavLink>
+          ) : ''}
           {/* 
           <NavLink
             to="/leave"
