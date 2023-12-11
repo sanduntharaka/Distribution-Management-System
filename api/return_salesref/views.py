@@ -53,7 +53,7 @@ class GetReturnsByDistributor(generics.ListAPIView):
         item = self.kwargs.get('id')
         queryset = SalesRefReturn.objects.filter(
             dis_sales_ref__distributor=item)
-        queryset = queryset.order_by('-date')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(queryset)
 
 
@@ -65,7 +65,7 @@ class GetReturnsByDSalesref(generics.ListAPIView):
         print(item)
         queryset = SalesRefReturn.objects.filter(
             dis_sales_ref__sales_ref=item)
-        queryset = queryset.order_by('-date')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(queryset)
 
 
@@ -76,7 +76,7 @@ class GetReturnsByOthers(generics.ListAPIView):
         item = self.kwargs.get('id')
         queryset = SalesRefReturn.objects.filter(
             dis_sales_ref__distributor=item)
-        queryset = queryset.order_by('-date')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(queryset)
 
 
@@ -91,7 +91,7 @@ class GetPendingReturns(generics.ListAPIView):
     def get_queryset(self):
         queryset = SalesRefReturn.objects.filter(
             status='pending')
-        queryset = queryset.order_by('-date')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(SalesRefReturn, status='pending')
 
 

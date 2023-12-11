@@ -100,7 +100,7 @@ class AllPendingInvoice(generics.ListAPIView):
 
         queryset = SalesRefInvoice.objects.filter(
             status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
-        queryset = queryset.order_by('-date', '-time')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(queryset)
 
 
@@ -115,7 +115,7 @@ class AllPendingInvoiceByOthers(generics.ListAPIView):
                               for distributor in disti_refs]
         queryset = SalesRefInvoice.objects.filter(
             status='pending', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
-        queryset = queryset.order_by('-date', '-time')
+        queryset = queryset.order_by('-bill_number')
         return get_list_or_404(queryset)
 
 
@@ -129,7 +129,10 @@ class AllCreditInvoice(generics.ListAPIView):
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
 
-        return get_list_or_404(SalesRefInvoice, status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = SalesRefInvoice.objects.filter(
+            status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = queryset.order_by('-bill_number')
+        return get_list_or_404(queryset)
 
 
 class AllCreditInvoiceByOthers(generics.ListAPIView):
@@ -141,7 +144,10 @@ class AllCreditInvoiceByOthers(generics.ListAPIView):
 
         distributorsrf_ids = [distributor['id']
                               for distributor in disti_refs]
-        return get_list_or_404(SalesRefInvoice, status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = SalesRefInvoice.objects.filter(
+            status='confirmed', is_settiled=False, dis_sales_ref__in=distributorsrf_ids)
+        queryset = queryset.order_by('-bill_number')
+        return get_list_or_404(queryset)
 
 
 class CreateInvoicePayment(generics.CreateAPIView):
