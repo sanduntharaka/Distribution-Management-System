@@ -75,7 +75,7 @@ class AllInvoiceByDistributor(generics.ListAPIView):
             dis_sales_ref__distributor=distributor_id)
 
         # Order the queryset by date and time
-        queryset = queryset.order_by('-date', '-time')
+        queryset = queryset.order_by('-bill_number')
 
         # Use get_list_or_404 to return the ordered queryset
         return get_list_or_404(queryset)
