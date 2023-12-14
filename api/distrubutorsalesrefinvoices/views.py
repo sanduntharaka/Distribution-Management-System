@@ -52,11 +52,13 @@ class CreateInvoice(generics.CreateAPIView):
 class AllInvoice(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
     queryset = SalesRefInvoice.objects.all()
+    pagination_class = None
 
 
 class AllInvoiceBySalesRef(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
     queryset = SalesRefInvoice.objects.all()
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         disti_ref = SalesRefDistributor.objects.get(
@@ -66,6 +68,7 @@ class AllInvoiceBySalesRef(generics.ListAPIView):
 
 class AllInvoiceByDistributor(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         distributor_id = self.kwargs.get('id')
@@ -83,6 +86,7 @@ class AllInvoiceByDistributor(generics.ListAPIView):
 
 class AllInvoiceByOthers_Distributor(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
@@ -90,6 +94,7 @@ class AllInvoiceByOthers_Distributor(generics.ListAPIView):
 
 class AllPendingInvoice(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         disti_refs = SalesRefDistributor.objects.filter(
@@ -106,6 +111,7 @@ class AllPendingInvoice(generics.ListAPIView):
 
 class AllPendingInvoiceByOthers(generics.ListAPIView):
     serializer_class = serializers.GetInvoicesSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         disti_refs = SalesRefDistributor.objects.filter(
@@ -121,6 +127,7 @@ class AllPendingInvoiceByOthers(generics.ListAPIView):
 
 class AllCreditInvoice(generics.ListAPIView):
     serializer_class = serializers.GetInvoiceWithPaymentSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         disti_refs = SalesRefDistributor.objects.filter(
@@ -137,6 +144,7 @@ class AllCreditInvoice(generics.ListAPIView):
 
 class AllCreditInvoiceByOthers(generics.ListAPIView):
     serializer_class = serializers.GetInvoiceWithPaymentSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         disti_refs = SalesRefDistributor.objects.filter(
@@ -195,6 +203,7 @@ class CreateInvoiceItems(generics.CreateAPIView):
 
 class InvoiceItems(generics.ListAPIView):
     serializer_class = serializers.GetInvoiceItemsSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
@@ -621,6 +630,7 @@ class AllInvoiceByDealer(APIView):
 
 class AllInvoicePayments(generics.ListAPIView):
     serializer_class = serializers.GetPaymentDetailsSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
@@ -672,6 +682,7 @@ class GetCheque(generics.ListAPIView):
     # queryset = Dealer.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ('cheque_number',)
+    pagination_class = None
 
     def get_queryset(self):
         request = self.request

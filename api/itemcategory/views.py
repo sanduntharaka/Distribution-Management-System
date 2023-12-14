@@ -27,6 +27,7 @@ class DeleteCategory(generics.DestroyAPIView):
 class AllCategory(generics.ListAPIView):
     serializer_class = serializers.GetCategorySerializer
     queryset = Category.objects.all()
+    pagination_class = None
 
 
 class CreateCategoryFromExcell(APIView):
@@ -39,7 +40,7 @@ class CreateCategoryFromExcell(APIView):
                 'description': row[1],
                 'foc_percentage': row[2],
                 'date': row[3],
-                'short_code':row[4],
+                'short_code': row[4],
                 'added_by': user,
             }
 

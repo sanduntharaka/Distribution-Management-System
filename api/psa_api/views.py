@@ -62,6 +62,7 @@ class CreateFromExcell(APIView):
 
 class AllCreatedPsa(generics.ListAPIView):
     serializer_class = serializers.GetAllPSASerializer
+    pagination_class = None
 
     def get_queryset(self):
         user = self.request.user.id
@@ -136,6 +137,7 @@ class GetAllSearch(generics.ListAPIView):
     serializer_class = serializers.GetAllPSASerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ('area_name',)
+    pagination_class = None
 
     def get_queryset(self):
         user = self.request.user.id

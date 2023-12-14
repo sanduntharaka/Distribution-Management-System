@@ -13,6 +13,8 @@ sesettings2.py
 core/settings.py
 media
 core/settings.py
+0002_alter_expense_name.py
+0004_companyproducts_delete_companyinventory.py
 0010_itemstock_from_market_return.py
 0009_itemstock_bill_foc_itemstock_bill_qty.py
 0008_distributoritemsinvoice_discount_and_more.py

@@ -45,6 +45,7 @@ class AddDealerExcel(APIView):
 class GetAll(generics.ListAPIView):
     serializer_class = serializers.GetAllDealersSerializer
     # queryset = Dealer.objects.all()
+    pagination_class = None
 
     def get_queryset(self):
         user = self.request.user.id
@@ -124,6 +125,7 @@ class GetAllSearch(generics.ListAPIView):
     # queryset = Dealer.objects.all()
     filter_backends = [GradeFilterBackend, filters.SearchFilter]
     search_fields = ('name', 'address', 'grade')
+    pagination_class = None
 
     def get_queryset(self):
         user = self.request.user.id

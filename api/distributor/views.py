@@ -189,10 +189,12 @@ class ViewInvoice(APIView):
 
 class GetDistributorInventoryItems(generics.ListAPIView):
     serializer_class = serializers.GetInventoryItems
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('id')
-        return get_list_or_404(DistributorInventoryItems, inventory=item)
+        queryset = get_list_or_404(DistributorInventoryItems, inventory=item)
+        return queryset
 
 
 class GetDistributorInventoryItemsByUser(generics.ListAPIView):
@@ -494,6 +496,7 @@ class AddItemsExcel(APIView):
 
 class AllSalesrefsByDistributor(generics.ListAPIView):
     serializer_class = serializers.MySalesrefs
+    pagination_class = None
 
     def get_queryset(self):
         item = self.kwargs.get('id')

@@ -45,7 +45,7 @@ class GeTAllNotBuyBysOthers(generics.ListAPIView):
 
 class GeTAllNotBuyBysSalesRefFilter(APIView):
     # serializer_class = serializers.GetNotBuySerializer
-
+    # pagination_class = None
     # def get_queryset(self):
 
     #     return get_list_or_404(NotBuyDetails, dis_sales_ref__sales_ref=self.kwargs.get('id'))
@@ -66,7 +66,6 @@ class GeTAllNotBuyBysSalesRefFilter(APIView):
                 data = data.order_by('-datetime')
                 serializer = serializers.GetNotBuySerializer(
                     data, many=True)
-
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
 
         elif request.user.is_salesref:

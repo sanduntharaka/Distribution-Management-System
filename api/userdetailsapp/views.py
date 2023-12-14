@@ -296,6 +296,7 @@ class DistributorsSrepsByManager(generics.ListAPIView):
 
 class GetUserTerriotories(generics.ListAPIView):
     serializer_class = serializers.UserDetailsTerriotoryGetSerializer
+    pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
 

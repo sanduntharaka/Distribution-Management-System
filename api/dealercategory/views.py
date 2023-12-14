@@ -56,6 +56,7 @@ class CreateCategoryFromExcell(APIView):
 class AllCreatedCategories(generics.ListAPIView):
     serializer_class = serializers.GetAllCategorySerializer
     queryset = DealerCategory.objects.all()
+    pagination_class = None
 
 
 class EditCategory(generics.UpdateAPIView):
