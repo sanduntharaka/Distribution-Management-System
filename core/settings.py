@@ -27,8 +27,7 @@ SECRET_KEY = 'django-insecure-=utx##huq3!w+=hb-lc!saug)!%mbywwlp0l*q#l9wi4$kgj%u
 DEBUG = False
 
 # 'bixtonlighting.com', 'main.bixtonlighting.com'
-ALLOWED_HOSTS = ['ebrandinginnovations.com',
-                 'distributionback.ebrandinginnovations.com', 'distributionback.ebrandinginnovations.com:8000', 'distribution.ebrandinginnovations.com', 'distribution.ebrandinginnovations.com:8000']
+ALLOWED_HOSTS = ['bixtonlighting.com', 'main.bixtonlighting.com']
 
 
 # Application definition
@@ -182,26 +181,26 @@ ASGI_APPLICATION = "core.routing.application"
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'bixton_test',
-#         'USER': 'postgres',
-#         'PASSWORD': '6673',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'testdistributionsystem',
-        'USER': 'testdistriuser',
-        'PASSWORD': 'P2ff3f4dP3a8',
+        'NAME': 'bixtonlightingdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'AVNS_GlClCnbEOaZm-02AQFW',
         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
         'PORT': '25060',
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'testdistributionsystem',
+#         'USER': 'testdistriuser',
+#         'PASSWORD': 'P2ff3f4dP3a8',
+#         'HOST': 'db-postgresql-blr1-42114-do-user-13856971-0.b.db.ondigitalocean.com',
+#         'PORT': '25060',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -287,7 +286,7 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'AUTH_HEADER_TYPES': ('JWT',),
 }
-DOMAIN = 'https://distribution.ebrandinginnovations.com'
+DOMAIN = 'https://bixtonlighting.com'
 SITE_NAME = 'Ebranding Distribution Management System'
 DJOSER = {
     'LOGIN_FIELD': 'user_name',
@@ -308,8 +307,8 @@ DJOSER = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://distribution.ebrandinginnovations.com:3000",
-    "http://distribution.ebrandinginnovations.com:3000",
-    "https://distribution.ebrandinginnovations.com",
-    "http://distribution.ebrandinginnovations.com",
+    "http://bixtonlighting.com:3000",
+    "https://bixtonlighting.com:3000",
+    "https://bixtonlighting.com",
+    "http://bixtonlighting.com",
 ]

@@ -56,7 +56,7 @@ class AddExistingItems(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         inv_data = request.data['invoice']
         items_data = request.data['items']
-
+        print(inv_data)
         # item_serializer.is_valid(raise_exception=True)
         # item = item_serializer.save()
 
@@ -72,7 +72,7 @@ class AddExistingItems(generics.CreateAPIView):
                 'total': inv_data.get('pay_total', 0),
                 'discount': inv_data.get('discount', 0),
                 'due_date': inv_data.get('due_date', 0),
-
+                'date': inv_data.get('date'),
             }
             invoice_add = serializers.AddInvoiceDetailsSerializer(
                 data=bill_data)

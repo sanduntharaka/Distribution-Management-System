@@ -65,6 +65,7 @@ class AllCreatedPsa(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
+
         user = self.request.user.id
         users = []
 
@@ -113,7 +114,7 @@ class AllCreatedPsa(generics.ListAPIView):
                 id__in=salesrefs).values_list('user', flat=True)
             users.extend(salesref_users_ids)
             show['sales_ref__in'] = users
-
+            print('hi:', show)
         if (self.request.user.is_salesref):
 
             # distributor = SalesRefDistributor.objects.get(

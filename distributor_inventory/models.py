@@ -40,7 +40,7 @@ class DistributorItemsInvoice(models.Model):
     total = models.FloatField(default=0)
     discount = models.FloatField(default=0)
     due_date = models.DateField(blank=True, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField()
 
 
 class ItemStock(models.Model):

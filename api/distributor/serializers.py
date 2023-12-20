@@ -67,12 +67,12 @@ class GetInventoryItemsStoks(serializers.ModelSerializer):
     item_code = serializers.CharField(source='item.item_code')
     description = serializers.CharField(source='item.description')
     base = serializers.CharField(source='item.base')
-    invoice_number = serializers.CharField(source='invoice.invoice_number')
+    # invoice_number = serializers.CharField(source='invoice.invoice_number')
 
     class Meta:
         model = ItemStock
         fields = ('id', 'item_code', 'qty', 'foc', 'added_by', 'description',
-                  'base', 'pack_size', 'date', 'whole_sale_price', 'retail_price', 'from_sales_return', 'category_name', 'invoice_number')
+                  'base', 'pack_size', 'date', 'whole_sale_price', 'retail_price', 'from_sales_return', 'category_name')
 
 
 class GetInventoryItems(serializers.ModelSerializer):

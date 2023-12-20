@@ -114,6 +114,74 @@ class GetinventoryItemsSearch (APIView):
             return Response(data={'error'}, status=status.HTTP_200_OK)
 
 
+class GetinventoryItemsSearchForInsertInvoice (APIView):
+    serializer_class = serializers.DistributorInventoryItems
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ('item__item_code', 'item__description')
+
+    def get(self, request, *args, **kwargs):
+        # Retrieve ItemStock data for the specific distributor inventory
+        try:
+            inventory_id = kwargs.get('pk')
+            queryset = ItemStock.objects.filter(
+                item__inventory=inventory_id)
+
+            # Separate data for the same price and different prices
+            same_price_data = queryset.values('whole_sale_price', 'retail_price', 'item__id', 'item__item_code', 'item__description').annotate(
+                total_qty=Sum('qty'), total_foc=Sum('foc')
+            )
+
+            different_price_data = queryset.exclude(
+                Q(whole_sale_price__in=same_price_data.values('whole_sale_price')) &
+                Q(retail_price__in=same_price_data.values('retail_price'))
+            )
+
+            # Combine data for same price and different prices
+            combined_queryset = list(
+                chain(same_price_data, different_price_data))
+
+            # Get the search term from the request
+            search_term = self.request.GET.get('search', '')
+
+            # Manually filter based on the search term
+            filtered_queryset = [
+
+                {
+                    'item_code': item['item__item_code'],
+                    'description': item['item__description'],
+                    'id': item['item__id'],
+                    'whole_sale_price': 0 if str(item['whole_sale_price']) == 'nan' else item['whole_sale_price'],
+                    'retail_price':  0 if str(item['retail_price']) == 'nan' else item['retail_price'],
+                    'qty': item['total_qty'],
+                    'foc': item['total_foc']
+                }
+                for item in combined_queryset
+                if search_term.lower() in item['item__item_code'].lower() or search_term.lower() in item['item__description'].lower()
+            ]
+
+            item_stock_ids = ItemStock.objects.values('item').distinct()
+
+            # Query DistributorInventoryItems excluding those in ItemStock
+            items_not_in_stock = DistributorInventoryItems.objects.exclude(
+                id__in=Subquery(item_stock_ids))
+
+            for item in items_not_in_stock:
+                filtered_queryset.append({
+                    'item_code': item.item_code,
+                    'description': item.description,
+                    'id': item.id,
+                    'whole_sale_price': 0,
+                    'retail_price': 0,
+                    'qty': 0,
+                    'foc': 0
+                })
+
+            return Response(data=filtered_queryset, status=status.HTTP_200_OK)
+        except Exception as e:
+            print('ii', e)
+            return Response(data={'error'}, status=status.HTTP_200_OK)
+
+
 class GetAlldistributorSalesRef(generics.ListAPIView):
     serializer_class = serializers.GetDistributorSalesRefSerializer
     queryset = SalesRefDistributor.objects.all()

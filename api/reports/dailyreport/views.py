@@ -22,6 +22,7 @@ from datetime import date, timedelta
 class GetDailyReport(APIView):
     def post(self, request):
         try:
+
             today = date.today()
             date_from = request.data['date_from']
             date_to = request.data['date_to']
@@ -50,10 +51,10 @@ class GetDailyReport(APIView):
                 planing_route_currunt = DailyStatus.objects.get(
                     date=date_from, route__salesref=sales_ref)
                 planned_dealers = planing_route_currunt.current_plan
-                print('pd:', planned_dealers)
 
             except:
-                pass
+                planned_dealers = []
+                planing_route_currunt = None
 
             try:
                 planing_route_month = DailyStatus.objects.filter(
@@ -63,12 +64,12 @@ class GetDailyReport(APIView):
                 for i in visits_list:
                     for j in i:
                         total_vists.append(j['id'])
-                print(total_vists)
+
             except:
                 pass
 
             data['sub_detail_1'] = {
-                'no_calls_p_day': len(planing_route_currunt.coverd),
+                'no_calls_p_day': len(planing_route_currunt.coverd) if planing_route_currunt is not None else 0,
                 'no_productive_calls_p_day': SalesRefInvoice.objects.filter(**filters, status='confirmed').count(),
                 'no_calls_p_month': len(total_vists),
                 'no_productive_calls_p_month': SalesRefInvoice.objects.filter(dealer__in=total_vists, date__month=today.month, dis_sales_ref__sales_ref=sales_ref, status='confirmed').count(),
@@ -135,6 +136,7 @@ class GetDailyReport(APIView):
                     reason = ' '
                 details['not_buy_reason'] = reason
                 dealer_data.append(details)
+
             data['category_details'] = dealer_data
             # print(data)
             file_genearte = GenerateDailyReportExcell(data)
