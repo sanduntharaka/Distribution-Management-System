@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_list_or_404, get_object_or_404
 from manager_distributor.models import ManagerDistributor
 from distrubutor_salesref.models import SalesRefDistributor
-from targets.models import DistributorTargets, SalesrefTargets,SalesrefValueTarget
+from targets.models import DistributorTargets, SalesrefTargets, SalesrefValueTarget
 
 
 class AddDistributorTargets(generics.CreateAPIView):
@@ -30,7 +30,14 @@ class AddDistributorTargets(generics.CreateAPIView):
 
 class ViewDistributorTargets(generics.ListAPIView):
     serializer_class = serializers.ShowDistributorTargetsSerializer
-    queryset = DistributorTargets.objects.all()
+    # queryset = DistributorTargets.objects.all()
+
+    def get_queryset(self):
+        queryset = DistributorTargets.objects.all()
+        user = self.request.user
+        if user.is_manager:
+            queryset = queryset.filter(added_by=user.id)
+        return queryset
 
 
 class EditDistributorTargets(generics.UpdateAPIView):
@@ -63,7 +70,14 @@ class AddSalesrepTargets(generics.CreateAPIView):
 
 class ViewSalesrepTargets(generics.ListAPIView):
     serializer_class = serializers.ShowSalesrepTargetsSerializer
-    queryset = SalesrefTargets.objects.all()
+    # queryset = SalesrefTargets.objects.all()
+
+    def get_queryset(self):
+        queryset = SalesrefTargets.objects.all()
+        user = self.request.user
+        if user.is_manager:
+            queryset = queryset.filter(added_by=user.id)
+        return queryset
 
 
 class EditSalesrepTargets(generics.UpdateAPIView):
@@ -149,8 +163,14 @@ class AddSalesrepValueTargets(generics.CreateAPIView):
     serializer_class = serializers.AddSalesrefValueTargetsSerializer
     queryset = SalesrefValueTarget.objects.all()
 
+
 class ViewSalesrepValueTargets(generics.ListAPIView):
     serializer_class = serializers.ShowSalesrepValueTargetsSerializer
-    queryset = SalesrefValueTarget.objects.all()
+    # queryset = SalesrefValueTarget.objects.all()
 
-
+    def get_queryset(self):
+        queryset = SalesrefValueTarget.objects.all()
+        user = self.request.user
+        if user.is_manager:
+            queryset = queryset.filter(added_by=user.id)
+        return queryset
