@@ -32,8 +32,8 @@ class GetVatRate(APIView):
             distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=request.user)
         if request.user.is_distributor:
-            distributor = SalesRefDistributor.objects.get(
-                distributor__user=request.user)
+            distributor = SalesRefDistributor.objects.filter(
+                distributor__user=request.user).first()
 
         data['vat_no'] = distributor.distributor.vat_no
         # serializer = serializers.VatRateSerializer(vat_rate)
