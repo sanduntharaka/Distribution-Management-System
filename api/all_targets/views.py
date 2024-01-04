@@ -1,3 +1,5 @@
+from distrubutor_salesref_invoice.models import SalesRefInvoice
+from django.db.models import Sum
 from distrubutor_salesref_invoice.models import InvoiceIntem, SalesRefDistributor, Item
 from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework import status
@@ -9,7 +11,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_list_or_404, get_object_or_404
 from manager_distributor.models import ManagerDistributor
 from distrubutor_salesref.models import SalesRefDistributor
-from targets.models import DistributorTargets, SalesrefTargets, SalesrefValueTarget
+from targets.models import DistributorTargets, SalesrefTargets, SalesrefValueTarget, SalesrepDailyValueTarget
 
 
 class AddDistributorTargets(generics.CreateAPIView):
@@ -174,3 +176,28 @@ class ViewSalesrepValueTargets(generics.ListAPIView):
         if user.is_manager:
             queryset = queryset.filter(added_by=user.id)
         return queryset
+
+
+class AddDailyValue(generics.CreateAPIView):
+    serializer_class = serializers.AddDailyValueSalesrep
+    queryset = SalesrepDailyValueTarget.objects.all()
+
+
+class ViewDailyDetails(APIView):
+    def post(self, request):
+        targets = SalesrepDailyValueTarget.objects.filter(
+            salesrep__id=request.data['salesref'], date=request.data['date'], added_by__id=request.user.id)
+        data = []
+        for target in targets:
+            total = SalesRefInvoice.objects.filter(
+                added_by__id=request.data['salesref'], dealer__psa__id=target.psa.id, date=request.data['date']).aggregate(
+                total_invoices=Sum('total'))['total_invoices']
+            print(target.psa.id)
+            data.append({
+                'date': target.date,
+                'psa': target.psa.id,
+                'value': target.value,
+                'covered': 0 if total is None else total
+            })
+        print(data)
+        return Response(data=data, status=status.HTTP_200_OK)

@@ -28,7 +28,8 @@ class CreateInvoice(generics.CreateAPIView):
                     inventory=request.data['inventory']).last()
 
                 data = request.data
-                data['total'] = data['sub_total'] - data['total_discount']
+                print(data)
+                # data['total'] = data['sub_total'] - data['total_discount']
                 if last_bill is not None:
                     bill_number = last_bill.bill_number
                     data['bill_number'] = bill_number + 1
@@ -63,7 +64,9 @@ class AllInvoiceBySalesRef(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         disti_ref = SalesRefDistributor.objects.get(
             sales_ref=self.kwargs.get('id'))
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref=disti_ref)
+        queryset = SalesRefInvoice.objects.filter(dis_sales_ref=disti_ref)
+        queryset = queryset.order_by('-bill_number')
+        return get_list_or_404(queryset)
 
 
 class AllInvoiceByDistributor(generics.ListAPIView):
@@ -89,7 +92,12 @@ class AllInvoiceByOthers_Distributor(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self, *args, **kwargs):
-        return get_list_or_404(SalesRefInvoice, dis_sales_ref__distributor=self.kwargs.get('id'))
+
+        queryset = SalesRefInvoice.objects.filter(
+            dis_sales_ref__distributor=self.kwargs.get('id'))
+        queryset = queryset.order_by('-bill_number')
+
+        return get_list_or_404(queryset)
 
 
 class AllPendingInvoice(generics.ListAPIView):

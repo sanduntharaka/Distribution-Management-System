@@ -13,6 +13,12 @@ sesettings2.py
 core/settings.py
 media
 core/settings.py
+0011_userdetails_vat_no.py
+0007_alter_salesrepdailyvaluetarget_salesrep.py
+0006_salesrepdailyvaluetarget.py
+0002_systemsettings_vat_percentage.py
+0010_salesrefinvoice_vat_amount.py
+0009_salesrefinvoice_invoice_type.py
 0011_alter_distributoritemsinvoice_date.py
 0002_alter_expense_name.py
 0004_companyproducts_delete_companyinventory.py

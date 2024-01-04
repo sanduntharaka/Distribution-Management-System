@@ -34,12 +34,14 @@ class SalesRefInvoice(models.Model):
     time = models.TimeField(null=True, blank=True)
     added_by = models.ForeignKey(UserDetails, on_delete=models.DO_NOTHING)
     billing_price_method = models.CharField(default='2', max_length=2)
+    invoice_type = models.CharField(default='normal', max_length=10)
     sub_total = models.FloatField(default=0.0)
     status = models.CharField(
         max_length=10, choices=BILL_STATUS, default='pending')
     is_settiled = models.BooleanField(default=False)
     rejected_reason = models.CharField(max_length=150, blank=True, null=True)
     confirmed_date = models.DateField(blank=True, null=True)
+    vat_amount = models.FloatField(default=0.0)
 
     def get_bill_code_number_combine(self):
         return f"{self.bill_code}-{str(self.bill_number)}"

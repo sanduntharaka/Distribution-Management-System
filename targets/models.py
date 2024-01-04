@@ -1,3 +1,4 @@
+from primary_sales_area.models import PrimarySalesArea
 from django.db import models
 from userdetails.models import UserDetails
 from manager_distributor.models import ManagerDistributor
@@ -30,10 +31,21 @@ class SalesrefTargets(models.Model):
 
     added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
+
 class SalesrefValueTarget(models.Model):
     target_person = models.ForeignKey(
         UserDetails, on_delete=models.CASCADE, null=True, blank=True)
     date_form = models.DateField()
     date_to = models.DateField()
     value = models.FloatField()
-    added_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True,blank=True)
+    added_by = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, null=True, blank=True)
+
+
+class SalesrepDailyValueTarget(models.Model):
+    salesrep = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
+    date = models.DateField()
+    value = models.FloatField()
+    psa = models.ForeignKey(PrimarySalesArea, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(
+        User, on_delete=models.DO_NOTHING, null=True, blank=True)

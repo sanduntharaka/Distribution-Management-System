@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from targets.models import DistributorTargets, SalesrefTargets,SalesrefValueTarget
+from targets.models import DistributorTargets, SalesrefTargets, SalesrefValueTarget, SalesrepDailyValueTarget
 
 
 class AddDistributorTargetsSerializer(serializers.ModelSerializer):
@@ -7,9 +7,22 @@ class AddDistributorTargetsSerializer(serializers.ModelSerializer):
         model = DistributorTargets
         fields = ('__all__')
 
+
 class AddSalesrefValueTargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesrefValueTarget
+        fields = ('__all__')
+
+
+class AddSalesrepTargetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesrefTargets
+        fields = ('__all__')
+
+
+class AddDailyValueSalesrep(serializers.ModelSerializer):
+    class Meta:
+        model = SalesrepDailyValueTarget
         fields = ('__all__')
 
 
@@ -29,18 +42,6 @@ class ShowDistributorTargetsSerializer(serializers.ModelSerializer):
                   'category_name', 'id')
 
 
-class EditDistributorTargetsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DistributorTargets
-        fields = ('date_form', 'date_to', 'amount')
-
-
-class AddSalesrepTargetsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SalesrefTargets
-        fields = ('__all__')
-
-
 class ShowSalesrepTargetsSerializer(serializers.ModelSerializer):
     salesrep_name = serializers.CharField(
         source='salesrep_distributor.sales_ref.full_name')
@@ -56,7 +57,8 @@ class ShowSalesrepTargetsSerializer(serializers.ModelSerializer):
                   'qty',
                   'added_by', 'salesrep_name',
                   'category_name', 'id')
-        
+
+
 class ShowSalesrepValueTargetsSerializer(serializers.ModelSerializer):
     salesrep_name = serializers.CharField(
         source='target_person.full_name')
@@ -64,15 +66,21 @@ class ShowSalesrepValueTargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesrefValueTarget
         fields = (
-                  'date_form',
-                  'date_to',
-                  
-                  'value',
-                  'added_by', 'salesrep_name',
-                   'id')
+            'date_form',
+            'date_to',
+
+            'value',
+            'added_by', 'salesrep_name',
+            'id')
 
 
 class EditSalesrepTargetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesrefTargets
         fields = ('date_form', 'date_to', 'foc', 'qty')
+
+
+class EditDistributorTargetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DistributorTargets
+        fields = ('date_form', 'date_to', 'amount')

@@ -17,10 +17,10 @@ urlpatterns = [
     path('get-ranges/<id>', views.AllAssignedRanges.as_view()),
     path('get-details/', views.RangeDetails.as_view()),
 
-
-
+    path('add-daily-value/', views.AddDailyValue.as_view()),
+    path('view-daily-value/', views.ViewDailyDetails.as_view())
 
 
 ]
 
-# "target/add-distributor/"
+# "target/view-daily-value/"

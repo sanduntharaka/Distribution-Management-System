@@ -1,3 +1,5 @@
+from django.db.models import Sum
+from targets.models import SalesrepDailyValueTarget
 from rest_framework import status
 from rest_framework.response import Response
 from distrubutor_salesref.models import SalesRefDistributor
@@ -137,7 +139,24 @@ class GetDailyReport(APIView):
                 details['not_buy_reason'] = reason
                 dealer_data.append(details)
 
+            targets = SalesrepDailyValueTarget.objects.filter(
+                salesrep__id=sales_ref, date=date_from)
+
+            target_data = []
+            for target in targets:
+                total = SalesRefInvoice.objects.filter(
+                    added_by__id=sales_ref, date=date_from, dealer__psa__id=target.psa.id).aggregate(
+                    total_invoices=Sum('total'))['total_invoices']
+
+                target_data.append({
+                    'date': target.date,
+                    'psa': target.psa.area_name,
+                    'value': target.value,
+                    'covered': 0 if total is None else total
+                })
+
             data['category_details'] = dealer_data
+            data['target_details'] = target_data
             # print(data)
             file_genearte = GenerateDailyReportExcell(data)
 

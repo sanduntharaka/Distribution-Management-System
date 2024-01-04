@@ -34,6 +34,7 @@ class UserDetails(models.Model):
     immediate_contact_person_number = models.CharField(
         max_length=15, null=True)
     photo = models.ImageField(upload_to=user_photo_upload_path, blank=True)
+    vat_no = models.CharField(max_length=50, null=True, blank=True)
 
     def getTerrotories(self):
         terriotories = UserTerriotory.objects.filter(user_detail=self.id)

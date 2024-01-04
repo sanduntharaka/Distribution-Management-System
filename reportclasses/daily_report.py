@@ -9,6 +9,7 @@ class GenerateDailyReportExcell:
         self.main_details = data['main_details']
         self.item_details = data['category_details']
         self.sub_details_calls = data['sub_detail_1']
+        self.target_data = data['target_details']
 
     # def clean_data(self):
     #     grouped_data = defaultdict(list)
@@ -27,7 +28,7 @@ class GenerateDailyReportExcell:
 
         worksheet = workbook.add_worksheet()
         f1 = workbook.add_format(
-            {'bold': True, 'border': 2, 'border_color': 'black'})
+            {'bold': True, 'border': 2, 'border_color': 'black', 'align': 'center'})
         f1_sales = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#bfff00'})
         f1_foc = workbook.add_format(
@@ -132,7 +133,7 @@ class GenerateDailyReportExcell:
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+7, 0, item['dealer'], f2)
             worksheet.write(row+7, 1, item['address'], f2)
-            worksheet.write(row+7, 2, item['amount'], f2)
+            worksheet.write(row+7, 2, "{:,.2f}".format(item['amount']), f2)
             worksheet.write(row+7, 3, f"{item['since']}", f2)
             i = 0
             for saleitem in item['sales']:
@@ -151,8 +152,26 @@ class GenerateDailyReportExcell:
                 for key, qty in mretitem.items():
                     k = k+1
                     worksheet.write(row+7, i+j+k+3, qty, f2_mret)
-            worksheet.write(row+7, i+j+k+4, item['total'], f2)
+            worksheet.write(
+                row+7, i+j+k+4, "{:,.2f}".format(item['total']), f2)
             worksheet.write(row+7, i+j+k+5, item['not_buy_reason'], f2)
+        target_row = row+10
+        worksheet.merge_range(
+            target_row-1, 0, target_row-1, 2, "Targets", f1)
+        worksheet.write(target_row, 0, 'PSA', f1)
+        worksheet.write(target_row, 1, 'Target', f1)
+        worksheet.write(target_row, 2, 'Achieved', f1)
+        for target in self.target_data:
+            if target['value'] < target['covered']:
+                row_colour = '#ff0000'
+                f2 = workbook.add_format(
+                    {'border': 2, 'border_color': 'black', 'bg_color': '#00bfff'})
+            worksheet.write(target_row+1, 0, target['psa'], f2)
+            worksheet.write(target_row+1, 1,
+                            "{:,.2f}".format(target['value']), f2)
+            worksheet.write(target_row+1, 2,
+                            "{:,.2f}".format(target['covered']), f2)
+            target_row += 1
 
         workbook.close()
         response = HttpResponse(output.getvalue(
