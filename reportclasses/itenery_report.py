@@ -20,7 +20,7 @@ class IteneryReportExcell:
         f1_payments = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0', 'align': 'center', 'valign': 'vcenter'})
         f2_payments = workbook.add_format(
-            {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0'})
+            {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0.#0'})
 
         f1_sales = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#FFFF00', 'align': 'center', 'valign': 'vcenter'})
@@ -51,9 +51,9 @@ class IteneryReportExcell:
         worksheet.merge_range(
             6, 0, 7, 0, "Routes/PSA", f1)
         worksheet.merge_range(
-            6, 1, 7, 1, "Last visited", f1)
+            6, 1, 7, 1, "Last Visited", f1)
         worksheet.merge_range(
-            6, 2, 7, 2, "Last invoice date", f1)
+            6, 2, 7, 2, "Last Invoice Date", f1)
 
         column = 4
         start_col = column
@@ -66,7 +66,7 @@ class IteneryReportExcell:
                 column += 1
 
         worksheet.merge_range(
-            6, start_col-1, 6, column-2, "Past 3 months Sales", f1_sales)
+            6, start_col-1, 6, column-2, "Past 3 Months Sales", f1_sales)
 
         start_col = column-1
 
@@ -76,7 +76,7 @@ class IteneryReportExcell:
         worksheet.write(7, start_col+1, 'Cheque', f1_payments)
         worksheet.write(7, start_col+2, 'Credit', f1_payments)
         worksheet.write(7, start_col+3, 'Total', f1_payments)
-        worksheet.write(7, start_col+4, 'Since when', f1_payments)
+        worksheet.write(7, start_col+4, 'Since When', f1_payments)
 
         for row, item in enumerate(self.item_details, start=1):
             worksheet.write(row+7, 0, item['psa'], f2)

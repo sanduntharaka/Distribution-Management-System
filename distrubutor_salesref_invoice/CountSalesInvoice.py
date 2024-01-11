@@ -272,12 +272,17 @@ class CountSalesInvoiceAll:
         distributors = self.distributor_ids
         # invoices = SalesRefInvoice.objects.filter(dis_sales_ref__distributor__in=distributors,date__month=self.month)
 
-        for distributor in distributors:
+        for distri in distributors:
             details = {}
+
             filtered_invoices = SalesRefInvoice.objects.filter(
-                dis_sales_ref__distributor=distributor, status='confirmed', date__month=self.month)
-            details['name'] = filtered_invoices.first(
-            ).dis_sales_ref.distributor.full_name
+                dis_sales_ref__distributor__id=distri)
+
+            if len(filtered_invoices) == 0:
+                details['name'] = UserDetails.objects.get(id=distri).full_name
+            else:
+                details['name'] = filtered_invoices.first(
+                ).dis_sales_ref.distributor.full_name
             details['value'] = sum([i.total for i in filtered_invoices])
             data.append(details)
         color_codes = self.generate_color_codes(len(distributors))

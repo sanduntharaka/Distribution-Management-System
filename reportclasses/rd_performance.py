@@ -56,7 +56,7 @@ class RDPerformanceReportExcell:
                 6, 0, 8, 0, "Product Description", f1)
 
             worksheet.merge_range(
-                6, 1, 6, 12, "Month's Perfromance", f1_month)
+                6, 1, 6, 12, "Month's Performance", f1_month)
             worksheet.merge_range(
                 7, 1, 7, 3, "Volume Performance", f1_month)
             worksheet.write(8, 1, "Current Month", f1_month)
@@ -76,25 +76,25 @@ class RDPerformanceReportExcell:
             worksheet.write(8, 9, "% Change", f1_month)
 
             worksheet.merge_range(
-                7, 10, 7, 12, "Market returns", f1_month)
+                7, 10, 7, 12, "Market Returns", f1_month)
             worksheet.write(8, 10, "Current Month", f1_month)
             worksheet.write(8, 11, "Last Month", f1_month)
             worksheet.write(8, 12, "% Change", f1_month)
 
             worksheet.merge_range(
-                6, 13, 6, 16, "YTD  Perfromance", f1_cumulative)
+                6, 13, 6, 16, "YTD  Performance", f1_cumulative)
             worksheet.write(
                 7, 13, "Volume Performance", f1_cumulative)
-            worksheet.write(8, 13, "for the period", f1_cumulative)
+            worksheet.write(8, 13, "For The Period", f1_cumulative)
             worksheet.write(
                 7, 14, "Value Performance", f1_cumulative)
-            worksheet.write(8, 14, "for the period", f1_cumulative)
+            worksheet.write(8, 14, "For The Period", f1_cumulative)
             worksheet.write(
                 7, 15, "Free Issues", f1_cumulative)
-            worksheet.write(8, 15, "for the period", f1_cumulative)
+            worksheet.write(8, 15, "For The Period", f1_cumulative)
             worksheet.write(
-                7, 16, "Market returns", f1_cumulative)
-            worksheet.write(8, 16, "for the period", f1_cumulative)
+                7, 16, "Market Returns", f1_cumulative)
+            worksheet.write(8, 16, "For The Period", f1_cumulative)
 
             for row, item in enumerate(self.item_details, start=1):
                 worksheet.write(row+8, 0, item['product_name'], f2)

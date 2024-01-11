@@ -33,13 +33,17 @@ class ProductiveReportExcell:
 
         f1_month = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97',  'align': 'center', 'valign': 'vcenter'})
+
         f1_cumulative = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black', 'bg_color': '#d3e0a4', 'align': 'center', 'valign': 'vcenter'})
         f2_month = workbook.add_format(
             {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0', 'align': 'center', 'valign': 'vcenter'})
+        f2_month_price = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0.#0', 'align': 'center', 'valign': 'vcenter'})
         f2_cumulative = workbook.add_format(
             {'border': 2, 'border_color': 'black', 'bg_color': '#d3e0a4', 'num_format': '#,##0', 'align': 'center', 'valign': 'vcenter'})
-
+        f2_cumulative_price = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'bg_color': '#d3e0a4', 'num_format': '#,##0.#0', 'align': 'center', 'valign': 'vcenter'})
         worksheet.set_column('A:A', 20)
         worksheet.freeze_panes(8, 0)
         merge_format = workbook.add_format({
@@ -87,47 +91,47 @@ class ProductiveReportExcell:
         worksheet.write(9, 0, 'Turnover', f3)
         worksheet.write(10, 0, 'Cash Sales', f2)
         worksheet.write(
-            10, 1, self.turnover_cash['month']['this_target'], f2_month)
+            10, 1, self.turnover_cash['month']['this_target'], f2_month_price)
         worksheet.write(
-            10, 2, self.turnover_cash['month']['this_actual'], f2_month)
+            10, 2, self.turnover_cash['month']['this_actual'], f2_month_price)
         worksheet.write(
-            10, 3,  self.turnover_cash['month']['last_actual'], f2_month)
+            10, 3,  self.turnover_cash['month']['last_actual'], f2_month_price)
         worksheet.write(
-            10, 4,  self.turnover_cash['cumulative']['this_actual'], f2_cumulative)
-        worksheet.write(10, 5,  ' ', f2_cumulative)
+            10, 4,  self.turnover_cash['cumulative']['this_actual'], f2_cumulative_price)
+        worksheet.write(10, 5,  ' ', f2_cumulative_price)
 
         worksheet.write(11, 0, 'Cheques', f2)
         worksheet.write(
-            11, 1, self.turnover_cheque['month']['this_target'], f2_month)
+            11, 1, self.turnover_cheque['month']['this_target'], f2_month_price)
         worksheet.write(
-            11, 2, self.turnover_cheque['month']['this_actual'], f2_month)
+            11, 2, self.turnover_cheque['month']['this_actual'], f2_month_price)
         worksheet.write(
-            11, 3,  self.turnover_cheque['month']['last_actual'], f2_month)
+            11, 3,  self.turnover_cheque['month']['last_actual'], f2_month_price)
         worksheet.write(
-            11, 4,  self.turnover_cheque['cumulative']['this_actual'], f2_cumulative)
-        worksheet.write(11, 5,  ' ', f2_cumulative)
+            11, 4,  self.turnover_cheque['cumulative']['this_actual'], f2_cumulative_price)
+        worksheet.write(11, 5,  ' ', f2_cumulative_price)
 
         worksheet.write(12, 0, 'Credit Sales', f2)
         worksheet.write(
-            12, 1, self.turnover_credit['month']['this_target'], f2_month)
+            12, 1, self.turnover_credit['month']['this_target'], f2_month_price)
         worksheet.write(
-            12, 2, self.turnover_credit['month']['this_actual'], f2_month)
+            12, 2, self.turnover_credit['month']['this_actual'], f2_month_price)
         worksheet.write(
-            12, 3,  self.turnover_credit['month']['last_actual'], f2_month)
+            12, 3,  self.turnover_credit['month']['last_actual'], f2_month_price)
         worksheet.write(
-            12, 4,  self.turnover_credit['cumulative']['this_actual'], f2_cumulative)
-        worksheet.write(12, 5,  ' ', f2_cumulative)
+            12, 4,  self.turnover_credit['cumulative']['this_actual'], f2_cumulative_price)
+        worksheet.write(12, 5,  ' ', f2_cumulative_price)
 
         worksheet.write(13, 0, 'Total Sales', f2)
         worksheet.write(
-            13, 1, self.turnover_total['month']['this_target'], f2_month)
+            13, 1, self.turnover_total['month']['this_target'], f2_month_price)
         worksheet.write(
-            13, 2, self.turnover_total['month']['this_actual'], f2_month)
+            13, 2, self.turnover_total['month']['this_actual'], f2_month_price)
         worksheet.write(
-            13, 3,  self.turnover_total['month']['last_actual'], f2_month)
+            13, 3,  self.turnover_total['month']['last_actual'], f2_month_price)
         worksheet.write(
-            13, 4,  self.turnover_total['cumulative']['this_actual'], f2_cumulative)
-        worksheet.write(13, 5,  ' ', f2_cumulative)
+            13, 4,  self.turnover_total['cumulative']['this_actual'], f2_cumulative_price)
+        worksheet.write(13, 5,  ' ', f2_cumulative_price)
 
         worksheet.write(14, 0, 'Callage', f3)
         worksheet.write(15, 0, 'Total Calls', f2)
@@ -169,7 +173,7 @@ class ProductiveReportExcell:
             worksheet.write(15+row, 5,  ' ', f2_cumulative)
             row += 1
         new_row = row+15
-        worksheet.write(new_row, 0, 'Average Productivity per call', f3)
+        worksheet.write(new_row, 0, 'Average Productivity Per Call', f3)
         row = 1
         for i in self.product_categories:
             worksheet.write(

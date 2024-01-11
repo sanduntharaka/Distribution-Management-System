@@ -26,8 +26,12 @@ class DistributorPerformanceReportExcell:
             f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
             f2_month = workbook.add_format(
                 {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0', 'align': 'center', 'valign': 'vcenter'})
+            f2_month_price = workbook.add_format(
+                {'border': 2, 'border_color': 'black', 'bg_color': '#C4BD97', 'num_format': '#,##0.#0', 'align': 'center', 'valign': 'vcenter'})
             f2_cumulative = workbook.add_format(
                 {'border': 2, 'border_color': 'black', 'bg_color': '#d3e0a4', 'num_format': '#,##0', 'align': 'center', 'valign': 'vcenter'})
+            f2_cumulative_price = workbook.add_format(
+                {'border': 2, 'border_color': 'black', 'bg_color': '#d3e0a4', 'num_format': '#,##0.#0', 'align': 'center', 'valign': 'vcenter'})
 
             worksheet.set_column('A:A', 20)
             worksheet.freeze_panes(8, 0)
@@ -72,7 +76,7 @@ class DistributorPerformanceReportExcell:
                 worksheet.write(
                     row+7, 1, item['mqty'] if item['mqty'] != 0 else ' ', f2_month)
                 worksheet.write(
-                    row+7, 2, item['mvalue'] if item['mvalue'] != 0 else ' ', f2_month)
+                    row+7, 2, item['mvalue'] if item['mvalue'] != 0 else ' ', f2_month_price)
                 worksheet.write(
                     row+7, 3, item['mfoc'] if item['mfoc'] != 0 else ' ', f2_month)
                 worksheet.write(
@@ -80,7 +84,7 @@ class DistributorPerformanceReportExcell:
                 worksheet.write(
                     row+7, 5, item['cqty'] if item['cqty'] != 0 else ' ', f2_cumulative)
                 worksheet.write(
-                    row+7, 6, item['cvalue'] if item['cvalue'] != 0 else ' ', f2_cumulative)
+                    row+7, 6, item['cvalue'] if item['cvalue'] != 0 else ' ', f2_cumulative_price)
                 worksheet.write(
                     row+7, 7, item['cfoc'] if item['cfoc'] != 0 else ' ', f2_cumulative)
                 worksheet.write(
@@ -90,7 +94,7 @@ class DistributorPerformanceReportExcell:
             worksheet.write(row+8, 1, sum([i['mqty']
                             for i in self.item_details]), f2_month)
             worksheet.write(row+8, 2, sum([i['mvalue']
-                            for i in self.item_details]), f2_month)
+                            for i in self.item_details]), f2_month_price)
             worksheet.write(row+8, 3, sum([i['mfoc']
                             for i in self.item_details]), f2_month)
             worksheet.write(row+8, 4, sum([i['mmret']
@@ -98,7 +102,7 @@ class DistributorPerformanceReportExcell:
             worksheet.write(row+8, 5, sum([i['cqty']
                             for i in self.item_details]), f2_cumulative)
             worksheet.write(row+8, 6, sum([i['cvalue']
-                            for i in self.item_details]), f2_cumulative)
+                            for i in self.item_details]), f2_cumulative_price)
             worksheet.write(row+8, 7, sum([i['cfoc']
                             for i in self.item_details]), f2_cumulative)
             worksheet.write(row+8, 8, sum([i['cmret']

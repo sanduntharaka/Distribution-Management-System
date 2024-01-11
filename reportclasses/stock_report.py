@@ -17,7 +17,8 @@ class GenerateStockReportExcell:
 
         f1 = workbook.add_format(
             {'bold': True, 'border': 2, 'border_color': 'black'})
-        f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+        f2 = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'num_format': '#,##0'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({

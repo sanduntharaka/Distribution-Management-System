@@ -15,8 +15,11 @@ class RetailerPerformanceReportExcell:
 
         worksheet = workbook.add_worksheet()
         f1 = workbook.add_format(
-            {'bold': True, 'border': 2, 'border_color': 'black'})
-        f2 = workbook.add_format({'border': 2, 'border_color': 'black'})
+            {'bold': True, 'border': 2, 'border_color': 'black', 'valign': 'vcenter', 'align': 'center'})
+        f2 = workbook.add_format(
+            {'border': 2, 'border_color': 'black', 'valign': 'vcenter', 'align': 'center'})
+        f2_value = workbook.add_format(
+            {'border': 2, 'num_format': '#,##0', 'border_color': 'black', 'valign': 'vcenter', 'align': 'center'})
 
         worksheet.set_column('A:A', 20)
         merge_format = workbook.add_format({
@@ -26,7 +29,7 @@ class RetailerPerformanceReportExcell:
             'font_size': 18
         })
         worksheet.merge_range(
-            1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Retailer performance Report", merge_format)
+            1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Retailer Performance Report", merge_format)
         worksheet.write('A3', 'Name')
         worksheet.write('B3', self.main_details['name'])
 
@@ -64,29 +67,29 @@ class RetailerPerformanceReportExcell:
         worksheet.write(13, 1, 'Current Month', f2)
         worksheet.write(13, 2, 'Last Month', f2)
         worksheet.write(13, 3, 'Previously', f2)
-        worksheet.write(13, 4, 'Last Purchase date', f2)
+        worksheet.write(13, 4, 'Last Purchase Date', f2)
 
         row = 14
 
         for i in self.item_details:
             worksheet.write(row, 0, i['category'], f2)
             worksheet.write(row, 1, i['this_month']
-                            if i['this_month'] != 0 else '', f2)
+                            if i['this_month'] != 0 else '', f2_value)
             worksheet.write(row, 2, i['last_month']
-                            if i['last_month'] != 0 else '', f2)
+                            if i['last_month'] != 0 else '', f2_value)
             worksheet.write(row, 3, i['previous']
-                            if i['previous'] != 0 else '', f2)
+                            if i['previous'] != 0 else '', f2_value)
             worksheet.write(row, 4, f"{i['last_p_date']}", f2)
 
             row += 1
         # worksheet.write(row+7, i+4, item['credit'], f2)
         worksheet.write(row, 0, 'Total', f2)
         worksheet.write(row, 1, sum([i['this_month']
-                        for i in self.item_details]), f2)
+                        for i in self.item_details]), f2_value)
         worksheet.write(row, 2, sum([i['last_month']
-                        for i in self.item_details]), f2)
+                        for i in self.item_details]), f2_value)
         worksheet.write(row, 3, sum([i['previous']
-                        for i in self.item_details]), f2)
+                        for i in self.item_details]), f2_value)
         worksheet.write(row, 4, ' ', f2)
 
         workbook.close()

@@ -161,7 +161,10 @@ class GetDataByDate(APIView):
 
             return file_genearte.generate()
         except Exception as e:
+
             if len(market_returns) == 0:
-                return Response({"data": "Invoices not found"}, status=status.HTTP_404_NOT_FOUND)
+
+                return Response({"data": "Invoices not found", "type": 'not-found'}, status=status.HTTP_204_NO_CONTENT)
             else:
+
                 return Response({"data": e}, status=status.HTTP_400_BAD_REQUEST)
