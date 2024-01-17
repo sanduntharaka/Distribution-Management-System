@@ -20,6 +20,10 @@ from users.models import UserAccount
 class AddNewItems(generics.CreateAPIView):
     serializer_class = serializers.AddItemsSerializer
     queryset = DistributorInventoryItems.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        return super().create(request, *args, **kwargs)
     # def create(self, request, *args, **kwargs):
     #     item_serializer = self.get_serializer(data=request.data)
     #     item_serializer.is_valid(raise_exception=True)
@@ -56,7 +60,6 @@ class AddExistingItems(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         inv_data = request.data['invoice']
         items_data = request.data['items']
-        print(inv_data)
         # item_serializer.is_valid(raise_exception=True)
         # item = item_serializer.save()
 
@@ -65,6 +68,7 @@ class AddExistingItems(generics.CreateAPIView):
                 invoice_number=inv_data['invoice_number'])
             invoice = invoice_obj.id
         except Exception as e:
+            print('Er1:', e)
             bill_data = {
                 'inventory': inv_data['inventory'],
                 'invoice_number': inv_data.get('invoice_number', 'INV-0000'),
@@ -90,7 +94,7 @@ class AddExistingItems(generics.CreateAPIView):
                     'invoice': invoice,
                     'item': item['id'],
                     'qty': int(item['qty'])+int(item['foc']),
-                    'pack_size': item.get('pack_size', 0),
+                    'pack_size': item['pack_size'] if item['pack_size'] is not None else 0,
                     'from_sales_return': inv_data['from_sales_return'],
                     'foc': item['foc'],
                     'whole_sale_price': item['whole_sale_price'],
@@ -108,13 +112,12 @@ class AddExistingItems(generics.CreateAPIView):
                 if serializer.is_valid():
                     serializer.save()
                 else:
-                    print(serializer.errors)
+                    print('bulkError:', serializer.errors)
 
             ItemStock.objects.bulk_create(bulk_items)
 
             return Response(status=status.HTTP_201_CREATED)
         except Exception as e:
-            print(e)
             return Response(data={'error': e}, status=status.HTTP_400_BAD_REQUEST)
 
 

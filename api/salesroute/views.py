@@ -1,3 +1,4 @@
+import datetime
 from users.models import UserAccount
 from dealer_details.models import Dealer
 from sales_route.models import SalesRoute, DailyStatus
@@ -15,12 +16,14 @@ class CreateRoute(APIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data
         salesref = request_data['sales_rep']
+        day = request_data['day']
+        print(request_data)
         dealers = [i['id'] for i in request_data['dealers']]
         try:
-            sales_route = SalesRoute.objects.get(salesref=salesref)
+            sales_route = SalesRoute.objects.get(salesref=salesref, day=day)
 
             serializer = serializers.AddRouteSerializer(
-                data={'salesref': salesref, 'dealers': dealers}, instance=sales_route)
+                data={'salesref': salesref, 'dealers': dealers, 'day': day}, instance=sales_route)
             if serializer.is_valid():
                 serializer.save()
                 return Response(status=status.HTTP_200_OK)
@@ -30,7 +33,7 @@ class CreateRoute(APIView):
         except SalesRoute.DoesNotExist:
 
             serializer = serializers.AddRouteSerializer(
-                data={'salesref': salesref, 'dealers': dealers})
+                data={'salesref': salesref, 'dealers': dealers, 'day': day})
             if serializer.is_valid():
                 serializer.save()
                 return Response(status=status.HTTP_200_OK)
@@ -40,8 +43,8 @@ class CreateRoute(APIView):
 
 
 class GetSavedRoutes(APIView):
-    def get(self, request, id):
-        sales_routes = SalesRoute.objects.get(salesref=id)
+    def get(self, request, id, day):
+        sales_routes = SalesRoute.objects.get(salesref=id, day=day)
         data = []
         for i in sales_routes.dealers:
             dealer_data = {}
@@ -56,9 +59,12 @@ class GetSavedRoutes(APIView):
 
 class GetDetails(APIView):
     def post(self, request):
+        print(request.data)
+        date_obj = datetime.datetime.strptime(request.data['date'], "%Y-%m-%d")
+        day_of_week = date_obj.strftime("%A").lower()
         try:
             sales_route = SalesRoute.objects.get(
-                salesref=request.data['salesref'])
+                salesref=request.data['salesref'], day=day_of_week)
 
             plan = []
             for i in sales_route.dealers:

@@ -9,6 +9,7 @@ import json
 
 class SalesRoute(models.Model):
     salesref = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
+    day = models.CharField(max_length=10, blank=True, null=True)
     dealers = ArrayField(models.IntegerField())
 
 

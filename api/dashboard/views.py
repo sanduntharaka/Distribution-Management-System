@@ -1,3 +1,4 @@
+import datetime
 from dealer_details.models import Dealer
 from datetime import datetime
 from sales_route.models import SalesRoute, DailyStatus
@@ -361,13 +362,19 @@ def allLawQtyBySalesref(request, *args, **kwargs):
 # ];
 
 
+current_day = datetime.today()
+
+
 @api_view(['GET'])
 def getNextToVisteDealer(request, *args, **kwargs):
+    # Use "%A" format code for full weekday name
+    day_name = current_day.strftime("%A").lower()
 
-    sales_route = SalesRoute.objects.get(salesref__user=request.user)
+    sales_route = SalesRoute.objects.get(
+        salesref__user=request.user, day=day_name)
     try:
         today = DailyStatus.objects.get(
-            route=sales_route, date=datetime.today())
+            route=sales_route, date=current_day)
         visited = [d["id"] for d in today.coverd]
         for item in sales_route.dealers:
             if item not in visited:

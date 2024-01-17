@@ -13,6 +13,7 @@ sesettings2.py
 core/settings.py
 media
 core/settings.py
+0005_salesroute_day.py
 0011_userdetails_vat_no.py
 0007_alter_salesrepdailyvaluetarget_salesrep.py
 0006_salesrepdailyvaluetarget.py

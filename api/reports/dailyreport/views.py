@@ -57,7 +57,6 @@ class GetDailyReport(APIView):
             except:
                 planned_dealers = []
                 planing_route_currunt = None
-
             try:
                 planing_route_month = DailyStatus.objects.filter(
                     date__month=today.month, route__salesref=sales_ref)

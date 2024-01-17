@@ -6,16 +6,19 @@ from dealer_details.models import Dealer
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
+date = datetime.today()
+day_name = date.strftime("%A").lower()
+
 
 @receiver(post_save, sender=SalesRefInvoice)
 def daily_sales_routes_handler(sender, instance, created, *args, **kwargs):
     try:
         if instance.added_by.user.is_salesref:
             route = SalesRoute.objects.get(
-                salesref=instance.dis_sales_ref.sales_ref)
+                salesref=instance.dis_sales_ref.sales_ref, day=day_name)
             try:
                 daily_status = DailyStatus.objects.get(
-                    date=datetime.today(), route=route)
+                    date=date, route=route)
                 data = {
                     'id': instance.dealer.id,
                     'time': instance.time.strftime('%H:%M:%S'),
@@ -37,7 +40,7 @@ def daily_sales_routes_handler(sender, instance, created, *args, **kwargs):
                 }
                 data_list = [data]
                 to_create_new = DailyStatus(
-                    route=route, current_plan=route.dealers, date=datetime.today(), coverd=data_list)
+                    route=route, current_plan=route.dealers, date=date, coverd=data_list)
 
                 to_create_new.save()
     except:
