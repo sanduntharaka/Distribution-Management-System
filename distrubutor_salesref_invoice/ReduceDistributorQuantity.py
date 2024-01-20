@@ -30,7 +30,6 @@ class ReduceQuantity:
 
         stoks = ItemStock.objects.filter(
             Q(qty__gt=0) | Q(foc__gt=0), item_id=self.id, whole_sale_price=self.wholesale, retail_price=self.price).order_by('date')
-        print('inish')
 
         for stok in stoks:
 
@@ -40,11 +39,9 @@ class ReduceQuantity:
             reduce_qty = 0
             reduce_foc = 0
             from_foc = 0
-            print('1')
-            print('totq:', total_qty)
-            print('totaf:', total_foc)
+
             if (total_qty) <= stock_qty:
-                print('2')
+
                 if total_foc <= stock_foc:
                     reduce_foc = total_foc
                     reduce_qty = total_qty
@@ -70,7 +67,6 @@ class ReduceQuantity:
                     stok.foc = 0
 
             else:
-                print('3')
 
                 reduce_qty = stok.qty
                 reduce_foc = stok.foc
@@ -110,10 +106,6 @@ class ReduceQuantity:
         self.item.save()
 
     def edited_details(self, prev_qty, prev_foc):
-        print('prev qty:', prev_qty)
-        print('prev foc:', prev_foc)
-        print('now qty:', self.qty)
-        print('now foc:', self.foc)
 
         # reduce bill item qty
         self.item.qty = self.item.qty + \

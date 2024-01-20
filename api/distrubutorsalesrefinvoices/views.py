@@ -177,7 +177,7 @@ class CreateInvoiceItems(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         bill = SalesRefInvoice.objects.get(id=request.data['bill'])
-
+        print('req:', request.data)
         item_objs = []
         inventory_items = []
         try:
