@@ -229,14 +229,13 @@ class ShowCredits(generics.ListAPIView):
         dealer = self.kwargs.get('dealer')
         if self.request.user.is_distributor:
             user_id = self.request.user.id
-            salesref_distributor = SalesRefDistributor.objects.filter(
-                distributor__user=user_id).first().id
+            distributor = SalesRefDistributor.objects.filter(
+                distributor__user=user_id).first().distributor.id
 
         if self.request.user.is_salesref:
             user_id = self.request.user.id
-            salesref_distributor = SalesRefDistributor.objects.get(
-                sales_ref__user=user_id).id
+            distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=user_id).distributor.id
         queryset = SalesRefInvoice.objects.filter(
-            dis_sales_ref=salesref_distributor, dealer=dealer, is_settiled=False, status='confirmed').order_by('date')
-        print(queryset)
+            dis_sales_ref__distributor=distributor, dealer=dealer, is_settiled=False, status='confirmed').order_by('date')
         return queryset
