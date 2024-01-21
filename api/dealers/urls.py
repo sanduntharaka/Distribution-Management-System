@@ -10,5 +10,7 @@ urlpatterns = [
     # path('all/filter/', views.GradeFilterBackend),
     path('delete/<int:pk>', views.DeleteDealer.as_view()),
     path('edit/<int:pk>', views.EditDealerDetails.as_view()),
+    path('credit/<int:dealer>', views.ShowCredits.as_view()),
+
 ]
 # dealer/all/by/distributor/

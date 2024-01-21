@@ -1,3 +1,4 @@
+from distrubutor_salesref_invoice.models import SalesRefInvoice
 from rest_framework_simplejwt.backends import TokenBackend
 from executive_distributor.models import ExecutiveDistributor
 from exceutive_manager.models import ExecutiveManager
@@ -219,3 +220,22 @@ class GetAllByPsa(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return get_list_or_404(Dealer, psa=self.kwargs.get('id'))
+
+
+class ShowCredits(generics.ListAPIView):
+    serializer_class = serializers.GetCreditInvoiceSerializer
+
+    def get_queryset(self, **kwargs):
+        dealer = self.kwargs.get('dealer')
+        if self.request.user.is_distributor:
+            user_id = self.request.user.id
+            salesref_distributor = SalesRefDistributor.objects.filter(
+                distributor__user=user_id).first().id
+
+        if self.request.user.is_salesref:
+            user_id = self.request.user.id
+            salesref_distributor = SalesRefDistributor.objects.get(
+                sales_ref__user=user_id).id
+        queryset = SalesRefInvoice.objects.filter(
+            dis_sales_ref=salesref_distributor, dealer=dealer, is_settiled=False).order_by('date')
+        return queryset

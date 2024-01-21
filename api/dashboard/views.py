@@ -369,9 +369,11 @@ current_day = datetime.today()
 def getNextToVisteDealer(request, *args, **kwargs):
     # Use "%A" format code for full weekday name
     day_name = current_day.strftime("%A").lower()
-
-    sales_route = SalesRoute.objects.get(
-        salesref__user=request.user, day=day_name)
+    try:
+        sales_route = SalesRoute.objects.get(
+            salesref__user=request.user, day=day_name)
+    except:
+        return Response(data={'dealer': 'Routes Not Assigned'}, status=status.HTTP_200_OK)
     try:
         today = DailyStatus.objects.get(
             route=sales_route, date=current_day)
