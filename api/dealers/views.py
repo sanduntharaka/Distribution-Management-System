@@ -237,5 +237,6 @@ class ShowCredits(generics.ListAPIView):
             salesref_distributor = SalesRefDistributor.objects.get(
                 sales_ref__user=user_id).id
         queryset = SalesRefInvoice.objects.filter(
-            dis_sales_ref=salesref_distributor, dealer=dealer, is_settiled=False).order_by('date')
+            dis_sales_ref=salesref_distributor, dealer=dealer, is_settiled=False, status='confirmed').order_by('date')
+        print(queryset)
         return queryset
