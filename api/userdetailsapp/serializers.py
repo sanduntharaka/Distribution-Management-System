@@ -74,7 +74,7 @@ class GetBasicUserDetail(serializers.ModelSerializer):
 
     class Meta:
         model = UserDetails
-        fields = ('id', 'email', 'photo', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
+        fields = ('id', 'dob', 'email', 'photo', 'full_name', 'address', 'designation', 'company_number', 'personal_number',
                   'home_number', 'immediate_contact_person_name', 'immediate_contact_person_number')
 
 

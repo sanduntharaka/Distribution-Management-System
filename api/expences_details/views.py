@@ -19,3 +19,17 @@ class AllExpences_details(generics.ListAPIView):
     def get_queryset(self):
         id = self.kwargs['id']
         return get_list_or_404(Expense, inventory_id=id)
+
+
+class EditExpences_details(generics.UpdateAPIView):
+    serializer_class = serializers.ExpenseEditSerializer
+    queryset = Expense.objects.all()
+
+    def update(self, request, *args, **kwargs):
+        print(request.data)
+        return super().update(request, *args, **kwargs)
+
+
+class DeleteExpences_details(generics.DestroyAPIView):
+    serializer_class = serializers.ExpenseEditSerializer
+    queryset = Expense.objects.all()
