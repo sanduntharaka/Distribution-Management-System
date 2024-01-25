@@ -1,3 +1,5 @@
+from userdetails.models import UserDetails
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from primary_sales_area.models import PrimarySalesArea
 from dealer_category.models import DealerCategory
@@ -36,3 +38,13 @@ class Dealer(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class DealerOrder(models.Model):
+    salesref = models.ForeignKey(
+        UserDetails, on_delete=models.CASCADE)
+    psa = psa = models.OneToOneField(PrimarySalesArea,
+                                     on_delete=models.CASCADE)
+    dealers = ArrayField(models.IntegerField())
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)

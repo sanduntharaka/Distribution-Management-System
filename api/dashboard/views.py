@@ -368,11 +368,11 @@ current_day = datetime.today()
 @api_view(['GET'])
 def getNextToVisteDealer(request, *args, **kwargs):
     # Use "%A" format code for full weekday name
-    day_name = current_day.strftime("%A").lower()
+    date = current_day.date()
     try:
         sales_route = SalesRoute.objects.get(
-            salesref__user=request.user, day=day_name)
-    except:
+            salesref__user=request.user, date=date, is_approved=True)
+    except Exception as e:
         return Response(data={'dealer': 'Routes Not Assigned'}, status=status.HTTP_200_OK)
     try:
         today = DailyStatus.objects.get(

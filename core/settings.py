@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'sales_route',
     'targets',
     'expences',
+    'reportdata',
     # 'api',
     'api',
     'api.userdetailsapp',

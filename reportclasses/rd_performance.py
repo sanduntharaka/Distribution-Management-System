@@ -34,7 +34,7 @@ class RDPerformanceReportExcell:
                                      'align': 'center', 'valign': 'vcenter', 'num_format': '#,##0'})
 
             worksheet.set_column('A:A', 20)
-            worksheet.freeze_panes(9, 0)
+            worksheet.freeze_panes(9, 1)
             merge_format = workbook.add_format({
                 'bold': 1,
                 'align': 'center',

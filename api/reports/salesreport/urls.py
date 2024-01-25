@@ -6,6 +6,8 @@ urlpatterns = [
     path('product/', views.FilterByProduct.as_view()),
     path('itenery/', views.IteneryReport.as_view()),
     path('productivity/', views.ProductivityReport.as_view()),
+    path('itenery/month/', views.MonthIteneryReport.as_view()),
+
 
 
 

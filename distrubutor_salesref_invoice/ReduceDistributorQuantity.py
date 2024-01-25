@@ -117,7 +117,9 @@ class ReduceQuantity:
     def deleted_details(self):
 
         # reduce bill item qty
-        self.item.qty = self.item.qty + (self.qty+self.foc)
+        cal_qty = 10
+        self.item.item.qty = self.item.item.qty + \
+            (self.qty+(self.foc-self.from_foc if self.foc > 0 else self.from_foc))
         self.item.foc = self.item.foc + (self.foc)
 
         self.item.save()

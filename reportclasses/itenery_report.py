@@ -33,7 +33,7 @@ class IteneryReportExcell:
             'valign': 'vcenter',
             'font_size': 18
         })
-        worksheet.freeze_panes(8, 0)
+        worksheet.freeze_panes(8, 3)
         worksheet.merge_range(
             1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Itenery Report", merge_format)
         worksheet.write('A3', 'Distributor')

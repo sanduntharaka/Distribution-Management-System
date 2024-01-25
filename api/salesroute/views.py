@@ -1,3 +1,6 @@
+from manager_distributor.models import ManagerDistributor
+from distrubutor_salesref.models import SalesRefDistributor
+from userdetails.models import UserDetails
 import datetime
 from users.models import UserAccount
 from dealer_details.models import Dealer
@@ -16,14 +19,16 @@ class CreateRoute(APIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data
         salesref = request_data['sales_rep']
-        day = request_data['day']
-        print(request_data)
+        date = request_data['date']
         dealers = [i['id'] for i in request_data['dealers']]
+        dealer_objects = Dealer.objects.filter(id__in=dealers)
+        psas = [i.psa.id for i in dealer_objects]
+        unique_psas = list(set(psas))
         try:
-            sales_route = SalesRoute.objects.get(salesref=salesref, day=day)
+            sales_route = SalesRoute.objects.get(salesref=salesref, date=date)
 
             serializer = serializers.AddRouteSerializer(
-                data={'salesref': salesref, 'dealers': dealers, 'day': day}, instance=sales_route)
+                data={'salesref': salesref, 'dealers': dealers, 'date': date, 'psas': unique_psas}, instance=sales_route)
             if serializer.is_valid():
                 serializer.save()
                 return Response(status=status.HTTP_200_OK)
@@ -33,7 +38,7 @@ class CreateRoute(APIView):
         except SalesRoute.DoesNotExist:
 
             serializer = serializers.AddRouteSerializer(
-                data={'salesref': salesref, 'dealers': dealers, 'day': day})
+                data={'salesref': salesref, 'dealers': dealers, 'date': date, 'psas': unique_psas})
             if serializer.is_valid():
                 serializer.save()
                 return Response(status=status.HTTP_200_OK)
@@ -43,28 +48,32 @@ class CreateRoute(APIView):
 
 
 class GetSavedRoutes(APIView):
-    def get(self, request, id, day):
-        sales_routes = SalesRoute.objects.get(salesref=id, day=day)
-        data = []
-        for i in sales_routes.dealers:
-            dealer_data = {}
-            dealer = Dealer.objects.get(id=i)
-            dealer_data['id'] = i
-            dealer_data['name'] = dealer.name
-            dealer_data['address'] = dealer.address
-            data.append(dealer_data)
+    def get(self, request, id, date):
+        try:
+            sales_routes = SalesRoute.objects.get(salesref=id, date=date)
 
-        return Response(data=data, status=status.HTTP_200_OK)
+            data = []
+            for i in sales_routes.dealers:
+                dealer_data = {}
+                dealer = Dealer.objects.get(id=i)
+                dealer_data['id'] = i
+                dealer_data['name'] = dealer.name
+                dealer_data['address'] = dealer.address
+                data.append(dealer_data)
+
+            return Response(data={'id': sales_routes.id, 'routs': data}, status=status.HTTP_200_OK)
+        except SalesRoute.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class GetDetails(APIView):
     def post(self, request):
         print(request.data)
         date_obj = datetime.datetime.strptime(request.data['date'], "%Y-%m-%d")
-        day_of_week = date_obj.strftime("%A").lower()
+        # day_of_week = date_obj.strftime("%A").lower()
         try:
             sales_route = SalesRoute.objects.get(
-                salesref=request.data['salesref'], day=day_of_week)
+                salesref=request.data['salesref'], date=date_obj, is_approved=True)
 
             plan = []
             for i in sales_route.dealers:
@@ -74,7 +83,7 @@ class GetDetails(APIView):
                 })
 
         except SalesRoute.DoesNotExist:
-            plan = []
+            plan = [{'name': 'Plan not Approved', 'address': ''}]
 
         try:
 
@@ -94,3 +103,43 @@ class GetDetails(APIView):
             covered = []
 
         return Response(data={'given': plan, 'coverd': covered}, status=status.HTTP_200_OK)
+
+
+class ApproveRoute(APIView):
+    def post(self, request, id):
+        dealers = [i['id'] for i in request.data['dealers']]
+        sales_route = SalesRoute.objects.get(id=id)
+        sales_route.is_approved = True
+        sales_route.approved_by = UserDetails.objects.get(
+            user=request.user.id)
+        old_dealers = sales_route.dealers
+
+        if dealers == old_dealers:
+            sales_route.save()
+            return Response(status=status.HTTP_200_OK)
+        else:
+
+            dealer_objects = Dealer.objects.filter(id__in=dealers)
+            psas = [i.psa.id for i in dealer_objects]
+            unique_psas = list(set(psas))
+
+            sales_route.dealers = dealers
+            sales_route.psas = unique_psas
+            sales_route.save()
+            return Response(status=status.HTTP_200_OK)
+
+
+class ToApprove(generics.ListAPIView):
+    serializer_class = serializers.ToApproveSeraializer
+
+    def get_queryset(self):
+
+        distributors = list(ManagerDistributor.objects.filter(
+            manager__user=self.request.user.id).values_list('distributor', flat=True))
+        salesrefs = SalesRefDistributor.objects.filter(
+            distributor__in=distributors).values_list('sales_ref', flat=True)
+
+        sales_routes = SalesRoute.objects.filter(
+            salesref__in=salesrefs, is_approved=False).order_by('date')
+
+        return get_list_or_404(sales_routes)

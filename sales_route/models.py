@@ -8,9 +8,16 @@ import json
 
 
 class SalesRoute(models.Model):
-    salesref = models.ForeignKey(UserDetails, on_delete=models.CASCADE)
-    day = models.CharField(max_length=10, blank=True, null=True)
+    salesref = models.ForeignKey(
+        UserDetails, on_delete=models.CASCADE, related_name='route_related_rep',)
+    date = models.DateField(null=True, blank=True)
+    psas = ArrayField(models.IntegerField(), null=True, blank=True)
     dealers = ArrayField(models.IntegerField())
+    is_approved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    approved_by = models.ForeignKey(
+        UserDetails, on_delete=models.CASCADE, related_name='route_approved_by', null=True, blank=True)
 
 
 class DailyStatus(models.Model):

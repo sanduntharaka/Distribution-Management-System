@@ -6,12 +6,15 @@ from dealer_details.models import Dealer
 from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
+date = datetime.today()
+day_name = date.date()
+
 
 @receiver(post_save, sender=NotBuyDetails)
 def daily_sales_routes_handler(sender, instance, created, *args, **kwargs):
     try:
         route = SalesRoute.objects.get(
-            salesref=instance.dis_sales_ref.sales_ref)
+            salesref=instance.dis_sales_ref.sales_ref, date=day_name)
 
         try:
             # update existing data

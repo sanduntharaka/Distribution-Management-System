@@ -43,10 +43,11 @@ class GetDailyReport(APIView):
 
             data = {
                 'main_details': {
-                    'date': date_from + ' to ' + date_to,
+                    'date': date_from,
                     'sales_rep': UserDetails.objects.get(id=sales_ref).full_name,
                     'area': UserDetails.objects.get(id=sales_ref).getTerrotories(),
                     'distributor': UserDetails.objects.get(id=distributor).full_name,
+                    'sales_rep_id': sales_ref,
                 }
             }
             try:
@@ -95,9 +96,9 @@ class GetDailyReport(APIView):
                     'since': pay_details.last().bill.date if pay_details.last() is not None else ' ',
                 }
 
-                sales_list = []
-                foc_list = []
-                market_return = []
+                sales_list = {}
+                foc_list = {}
+                market_return = {}
 
                 for category in categories:
                     sales_data = {}
@@ -107,22 +108,24 @@ class GetDailyReport(APIView):
                                                      )
                     sale_sum = sum(
                         [bil_item.foc+bil_item.qty for bil_item in bill_items])
-                    sales_data[category.short_code] = sale_sum if sale_sum > 0 else ' '
-                    sales_list.append(sales_data)
+                    # sales_data[category.short_code] = sale_sum if sale_sum > 0 else ' '
+                    # sales_list.append(sales_data)
+                    sales_list[category.short_code] = sale_sum if sale_sum > 0 else ' '
 
                     foc_sum = sum(
                         [bil_item.foc for bil_item in bill_items])
-                    foc_data[category.short_code] = foc_sum if foc_sum > 0 else ' '
-                    foc_list.append(foc_data)
+                    # foc_data[category.short_code] = foc_sum if foc_sum > 0 else ' '
+                    # foc_list.append(foc_data)
+                    foc_list[category.short_code] = foc_sum if foc_sum > 0 else ' '
 
                     maket_return_items = SalesRefReturnItem.objects.filter(
                         item__item__category=category, salesrefreturn__dis_sales_ref__sales_ref=sales_ref, salesrefreturn__date__range=(date_from, date_to), salesrefreturn__dealer=dealer)
 
                     mret_sum = sum(
                         [mk_item.foc+mk_item.qty for mk_item in maket_return_items])
-                    market_return_data[category.short_code] = mret_sum if mret_sum > 0 else ' '
+                    market_return[category.short_code] = mret_sum if mret_sum > 0 else ' '
 
-                    market_return.append(market_return_data)
+                    # market_return.append(market_return_data)
 
                 details['sales'] = sales_list
                 details['foc'] = foc_list

@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from dealer_details.models import Dealer
+from dealer_details.models import Dealer, DealerOrder
 from distrubutor_salesref_invoice.models import SalesRefInvoice
 
 
 class AddDealerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dealer
+        fields = ('__all__')
+
+
+class AddDealerOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DealerOrder
         fields = ('__all__')
 
 

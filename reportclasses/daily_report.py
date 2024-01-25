@@ -2,6 +2,7 @@ import xlsxwriter
 from collections import defaultdict
 import io
 from django.http import HttpResponse
+from reportdata.models import DailyReport, SalesData, FocData, MarketReturnData
 
 
 class GenerateDailyReportExcell:
@@ -23,6 +24,12 @@ class GenerateDailyReportExcell:
     #     return result
 
     def generate(self):
+        try:
+            report_data = DailyReport.objects.get(
+                sales_ref=self.main_details['sales_rep_id'], date=self.main_details['date'])
+        except DailyReport.DoesNotExist:
+            report_data = None
+
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
 
@@ -50,7 +57,7 @@ class GenerateDailyReportExcell:
             'valign': 'vcenter',
             'font_size': 18
         })
-        worksheet.freeze_panes(8, 0)
+        worksheet.freeze_panes(8, 2)
         worksheet.merge_range(
             1, 1, 1, 10, "BIXTON DISTRIBUTORS (PVT) LTD - Sales Reps Daily Report", merge_format)
         worksheet.write('A3', 'Distributor')
@@ -93,10 +100,9 @@ class GenerateDailyReportExcell:
 
         sale_list = self.item_details[0]['sales']
 
-        for item in sale_list:
-            for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1_sales)
-                column += 1
+        for key in sale_list:
+            worksheet.write(7, column-1, key, f1_sales)
+            column += 1
 
         worksheet.merge_range(
             6, start_col-1, 6, column-2, "Sales Made", f1_sales)
@@ -104,10 +110,10 @@ class GenerateDailyReportExcell:
         foc_list = self.item_details[0]['foc']
 
         start_col = column
-        for item in foc_list:
-            for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1_foc)
-                column += 1
+        for key in foc_list:
+
+            worksheet.write(7, column-1, key, f1_foc)
+            column += 1
 
         worksheet.merge_range(
             6, start_col-1, 6, column-2, "FOC", f1_foc)
@@ -115,10 +121,10 @@ class GenerateDailyReportExcell:
         mret_list = self.item_details[0]['market_return']
 
         start_col = column
-        for item in mret_list:
-            for salekey, saleqty in item.items():
-                worksheet.write(7, column-1, salekey, f1_mret)
-                column += 1
+        for key in mret_list:
+
+            worksheet.write(7, column-1, key, f1_mret)
+            column += 1
 
         worksheet.merge_range(
             6, start_col-1, 6, column-2, "Market returns", f1_mret)
@@ -136,26 +142,84 @@ class GenerateDailyReportExcell:
             worksheet.write(row+7, 2, "{:,.2f}".format(item['amount']), f2)
             worksheet.write(row+7, 3, f"{item['since']}", f2)
             i = 0
-            for saleitem in item['sales']:
-                for key, qty in saleitem.items():
-                    i = i+1
-                    worksheet.write(row+7, 3+i, qty, f2_sales)
+            for key in item['sales']:
+                i = i+1
+                worksheet.write(row+7, 3+i, item['sales'][key], f2_sales)
 
             j = 0
-            for focitem in item['foc']:
-                for key, qty in focitem.items():
-                    j = j+1
-                    worksheet.write(row+7, i+j+3, qty, f2_foc)
+            for key in item['foc']:
+
+                j = j+1
+                worksheet.write(row+7, i+j+3, item['foc'][key], f2_foc)
 
             k = 0
-            for mretitem in item['market_return']:
-                for key, qty in mretitem.items():
-                    k = k+1
-                    worksheet.write(row+7, i+j+k+3, qty, f2_mret)
+            for key in item['market_return']:
+
+                k = k+1
+                worksheet.write(
+                    row+7, i+j+k+3, item['market_return'][key], f2_mret)
             worksheet.write(
                 row+7, i+j+k+4, "{:,.2f}".format(item['total']), f2)
             worksheet.write(row+7, i+j+k+5, item['not_buy_reason'], f2)
-        target_row = row+10
+
+        target_row = row+8
+        worksheet.write(target_row, 0, "Total", f2)
+        worksheet.write(target_row, 1, " ", f2)
+        worksheet.write(target_row, 2, sum(
+            [i['amount'] for i in self.item_details]), f2)
+        worksheet.write(target_row, 3, ' ', f1)
+        column = 4
+        for key in sale_list:
+            worksheet.write(target_row, column, sum(
+                [d['sales'][key] if d['sales'][key] != ' ' else 0 for d in self.item_details]), f2_sales)
+            column += 1
+
+        for key in foc_list:
+            worksheet.write(target_row, column, sum(
+                [d['foc'][key] if d['foc'][key] != ' ' else 0 for d in self.item_details]), f2_foc)
+            column += 1
+
+        for key in mret_list:
+            worksheet.write(target_row, column, sum(
+                [d['market_return'][key] if d['market_return'][key] != ' ' else 0 for d in self.item_details]), f2_mret)
+            column += 1
+
+        worksheet.write(
+            target_row, column, "{:,.2f}".format(sum([t['total'] for t in self.item_details])), f2)
+        worksheet.write(target_row, column+1, ' ', f2)
+
+        if report_data is not None:
+            target_row = target_row+1
+
+            worksheet.write(target_row, 0, 'Cumulative B/F', f1)
+            worksheet.write(target_row, 1, ' ', f1)
+            worksheet.write(target_row, 2, "{:,.2f}".format(
+                report_data.amount), f1)
+            worksheet.write(target_row, 3, ' ', f1)
+            column = 4
+            for key in sale_list:
+                worksheet.write(target_row, column, SalesData.objects.get(
+                    category__short_code=key, report=report_data).value, f1_sales)
+                column += 1
+            for key in foc_list:
+
+                worksheet.write(target_row, column, FocData.objects.get(
+                    category__short_code=key, report=report_data).value, f1_sales)
+                column += 1
+
+            for key in mret_list:
+
+                worksheet.write(target_row, column, MarketReturnData.objects.get(
+                    category__short_code=key, report=report_data).value, f1_sales)
+                column += 1
+
+            worksheet.write(target_row, column,
+                            "{:,.2f}".format(report_data.total), f1)
+            worksheet.write(target_row, column+1,
+                            " ", f1)
+
+        target_row = target_row+3
+
         worksheet.merge_range(
             target_row-1, 0, target_row-1, 2, "Targets", f1)
         worksheet.write(target_row, 0, 'PSA', f1)

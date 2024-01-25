@@ -7,7 +7,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 date = datetime.today()
-day_name = date.strftime("%A").lower()
+day_name = date.date()
 
 
 @receiver(post_save, sender=SalesRefInvoice)
@@ -15,7 +15,7 @@ def daily_sales_routes_handler(sender, instance, created, *args, **kwargs):
     try:
         if instance.added_by.user.is_salesref:
             route = SalesRoute.objects.get(
-                salesref=instance.dis_sales_ref.sales_ref, day=day_name)
+                salesref=instance.dis_sales_ref.sales_ref, date=day_name)
             try:
                 daily_status = DailyStatus.objects.get(
                     date=date, route=route)

@@ -1,3 +1,5 @@
+from reportclasses.month_itenery_report import MonthIteneryReportExcell
+from sales_route.models import SalesRoute, DailyStatus
 from targets.models import SalesrefValueTarget
 from targets.models import SalesrefTargets
 from dealer_details.models import Dealer
@@ -458,6 +460,53 @@ class ProductivityReport(APIView):
 
             return file_genearte.generate()
             # return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class MonthIteneryReport(APIView):
+    def post(self, request):
+        try:
+            today = date.today()
+            now = datetime.now()
+            current_month_name = now.strftime('%B')
+            psa = request.data['psa']
+            sales_ref = request.data['sales_ref']
+            distributor = request.data['distributor']
+            categories = Category.objects.all()
+            sales_planings = SalesRoute.objects.filter(
+                salesref=UserDetails.objects.get(id=sales_ref), date__month=today.month)
+            planing_psa = [{'date': i.date, 'psas': i.psas}
+                           for i in sales_planings]
+            data = {
+                'main_details': {
+                    'month': current_month_name,
+                    'sales_rep': UserDetails.objects.get(id=sales_ref).full_name,
+                    'distributor': UserDetails.objects.get(id=distributor).full_name,
+                }
+            }
+
+            planing_data = []
+            for plan in planing_psa:
+
+                for item in plan['psas']:
+                    psa_data = {}
+                    psa_data['date'] = plan['date']
+                    psa = PrimarySalesArea.objects.get(id=item)
+                    psa_data['psa'] = psa.area_name
+
+                    sales = SalesRefInvoice.objects.filter(
+                        date=plan['date'], dealer__psa=psa, dis_sales_ref__sales_ref=sales_ref)
+
+                    psa_data['sales_total'] = sum([i.total for i in sales])
+                    planing_data.append(psa_data)
+
+            data['planing_data'] = planing_data
+            print(data)
+            file_genearte = MonthIteneryReportExcell(data)
+
+            return file_genearte.generate()
         except Exception as e:
             print(e)
             return Response(data=e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

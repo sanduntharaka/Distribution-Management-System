@@ -1,3 +1,5 @@
+from django.db.models import Case, When, Value, IntegerField
+from primary_sales_area.models import PrimarySalesArea
 from distrubutor_salesref_invoice.models import SalesRefInvoice
 from rest_framework_simplejwt.backends import TokenBackend
 from executive_distributor.models import ExecutiveDistributor
@@ -7,7 +9,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import filters
 from userdetails.models import UserDetails
-from dealer_details.models import Dealer
+from dealer_details.models import Dealer, DealerOrder
 from distrubutor_salesref.models import SalesRefDistributor
 from . import serializers
 from rest_framework import generics
@@ -219,7 +221,19 @@ class GetAllByPsa(generics.ListAPIView):
     serializer_class = serializers.GetAllDealersSerializer
 
     def get_queryset(self, *args, **kwargs):
-        return get_list_or_404(Dealer, psa=self.kwargs.get('id'))
+
+        try:
+            dearler_order = DealerOrder.objects.get(
+                psa=self.kwargs.get('id')).dealers
+
+            case_expression = Case(*[When(id=id_val, then=pos)
+                                   for pos, id_val in enumerate(dearler_order)])
+            queryset = Dealer.objects.filter(
+                id__in=dearler_order).order_by(case_expression)
+        except DealerOrder.DoesNotExist:
+            queryset = Dealer.objects.filter(psa=self.kwargs.get('id'))
+
+        return get_list_or_404(queryset)
 
 
 class ShowCredits(generics.ListAPIView):
@@ -239,3 +253,32 @@ class ShowCredits(generics.ListAPIView):
         queryset = SalesRefInvoice.objects.filter(
             dis_sales_ref__distributor=distributor, dealer=dealer, is_settiled=False, status='confirmed').order_by('date')
         return queryset
+
+
+class CreateDealerOrder(APIView):
+    # serializer_class = serializers.AddRouteSerializer
+
+    def post(self, request, *args, **kwargs):
+        request_data = request.data
+        salesref = request_data['sales_rep']
+        dealers = [i['id'] for i in request_data['dealers']]
+        dealer_objects = Dealer.objects.filter(id__in=dealers)
+        psas = [i.psa.id for i in dealer_objects]
+        unique_psas = list(set(psas))
+
+        try:
+            previous_order = DealerOrder.objects.get(
+                salesref=salesref, psa__id=unique_psas[0])
+
+            previous_order.dealers = dealers
+            previous_order.psa = PrimarySalesArea.objects.get(
+                id=unique_psas[0])
+            previous_order.save()
+            return Response(status=status.HTTP_200_OK)
+
+        except DealerOrder.DoesNotExist:
+            serializer = serializers.AddDealerOrderSerializer(
+                data={'salesref': salesref, 'dealers': dealers, 'psa': unique_psas[0]})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(status=status.HTTP_200_OK)

@@ -316,10 +316,10 @@ class ConfirmInvoice(generics.UpdateAPIView):
                 bill.rejected_reason = cof_status['rejected_reason']
                 bill.is_settiled = False
                 bill.save()
-                invoice_items = InvoiceIntem.objects.filter(bill=bill.id)
-                for item in invoice_items:
+                invoice_reduced_items = Item.objects.filter(invoice_item__bill=bill.id)
+                for item in invoice_reduced_items:
                     reduce_qty = ReduceQuantity(
-                        item=item.item, qty=item.qty, foc=item.foc)
+                        item=item)
                     reduce_qty.deleted_details()
 
                 return Response(status=status.HTTP_200_OK)
