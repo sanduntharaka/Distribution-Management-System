@@ -20,6 +20,22 @@ text.ipynb
 0006_remove_salesroute_day_salesroute_approved_by_and_more.py
 0007_salesroute_date.py
 0008_salesroute_psas.py
+backgrountasks/logs/
+0003_dealerorder.py
+0003_alter_itemstock_invoice_number_and_more.py
+0004_distributoritemsinvoice_discount_and_more.py
+0005_itemstock_from_market_return.py
+0006_alter_distributoritemsinvoice_date.py
+0003_salesrefinvoice_invoice_type_and_more.py
+myprojectenv/
+out.txt
+0003_salesroute_day.py
+0004_remove_salesroute_day_salesroute_approved_by_and_more.py
+static/
+0003_remove_salesreftargets_amount_salesreftargets_foc_and_more.py
+0004_salesrefvaluetarget.py
+0005_salesrepdailyvaluetarget.py
+0003_userdetails_vat_no.py
 
 0005_salesroute_day.py
 0011_userdetails_vat_no.py

@@ -256,6 +256,7 @@ AUTH_USER_MODEL = 'users.UserAccount'
 CRONJOBS = [
     ('0 1 * * *', 'backgrountasks.cheque_realize.realizeAllCheques'),
     ('0 23 * * *', 'backgrountasks.inventory_history.autoCreateInventoryHistory'),
+    ('0 2 * * *', 'backgrountasks.daily_report.autoCreateCumulativeDetails'),
 ]
 
 # Email Settings
