@@ -73,8 +73,11 @@ class GetDetails(APIView):
         # day_of_week = date_obj.strftime("%A").lower()
         try:
             sales_route = SalesRoute.objects.get(
-                salesref=request.data['salesref'], date=date_obj, is_approved=True)
-
+                salesref=request.data['salesref'], date=date_obj)
+            print(sales_route)
+            if sales_route.is_approved is not True:
+                plan = [{'name': 'Plan not approved', 'address': ''}]
+                return Response(data={'given': plan, 'coverd': []}, status=status.HTTP_200_OK)
             plan = []
             for i in sales_route.dealers:
                 plan.append({
@@ -83,7 +86,7 @@ class GetDetails(APIView):
                 })
 
         except SalesRoute.DoesNotExist:
-            plan = [{'name': 'Plan not Approved', 'address': ''}]
+            plan = [{'name': 'Plan not created', 'address': ''}]
 
         try:
 

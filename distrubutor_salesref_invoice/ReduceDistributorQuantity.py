@@ -105,6 +105,8 @@ class ReduceQuantity:
 
         self.item.save()
 
+        # inv_item.delete()
+
     def edited_details(self, prev_qty, prev_foc):
 
         # reduce bill item qty
@@ -117,9 +119,56 @@ class ReduceQuantity:
     def deleted_details(self):
 
         # reduce bill item qty
-        cal_qty = 10
-        self.item.item.qty = self.item.item.qty + \
-            (self.qty+(self.foc-self.from_foc if self.foc > 0 else self.from_foc))
-        self.item.foc = self.item.foc + (self.foc)
+        # cal_qty = 10
+        # self.item.item.qty = self.item.item.qty + \
+        #     (self.qty+(self.foc-self.from_foc if self.foc > 0 else self.from_foc))
+        # self.item.foc = self.item.foc + (self.foc)
 
-        self.item.save()
+        # self.item.save()
+
+        print(self.item)
+        # item_id = self.item.id
+        # reduced_items = Item.objects.filter(
+        #     invoice_item__item__item_id=item_id)
+
+        # for inv_item in reduced_items:
+        #     qty_to_add = inv_item.qty
+        #     foc_to_add = inv_item.foc
+
+        #     stoks = ItemStock.objects.filter(
+        #         item_id=self.id,
+        #         whole_sale_price=self.wholesale,
+        #         retail_price=self.price
+        #     ).order_by('-date')
+
+        #     for stok in stoks:
+        #         if qty_to_add > 0:
+        #             qty_added = min(qty_to_add, stok.initial_qty - stok.qty)
+        #             stok.qty += qty_added
+        #             qty_to_add -= qty_added
+
+        #         if foc_to_add > 0:
+        #             foc_added = min(foc_to_add, stok.initial_qty - stok.foc)
+        #             stok.foc += foc_added
+        #             foc_to_add -= foc_added
+
+        #         stok.save()
+
+        #         if qty_to_add == 0 and foc_to_add == 0:
+        #             break
+
+        billed_qty = self.item.qty
+        billed_foc = self.item.foc
+        only_foc = self.item.from_foc
+
+        stock = self.item.item
+        print('st:', stock)
+        print(f"{billed_qty} {billed_foc} {only_foc}")
+        print(f"{stock.qty} {stock.foc} ")
+
+        stock.qty = stock.qty + (billed_qty+(billed_foc-only_foc))
+        stock.foc = stock.foc + (only_foc)
+
+        print(f"{stock.qty} {stock.foc} ")
+
+        # stock.save()

@@ -223,6 +223,8 @@ class GetDistributorItems(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         item = self.kwargs.get('pk')
+
+        print(ItemStock.objects.filter(item=item).last().qty)
         return get_list_or_404(ItemStock, item=item)
 
 
