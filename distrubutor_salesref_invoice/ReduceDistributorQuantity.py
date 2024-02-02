@@ -25,61 +25,75 @@ class ReduceQuantity:
         this method is used to save new qty
         """
         item = self.item.id
-        total_qty = self.item.qty+self.item.foc
-        total_foc = self.item.foc
+        # total_qty = self.item.qty+self.item.foc
+        # total_foc = self.item.foc
+        bill_foc = self.item.foc
+        bill_qty = self.item.qty
 
         stoks = ItemStock.objects.filter(
             Q(qty__gt=0) | Q(foc__gt=0), item_id=self.id, whole_sale_price=self.wholesale, retail_price=self.price).order_by('date')
 
         for stok in stoks:
 
-            stock_qty = stok.qty
-            stock_foc = stok.foc
-
             reduce_qty = 0
             reduce_foc = 0
             from_foc = 0
 
-            if (total_qty) <= stock_qty:
+            if (bill_qty+bill_foc) <= stok.qty:
 
-                if total_foc <= stock_foc:
-                    reduce_foc = total_foc
-                    reduce_qty = total_qty
-                    stok.foc = stok.foc - total_foc
-                    from_foc = total_foc
-                    stok.qty = stok.qty - (total_qty)
-                    if stok.qty < stok.foc:
-                        stok.foc = stok.qty
-                    total_qty = 0
-                    total_foc = 0
+                if self.item.foc <= stok.foc:
+
+                    stok.foc = stok.foc - bill_foc
+                    stok.qty = stok.qty - bill_foc
+                    reduce_foc = bill_foc
+                    bill_foc = 0
+                    print("sfc:", stok.foc, "sqty:", stok.qty)
+                    if bill_qty <= (stok.qty-stok.foc):
+                        stok.qty = stok.qty-bill_qty
+                        reduce_qty = bill_qty
+                        bill_qty = 0
+                    else:
+                        reduce_qty = stok.qty-stok.foc
+                        stok.qty = stok.qty-reduce_qty
+                        bill_qty = bill_qty-reduce_qty
+                        stok.foc = stok.foc-bill_qty
+                        reduce_foc = reduce_foc+bill_qty
+                        stok.qty = stok.qty-bill_qty
+                        bill_qty = 0
 
                 else:
 
+                    bill_foc = bill_foc - stok.foc
                     reduce_foc = stok.foc
-                    reduce_qty = total_qty
-                    total_foc = total_foc - stok.foc
-                    from_foc = stok.foc
-                    stok.qty = stok.qty - (total_qty)
-                    if stok.qty == 0:
-                        total_foc = 0
-                    total_qty = total_foc
-
+                    stok.qty = stok.qty - (stok.foc)
                     stok.foc = 0
+
+                    if bill_foc <= stok.qty:
+                        stok.qty = stok.qty - bill_foc
+                        reduce_qty = bill_foc
+                        bill_foc = 0
+                    stok.qty = stok.qty - bill_qty
+                    reduce_qty = reduce_qty + bill_qty
+                    bill_qty = 0
 
             else:
 
-                reduce_qty = stok.qty
+                reduce_qty = stok.qty - stok.foc
                 reduce_foc = stok.foc
-                from_foc = stok.foc
-                total_qty = total_qty - (stok.qty)
-                if total_foc <= stok.foc:
 
-                    total_foc = 0
+                if bill_foc <= stok.foc:
+                    stok.foc = stok.foc - bill_foc
+                    stok.qty = stok.qty - bill_qty
+                    bill_foc = 0
+                    bill_qty = bill_qty-stok.qty
+
                 else:
-                    total_foc = total_foc - stok.foc
+                    bill_foc = bill_foc - stok.foc
+                    stok.qty = stok.qty - (stok.foc)
+                    bill_qty = bill_qty - stok.qty
 
-                stok.qty = 0
                 stok.foc = 0
+                stok.qty = 0
 
             stok.initial_qty = 0
             stok.save()
@@ -89,7 +103,7 @@ class ReduceQuantity:
 
             inv_item.save()
 
-            if total_foc == 0 and total_qty == 0:
+            if bill_foc == 0 and bill_qty == 0:
                 break
 
         # self.item.qty = self.item.qty - (self.qty+self.foc)
@@ -100,10 +114,11 @@ class ReduceQuantity:
         # self.item.save()
 
     def reverse_reduce_qty(self):
-        self.item.qty = self.item.qty + (self.qty+self.foc)
-        self.item.foc = self.item.foc + (self.foc)
 
-        self.item.save()
+        self.item.item.qty = self.item.item.qty + (self.item.qty+self.item.foc)
+        self.item.item.foc = self.item.item.foc + (self.item.foc)
+
+        self.item.item.save()
 
         # inv_item.delete()
 

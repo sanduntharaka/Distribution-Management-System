@@ -312,22 +312,24 @@ class ConfirmInvoice(generics.UpdateAPIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
             if confirm_status == 'rejected':
-                raise KeyError('rejected')
-                # bill.status = 'rejected'
-                # bill.confirmed_date = cof_status['confirmed_date']
-                # bill.rejected_reason = cof_status['rejected_reason']
-                # bill.is_settiled = False
-                # # bill.save()
-                # invoice_reduced_items = Item.objects.filter(
-                #     invoice_item__bill=bill.id)
-                # for item in invoice_reduced_items:
-                #     reduce_qty = ReduceQuantity(
-                #         item=item, id=item.id, wholesale=item.item.whole_sale_price, price=item.item.retail_price)
-                #     # ,item.id, item.whole_sale_price, item.price
-                #     #  invoice_item, item['id'], item['whole_sale_price'], item['price']
-                #     reduce_qty.deleted_details()
+                bill.status = 'rejected'
+                bill.confirmed_date = cof_status['confirmed_date']
+                bill.rejected_reason = cof_status['rejected_reason']
+                bill.is_settiled = False
+                try:
+                    invoice_reduced_items = Item.objects.filter(
+                        invoice_item__bill=bill.id)
+                    for item in invoice_reduced_items:
+                        reduce_qty = ReduceQuantity(
+                            item=item, id=item.id, wholesale=item.item.whole_sale_price, price=item.item.retail_price)
+                        # ,item.id, item.whole_sale_price, item.price
+                        #  invoice_item, item['id'], item['whole_sale_price'], item['price']
+                        reduce_qty.reverse_reduce_qty()
+                    bill.save()
+                    return Response(status=status.HTTP_200_OK)
+                except:
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
 
-                # return Response(status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
