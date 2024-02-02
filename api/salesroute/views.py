@@ -50,19 +50,30 @@ class CreateRoute(APIView):
 class GetSavedRoutes(APIView):
     def get(self, request, id, date):
         try:
-            sales_routes = SalesRoute.objects.get(salesref=id, date=date)
-
-            data = []
-            for i in sales_routes.dealers:
+            sales_routes = SalesRoute.objects.get(
+                salesref=id, date=date)
+            if sales_routes.is_approved == True:
+                data = []
                 dealer_data = {}
-                dealer = Dealer.objects.get(id=i)
-                dealer_data['id'] = i
-                dealer_data['name'] = dealer.name
-                dealer_data['address'] = dealer.address
+                dealer_data['id'] = 0
+                dealer_data['name'] = 'Plan Approved'
+                dealer_data['address'] = ""
                 data.append(dealer_data)
 
-            return Response(data={'id': sales_routes.id, 'routs': data}, status=status.HTTP_200_OK)
-        except SalesRoute.DoesNotExist:
+                return Response(data={'id': sales_routes.id, 'routs': data}, status=status.HTTP_200_OK)
+            else:
+                data = []
+                for i in sales_routes.dealers:
+                    dealer_data = {}
+                    dealer = Dealer.objects.get(id=i)
+                    dealer_data['id'] = i
+                    dealer_data['name'] = dealer.name
+                    dealer_data['address'] = dealer.address
+                    data.append(dealer_data)
+
+                return Response(data={'id': sales_routes.id, 'routs': data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print('asdasd:', e)
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
