@@ -5,6 +5,8 @@ urlpatterns = [
     path('items/add/', views.AddNewItems.as_view()),
     path('stoks/add/', views.AddExistingItems.as_view()),
     path('items/add/excel/', views.AddItemsExcel.as_view()),
+    path('items/price/excel/', views.ChangeItemsPriceExcel.as_view()),
+
 
     # get DistributorInventoryItems details
     path('all/<id>', views.GetDistributorInventoryItems.as_view()),
@@ -30,4 +32,4 @@ urlpatterns = [
 
 
 ]
-# distributor/invoice/invoice/check/
+# distributor/items/price/excel/

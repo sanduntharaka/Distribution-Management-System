@@ -499,6 +499,24 @@ class AddItemsExcel(APIView):
             return Response({'added_count': len(success), 'added_count': len(success), 'added': success, 'errors_count': len(erros), 'error_rows': erros, 'resons': erros_reson}, status=status.HTTP_201_CREATED)
 
 
+class ChangeItemsPriceExcel(APIView):
+    def post(self, request):
+        data_file = request.data['file']
+        df = pd.read_excel(data_file)
+        complete = []
+        for i in range(len(df)):
+            products = ItemStock.objects.filter(
+                item__item_code=df['item_code'][i], qty__gte=0, foc__gte=0)
+            products.update(
+                whole_sale_price=df['whole_sale_price'][i], retail_price=df['retail_price'][i])
+            print(products)
+            complete.append(
+                {"item_code": df['item_code'][i], "no of items": products.count()})
+        # print(df['item_code'])
+
+        return Response(data=complete, status=status.HTTP_200_OK)
+
+
 class AllSalesrefsByDistributor(generics.ListAPIView):
     serializer_class = serializers.MySalesrefs
     pagination_class = None
