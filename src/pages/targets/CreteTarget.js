@@ -56,16 +56,24 @@ const CreteTarget = ({ user }) => {
         target_person: '',
         date_form: '',
         date_to: '',
-        value:'',
+        value: '',
+        added_by: user.id,
+    })
+
+    const [salesrepDailyValData, setSalesrepDailyValData] = useState({
+        salesrep: '',
+        date: '',
+        psa: '',
+        value: '',
         added_by: user.id,
     })
 
 
 
-    const [dealers, setDealers] = useState([])
+    // const [dealers, setDealers] = useState([])
 
-    const [items, setItems] = useState([])
-
+    // const [items, setItems] = useState([])
+    const [psas, setPsas] = useState([])
     useEffect(() => {
 
         axiosInstance
@@ -76,7 +84,7 @@ const CreteTarget = ({ user }) => {
                 },
             })
             .then((res) => {
-                console.log(res.data);
+
 
                 setSalesrefs(res.data);
 
@@ -92,7 +100,7 @@ const CreteTarget = ({ user }) => {
                 },
             })
             .then((res) => {
-                console.log(res.data);
+
 
                 setDistributors(res.data);
 
@@ -110,7 +118,7 @@ const CreteTarget = ({ user }) => {
             })
             .then((res) => {
                 setCategories(res.data)
-                console.log(res.data);
+
             })
             .catch((err) => {
 
@@ -124,38 +132,38 @@ const CreteTarget = ({ user }) => {
 
 
 
-    const handleSubmitDistributor = (e) => {
-        e.preventDefault();
+    // const handleSubmitDistributor = (e) => {
+    //     e.preventDefault();
 
-        axiosInstance
-            .post(
-                `/target/add-distributor/`,
-                distributorData,
+    //     axiosInstance
+    //         .post(
+    //             `/target/add-distributor/`,
+    //             distributorData,
 
-                {
-                    headers: {
-                        Authorization:
-                            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-                    },
-                }
-            )
-            .then((res) => {
-                console.log(res);
-                setError(false)
-                setSuccess(true)
-                setMsg('Your data saved successfully.');
-                setTitle('Success');
-                handleOpen();
-            })
-            .catch((err) => {
-                console.log(err);
-                setSuccess(false);
-                setError(true);
-                setMsg('Cannot save your data. Please try again');
-                setTitle('Error');
-                handleOpen();
-            });
-    }
+    //             {
+    //                 headers: {
+    //                     Authorization:
+    //                         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+    //                 },
+    //             }
+    //         )
+    //         .then((res) => {
+    //             console.log(res);
+    //             setError(false)
+    //             setSuccess(true)
+    //             setMsg('Your data saved successfully.');
+    //             setTitle('Success');
+    //             handleOpen();
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //             setSuccess(false);
+    //             setError(true);
+    //             setMsg('Cannot save your data. Please try again');
+    //             setTitle('Error');
+    //             handleOpen();
+    //         });
+    // }
 
 
 
@@ -224,7 +232,60 @@ const CreteTarget = ({ user }) => {
             });
     }
 
-    
+
+    const handleSubmitDailyValSalesrep = (e) => {
+
+        e.preventDefault();
+        axiosInstance
+            .post(
+                `/target/add-daily-value/`,
+                salesrepDailyValData,
+
+                {
+                    headers: {
+                        Authorization:
+                            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+                    },
+                }
+            )
+            .then((res) => {
+                console.log(res);
+                setError(false)
+                setSuccess(true)
+                setMsg('Your data saved successfully.');
+                setTitle('Success');
+                handleOpen();
+            })
+            .catch((err) => {
+                console.log(err);
+                setSuccess(false);
+                setError(true);
+                setMsg('Cannot save your data. Please try again');
+                setTitle('Error');
+                handleOpen();
+            });
+    }
+
+    const handleSelectSalesrep = (e) => {
+
+        setSalesrepDailyValData({ ...salesrepDailyValData, salesrep: e.target.value })
+        axiosInstance.get(`psa/get/srep/${e.target.value}`, {
+            headers: {
+                Authorization:
+                    'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+        })
+            .then((res) => {
+
+                console.log(res.data)
+                setPsas(res.data)
+
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
 
     return (
         <div className="page">
@@ -238,7 +299,7 @@ const CreteTarget = ({ user }) => {
                 />
             </Modal>
 
-            <div className="page__title">
+            {/* <div className="page__title">
                 <p>Target for Distributors</p>
             </div>
             <div className="page__pcont">
@@ -339,11 +400,11 @@ const CreteTarget = ({ user }) => {
                         </div>
                     </form>
                 </div>
-            </div>
+            </div> */}
 
 
             <div className="page__title">
-                <p>By Category Target  for Sales Rep</p>
+                <p>Category Target  for Sales Rep Per Month</p>
             </div>
             <div className="page__pcont">
                 <div className="form">
@@ -360,7 +421,7 @@ const CreteTarget = ({ user }) => {
                                         }
                                         required
                                     >
-                                        <option>Select sales rep</option>
+                                        <option>Select Sales Rep</option>
                                         {
                                             salesrefs.map((item, i) => (
                                                 <option value={item.id} key={i}>{item.full_name}</option>
@@ -399,13 +460,13 @@ const CreteTarget = ({ user }) => {
                                 <div className="form__row__col__input">
                                     <select
                                         type="text"
-                                        placeholder="Select psa"
+                                        placeholder="Select Category"
                                         onChange={(e) =>
                                             setSalesrepData({ ...salesrepData, category: e.target.value })
                                         }
                                         required
                                     >
-                                        <option>Select category</option>
+                                        <option>Select Category</option>
                                         {
                                             categories.map((category, i) => (
                                                 <option value={
@@ -456,10 +517,10 @@ const CreteTarget = ({ user }) => {
                         </div>
                     </form>
                 </div>
-                
+
             </div>
             <div className="page__title">
-                <p>By Value Target  for Sales Rep</p>
+                <p>Value Target  for Sales Rep Per Month</p>
             </div>
             <div className="page__pcont">
                 <div className="form">
@@ -476,7 +537,7 @@ const CreteTarget = ({ user }) => {
                                         }
                                         required
                                     >
-                                        <option>Select sales rep</option>
+                                        <option>Select Sales Rep</option>
                                         {
                                             salesrefs.map((item, i) => (
                                                 <option value={item.id} key={i}>{item.full_name}</option>
@@ -513,13 +574,13 @@ const CreteTarget = ({ user }) => {
                             <div className="form__row__col">
                                 <div className="form__row__col__label">Type Value</div>
                                 <div className="form__row__col__input">
-                                <input type="number" placeholder='0' onChange={(e) =>
+                                    <input type="number" placeholder='0' onChange={(e) =>
                                         setSalesrepValData({ ...salesrepValData, value: e.target.value })
                                     } required />
-                                   
+
                                 </div>
                             </div>
-                            
+
 
                         </div>
 
@@ -535,7 +596,98 @@ const CreteTarget = ({ user }) => {
                         </div>
                     </form>
                 </div>
-                
+
+            </div>
+
+            <div className="page__title">
+                <p>Value Target  for Sales Rep By Date</p>
+            </div>
+            <div className="page__pcont">
+                <div className="form">
+                    <form >
+                        <div className="form__row">
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select Sales Rep</div>
+                                <div className="form__row__col__input">
+                                    <select
+                                        type="text"
+                                        placeholder="Select Sales Rep"
+                                        onChange={(e) =>
+                                            handleSelectSalesrep(e)
+                                        }
+                                        name='salesrep'
+                                        required
+                                    >
+                                        <option>Select Sales Rep</option>
+                                        {
+                                            console.log(salesrefs)
+                                        }
+                                        {
+                                            salesrefs.map((item, i) => (
+                                                <option value={item.id} key={i}>{item.full_name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select PSA</div>
+                                <div className="form__row__col__input">
+
+                                    <select name='psa' onChange={(e) => setSalesrepDailyValData({ ...salesrepDailyValData, psa: e.target.value })}>
+                                        <option value="">Select PSA</option>
+                                        {
+                                            psas.map((item, i) => (
+                                                <option value={item.id} key={i}>{item.area_name}</option>
+                                            )
+                                            )
+                                        }
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Select Date</div>
+                                <div className="form__row__col__input" name='date'>
+
+
+                                    <input type="date" onChange={(e) =>
+                                        setSalesrepDailyValData({ ...salesrepDailyValData, date: e.target.value })
+                                    }
+                                        required />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form__row">
+                            <div className="form__row__col">
+                                <div className="form__row__col__label">Type Value</div>
+                                <div className="form__row__col__input">
+                                    <input type="number" placeholder='0' onChange={(e) =>
+                                        setSalesrepDailyValData({ ...salesrepDailyValData, value: e.target.value })
+                                    } name='vale' required />
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div className="form__btn">
+                            <div className="form__btn__container">
+                                <button
+                                    className="btnEdit"
+                                    type='submit'
+                                    onClick={(e) => handleSubmitDailyValSalesrep(e)}
+
+                                >
+                                    save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             </div>
 
         </div>

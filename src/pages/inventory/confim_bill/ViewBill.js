@@ -77,16 +77,16 @@ const ViewBill = (props) => {
             </div>
           </div>
           <div className={styles.row}>
-            <table>
+            <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Item Code</th>
-                  <th>Description</th>
-                  <th>Unit Qty</th>
-                  <th>Free Qty</th>
-                  <th>Wholesale Price</th>
-                  <th>Retail Price</th>
-                  <th>Value</th>
+                  <th className={styles.th} >Item Code</th>
+                  <th className={styles.th} >Description</th>
+                  <th className={styles.th} >Unit Qty</th>
+                  <th className={styles.th} >Free Qty</th>
+                  <th className={styles.th} >Wholesale Price</th>
+                  <th className={styles.th} >Retail Price</th>
+                  <th className={styles.th} >Value</th>
                 </tr>
               </thead>
               <tbody>
@@ -97,15 +97,15 @@ const ViewBill = (props) => {
                   )
                   .map((item, i) => (
                     <tr key={i}>
-                      <td>{item.item_code}</td>
-                      <td>{item.description}</td>
-                      <td>{item.qty}</td>
-                      <td>{item.foc}</td>
-                      <td>
+                      <td className={styles.td} >{item.item_code}</td>
+                      <td className={styles.td} >{item.description}</td>
+                      <td className={styles.td} >{item.qty}</td>
+                      <td className={styles.td} >{item.foc}</td>
+                      <td className={styles.td} >
                         {item.whole_sale_price}
                       </td>
-                      <td>{item.retail_price}</td>
-                      <td>{item.extended_price}</td>
+                      <td className={styles.td}>{item.retail_price}</td>
+                      <td className={styles.td}>{item.extended_price}</td>
                     </tr>
                   ))}
               </tbody>

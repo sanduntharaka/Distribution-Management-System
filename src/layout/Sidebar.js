@@ -41,11 +41,11 @@ const Sidebar = () => {
     <>
       <div className="container">
         <div className="container__logo">
-          <img src="./images/Bixton_logo.png" alt="" />
+          <img src="./images/sidebar.png" alt="" />
         </div>
         <div className="container__header">
           <div className="container__header__brand">
-            <p>BIXTON DISTRIBUTORS</p>
+            <p>INNOVERSE DMS</p>
           </div>
         </div>
         <div className="container__list">
@@ -267,18 +267,18 @@ const Sidebar = () => {
             </div>
             <div className="container__list__item__name">leave</div>
           </NavLink> */}
-
-          <NavLink
-            to="/report"
-            className={(isActive, isPending) =>
-              handleClassname(isActive, isPending)
-            }
-          >
-            <div className="container__list__item__icon">
-              <TbReportSearch />
-            </div>
-            <div className="container__list__item__name">reports</div>
-          </NavLink>
+          {!user.is_salesref ?
+            <NavLink
+              to="/report"
+              className={(isActive, isPending) =>
+                handleClassname(isActive, isPending)
+              }
+            >
+              <div className="container__list__item__icon">
+                <TbReportSearch />
+              </div>
+              <div className="container__list__item__name">reports</div>
+            </NavLink> : ''}
 
           {user.is_company ? (
             <NavLink

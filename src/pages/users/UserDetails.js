@@ -55,6 +55,7 @@ const UserDetails = () => {
     home_number: '',
     immediate_contact_person_name: '',
     immediate_contact_person_number: '',
+    vat_no: '',
   });
   const [users, setUsers] = useState([]);
 
@@ -254,7 +255,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type name here"
+                    placeholder="Type Name Here"
                     value={data.full_name ? data.full_name : ''}
                     onChange={(e) =>
                       setData({ ...data, full_name: e.target.value })
@@ -273,7 +274,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type email here"
+                    placeholder="Type Email Here"
                     value={data.email ? data.email : ''}
                     onChange={(e) =>
                       setData({ ...data, email: e.target.value })
@@ -290,7 +291,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type address here"
+                    placeholder="Type Address Here"
                     value={data.address ? data.address : ''}
                     onChange={(e) =>
                       setData({ ...data, address: e.target.value })
@@ -304,10 +305,22 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder=" Type NIC number here"
+                    placeholder=" Type NIC Number Here"
                     value={data.nic ? data.nic : ''}
                     onChange={(e) => setData({ ...data, nic: e.target.value })}
                     required
+                  />
+                </div>
+              </div>
+              <div className="form__row__col">
+                <div className="form__row__col__label">VAT Invoice Number(Optional)</div>
+                <div className="form__row__col__input">
+                  <input
+                    type="text"
+                    placeholder=" Type VAT Number Here"
+                    value={data.vat_no ? data.vat_no : ''}
+                    onChange={(e) => setData({ ...data, vat_no: e.target.value })}
+
                   />
                 </div>
               </div>
@@ -319,7 +332,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="date"
-                    placeholder="Type name here"
+                    placeholder="Type dob Here"
                     value={data.dob ? data.dob : ''}
                     onChange={(e) => setData({ ...data, dob: e.target.value })}
                     required
@@ -377,7 +390,7 @@ const UserDetails = () => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="Type company number"
+                      placeholder="Type Company Number"
                       value={data.company_number ? data.company_number : ''}
                       onChange={(e) =>
                         setData({ ...data, company_number: e.target.value })
@@ -389,7 +402,7 @@ const UserDetails = () => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="Type personal number"
+                      placeholder="Type Personal Number"
                       value={data.personal_number ? data.personal_number : ''}
                       onChange={(e) =>
                         setData({ ...data, personal_number: e.target.value })
@@ -401,7 +414,7 @@ const UserDetails = () => {
                   <div className="form__row__col__input" style={{ flex: 1 }}>
                     <input
                       type="tel"
-                      placeholder="Type home number"
+                      placeholder="Type Home Number"
                       value={data.home_number ? data.home_number : ''}
                       onChange={(e) =>
                         setData({ ...data, home_number: e.target.value })
@@ -421,7 +434,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Type Here"
                     value={
                       data.immediate_contact_person_name
                         ? data.immediate_contact_person_name
@@ -443,7 +456,7 @@ const UserDetails = () => {
                 <div className="form__row__col__input">
                   <input
                     type="tel"
-                    placeholder="Type here"
+                    placeholder="Type Here"
                     value={
                       data.immediate_contact_person_number
                         ? data.immediate_contact_person_number
@@ -469,7 +482,7 @@ const UserDetails = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type terriotory here"
+                        placeholder="Type Territory Here"
                         name='terriotory_name'
                         value={item.terriotory_name}
                         onChange={(e) => handleTypeTerriotory(e, i)}
@@ -478,7 +491,7 @@ const UserDetails = () => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type code here"
+                        placeholder="Type Code Here"
                         name='code'
 
                         value={item.code}

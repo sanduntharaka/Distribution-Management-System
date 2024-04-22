@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -41,14 +42,13 @@ const tableIcons = {
 };
 const ByDateRangeTable = (props) => {
   const columns = [
-    { title: 'Item code', field: 'item_code' },
-    { title: 'Item description', field: 'description' },
+    { title: 'Item Code', field: 'item_code' },
+    { title: 'Item Description', field: 'description' },
 
-    { title: 'Qty', field: 'qty' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Price', field: 'price' },
-    { title: 'Discount', field: 'discount' },
-    { title: 'Extended amount', field: 'extended_price' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
+    { title: 'Price', field: 'price', render: (rowData) => formatNumberPrice(rowData.price) },
+    { title: 'Discount', field: 'discount', render: (rowData) => formatNumberPrice(rowData.discount) },
+    { title: 'Extended Amount', field: 'extended_price', render: (rowData) => formatNumberPrice(rowData.extended_price) },
   ];
   return (
     <MaterialTable

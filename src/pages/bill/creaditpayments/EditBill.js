@@ -24,7 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import RequsetStatus from '../../../components/requeststatus/RequsetStatus';
 import ShowPaymentDetails from './ShowPaymentDetails';
 import EditCheque from '../../../components/edit/EditCheque';
-
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -80,8 +80,8 @@ const EditBill = (props) => {
     { title: 'Date', field: 'date', editable: false },
     { title: 'Due date', field: 'due_date', editable: false },
     { title: 'Payment type', field: 'payment_type', editable: false },
-    { title: 'Amount', field: 'paid_amount', editable: false },
-    { title: 'Cheque Amount', field: 'cheque_amount', editable: false },
+    { title: 'Amount', field: 'paid_amount', editable: false, render: (rowData) => formatNumberPrice(rowData.paid_amount), },
+    { title: 'Cheque Amount', field: 'cheque_amount', editable: false, render: (rowData) => formatNumberPrice(rowData.cheque_amount), },
     {
       title: 'Cheque Status',
       field: 'cheque_status',
@@ -217,13 +217,13 @@ const EditBill = (props) => {
               actions={
                 props.user.is_distributor
                   ? [
-                      {
-                        icon: ViewColumn,
-                        tooltip: 'View details',
-                        onClick: (event, rowData) =>
-                          handleViewDetails(event, rowData),
-                      },
-                    ]
+                    {
+                      icon: ViewColumn,
+                      tooltip: 'View details',
+                      onClick: (event, rowData) =>
+                        handleViewDetails(event, rowData),
+                    },
+                  ]
                   : ''
               }
               components={{

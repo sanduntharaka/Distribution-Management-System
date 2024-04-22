@@ -6,6 +6,7 @@ import Spinner from '../../../components/loadingSpinner/Spinner';
 import Message from '../../../components/message/Message';
 import EditBill from './EditBill';
 import RejectForm from './RejectForm';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const ConfirmStatus = (props) => {
   const [currentDate, setCurrentDate] = useState(() => {
     const d = new Date();
@@ -248,11 +249,11 @@ const ConfirmStatus = (props) => {
               <div className="row">
                 <div className="col">
                   <p>sub total</p>
-                  <p>{props.invoice.sub_total}</p>
+                  <p>{formatNumberPrice(props.invoice.sub_total)}</p>
                 </div>
                 <div className="col">
                   <p>Total</p>
-                  <p>{props.invoice.total}</p>
+                  <p>{formatNumberPrice(props.invoice.total)}</p>
                 </div>
               </div>
               <div className="row">

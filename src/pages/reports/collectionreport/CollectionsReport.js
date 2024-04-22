@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ByDateRangeTable from './ByDateRangeTable';
 import { utils, writeFile } from 'xlsx';
-
+import { formatNumberPrice } from '../../../var/NumberFormats';
 import { axiosInstance } from '../../../axiosInstance';
 
 function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
@@ -198,7 +198,7 @@ const CollectionsReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributorDateBy(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -211,7 +211,7 @@ const CollectionsReport = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -222,7 +222,7 @@ const CollectionsReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -233,7 +233,7 @@ const CollectionsReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Salesrefs</div>
+              <div className="form__row__col__label">Sales Reps</div>
               <div className="form__row__col__input">
                 <select
                   name=""

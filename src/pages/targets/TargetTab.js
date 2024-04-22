@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CreteTarget from './CreteTarget';
 import Summary from './Summary';
 import ViewTargets from './ViewTargets';
+import DailyTargets from './DailyTargets';
 
 const TargetTab = () => {
     const user = JSON.parse(sessionStorage.getItem('user'));
@@ -19,11 +20,18 @@ const TargetTab = () => {
                     Create
                 </div>
                 <div
+                    className={`item ${selected === 3 ? 'selected' : ''}`}
+                    onClick={() => handleSelect(3)}
+                >
+                    Daily Targets
+                </div>
+                <div
                     className={`item ${selected === 1 ? 'selected' : ''}`}
                     onClick={() => handleSelect(1)}
                 >
-                    View
+                    Other Targets
                 </div>
+
                 <div
                     className={`item ${selected === 2 ? 'selected' : ''}`}
                     onClick={() => handleSelect(2)}
@@ -37,6 +45,8 @@ const TargetTab = () => {
                 {selected === 1 ? <ViewTargets user={user} /> : ''}
 
                 {selected === 2 ? <Summary user={user} /> : ''}
+                {selected === 3 ? <DailyTargets user={user} /> : ''}
+
 
             </div>
         </div>

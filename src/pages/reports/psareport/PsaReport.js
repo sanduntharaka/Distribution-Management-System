@@ -281,7 +281,7 @@ const PsaReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributor(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}

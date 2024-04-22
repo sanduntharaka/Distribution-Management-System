@@ -1,7 +1,8 @@
 .details {
   &__content {
     width: 50%;
-    height: 75%;
+    height: max-content;
+    max-height: 75%;
     overflow-y: scroll;
     scrollbar-gutter: stable;
     background-color: white;
@@ -16,6 +17,7 @@
     transform: translateY(-50%);
     scrollbar-width: thin;
     scrollbar-color: #000f80 #ffffff;
+
     &::-webkit-scrollbar {
       width: 5px;
     }
@@ -28,15 +30,19 @@
       background-color: #000f80;
       border-radius: 25px;
     }
+
     &::-webkit-scrollbar-button {
       height: 50px;
     }
+
     @include mobile {
       width: 300px;
       padding: 25px;
     }
+
     &__title {
       text-align: center;
+
       h4 {
         background-color: $color-details;
         padding: 5px;
@@ -44,6 +50,7 @@
         border-radius: 20px;
       }
     }
+
     &__body {
       margin-top: 25px;
     }
@@ -62,9 +69,11 @@
         padding: 10px;
         box-sizing: border-box;
       }
+
       &.buttons {
         margin-top: 15px;
         justify-content: space-around;
+
         @include mobile {
           display: flex;
           flex-direction: column;
@@ -73,7 +82,9 @@
           align-items: center;
         }
       }
+
       &__col {
+
         .btnEdit,
         .btnDelete,
         .addBtn {
@@ -93,8 +104,10 @@
     table {
       width: 100%;
       border: 1px solid grey;
+
       thead {
         background-color: #000f80;
+
         tr {
           td {
             text-align: center;
@@ -102,6 +115,7 @@
           }
         }
       }
+
       tbody {
         tr {
           &.even {

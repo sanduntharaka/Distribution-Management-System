@@ -1,3 +1,4 @@
+import { formatNumberPrice } from '../../../var/NumberFormats';
 import React from 'react';
 
 const ThisMonthSales = (props) => {
@@ -17,13 +18,13 @@ const ThisMonthSales = (props) => {
       <div className="wcontainer__row details">
         <div className="wcontainer__row__col">Total Sale</div>
         <div className="wcontainer__row__col">
-          Rs {props.data.total_sales}/-
+          Rs {formatNumberPrice(props.data.total_sales)}/-
         </div>
       </div>
       <div className="wcontainer__row details">
         <div className="wcontainer__row__col">Total Credit</div>
         <div className="wcontainer__row__col">
-          Rs {props.data.total_balance}/-
+          Rs {formatNumberPrice(props.data.total_balance)}/-
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 import { utils, writeFile } from 'xlsx';
 import ChequeRetuernsTable from './ChequeRetuernsTable';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
   const dataWithoutTableData = data.map(({ tableData, id, ...item }) => item);
   const workbook = utils.book_new();
@@ -164,8 +165,8 @@ const ChqueReturnsReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -175,7 +176,7 @@ const ChqueReturnsReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributor(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -204,8 +205,8 @@ const ChqueReturnsReport = (props) => {
                   <option value="3">46-60d</option>
                   <option value="4">61-90d</option>
                   <option value="5">91-120d</option>
-                  <option value="6">over 121 to 150d</option>
-                  <option value="7">over 151 d</option>
+                  <option value="6">Over 121 to 150d</option>
+                  <option value="7">Over 151 d</option>
                 </select>
               </div>
             </div>
@@ -234,7 +235,7 @@ const ChqueReturnsReport = (props) => {
           <div className="page__pcont__row__col total">
             <p>Total</p>
             <p>
-              Rs {dateByData.reduce((sum, item) => sum + item.amount, 0)}
+              Rs {formatNumberPrice(dateByData.reduce((sum, item) => sum + item.amount, 0))}
               /-
             </p>
           </div>

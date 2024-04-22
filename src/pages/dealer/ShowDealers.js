@@ -284,7 +284,7 @@ const ShowDealers = () => {
                 onChange={(e) => handleFilterDealers(e.target.value)}
                 required
               >
-                <option value="">Select grade</option>
+                <option value="">Select Grade</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
                 <option value="C">C</option>

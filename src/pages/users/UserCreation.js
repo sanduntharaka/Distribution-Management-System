@@ -161,7 +161,7 @@ const UserCreation = () => {
           setSuccess(true);
           setError(false);
           setTitle('Success');
-          setMsg('User created successfully. Please subimit user details.');
+          setMsg('User created successfully. Please submit user details.');
           sessionStorage.setItem('new_user', res.data.id);
           if (data.is_company) {
             sessionStorage.setItem('new_user_designation', 'company');
@@ -247,12 +247,12 @@ const UserCreation = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>Username</p>
+                  <p>User Name</p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type name here"
+                    placeholder="Type Name Here"
                     autoComplete="username"
                     value={data.user_name ? data.user_name : ''}
                     onChange={(e) =>
@@ -270,7 +270,7 @@ const UserCreation = () => {
                   <input
                     type="password"
                     name="password1"
-                    placeholder="Type password here"
+                    placeholder="Type Password Here"
                     value={data.password ? data.password : ''}
                     onChange={(e) =>
                       setData({ ...data, password: e.target.value })
@@ -281,8 +281,8 @@ const UserCreation = () => {
                 <div
                   style={visible ? { color: '#d50000' } : { display: 'none' }}
                 >
-                  <p>passwords must be more than 8 charactors</p>
-                  <p>passowrds must not similar with username or email</p>
+                  <p>Passwords Must be More Than 8 Characters </p>
+                  <p>Passwords Must Not Similar With User Name or Email</p>
                 </div>
               </div>
               <div className="form__row__col">
@@ -293,7 +293,7 @@ const UserCreation = () => {
                   <input
                     type="password"
                     name="password2"
-                    placeholder="Type password again"
+                    placeholder="Type Password Again"
                     value={data.re_password ? data.re_password : ''}
                     onChange={(e) =>
                       setData({ ...data, re_password: e.target.value })
@@ -323,8 +323,8 @@ const UserCreation = () => {
                     ''
                   )} */}
                   {user.is_superuser ||
-                  user.is_company ||
-                  user.is_excecutive ? (
+                    user.is_company ||
+                    user.is_excecutive ? (
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"
@@ -349,9 +349,9 @@ const UserCreation = () => {
                     ''
                   )}
                   {user.is_company ||
-                  user.is_manager ||
-                  user.is_superuser ||
-                  user.is_excecutive ? (
+                    user.is_manager ||
+                    user.is_superuser ||
+                    user.is_excecutive ? (
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"
@@ -364,10 +364,10 @@ const UserCreation = () => {
                     ''
                   )}
                   {user.is_company ||
-                  user.is_excecutive ||
-                  user.is_manager ||
-                  user.is_superuser ||
-                  user.is_distributor ? (
+                    user.is_excecutive ||
+                    user.is_manager ||
+                    user.is_superuser ||
+                    user.is_distributor ? (
                     <div className="form__row__col__input aligned">
                       <input
                         type="radio"

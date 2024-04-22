@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -45,8 +46,8 @@ const MkReturntable = (props) => {
     { title: 'Description', field: 'item_description' },
     { title: 'Reason', field: 'reason' },
 
-    { title: 'Qty', field: 'qty' },
-    { title: 'Value', field: 'sub_total' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
+    { title: 'Value', field: 'sub_total', render: (rowData) => formatNumberPrice(rowData.sub_total) },
   ];
 
   return (

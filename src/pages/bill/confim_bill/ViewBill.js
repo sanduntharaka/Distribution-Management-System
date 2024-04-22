@@ -1,16 +1,58 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '../../../sass/invoice/confrm_bill.module.scss';
-
+import { formatNumberPrice } from '../../../var/NumberFormats';
 import { axiosInstance } from '../../../axiosInstance';
 import { useReactToPrint } from 'react-to-print';
 import classNames from 'classnames';
 const ViewBill = (props) => {
   const compoenentRef = useRef();
-  const [distributor, setDistributor] = useState({
-    full_name: '',
-    address: '',
-    company_number: '',
-  });
+  const [vat_rate, setVatRate] = useState(0)
+  const [vat_no, setVat_no] = useState('')
+
+  console.log('pp:', props)
+  useEffect(() => {
+    if (props.user.is_distributor || props.user.is_salesref) {
+      axiosInstance
+        .get(
+          `/settings/get/vat/`,
+          {
+            headers: {
+              Authorization:
+                'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+            },
+          }
+        )
+        .then((res) => {
+
+          setVatRate(parseFloat(res.data.vat_percentage))
+          setVat_no(res.data.vat_no)
+        })
+        .catch((err) => {
+          console.log(err);
+
+        });
+    }
+    if (props.user.is_company || props.user.is_manager || props.user.is_excecutive) {
+      axiosInstance.get(
+        `/settings/get/vat/${props.data.dis_sales_ref}`,
+        {
+          headers: {
+            Authorization:
+              'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+          },
+        }
+      )
+        .then((res) => {
+
+          setVatRate(parseFloat(res.data.vat_percentage))
+          setVat_no(res.data.vat_no)
+        })
+        .catch((err) => {
+          console.log(err);
+
+        });
+    }
+  }, [])
 
   const handleCancle = (e) => {
     e.preventDefault();
@@ -32,6 +74,13 @@ const ViewBill = (props) => {
           style={{ fontSize: '12px' }}
           className={styles.bill}
         >
+          {
+
+            props.data.invoice_type === 'vat' ?
+              (<div className={styles.row} style={{ alignItems: 'right', display: 'flex', justifyContent: 'flex-end' }}>
+                <p style={{ fontSize: 10 }}>VAT_INV:{vat_no}</p>
+              </div>) : ''
+          }
           <div className={styles.row}>
             <div className={styles.heading}>
               <div className={styles.hcol1}>
@@ -67,35 +116,35 @@ const ViewBill = (props) => {
             </div>
           </div>
           <div className={styles.row}>
-            <table>
+            <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Item Code</th>
-                  <th>Description</th>
-                  <th>Unit Qty</th>
-                  <th>Free Qty</th>
-                  <th>Price</th>
-                  <th>Discount</th>
-                  <th>Value</th>
+                  <th className={styles.th} >Item Code</th>
+                  <th className={styles.th} >Description</th>
+                  <th className={styles.th} >Unit Qty</th>
+                  <th className={styles.th} >Free Qty</th>
+                  <th className={styles.th} >Price</th>
+                  <th className={styles.th} >Discount</th>
+                  <th className={styles.th} >Value</th>
                 </tr>
               </thead>
 
               <tbody>
                 {props.items.map((item, i) => (
                   <tr key={i}>
-                    <td>{item.item_code}</td>
-                    <td>{item.description}</td>
-                    <td>{item.qty}</td>
-                    <td>{item.foc}</td>
-                    <td>
+                    <td className={styles.td}>{item.item_code}</td>
+                    <td className={styles.td}>{item.description}</td>
+                    <td className={styles.td}>{item.qty}</td>
+                    <td className={styles.td}>{item.foc}</td>
+                    <td className={styles.td}>
                       {props.invoice.billing_price_method === '1'
-                        ? item.wholesale_price
+                        ? formatNumberPrice(item.wholesale_price)
                         : props.invoice.billing_price_method === '2'
-                          ? item.retail_price
+                          ? formatNumberPrice(item.retail_price)
                           : 0}
                     </td>
-                    <td>{item.discount}</td>
-                    <td>{item.extended_price}</td>
+                    <td className={styles.td}>{formatNumberPrice(item.discount)}</td>
+                    <td className={styles.td}>{formatNumberPrice(item.extended_price)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -104,15 +153,22 @@ const ViewBill = (props) => {
           <div className={styles.bottom}>
             <div className={styles.amount}>
               <p className={styles.total}>
-                Total Amount: Rs {props.data.sub_total}
+                Total Amount: Rs {formatNumberPrice(props.data.sub_total)}
               </p>
+              {
+                props.data.invoice_type === 'vat' ?
+                  (<p className={styles.total}>
+                    Total VAT({vat_rate}%) Amount: Rs {formatNumberPrice(props.data.vat_amount)}
+                  </p>) : ''
+              }
 
               <p className={styles.total}>
-                Total Dicsount Amount: Rs {props.data.total_discount}
+                Total Dicsount Amount: Rs {formatNumberPrice(props.data.total_discount)}
               </p>
 
+
               <p className={styles.total}>
-                Final Amount: Rs {props.data.total}
+                Final Amount: Rs {formatNumberPrice(props.data.total)}
               </p>
             </div>
             <div className={styles.row}>

@@ -130,7 +130,7 @@ const DealerCategory = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type category title"
+                        placeholder="Type Category Title"
                         onChange={(e) =>
                           setData({ ...data, category_name: e.target.value })
                         }

@@ -161,7 +161,7 @@ const ConfimReceipt = (props) => {
                 <h2>{distributor.full_name}</h2>
                 <p>{distributor.address}</p>
                 <p>{distributor.company_number}</p>
-                <h3>Market return receipt</h3>
+                <h3>Market Return Receipt</h3>
               </div>
             </div>
           </div>
@@ -177,8 +177,8 @@ const ConfimReceipt = (props) => {
                 {props.data.is_return_goods
                   ? 'Return form goods'
                   : props.data.is_deduct_bill
-                  ? 'Deduct from bill'
-                  : ''}
+                    ? 'Deduct from bill'
+                    : ''}
               </p>
 
               <p>Customer: {props.data.dealer_name}</p>
@@ -208,22 +208,22 @@ const ConfimReceipt = (props) => {
             ''
           )}
           <div className={styles.row}>
-            <table>
+            <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Item Code</th>
-                  <th>Reason</th>
-                  <th>Qty</th>
-                  <th>Foc</th>
+                  <th className={styles.th}>Item Code</th>
+                  <th className={styles.th}>Reason</th>
+                  <th className={styles.th}>Qty</th>
+                  <th className={styles.th}>Foc</th>
                 </tr>
               </thead>
               <tbody>
                 {props.items.map((item, i) => (
                   <tr key={i}>
-                    <td>{item.item_code}</td>
-                    <td>{item.reason}</td>
-                    <td>{item.qty}</td>
-                    <td>{item.foc}</td>
+                    <td className={styles.td}>{item.item_code}</td>
+                    <td className={styles.td}>{item.reason}</td>
+                    <td className={styles.td}>{item.qty}</td>
+                    <td className={styles.td}>{item.foc}</td>
                   </tr>
                 ))}
               </tbody>

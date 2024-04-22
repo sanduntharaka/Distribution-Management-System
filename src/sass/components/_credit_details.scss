@@ -1,0 +1,102 @@
+.credit_details {
+  background-color: white;
+  width: 80%;
+  max-width: 500px;
+
+  height: auto;
+  max-height: 300px;
+
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: content-box; // Set box-sizing to content-box
+
+  &__close {
+    // background-color: red;
+    color: $color-black;
+    font-size: 1.5rem;
+
+    &:hover {
+      color: $color-danger;
+    }
+  }
+
+  &__title {
+    text-align: center;
+
+    h4 {
+      background-color: $color-btn-warning;
+      padding: 5px;
+      color: $color-white;
+      border-radius: 20px;
+    }
+
+    &.danger {
+      h4 {
+        background-color: $color-danger;
+      }
+    }
+  }
+
+  &__content {
+    // background-color: red;
+    margin: 10px; // Use margin instead of padding
+    box-sizing: border-box; // Set box-sizing to border-box
+    display: grid;
+    height: 200px;
+
+    &__head {
+      background-color: $color-blue-sidebar-title-dark;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+
+    &__body {
+      box-sizing: border-box;
+      overflow-y: scroll;
+      overflow-x: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: #000f80 #ffffff;
+
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #000f80;
+        border-radius: 25px;
+      }
+
+      &::-webkit-scrollbar-button {
+        height: 50px;
+      }
+
+      &__row {
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1pt solid #ff000d;
+        gap: 15px;
+      }
+    }
+
+
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+  }
+}

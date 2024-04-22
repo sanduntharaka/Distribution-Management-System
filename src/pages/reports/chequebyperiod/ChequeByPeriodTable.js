@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -41,11 +42,11 @@ const tableIcons = {
 
 const ChequeByPeriodTable = (props) => {
   const columns = [
-    { title: 'Dealer name', field: 'dealer' },
+    { title: 'Dealer Name', field: 'dealer' },
     { title: 'Address', field: 'address' },
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Dates given', field: 'given_date' },
-    { title: 'Amount', field: 'amount' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Dates Given', field: 'given_date' },
+    { title: 'Amount', field: 'amount', render: (rowData) => formatNumberPrice(rowData.amount) },
   ];
 
   return (

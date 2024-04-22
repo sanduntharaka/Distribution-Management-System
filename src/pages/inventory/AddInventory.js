@@ -4,6 +4,7 @@ import Message from '../../components/message/Message';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import Modal from '@mui/material/Modal';
 import FileUpload from '../../components/fileupload/FileUpload';
+
 const AddInventory = () => {
   const [show_message, setShowMsg] = useState(false);
   const [show_upload, setShowUplod] = useState(false);

@@ -251,7 +251,7 @@ const CreateReturn = ({ inventory }) => {
   };
 
   const hanldeProductFilter = (e, item) => {
-    setValue2(item.item_code);
+    setValue2(`${item.item_code}-${item.description}`);
     setProduct(item);
     setShowProducts(false);
   };
@@ -278,6 +278,7 @@ const CreateReturn = ({ inventory }) => {
       {
         id: product.id,
         item_code: product.item_code,
+        description: product.description,
         qty: qty,
         foc: foc,
         whole_sale_price: product.whole_sale_price,
@@ -650,7 +651,7 @@ const CreateReturn = ({ inventory }) => {
                     </tr>
                     {items.map((item, i) => (
                       <tr className="datarow" key={i}>
-                        <td>{item.item_code}</td>
+                        <td>{item.item_code}-{item.description}</td>
                         <td>{item.foc}</td>
                         <td>{item.qty}</td>
                         <td>{item.reason}</td>

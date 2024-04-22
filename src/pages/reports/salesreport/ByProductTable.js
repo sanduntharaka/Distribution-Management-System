@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -44,8 +45,8 @@ const ByProductTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
     { title: 'Category', field: 'category' },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Value', field: 'extended_price' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
+    { title: 'Value', field: 'extended_price', render: (rowData) => formatNumberPrice(rowData.extended_price) },
   ];
 
   return (

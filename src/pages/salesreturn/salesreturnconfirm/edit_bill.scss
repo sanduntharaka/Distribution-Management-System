@@ -26,6 +26,7 @@
       margin-top: 25px;
       text-align: center;
     }
+
     .details {
       margin-left: 25px;
       margin-right: 25px;
@@ -33,6 +34,7 @@
       border-radius: 25px;
       padding: 25px;
       box-sizing: border-box;
+
       section {
         margin-bottom: 25px;
 
@@ -42,6 +44,7 @@
           gap: 50px;
         }
       }
+
       .subtitle {
         font-size: 15px;
         font-weight: bold;
@@ -52,14 +55,18 @@
           margin-bottom: 15px;
           display: flex;
           gap: 50px;
+
           .col {
             display: block;
           }
+
           label {
             width: 150px;
           }
         }
+
         td {
+
           input,
           select {
             width: 150px;
@@ -69,10 +76,12 @@
             border-radius: 20px;
             padding: 5px 10px;
             box-sizing: border-box;
+
             &:focus {
               border-color: blue;
               box-shadow: 0px 0px 5px blue;
-              outline: none; /* Remove default outline */
+              outline: none;
+              /* Remove default outline */
             }
           }
 
@@ -80,20 +89,26 @@
             font-size: 25px;
             display: flex;
             gap: 10px;
+
             .edit {
               color: orange;
+
               &:hover {
                 color: rgb(172, 112, 0);
               }
             }
+
             .save {
               color: blue;
+
               &:hover {
                 color: rgb(0, 0, 151);
               }
             }
+
             .delete {
               color: red;
+
               &:hover {
                 color: rgb(145, 0, 0);
               }

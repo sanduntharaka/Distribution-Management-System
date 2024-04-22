@@ -115,6 +115,10 @@ const Profile = () => {
     setPic(true);
     handleOpen();
   };
+
+  const handleShowTerritory = (e) => {
+    e.preventDefault();
+  }
   return (
     <div className="page">
       {loading ? (
@@ -217,6 +221,7 @@ const Profile = () => {
                         onChange={(e) =>
                           setData({ ...data, designation: e.target.value })
                         }
+                        disabled
                       />
                     </div>
                   </div>
@@ -248,6 +253,7 @@ const Profile = () => {
                         className="form__row__col__input"
                         style={{ flex: 1 }}
                       >
+                        <div className="form__row__col__label" style={{ fontSize: 12 }}>Company</div>
                         <input
                           type="tel"
                           placeholder="Type company number"
@@ -266,6 +272,7 @@ const Profile = () => {
                         className="form__row__col__input"
                         style={{ flex: 1 }}
                       >
+                        <div className="form__row__col__label" style={{ fontSize: 12 }}>Personal</div>
                         <input
                           type="tel"
                           placeholder="Type personal number"
@@ -287,6 +294,7 @@ const Profile = () => {
                         className="form__row__col__input"
                         style={{ flex: 1 }}
                       >
+                        <div className="form__row__col__label" style={{ fontSize: 12 }}>Home</div>
                         <input
                           type="tel"
                           placeholder="Type home number"
@@ -355,16 +363,7 @@ const Profile = () => {
                   <div className="form__row__col">
                     <div className="form__row__col__label">Territory</div>
                     <div className="form__row__col__input">
-                      <input
-                        type="text"
-                        placeholder="Type address here"
-                        value={
-                          data.terriotory !== undefined ? data.terriotory : ''
-                        }
-                        onChange={(e) =>
-                          setData({ ...data, terriotory: e.target.value })
-                        }
-                      />
+                      <button className='addBtn' onClick={(e) => handleShowTerritory(e)}>Show My Territory</button>
                     </div>
                   </div>
                   <div className="form__row__col dontdisp"></div>

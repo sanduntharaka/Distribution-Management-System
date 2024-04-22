@@ -136,7 +136,7 @@ const RdPerformanceReport = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>RD Performance report</p>
+                <p>RD Performance Report</p>
             </div>
             <div className="page__pcont">
 
@@ -154,7 +154,7 @@ const RdPerformanceReport = (props) => {
                                         defaultValue={'1'}
                                         onChange={(e) => handleDistributor(e)}
                                     >
-                                        <option value="">Select distributor</option>
+                                        <option value="">Select Distributor</option>
                                         {distributors.map((item, i) => (
                                             <option value={item.id} key={i}>
                                                 {item.full_name}

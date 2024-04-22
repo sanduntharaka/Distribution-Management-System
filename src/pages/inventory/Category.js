@@ -37,7 +37,7 @@ const Category = (props) => {
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
     category_name: '',
     description: '',
-    short_code:'',
+    short_code: '',
     foc_percentage: 0,
   });
   const handleSubmit = (e) => {
@@ -81,7 +81,7 @@ const Category = (props) => {
       ...data,
       category_name: '',
       description: '',
-      short_code:'',
+      short_code: '',
       foc_percentage: 0,
     });
   };
@@ -138,7 +138,7 @@ const Category = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type category name"
+                        placeholder="Type Category Name"
                         value={data.category_name ? data.category_name : ''}
                         onChange={(e) =>
                           setData({ ...data, category_name: e.target.value })
@@ -152,7 +152,7 @@ const Category = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type more details"
+                        placeholder="Type More Details"
                         value={data.description ? data.description : ''}
                         onChange={(e) =>
                           setData({ ...data, description: e.target.value })
@@ -165,7 +165,7 @@ const Category = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type short code"
+                        placeholder="Type Short Code"
                         value={data.short_code ? data.short_code : ''}
                         onChange={(e) =>
                           setData({ ...data, short_code: e.target.value })
@@ -185,7 +185,7 @@ const Category = (props) => {
                         min="0"
                         max="100"
                         step="1"
-                        placeholder="Type percentage"
+                        placeholder="Type Percentage"
                         value={data.foc_percentage ? data.foc_percentage : ''}
                         onChange={(e) =>
                           setData({ ...data, foc_percentage: e.target.value })

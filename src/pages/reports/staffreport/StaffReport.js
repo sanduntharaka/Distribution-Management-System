@@ -51,17 +51,16 @@ const StaffReport = () => {
     { title: 'Name', field: 'full_name' },
     { title: 'Address', field: 'address' },
     { title: 'NIC', field: 'id_number' },
-    { title: 'Terriotory', field: 'terriotory' },
+    { title: 'Territory', field: 'terriotory' },
     { title: 'Designation', field: 'designation' },
-    { title: 'Contact number', field: 'personal_number' },
+    { title: 'Contact Number', field: 'personal_number' },
   ];
   const [loading, setIs_Loading] = useState(false);
   useEffect(() => {
     setIs_Loading(true);
     axiosInstance
       .get(
-        `/reports/staffdetails/by/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/reports/staffdetails/by/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         {
           headers: {

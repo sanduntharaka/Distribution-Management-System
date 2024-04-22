@@ -8,6 +8,7 @@
   height: 100vh;
   position: relative;
 
+
   &__logo {
     margin-top: 10px;
     display: flex;
@@ -43,11 +44,14 @@
 
   &__list {
     margin-top: 0px;
+
+
     overflow-y: scroll;
-    scrollbar-gutter: stable;
+    // scrollbar-gutter: stable;
     margin-bottom: 150px;
-    scrollbar-width: thin;
-    scrollbar-color: $color-colum-background #ffffff;
+    // scrollbar-width: thin;
+    // scrollbar-color: $color-colum-background #ffffff;
+    // background-color: red;
 
     &::-webkit-scrollbar {
       width: 5px;

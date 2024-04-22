@@ -156,7 +156,7 @@ const CreatePsa = (props) => {
                         }
                         required
                       >
-                        <option>Select salesref</option>
+                        <option>Select Sales Rep</option>
                         {
                           salesrefs.map((item, i) => (
                             <option value={item.id} key={i}>{item.full_name}</option>
@@ -170,7 +170,7 @@ const CreatePsa = (props) => {
                     <div className="form__row__col__input">
                       <input
                         type="text"
-                        placeholder="Type PSA  name"
+                        placeholder="Type PSA Name"
                         onChange={(e) =>
                           setData({ ...data, area_name: e.target.value })
                         }

@@ -22,7 +22,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ViewBill from './confim_bill/ViewBill';
 import RecommendIcon from '@mui/icons-material/Recommend';
-
+import { formatNumberPrice } from '../../var/NumberFormats';
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -62,8 +62,8 @@ const AllInvoices = (props) => {
         { title: 'Page No', field: 'page_number' },
         { title: 'Date', field: 'date' },
         { title: 'Due date', field: 'due_date' },
-        { title: 'Discount', field: 'discount' },
-        { title: 'Total', field: 'total' },
+        { title: 'Discount', field: 'discount', render: (rowData) => formatNumberPrice(rowData.discount), },
+        { title: 'Total', field: 'total', render: (rowData) => formatNumberPrice(rowData.total), },
 
     ];
     const [loading, setLoading] = useState(false);

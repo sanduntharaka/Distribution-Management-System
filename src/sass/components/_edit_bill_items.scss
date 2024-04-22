@@ -1,0 +1,81 @@
+.billEdit {
+    background-color: white;
+    width: 80%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: content-box; // Set box-sizing to content-box
+
+    &__close {
+        // background-color: red;
+        color: $color-black;
+        font-size: 1.5rem;
+
+        &:hover {
+            color: $color-danger;
+        }
+    }
+
+    &__title {
+        text-align: center;
+
+        h4 {
+            background-color: $color-btn-warning;
+            padding: 5px;
+            color: $color-white;
+            border-radius: 20px;
+        }
+
+        &.danger {
+            h4 {
+                background-color: $color-danger;
+            }
+        }
+    }
+
+    &__edit_bill_form {
+        // background-color: red;
+        margin: 10px; // Use margin instead of padding
+        box-sizing: border-box; // Set box-sizing to border-box
+        display: grid;
+
+        &__row {
+            background-color: $color-btn-warning;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            padding: 5px 10px;
+
+            &__label {
+                text-transform: capitalize;
+                font-weight: bold;
+                padding-right: 10px;
+                box-sizing: border-box;
+            }
+
+            &__input {
+                border: none;
+                border-radius: 5px;
+                padding: 5px;
+                box-sizing: border-box;
+                width: 100%;
+                border-radius: 20px;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+                &:focus {
+                    border-color: $color-underline;
+                    box-shadow: 0px 0px 5px blue;
+                    outline: none;
+                    /* Remove default outline */
+                }
+            }
+        }
+    }
+
+    &__buttons {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+}

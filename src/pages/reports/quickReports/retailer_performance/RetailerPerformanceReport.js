@@ -170,7 +170,7 @@ const RetailerPerformanceReport = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>Retailer Performance report</p>
+                <p>Retailer Performance Report</p>
             </div>
             <div className="page__pcont">
 

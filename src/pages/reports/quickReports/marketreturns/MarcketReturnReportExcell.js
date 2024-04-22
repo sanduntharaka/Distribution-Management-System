@@ -87,14 +87,26 @@ const MarcketReturnReportExcell = (props) => {
                 responseType: 'blob',
             })
             .then((res) => {
-                setLoading(false);
-                setFile(res.data)
-                setError(false);
-                setSuccess(true);
-                setFileName(`marketreturn_${dateBy.date_to}`)
-                setTitle('Your file is ready');
-                setMsg('Click download button to download');
-                handleOpen();
+
+                if (res.status === 204) {
+                    setLoading(false);
+
+                    setSuccess(false);
+                    setError(true);
+
+                    setTitle('No Data');
+                    setMsg(`Data not found at given date range.`);
+                    handleOpen();
+                } else {
+                    setLoading(false);
+                    setFile(res.data)
+                    setError(false);
+                    setSuccess(true);
+                    setFileName(`marketreturn_${dateBy.date_to}`)
+                    setTitle('Your file is ready');
+                    setMsg('Click download button to download');
+                    handleOpen();
+                }
             })
             .catch((err) => {
                 setLoading(false);
@@ -136,7 +148,7 @@ const MarcketReturnReportExcell = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>Market returns report</p>
+                <p>Market Returns Report</p>
             </div>
             <div className="page__pcont">
 
@@ -154,7 +166,7 @@ const MarcketReturnReportExcell = (props) => {
                                         defaultValue={'1'}
                                         onChange={(e) => handleDistributor(e)}
                                     >
-                                        <option value="">Select distributor</option>
+                                        <option value="">Select Distributor</option>
                                         {distributors.map((item, i) => (
                                             <option value={item.id} key={i}>
                                                 {item.full_name}
@@ -193,12 +205,12 @@ const MarcketReturnReportExcell = (props) => {
                         {
                             !props.user.is_salesref ? (
                                 <div className="form__row__col">
-                                    <div className="form__row__col__label">Sales ref</div>
+                                    <div className="form__row__col__label">Sales Rep</div>
                                     <div className="form__row__col__input">
                                         <select name="" id="" onChange={(e) =>
                                             setDateBy({ ...dateBy, sales_ref: e.target.value })}>
 
-                                            <option value="">Select sales rep</option>
+                                            <option value="">Select Sales Rep</option>
 
                                             {
                                                 salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))

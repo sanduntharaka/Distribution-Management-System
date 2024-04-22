@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { axiosInstance } from '../../axiosInstance';
-import { DateTime } from 'luxon';
 import Message from '../../components/message/Message';
 import Modal from '@mui/material/Modal';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import WebSocketInstance from '../../WebSocket';
 import SearchSpinner from '../../components/loadingSpinner/SearchSpinner';
 import ConfimBill from './confim_bill/ConfimBill';
-
+import { formatNumberPrice, formatNumberValue } from '../../var/NumberFormats';
 
 
 const MyMessage = React.forwardRef((props, ref) => {
@@ -86,6 +84,7 @@ const AddInvoice = ({ inventory }) => {
     const [currentItem, setCurrentItem] = useState({
         item: '',
         item_code: '',
+        description: '',
         qty: 0,
         pack_size: '',
         foc: 0,
@@ -116,6 +115,7 @@ const AddInvoice = ({ inventory }) => {
                         whole_sale_price: res.data.whole_sale_price,
                         retail_price: res.data.retail_price,
                         pack_size: res.data.pack_size,
+                        description: res.data.description,
                     }))
                 })
                 .catch((err) => {
@@ -151,10 +151,9 @@ const AddInvoice = ({ inventory }) => {
         setShowProducts(true);
         setAddedsameItem(false);
         setSearchLoadingProducts(true);
-
         axiosInstance
             .get(
-                `/distributor/salesref/inventory/items/${inventory.id}/search?search=${e.target.value}`,
+                `/distributor/salesref/inventory/items-invoice/${inventory.id}/search?search=${e.target.value}`,
                 {
                     headers: {
                         Authorization:
@@ -178,6 +177,7 @@ const AddInvoice = ({ inventory }) => {
             ...prevItems,
             item_code: item.item_code,
             id: item.id,
+            description: item.description,
         }))
         setProduct(item);
         setShowProducts(false);
@@ -211,6 +211,7 @@ const AddInvoice = ({ inventory }) => {
 
     };
     const handleAdd = (e) => {
+        console.log(currentItem)
         e.preventDefault();
         if (addedsameItem === false) {
 
@@ -325,14 +326,14 @@ const AddInvoice = ({ inventory }) => {
                                 <div className="form__row__col__label">Invoie Number</div>
                                 <div className="form__row__col__input">
                                     <input type="text" value={data.invoice_number}
-                                        onChange={(e) => handleInvoiceNumber(e)} />
+                                        onChange={(e) => handleInvoiceNumber(e)} placeholder='Type Invoice Number Here' />
                                 </div>
                             </div>
                             <div className="form__row__col">
                                 <div className="form__row__col__label">Page Number</div>
                                 <div className="form__row__col__input">
                                     <input type="text" value={data.page_number}
-                                        onChange={(e) => setData({ ...data, page_number: e.target.value })} />
+                                        onChange={(e) => setData({ ...data, page_number: e.target.value })} placeholder='Type Invoice Page Number Here' />
                                 </div>
                             </div>
                             {
@@ -462,10 +463,10 @@ const AddInvoice = ({ inventory }) => {
                                                 >
                                                     <div className="searchContent__row__details">
                                                         <p>{item.item_code}</p>
-                                                        <p>{item.qty}</p>
-                                                        <p>{item.foc}</p>
-                                                        <p>{item.whole_sale_price}</p>
-                                                        <p>{item.retail_price}</p>
+                                                        <p>{formatNumberValue(item.qty)}</p>
+                                                        <p>{formatNumberValue(item.foc)}</p>
+                                                        <p>{formatNumberPrice(item.whole_sale_price)}</p>
+                                                        <p>{formatNumberPrice(item.retail_price)}</p>
                                                         <p>{item.description}</p>
                                                     </div>
                                                 </div>
@@ -488,6 +489,7 @@ const AddInvoice = ({ inventory }) => {
                                         type="number"
                                         value={currentItem.whole_sale_price}
                                         onChange={(e) => setCurrentItem({ ...currentItem, whole_sale_price: e.target.value })}
+                                        placeholder='0'
                                     />
                                 </div>
                             </div>
@@ -498,16 +500,18 @@ const AddInvoice = ({ inventory }) => {
                                         type="number"
                                         value={currentItem.retail_price}
                                         onChange={(e) => setCurrentItem({ ...currentItem, retail_price: e.target.value })}
+                                        placeholder='0'
                                     />
                                 </div>
                             </div>
                             <div className="form__row__col">
-                                <div className="form__row__col__label">Pack size</div>
+                                <div className="form__row__col__label">Pack Size</div>
                                 <div className="form__row__col__input">
                                     <input
                                         type="number"
                                         value={currentItem.pack_size}
                                         onChange={(e) => setCurrentItem({ ...currentItem, pack_size: e.target.value })}
+                                        placeholder='0'
                                     />
                                 </div>
                             </div>
@@ -562,11 +566,11 @@ const AddInvoice = ({ inventory }) => {
                                     <table>
                                         <thead>
                                             <tr className="tableHead">
-                                                <th> Item Code</th>
+                                                <th>Item Code</th>
                                                 <th>Qty</th>
                                                 <th>FOC</th>
-                                                <th>Unit price</th>
-                                                <th>Extended price</th>
+                                                <th>Unit Price</th>
+                                                <th>Extended Price</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -574,11 +578,11 @@ const AddInvoice = ({ inventory }) => {
 
                                             {items.map((item, i) => (
                                                 <tr className="datarow" key={i}>
-                                                    <td>{item.item_code}</td>
-                                                    <td>{item.qty}</td>
-                                                    <td>{item.foc}</td>
-                                                    <td>{item.whole_sale_price}</td>
-                                                    <td>{item.whole_sale_price * item.qty}</td>
+                                                    <td>{item.item_code}-{item.description}</td>
+                                                    <td>{formatNumberValue(item.qty)}</td>
+                                                    <td>{formatNumberValue(item.foc)}</td>
+                                                    <td>{formatNumberPrice(item.whole_sale_price)}</td>
+                                                    <td>{formatNumberPrice(item.whole_sale_price * item.qty)}</td>
 
                                                     <td className="action">
                                                         <div
@@ -612,7 +616,7 @@ const AddInvoice = ({ inventory }) => {
                             >
                                 <p>Total:</p>
 
-                                <p>Rs {finalTotal}/-</p>
+                                <p>Rs {formatNumberPrice(finalTotal)}/-</p>
                             </div>
                         </div>
 
@@ -628,14 +632,14 @@ const AddInvoice = ({ inventory }) => {
                                 }}
                             >
                                 <p>Final Total:</p>
-                                <p>Rs {finalTotal - data.discount}/-</p>
+                                <p>Rs {formatNumberPrice(finalTotal - data.discount)}/-</p>
                             </div>
                         </div>
 
                         <div className="form__row">
 
                             <div className="form__row__col__input aligned">
-                                <div className="form__row__col__label" style={{ width: 150 }}>From market return</div>
+                                <div className="form__row__col__label" style={{ width: 150 }}>From Market Return</div>
                                 <div className="form__row__col__input">
                                     <input type="radio" checked={data.from_market_return ? true : false} onChange={(e) => handleMret(e)} />
                                 </div>
@@ -648,7 +652,7 @@ const AddInvoice = ({ inventory }) => {
                         <div className="form__row">
 
                             <div className="form__row__col__input aligned">
-                                <div className="form__row__col__label" style={{ width: 150 }}>From sales return</div>
+                                <div className="form__row__col__label" style={{ width: 150 }}>From Sales Return</div>
                                 <div className="form__row__col__input">
                                     <input type="radio" checked={data.from_sales_return ? true : false} onChange={(e) => handleSret(e)} />
                                 </div>

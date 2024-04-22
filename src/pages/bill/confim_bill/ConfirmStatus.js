@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './confirmstatus.scss';
 import { axiosInstance } from '../../../axiosInstance';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 
 const ConfirmStatus = (props) => {
   const [currentDate, setCurrentDate] = useState(() => {
@@ -193,11 +194,11 @@ const ConfirmStatus = (props) => {
               <div className="row">
                 <div className="col">
                   <p>sub total</p>
-                  <p>{props.invoice.sub_total}</p>
+                  <p>{formatNumberPrice(props.invoice.sub_total)}</p>
                 </div>
                 <div className="col">
                   <p>Total</p>
-                  <p>{props.invoice.total}</p>
+                  <p>{formatNumberPrice(props.invoice.total)}</p>
                 </div>
               </div>
               <div className="row">

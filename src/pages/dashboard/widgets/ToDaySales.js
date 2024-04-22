@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { axiosInstance } from '../../../axiosInstance';
 import { TbTriangleFilled, TbTriangleInvertedFilled } from 'react-icons/tb';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 
 const ToDaySales = (props) => {
   return (
@@ -25,7 +26,7 @@ const ToDaySales = (props) => {
       </div>
       <div className="wcontainer__row details">
         <div className="wcontainer__row__col">Total Sale</div>
-        <div className="wcontainer__row__col">Rs {props.data.total}/-</div>
+        <div className="wcontainer__row__col">Rs {formatNumberPrice(props.data.total)}/-</div>
       </div>
     </div>
   );

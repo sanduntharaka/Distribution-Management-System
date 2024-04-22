@@ -36,7 +36,7 @@ const Login = () => {
     navigate('/');
 
     if (error) {
-      setShowError('Username or password not valid.');
+      setShowError('User Name or Password Not Valid.');
       setTimeout(() => {
         setShowError('');
       }, 2000);
@@ -44,6 +44,9 @@ const Login = () => {
   };
   return (
     <div className="login">
+      <div className="logLogo">
+        <img src="./images/2.png" alt="" />
+      </div>
       <div className="logContent">
         <div className="logContent__img">
           <img src="./images/loginback.png" alt="" />
@@ -63,7 +66,7 @@ const Login = () => {
                 <LockOutlinedIcon />
               </Avatar>
               <Typography component="h1" variant="h5">
-                Sign in
+                Sign In
               </Typography>
               <Box
                 component="form"
@@ -76,7 +79,7 @@ const Login = () => {
                   required
                   fullWidth
                   id="user_name"
-                  label="User name"
+                  label="User Name"
                   name="user_name"
                   autoComplete="user_name"
                   autoFocus
@@ -103,11 +106,11 @@ const Login = () => {
                 <Grid container>
                   <Grid item xs>
                     <Link href="/forgot" variant="body2">
-                      Forgot password?
+                      Forgot Password?
                     </Link>
                   </Grid>
                 </Grid>
-                {error ? <p style={{ color: 'red' }}>{showError}</p> : ''}
+                {error ? <p style={{ color: 'red', fontSize: 12 }}>{showError}</p> : ''}
               </Box>
             </Box>
           </Container>

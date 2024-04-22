@@ -10,6 +10,7 @@ import AddDistributorInventoryStocks from './AddDistributorInventoryStocks';
 import ViewInventoryOthers from './ViewInventoryOthers';
 import AddInvoice from './AddInvoice';
 import AllInvoices from './AllInvoices';
+import ChangeItemPrices from './ChangeItemPrices';
 
 const InventoryTabs = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -149,6 +150,14 @@ const InventoryTabs = () => {
             </div>
           </>
         ) : ""}
+        {user.is_company ?
+          <div
+            className={`item ${selected === 8 ? 'selected' : ''}`}
+            onClick={() => handleSelect(8)}
+          >
+            Price Change
+          </div>
+          : ""}
       </div>
       <div className="tab_page">
         {selected === 0 ? (
@@ -172,6 +181,8 @@ const InventoryTabs = () => {
           <AddInvoice inventory={inventory} />
         ) : loading === false && selected === 7 && inventory !== undefined ? (
           <AllInvoices inventory={inventory} />
+        ) : loading === false && selected === 8 ? (
+          <ChangeItemPrices inventory={inventory} />
         ) : (
           ''
         )}

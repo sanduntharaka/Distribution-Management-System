@@ -51,7 +51,7 @@ const CreateExpences = ({ inventory }) => {
                 setError(false);
                 setSuccess(true);
                 setTitle('Success');
-                setMsg('Product add to the inventory.');
+                setMsg('Your Expense Successfully Added.');
                 handleOpen();
             })
             .catch((err) => {
@@ -89,7 +89,7 @@ const CreateExpences = ({ inventory }) => {
         }
 
         <div className="page__title">
-            <p>Add Expences</p>
+            <p>Add Expenses</p>
         </div>
         <div className="page__pcont">
             <div className="form">
@@ -98,7 +98,7 @@ const CreateExpences = ({ inventory }) => {
                         <div className="form__row__col">
                             <div className="form__row__col__label">Name</div>
                             <div className="form__row__col__input">
-                                <input
+                                <select
                                     type="text"
                                     placeholder="Type here"
                                     name="name"
@@ -107,7 +107,15 @@ const CreateExpences = ({ inventory }) => {
                                         setData({ ...data, name: e.target.value })
                                     }
                                     required
-                                />
+                                >
+                                    <option value="">Choose expence type</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="vehicle-repair">Vehicle Repair</option>
+                                    <option value="tokens">Tokens</option>
+                                    <option value="cheque-returns">Cheque Returns</option>
+                                    <option value="driver-salary">Driver's Salary</option>
+                                    <option value="others">Others</option>
+                                </select>
                             </div>
                         </div>
 

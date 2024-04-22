@@ -184,7 +184,7 @@ const NonBuyingDealerReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributor(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -197,7 +197,7 @@ const NonBuyingDealerReport = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -208,7 +208,7 @@ const NonBuyingDealerReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -221,12 +221,12 @@ const NonBuyingDealerReport = (props) => {
             {
               !props.user.is_salesref ? (
                 <div className="form__row__col">
-                  <div className="form__row__col__label">Sales ref</div>
+                  <div className="form__row__col__label">Sales Rep</div>
                   <div className="form__row__col__input">
                     <select name="" id="" onChange={(e) =>
                       setDateBy({ ...dateBy, sales_ref: e.target.value })}>
 
-                      <option value="">Select sales rep</option>
+                      <option value="">Select Sales Rep</option>
 
                       {
                         salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))

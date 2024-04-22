@@ -15,7 +15,32 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 
 
 const MainChart = (props) => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+  ]);
+  const [revisedOrder, setRevisedOrder] = useState([]);
+  useEffect(() => {
+    const getRevisedOrderOfMonths = () => {
+      const currentMonth = new Date().getMonth() + 1; // Adding 1 to make it 1-based
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      const revisedOrder = [];
+      for (let i = currentMonth - 1; i >= 0; i--) {
+        revisedOrder.push(monthNames[i]);
+      }
+
+      for (let i = 11; i >= currentMonth; i--) {
+        revisedOrder.push(monthNames[i]);
+      }
+
+      setRevisedOrder(revisedOrder);
+    };
+
+    getRevisedOrderOfMonths();
+  }, []);
+
   useEffect(() => {
     if (props.user.is_salesref) {
       axiosInstance
@@ -78,78 +103,16 @@ const MainChart = (props) => {
         });
     }
   }, []);
-  // const data = [
-  //   {
-  //     name: 'Page A',
-  //     uv: 4000,
-  //     pv: 2400,
-  //     amt: 2400,
-  //   },
-  //   {
-  //     name: 'Page B',
-  //     uv: 3000,
-  //     pv: 1398,
-  //     amt: 2210,
-  //   },
-  //   {
-  //     name: 'Page C',
-  //     uv: 2000,
-  //     pv: 9800,
-  //     amt: 2290,
-  //   },
-  //   {
-  //     name: 'Page D',
-  //     uv: 2780,
-  //     pv: 3908,
-  //     amt: 2000,
-  //   },
-  //   {
-  //     name: 'Page E',
-  //     uv: 1890,
-  //     pv: 4800,
-  //     amt: 2181,
-  //   },
-  //   {
-  //     name: 'Page F',
-  //     uv: 2390,
-  //     pv: 3800,
-  //     amt: 2500,
-  //   },
-  //   {
-  //     name: 'Page G',
-  //     uv: 3490,
-  //     pv: 4300,
-  //     amt: 2100,
-  //   },
-  // ];
+  const reorderedData = revisedOrder.map((month) => data.find((item) => item.month === month))
+  const filteredArray = reorderedData.filter(item => item !== undefined).reverse();
+
+  console.log(filteredArray);
+  console.log(reorderedData)
   return (
-    // <ResponsiveContainer width="100%" height="100%">
-    //   <BarChart
-    //     width={500}
-    //     height={400}
-    //     data={data}
-    //     margin={{
-    //       top: 10,
-    //       right: 30,
-    //       left: 0,
-    //       bottom: 0,
-    //     }}
-    //   >
-    //     <CartesianGrid strokeDasharray="3 3" />
-    //     <XAxis dataKey="month" />
-    //     <Tooltip />
-    //     <Area
-    //       type="monotone"
-    //       dataKey="total"
-    //       stackId="1"
-    //       stroke="#8884d8"
-    //       fill="#8884d8"
-    //     />
-    //   </BarChart>
-    // </ResponsiveContainer>
+
     <ResponsiveContainer width="100%" height="90%" >
-      <BarChart width={150} height={40} data={data} >
-        <XAxis dataKey="month" />
+      <BarChart width={150} height={40} data={filteredArray} >
+        <XAxis dataKey='month' />
 
         <Bar dataKey="total" fill="#8884d8" />
       </BarChart>

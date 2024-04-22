@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 
 const YesterDay = (props) => {
   return (
@@ -17,7 +18,7 @@ const YesterDay = (props) => {
       <div className="wcontainer__row details">
         <div className="wcontainer__row__col">Total Sale</div>
         <div className="wcontainer__row__col">
-          Rs {props.data.total_sales}/-
+          Rs {formatNumberPrice(props.data.total_sales)}/-
         </div>
       </div>
     </div>

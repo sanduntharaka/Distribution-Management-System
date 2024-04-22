@@ -22,10 +22,10 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
-import EditIcon from '@mui/icons-material/Edit';
 import RequsetStatus from '../../../components/requeststatus/RequsetStatus';
 import { Delete } from '@material-ui/icons';
 import EditInvoiceItems from '../../../components/edit/EditInvoiceItems';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -91,10 +91,10 @@ const EditBill = (props) => {
     { title: 'Bill ', field: 'bill_code', editable: false },
     { title: 'Item code', field: 'item_code', editable: false },
     { title: 'Description', field: 'description', editable: false },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Discount', field: 'discount' },
-    { title: 'Sub Total', field: 'extended_price' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
+    { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc), },
+    { title: 'Discount', field: 'discount', render: (rowData) => formatNumberPrice(rowData.discount), },
+    { title: 'Sub Total', field: 'extended_price', render: (rowData) => formatNumberPrice(rowData.extended_price), },
   ];
 
   useEffect(() => {

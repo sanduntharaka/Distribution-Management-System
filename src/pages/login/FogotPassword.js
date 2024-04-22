@@ -108,7 +108,7 @@ const FogotPassword = () => {
                   <LockResetIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                  Fogot password
+                  Fogot Password
                 </Typography>
                 <Box
                   component="form"
@@ -138,7 +138,7 @@ const FogotPassword = () => {
                   <Grid container>
                     <Grid item xs>
                       <Link href="/" variant="body2">
-                        login page
+                        Login Page
                       </Link>
                     </Grid>
                   </Grid>

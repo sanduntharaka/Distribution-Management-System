@@ -12,26 +12,32 @@
     right: 0;
     margin: auto;
     transform: translateY(-50%);
+
     &__title {
       text-align: center;
+
       h4 {
         padding: 5px;
         color: $color-danger;
         border-radius: 20px;
       }
     }
+
     &__details {
       margin-top: 25px;
     }
+
     &__buttons {
       margin-top: 25px;
       display: flex;
       justify-content: flex-end;
       align-items: center;
       gap: 5px;
+
       @include mobile {
         justify-content: center;
       }
+
       .remBtn {
         display: flex;
         justify-content: center;
@@ -44,6 +50,7 @@
         color: white;
         display: flex;
       }
+
       .addBtn {
         display: flex;
         justify-content: center;
@@ -57,6 +64,7 @@
         color: white;
         display: flex;
       }
+
       .btnEdit {
         display: flex;
         width: 150px;

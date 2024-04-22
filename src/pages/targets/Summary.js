@@ -160,7 +160,7 @@ const Summary = () => {
                                     onChange={(e) => setPerson(e.target.value)}
 
                                 >
-                                    <option value="">Select distributor/salesrep</option>
+                                    <option value="">Select Distributor/sales Rep</option>
                                     {
                                         persons.map((item, i) => (
                                             <option value={item.id} key={i}>{item.person}</option>
@@ -193,7 +193,7 @@ const Summary = () => {
                                     onChange={(e) => handleRange(e.target.value)}
 
                                 >
-                                    <option value="">Select date range</option>
+                                    <option value="">Select Date Range</option>
 
                                     {
                                         ranges.map((item, i) => (

@@ -41,11 +41,11 @@ const tableIcons = {
 
 const StockTable = (props) => {
   const columns = [
-    { title: 'Item code', field: 'item_code' },
+    { title: 'Item Code', field: 'item_code' },
     { title: 'Description', field: 'description' },
     { title: 'Category', field: 'category' },
-    { title: 'Whole sale price', field: 'whole_sale_price' },
-    { title: 'Retail price', field: 'retail_price' },
+    { title: 'Wholesale Price', field: 'whole_sale_price' },
+    { title: 'Retail Price', field: 'retail_price' },
     { title: 'Foc', field: 'foc' },
     { title: 'Qty', field: 'qty' },
 

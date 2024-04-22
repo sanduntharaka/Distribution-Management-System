@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -42,13 +43,13 @@ const tableIcons = {
 const ByDateRangeTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
-    { title: 'Dealer name', field: 'dealer_name' },
-    { title: 'Dealer address', field: 'dealer_address' },
-    { title: 'Dealer contact', field: 'dealer_contact' },
-    { title: 'Dealer category', field: 'dealer_category' },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Value', field: 'total' },
+    { title: 'Dealer Name', field: 'dealer_name' },
+    { title: 'Dealer Address', field: 'dealer_address' },
+    { title: 'Dealer Contact', field: 'dealer_contact' },
+    { title: 'Dealer Category', field: 'dealer_category' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
+    { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc) },
+    { title: 'Value', field: 'total', render: (rowData) => formatNumberPrice(rowData.total) },
   ];
   return (
     <MaterialTable

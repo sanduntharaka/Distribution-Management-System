@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -43,8 +44,8 @@ const FocReportTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
     { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Qty', field: 'qty' },
+    { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc) },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
   ];
 
   return (

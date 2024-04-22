@@ -215,7 +215,7 @@ const DayilyReport = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>Daily report</p>
+                <p>Daily Report</p>
             </div>
             <div className="page__pcont">
 
@@ -233,7 +233,7 @@ const DayilyReport = (props) => {
                                         defaultValue={'1'}
                                         onChange={(e) => handleDistributor(e)}
                                     >
-                                        <option value="">Select distributor</option>
+                                        <option value="">Select Distributor</option>
                                         {distributors.map((item, i) => (
                                             <option value={item.id} key={i}>
                                                 {item.full_name}
@@ -247,17 +247,17 @@ const DayilyReport = (props) => {
                         )}
 
                         <div className="form__row__col">
-                            <div className="form__row__col__label">Start Date</div>
+                            <div className="form__row__col__label">Date</div>
                             <div className="form__row__col__input">
                                 <input
                                     type="date"
                                     onChange={(e) =>
-                                        setDateBy({ ...dateBy, date_from: e.target.value })
+                                        setDateBy({ ...dateBy, date_from: e.target.value, date_to: e.target.value })
                                     }
                                 />
                             </div>
                         </div>
-                        <div className="form__row__col">
+                        {/* <div className="form__row__col">
                             <div className="form__row__col__label">End Date</div>
                             <div className="form__row__col__input">
                                 <input
@@ -267,17 +267,17 @@ const DayilyReport = (props) => {
                                     }
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         {
                             !props.user.is_salesref ? (
                                 <div className="form__row__col">
-                                    <div className="form__row__col__label">Sales ref</div>
+                                    <div className="form__row__col__label">Sales Rep</div>
                                     <div className="form__row__col__input">
                                         <select name="" id="" onChange={(e) =>
                                             setDateBy({ ...dateBy, sales_ref: e.target.value })}>
 
-                                            <option value="">Select sales rep</option>
+                                            <option value="">Select Sales Rep</option>
 
                                             {
                                                 salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))
@@ -288,6 +288,10 @@ const DayilyReport = (props) => {
                                 </div>
                             ) : ''
                         }
+                        <div
+                            className="form__row__col dontdisp"
+                            style={{ display: 'flex', alignItems: 'center' }}
+                        ></div>
                         <div
                             className="form__row__col dontdisp"
                             style={{ display: 'flex', alignItems: 'center' }}

@@ -65,8 +65,7 @@ const NormalFocReport = () => {
 
     axiosInstance
       .post(
-        `/reports/foc-normal/distributor/date/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/reports/foc-normal/distributor/date/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         dateBy,
         {
@@ -147,7 +146,7 @@ const NormalFocReport = () => {
         <div className="form">
           <div className="form__row">
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -158,7 +157,7 @@ const NormalFocReport = () => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"

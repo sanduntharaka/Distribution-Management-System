@@ -20,6 +20,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import RecommendIcon from '@mui/icons-material/Recommend';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -57,7 +58,7 @@ const ViewAllPendingBillsOthers = ({ user }) => {
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
+    { title: 'Total(Rs)', field: 'total', render: (rowData) => formatNumberPrice(rowData.total), },
 
     { title: 'Status', field: 'status' },
   ];

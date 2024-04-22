@@ -19,7 +19,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import { FormControl, Select, MenuItem } from '@material-ui/core';
 import RequsetStatus from '../../../components/requeststatus/RequsetStatus';
-
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -74,11 +74,11 @@ const DetailsItems = (props) => {
     },
     { title: 'Date', field: 'date', editable: false },
     { title: 'Invoice no', field: 'invoice_number' },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Pack size', field: 'pack_size' },
-    { title: 'Whole sale price', field: 'whole_sale_price' },
-    { title: 'Retails price', field: 'retail_price' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
+    { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc), },
+    { title: 'Pack size', field: 'pack_size', render: (rowData) => formatNumberValue(rowData.pack_size), },
+    { title: 'Whole sale price', field: 'whole_sale_price', render: (rowData) => formatNumberPrice(rowData.whole_sale_price), },
+    { title: 'Retails price', field: 'retail_price', render: (rowData) => formatNumberPrice(rowData.retail_price), },
     {
       title: 'From',
       field: 'from_sales_return',
@@ -204,10 +204,10 @@ const DetailsItems = (props) => {
                   handleEdit(newData, oldData, resolve);
                 }),
 
-              onRowDelete: (oldData) =>
-                new Promise((resolve) => {
-                  handleDelete(oldData, resolve);
-                }),
+              // onRowDelete: (oldData) =>
+              //   new Promise((resolve) => {
+              //     handleDelete(oldData, resolve);
+              //   }),
             }
             : ''
         }

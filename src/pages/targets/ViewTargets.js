@@ -20,6 +20,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../var/NumberFormats';
 
 
 const tableIcons = {
@@ -59,7 +60,7 @@ const ViewTargets = (props) => {
     const [salesrepData, setSalesrepData] = useState([]);
     const [salesrepValueData, setSalesrepValueData] = useState([]);
 
-    
+
 
 
     const [tblData, setTableData] = useState([]);
@@ -77,7 +78,7 @@ const ViewTargets = (props) => {
         { title: 'Category Name', field: 'category_name', editable: false, },
         { title: 'Date From', field: 'date_form' },
         { title: 'Date To', field: 'date_to' },
-        { title: 'Amount(Rs)', field: 'amount' },
+        { title: 'Amount(Rs)', field: 'amount', render: (rowData) => formatNumberPrice(rowData.amount), },
     ];
     const columns_salesrep = [
         {
@@ -109,10 +110,10 @@ const ViewTargets = (props) => {
         },
         { title: 'Salesrep Name', field: 'salesrep_name', editable: false, },
 
-        
+
         { title: 'Date From', field: 'date_form' },
         { title: 'Date To', field: 'date_to' },
-        { title: 'Value', field: 'value' },
+        { title: 'Amount(Rs)', field: 'value', render: (rowData) => formatNumberPrice(rowData.value), },
     ];
 
 
@@ -178,7 +179,7 @@ const ViewTargets = (props) => {
                 console.log(err);
             });
 
-            axiosInstance
+        axiosInstance
             .get(`/target/show-salesrep/`, {
                 headers: {
                     Authorization:

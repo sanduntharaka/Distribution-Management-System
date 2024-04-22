@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -41,13 +42,13 @@ const tableIcons = {
 
 const ChequeRetuernsTable = (props) => {
   const columns = [
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Invoice date', field: 'invoice_date' },
-    { title: 'Cheque deposited date', field: 'deposited_at' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Invoice Date', field: 'invoice_date' },
+    { title: 'Cheque Deposited Date', field: 'deposited_at' },
     { title: 'Bank', field: 'bank' },
-    { title: 'Cheque number', field: 'cheque_number' },
-    { title: 'Original amount', field: 'original_amount' },
-    { title: 'Balance amount', field: 'amount' },
+    { title: 'Cheque Number', field: 'cheque_number' },
+    { title: 'Original Amount', field: 'original_amount' },
+    { title: 'Balance Amount', field: 'amount', render: (rowData) => formatNumberPrice(rowData.amount) },
   ];
 
   return (

@@ -24,7 +24,7 @@ import ViewBill from './confim_bill/ViewBill';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import PaymentDetails from './confim_bill/PaymentDetails';
 import { MdOutlinePayment } from "react-icons/md";
-
+import { formatNumberPrice } from '../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -63,7 +63,7 @@ const ViewBillByOthers = ({ user }) => {
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
+    { title: 'Total(Rs)', field: 'total', render: (rowData) => formatNumberPrice(rowData.total), },
 
     { title: 'Status', field: 'status' },
   ];
@@ -220,6 +220,7 @@ const ViewBillByOthers = ({ user }) => {
         .then((res) => {
           setLoading(false);
           setTableData(res.data);
+          console.log('red:', res.data)
         })
         .catch((err) => {
           setLoading(false);

@@ -129,6 +129,7 @@ const AllUsers = (props) => {
       immediate_contact_person_name: value.immediate_contact_person_name,
       immediate_contact_person_number: value.immediate_contact_person_number,
       terriotory: value.terriotory,
+      vat_no: value.vat_no,
     });
     setMessageOpen(false);
     setEditDetailsOpen(false);
@@ -151,6 +152,7 @@ const AllUsers = (props) => {
       immediate_contact_person_name: value.immediate_contact_person_name,
       immediate_contact_person_number: value.immediate_contact_person_number,
       terriotory: value.terriotory,
+      vat_no: value.vat_no,
     });
     setMessageOpen(false);
     setDeleteDetailsOpen(false);

@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -42,16 +43,16 @@ const tableIcons = {
 const ByDateRangeTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
-    { title: 'Dealer name', field: 'dealer_name' },
+    { title: 'Dealer Name', field: 'dealer_name' },
     { title: 'Address', field: 'address' },
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Invoice amount', field: 'invoice_amount' },
-    { title: 'Collected amount', field: 'paid_amount' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Invoice Amount', field: 'invoice_amount', render: (rowData) => formatNumberPrice(rowData.invoice_amount) },
+    { title: 'Collected Amount', field: 'paid_amount', render: (rowData) => formatNumberPrice(rowData.paid_amount) },
     { title: 'Type', field: 'payment_type' },
-    { title: 'Cheque number', field: 'cheque_number' },
-    { title: 'Cheque date', field: 'cheque_date' },
-    { title: 'Cheque bank', field: 'cheque_bank' },
-    { title: 'Cheque amount', field: 'cheque_amount' },
+    { title: 'Cheque Number', field: 'cheque_number' },
+    { title: 'Cheque Date', field: 'cheque_date' },
+    { title: 'Cheque Bank', field: 'cheque_bank' },
+    { title: 'Cheque Amount', field: 'cheque_amount', render: (rowData) => formatNumberPrice(rowData.cheque_amount) },
   ];
   return (
     <MaterialTable

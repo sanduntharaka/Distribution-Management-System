@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import Message from '../../components/message/Message';
 import { axiosInstance } from '../../axiosInstance';
 import Modal from '@mui/material/Modal';
@@ -26,7 +26,30 @@ const MainSettings = () => {
 
   const [data, setData] = useState({
     hr_email: '',
+    vat_percentage: 0,
   });
+
+  useEffect(() => {
+    axiosInstance
+      .get('/settings/get/1', {
+        headers: {
+          Authorization:
+            'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
+        },
+      })
+      .then((res) => {
+
+        setData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        handleOpen();
+        setTitle('Error');
+        setSuccess(false);
+        setError(true);
+        setMsg('Cannot retrieve data. Please try again.');
+      })
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -67,7 +90,7 @@ const MainSettings = () => {
         />
       </Modal>
       <div className="page__title">
-        <p>Main settings</p>
+        <p>Main Settings</p>
       </div>
       <div></div>
       <div className="page__pcont">
@@ -76,15 +99,35 @@ const MainSettings = () => {
             <div className="form__row">
               <div className="form__row__col">
                 <div className="form__row__col__label">
-                  <p>HR email</p>
+                  <p>HR Email</p>
                 </div>
                 <div className="form__row__col__input">
                   <input
                     type="email"
                     placeholder="type email here"
                     autoComplete="hr_email"
+                    value={data.hr_email}
                     onChange={(e) =>
                       setData({ ...data, hr_email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="form__row">
+              <div className="form__row__col">
+                <div className="form__row__col__label">
+                  <p>VAT Rate</p>
+                </div>
+                <div className="form__row__col__input">
+                  <input
+                    type="number"
+                    placeholder="type email here"
+                    autoComplete="vat_rate"
+                    value={data.vat_percentage}
+                    onChange={(e) =>
+                      setData({ ...data, vat_percentage: e.target.value })
                     }
                     required
                   />
@@ -96,7 +139,7 @@ const MainSettings = () => {
                 <button className="btnEdit" type="submit">
                   save
                 </button>
-                <button className="btnSave">clear</button>
+                {/* <button className="btnSave">clear</button> */}
               </div>
             </div>
           </form>

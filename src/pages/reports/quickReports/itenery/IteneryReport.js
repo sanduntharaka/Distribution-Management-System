@@ -157,7 +157,7 @@ const IteneryReport = (props) => {
                 </Modal>
             }
             <div className="page__title">
-                <p>Itenery report</p>
+                <p>Itenery Report</p>
             </div>
             <div className="page__pcont">
 
@@ -175,7 +175,7 @@ const IteneryReport = (props) => {
                                         defaultValue={'1'}
                                         onChange={(e) => handleDistributor(e)}
                                     >
-                                        <option value="">Select distributor</option>
+                                        <option value="">Select Distributor</option>
                                         {distributors.map((item, i) => (
                                             <option value={item.id} key={i}>
                                                 {item.full_name}
@@ -192,11 +192,11 @@ const IteneryReport = (props) => {
                         {
                             !props.user.is_salesref ? (
                                 <div className="form__row__col">
-                                    <div className="form__row__col__label">Sales ref</div>
+                                    <div className="form__row__col__label">Sales Rep</div>
                                     <div className="form__row__col__input">
                                         <select name="" id="" onChange={(e) => handleSalesref(e)}>
 
-                                            <option value="">Select sales rep</option>
+                                            <option value="">Select Sales Rep</option>
 
                                             {
                                                 salesrefs.map((item, i) => (<option value={item.salesref_id} key={i}>{item.full_name}</option>))

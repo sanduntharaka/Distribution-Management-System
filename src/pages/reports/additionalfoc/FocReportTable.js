@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberValue, formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -42,16 +43,16 @@ const tableIcons = {
 const FocReportTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Item code', field: 'item_code' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Item Code', field: 'item_code' },
     { title: 'Category', field: 'category' },
-    { title: 'Dealer name', field: 'dealer_name' },
-    { title: 'Dealer address', field: 'dealer_address' },
-    { title: 'Dealer contact number', field: 'dealer_contact_number' },
-    { title: 'Qty', field: 'qty' },
-    { title: 'Additional foc', field: 'addtional_foc_qty' },
-    { title: 'Discount', field: 'discount' },
-    { title: 'Value', field: 'value' },
+    { title: 'Dealer Name', field: 'dealer_name' },
+    { title: 'Dealer Address', field: 'dealer_address' },
+    { title: 'Dealer Contact Number', field: 'dealer_contact_number' },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty) },
+    { title: 'Additional Foc', field: 'addtional_foc_qty', render: (rowData) => formatNumberValue(rowData.addtional_foc_qty) },
+    { title: 'Discount', field: 'discount', render: (rowData) => formatNumberPrice(rowData.discount) },
+    { title: 'Value', field: 'value', render: (rowData) => formatNumberPrice(rowData.value) },
   ];
 
   return (

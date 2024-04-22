@@ -99,7 +99,7 @@ const PsaEdit = (props) => {
                     }
                     required
                   >
-                    <option>Select salesref</option>
+                    <option>Select Sales Rep</option>
                     {
                       salesrefs.map((item, i) => (
                         <option value={item.id} key={i}>{item.full_name}</option>

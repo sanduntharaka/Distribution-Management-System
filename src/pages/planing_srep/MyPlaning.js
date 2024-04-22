@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import {
     MdDoneOutline, MdOutlineClose
 } from 'react-icons/md';
+import { IoStar } from "react-icons/io5";
 const MyMessage = React.forwardRef((props, ref) => {
     return (
         <Message
@@ -29,11 +30,10 @@ const MyPlaning = () => {
     const [currentDate, setCurrentDate] = useState(() => {
         const d = new Date();
         let year = d.getFullYear();
-        let month = d.getMonth() + 1;
-        let day = d.getDate();
+        let month = (d.getMonth() + 1).toString().padStart(2, '0');
+        let day = d.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     });
-    const [salesrefs, setSalesrefs] = useState([])
     const [data, setData] = useState({
         date: currentDate,
         salesref: JSON.parse(sessionStorage.getItem('user_details')).id
@@ -43,27 +43,16 @@ const MyPlaning = () => {
     const [covered, setCovered] = useState([])
 
     useEffect(() => {
-        axiosInstance
-            .post(`/planing/get/detail/`, data, {
-                headers: {
-                    Authorization:
-                        'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
-                },
-            })
-            .then((res) => {
-                setGiven(res.data.given)
-                setCovered(res.data.coverd)
-                console.log(res)
-            })
-            .catch((err) => {
-                console.log(err);
-                setSuccess(false);
-                setError(true);
-                setMsg('This person is not started sales yet. Please try again later.');
-                setTitle('Pending');
-                handleOpen();
-            });
-    }, [])
+        handleFilter()
+    }, [data, setData])
+
+
+
+    const handleFetchDateBy = (e) => {
+        setData({ ...data, date: e.target.value })
+    }
+
+
 
     const handleFilter = () => {
 
@@ -78,7 +67,7 @@ const MyPlaning = () => {
             .then((res) => {
                 setGiven(res.data.given)
                 setCovered(res.data.coverd)
-
+                console.log(res)
             })
             .catch((err) => {
                 console.log(err);
@@ -106,7 +95,17 @@ const MyPlaning = () => {
             </div>
             <div className="page__pcont">
                 <div className="page__pcont__row ">
+                    <div className="form__row__col">
+                        <div className="form__row__col__label">Date</div>
+                        <div className="form__row__col__input">
+                            <input type="date" value={data.date} onChange={(e) => handleFetchDateBy(e)} />
+                        </div>
+                    </div>
+
+                </div>
+                <div className="page__pcont__row ">
                     <div className="page__pcont__row pbox-container">
+
                         <div className="page__pcont__row__col pbox">
                             <p className='pbox__title'>Given Plan</p>
                             <div className='pbox__box1'>
@@ -142,7 +141,9 @@ const MyPlaning = () => {
                                             covered.map((item, i) => (
                                                 <tr key={i}>
                                                     <td>{i + 1}</td>
-                                                    <td>{item.name}</td>
+                                                    <td>{item.name}{given.find(obj => obj.name === item.name) ? (
+                                                        ''
+                                                    ) : <IoStar style={{ color: 'orange' }} />}</td>
                                                     <td>{item.time}</td>
                                                     <td>{item.status}</td>
 
@@ -158,7 +159,19 @@ const MyPlaning = () => {
 
 
                         </div>
+
                     </div>
+                </div>
+                <div className="page__pcont__row ">
+                    <div className="form__row__col" style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
+                        <span>
+                            <MdDoneOutline style={{ color: 'green' }} /> Covered
+                        </span>
+                        <span><MdOutlineClose style={{ color: 'red' }} /> Not Covered</span>
+                        <span><IoStar style={{ color: 'orange' }} /> Not in Given Plan</span>
+
+
+                    </  div>
                 </div>
             </div>
 

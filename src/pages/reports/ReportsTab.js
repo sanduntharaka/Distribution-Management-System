@@ -201,7 +201,7 @@ const ReportsTab = () => {
           Credit Bills Report
 
         </div>
-        {!user.is_salesref ? (
+        {/* {!user.is_salesref ? (
           <div
             className={`item ${selected === 23 ? 'selected' : ''}`}
             onClick={() => handleSelect(23)}
@@ -210,7 +210,7 @@ const ReportsTab = () => {
           </div>
         ) : (
           ''
-        )}
+        )} */}
         {!user.is_salesref ? (
           <div
             className={`item ${selected === 17 ? 'selected' : ''}`}
@@ -334,22 +334,24 @@ const ReportsTab = () => {
           <DealerPaymentPattern user={user} />
         ) : selected === 22 ? (
           <FocReport inventory={inventory} user={user} />
-        ) : selected === 23 ? (
-          <OldCreditBillsCollection user={user} />
-        ) : selected === 24 ? (
-          <AddtionalFocReport user={user} />
         )
-          : selected === 25 ? (
-            <DaylyInventoryPeriod user={user} />
+          // : selected === 23 ? (
+          //   <OldCreditBillsCollection user={user} />
+          // ) 
+          : selected === 24 ? (
+            <AddtionalFocReport user={user} />
           )
-            //  : selected === 26 ? (
-            //   <DailyReport user={user} user_details={user_details} />
-            // ) 
-            : selected === 27 ? (
-              <QuickReports user={user} user_details={user_details} />
-            ) : (
-              ''
-            )}
+            : selected === 25 ? (
+              <DaylyInventoryPeriod user={user} />
+            )
+              //  : selected === 26 ? (
+              //   <DailyReport user={user} user_details={user_details} />
+              // ) 
+              : selected === 27 ? (
+                <QuickReports user={user} user_details={user_details} />
+              ) : (
+                ''
+              )}
       </div>
     </div>
   );

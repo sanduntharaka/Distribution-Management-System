@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import CreateDealer from './CreateDealer';
 import ShowDealers from './ShowDealers';
 import DealerCategory from './DealerCategory';
+import SetupDealerOrder from './SetupDealerOrder';
 const DealersTab = () => {
   const user = JSON.parse(sessionStorage.getItem('user'));
+  const user_details = JSON.parse(sessionStorage.getItem('user_details'));
+
   const [selected, setSelected] = useState(
     user.is_manager ||
       user.is_superuser ||
@@ -44,6 +47,15 @@ const DealersTab = () => {
         >
           View Dealers
         </div>
+        {
+          user.is_salesref ? (
+            <div
+              className={`item ${selected === 3 ? 'selected' : ''}`}
+              onClick={() => handleSelect(3)}
+            >
+              Setup Dealer Order
+            </div>) : ''
+        }
       </div>
       <div className="tab_page">
         {selected === 0 ? (
@@ -52,6 +64,8 @@ const DealersTab = () => {
           <CreateDealer />
         ) : selected === 2 ? (
           <ShowDealers inventory={0} />
+        ) : selected === 3 ? (
+          <SetupDealerOrder inventory={0} user={user} user_details={user_details} />
         ) : (
           ''
         )}

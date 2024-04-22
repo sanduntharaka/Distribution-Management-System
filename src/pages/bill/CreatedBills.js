@@ -25,7 +25,7 @@ import RecommendIcon from '@mui/icons-material/Recommend';
 import Spinner from '../../components/loadingSpinner/Spinner';
 import { MdOutlinePayment } from "react-icons/md";
 import PaymentDetails from './confim_bill/PaymentDetails';
-
+import { formatNumberPrice } from '../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -65,7 +65,7 @@ const CreatedBills = () => {
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
+    { title: 'Total(Rs)', field: 'total', render: (rowData) => formatNumberPrice(rowData.total), },
 
     { title: 'Status', field: 'status' },
   ];
@@ -144,6 +144,7 @@ const CreatedBills = () => {
     setLoading(true);
     setInvoice(value);
     setSataSingle(value);
+    console.log('inv:', value)
     axiosInstance
       .get(`/salesref/invoice/items/${value.id}`, {
         headers: {
@@ -152,6 +153,7 @@ const CreatedBills = () => {
         },
       })
       .then((res) => {
+
         setItems(res.data);
         setMessageOpen(false);
         setPaymentOpen(false);

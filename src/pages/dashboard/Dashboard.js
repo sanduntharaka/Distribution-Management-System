@@ -256,7 +256,6 @@ const Dashboard = () => {
       let selected = ranges.find((item) => {
         return item.id === parseInt(i)
       })
-      console.log('sel:', selected)
       axiosInstance
         .post(`/target/get-details/`,
           {
@@ -365,9 +364,9 @@ const Dashboard = () => {
             {user.is_manager || user.is_company || user.is_excecutive ? (
               <div className="chart simple_chart">
                 {user.is_manager || user.is_excecutive ? (
-                  <div className="title">Distributors sales {monthName}</div>
+                  <div className="title">Distributors Sales {monthName}</div>
                 ) : user.is_company ? (
-                  <div className="title">Manager sales {monthName}</div>
+                  <div className="title">Manager Sales {monthName}</div>
                 ) : (
                   ''
                 )}

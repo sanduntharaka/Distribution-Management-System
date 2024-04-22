@@ -121,8 +121,7 @@ const ViewAllExecutiveManagers = (props) => {
     if (props.user.is_excecutive) {
       axiosInstance
         .get(
-          `/executive/manager/by/executive/${
-            JSON.parse(sessionStorage.getItem('user')).id
+          `/executive/manager/by/executive/${JSON.parse(sessionStorage.getItem('user')).id
           }`,
           {
             headers: {
@@ -197,7 +196,7 @@ const ViewAllExecutiveManagers = (props) => {
         )}
       </Modal>
       <div className="page__title">
-        <p>View all Managers and their Executives</p>
+        <p>View all Managers and Related Executives</p>
       </div>
       <div className="page__pcont">
         <div className="page__pcont__row">

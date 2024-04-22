@@ -26,7 +26,8 @@
   }
 
   &__sidebar {
-    background-color: $color-sidebar;
+    background: rgb(0, 49, 88);
+    background: linear-gradient(90deg, rgba(0, 49, 88, 1) 0%, rgba(0, 98, 117, 1) 100%);
     display: block;
 
     @include mobile {
@@ -141,10 +142,54 @@
   }
 }
 
+.billaction {
+  margin-left: 5px;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 5px;
+
+
+  &__billBtnDelete {
+    background-color: red;
+    color: $color-white;
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+    font-weight: bolder;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $color-blue-sidebar-title-dark;
+    }
+
+  }
+
+  &__billBtnEdit {
+    background-color: $color-btn-warning;
+    color: $color-white;
+    border-radius: 5px;
+
+    border: none;
+    cursor: pointer;
+    font-weight: bolder;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: $color-blue-sidebar-title-light;
+    }
+  }
+}
+
 .login {
   width: 100%;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }

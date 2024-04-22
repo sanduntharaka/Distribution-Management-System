@@ -37,18 +37,18 @@ const AddDistributorInventory = ({ inventory }) => {
   const [data, setData] = useState({
     inventory: inventory.id,
     added_by: JSON.parse(sessionStorage.getItem('user')).id,
-    addedQty: 0,
+    // addedQty: 0,
     category: '',
     item_code: '',
-    invoice_number: '',
+    // invoice_number: '',
     description: '',
-    base: ' ',
-    qty: 0,
-    pack_size: 0,
-    free_of_charge: 0,
-    whole_sale_price: 0,
-    retail_price: 0,
-    from_sales_return: false,
+    base: NaN,
+    // qty: 0,
+    // pack_size: 0,
+    // free_of_charge: 0,
+    // whole_sale_price: 0,
+    // retail_price: 0,
+    // from_sales_return: false,
   });
   useEffect(() => {
     setLoading(true);
@@ -72,10 +72,10 @@ const AddDistributorInventory = ({ inventory }) => {
       });
   }, []);
   useEffect(() => {
-    setData({
-      ...data,
-      qty: parseInt(data.addedQty) + parseInt(data.free_of_charge),
-    });
+    // setData({
+    //   ...data,
+    //   qty: parseInt(data.addedQty) + parseInt(data.free_of_charge),
+    // });
   }, [data.addedQty, data.free_of_charge]);
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -186,7 +186,7 @@ const AddDistributorInventory = ({ inventory }) => {
       )}
 
       <div className="page__title">
-        <p>Add new product</p>
+        <p>Add New Product</p>
       </div>
       <div className="page__pcont">
         <div className="form">
@@ -216,7 +216,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Type Here"
                     name="item_code"
                     value={data.item_code === undefined ? '' : data.item_code}
                     onChange={(e) =>
@@ -231,7 +231,7 @@ const AddDistributorInventory = ({ inventory }) => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type here"
+                    placeholder="Type Here"
                     name="base"
                     value={data.base === undefined ? '' : data.base}
                     onChange={(e) => setData({ ...data, base: e.target.value })}
@@ -359,7 +359,7 @@ const AddDistributorInventory = ({ inventory }) => {
                     id="description"
                     rows="5"
                     cols="30"
-                    placeholder="Type here..."
+                    placeholder="Type Here..."
                     name="description"
                     value={
                       data.description === undefined ? '' : data.description
@@ -395,7 +395,7 @@ const AddDistributorInventory = ({ inventory }) => {
             <div className="form__btn">
               <div className="form__btn__container">
                 <button className="addBtn" onClick={(e) => hanldeFileUpload(e)}>
-                  Add from exell
+                  Add from excel
                 </button>
                 <button className="btnEdit" type="submit">
                   save

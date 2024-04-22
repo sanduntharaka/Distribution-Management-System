@@ -6,6 +6,7 @@ import Spinner from '../../../components/loadingSpinner/Spinner';
 import BillSuccess from '../../../components/userComfirm/BillSuccess';
 import Modal from '@mui/material/Modal';
 import classNames from 'classnames';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 
 const ConfimBill = (props) => {
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -16,6 +17,8 @@ const ConfimBill = (props) => {
     company_number: '',
   });
 
+  console.log(props);
+
   const [loading, isLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -24,9 +27,15 @@ const ConfimBill = (props) => {
     props.close();
     props.clear();
   };
+  const total = props.total_sub - props.total_discount
+  const vat_amount = props.total_sub * props.vat_rate / 100
 
-  console.log(props)
   useEffect(() => {
+    props.data.total = props.total_sub - props.total_discount;
+    props.data.vat_amount = vat_amount;
+    props.data.total_discount = props.total_discount;
+    props.data.sub_total = props.total_sub;
+
     if (user.is_salesref) {
       axiosInstance
         .get(
@@ -179,8 +188,6 @@ const ConfimBill = (props) => {
 
   const handleSaveBill = () => {
     isLoading(true);
-
-    console.log('rsdaa:', props.data)
     axiosInstance
       .post('/salesref/invoice/create/invoice/', props.data, {
         headers: {
@@ -313,6 +320,14 @@ const ConfimBill = (props) => {
           style={{ fontSize: '12px' }}
           className={styles.bill}
         >
+          {
+
+            props.data.invoice_type === 'vat' ?
+              (<div className={styles.row} style={{ alignItems: 'right', display: 'flex', justifyContent: 'flex-end' }}>
+                <p style={{ fontSize: 10 }}>VAT_INV:{props.vat_no}</p>
+              </div>) : ''
+          }
+
           <div className={styles.row}>
             <div className={styles.heading}>
               <div className={styles.hcol1}>
@@ -353,35 +368,35 @@ const ConfimBill = (props) => {
             </div>
           </div>
           <div className={styles.row}>
-            <table>
+            <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Item Code</th>
-                  <th>Description</th>
-                  <th>Unit Qty</th>
-                  <th>Free Qty</th>
-                  <th>Price</th>
-                  <th>Discount</th>
-                  <th>Value</th>
+                  <th className={styles.th} >Item Code</th>
+                  <th className={styles.th} >Description</th>
+                  <th className={styles.th} >Unit Qty</th>
+                  <th className={styles.th} >Free Qty</th>
+                  <th className={styles.th} >Price</th>
+                  <th className={styles.th} >Discount</th>
+                  <th className={styles.th} >Value</th>
                 </tr>
               </thead>
               <tbody>
                 {props.items.map((item, i) => (
                   <tr key={i}>
-                    <td>{item.item_code}</td>
-                    <td>{item.description}</td>
-                    <td>{item.qty}</td>
-                    <td>{item.foc}</td>
-                    <td>
-                      {console.log('bbm:', props.data.billing_price_method)}
+                    <td className={styles.td} >{item.item_code}</td>
+                    <td className={styles.td} >{item.description}</td>
+                    <td className={styles.td} >{item.qty}</td>
+                    <td className={styles.td} >{item.foc}</td>
+                    <td className={styles.td} >
+
                       {props.data.billing_price_method == 1
-                        ? item.whole_sale_price
+                        ? formatNumberPrice(item.whole_sale_price)
                         : props.data.billing_price_method == 2
-                          ? item.price
+                          ? formatNumberPrice(item.price)
                           : 0}
                     </td>
-                    <td>{item.discount}</td>
-                    <td>{item.extended_price}</td>
+                    <td className={styles.td} >{formatNumberPrice(item.discount)}</td>
+                    <td className={styles.td} >{formatNumberPrice(item.extended_price)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -390,13 +405,21 @@ const ConfimBill = (props) => {
           <div className={styles.bottom}>
             <div className={styles.amount}>
               <p className={styles.total}>
-                Total Amount: Rs {props.data.sub_total}
+                Total Amount: Rs {formatNumberPrice(props.data.sub_total)}
               </p>
+              {
+                props.data.invoice_type === 'vat' ?
+                  (<p className={styles.total}>
+                    Total VAT({props.vat_percentage}%) Amount: Rs {formatNumberPrice(props.data.vat_amount)}
+                  </p>) : ''
+              }
               <p className={styles.total}>
-                Total Dicsount Amount: Rs {props.data.total_discount}
+                Total Dicsount Amount: Rs {formatNumberPrice(props.data.total_discount)}
               </p>
+
+
               <p className={styles.total}>
-                Final Amount: Rs {props.data.sub_total - props.data.total_discount}
+                Final Amount: Rs {formatNumberPrice(total)}
               </p>
             </div>
 

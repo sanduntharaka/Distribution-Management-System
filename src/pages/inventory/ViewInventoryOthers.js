@@ -25,7 +25,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import EditIcon from '@mui/icons-material/Edit';
-
+import { formatNumberPrice, formatNumberValue } from '../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -63,8 +63,8 @@ const ViewInventoryOthers = ({ user }) => {
       { title: 'Category', field: 'category_name' },
       { title: 'Description', field: 'description' },
       { title: 'Base', field: 'base' },
-      { title: 'Foc', field: 'foc' },
-      { title: 'Qty', field: 'qty' },
+      { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc), },
+      { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
     ],
     []
   );

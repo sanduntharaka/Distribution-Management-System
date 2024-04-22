@@ -24,6 +24,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import ConfirmStatus from './ConfirmStatus';
 import RejectForm from './RejectForm';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -61,7 +62,7 @@ const BillConfirm = () => {
     { title: 'Bill No', field: 'code' },
     { title: 'Date', field: 'date' },
     { title: 'Dealer', field: 'dealer_name' },
-    { title: 'Total', field: 'total' },
+    { title: 'Total(Rs)', field: 'total', render: (rowData) => formatNumberPrice(rowData.total), },
 
     { title: 'Status', field: 'status' },
   ];

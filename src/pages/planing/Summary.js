@@ -5,7 +5,7 @@ import Modal from '@mui/material/Modal';
 import {
     MdDoneOutline, MdOutlineClose
 } from 'react-icons/md';
-
+import { IoStar } from "react-icons/io5";
 const MyMessage = React.forwardRef((props, ref) => {
     return (
         <Message
@@ -187,7 +187,10 @@ const Summary = () => {
                                             covered.map((item, i) => (
                                                 <tr key={i}>
                                                     <td>{i + 1}</td>
-                                                    <td>{item.name}</td>
+                                                    <td>{item.name} {given.find(obj => obj.name === item.name) ? (
+                                                        ''
+                                                    ) : <IoStar style={{ color: 'orange' }} />}</td>
+
                                                     <td>{item.time}</td>
                                                     <td>{item.status}</td>
 
@@ -205,6 +208,18 @@ const Summary = () => {
                         </div>
                     </div>
                 </div>
+                <div className="page__pcont__row ">
+                    <div className="form__row__col" style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
+                        <span>
+                            <MdDoneOutline style={{ color: 'green' }} /> Covered
+                        </span>
+                        <span><MdOutlineClose style={{ color: 'red' }} /> Not Covered</span>
+                        <span><IoStar style={{ color: 'orange' }} /> Not in Given Plan</span>
+
+
+                    </  div>
+                </div>
+
             </div>
 
 

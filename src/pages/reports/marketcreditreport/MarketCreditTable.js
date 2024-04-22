@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -41,13 +42,13 @@ const tableIcons = {
 
 const MarketCreditTable = (props) => {
   const columns = [
-    { title: 'Delivery date', field: 'confirmed_date' },
-    { title: 'Dealer name', field: 'dealer' },
+    { title: 'Delivery Date', field: 'confirmed_date' },
+    { title: 'Dealer Name', field: 'dealer' },
     { title: 'Address', field: 'address' },
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Original amount', field: 'total' },
-    { title: 'Paid amount', field: 'paid_amount' },
-    { title: 'Balance', field: 'balance' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Original Amount', field: 'total' },
+    { title: 'Paid Amount', field: 'paid_amount' },
+    { title: 'Balance', field: 'balance', render: (rowData) => formatNumberPrice(rowData.balance) },
   ];
 
   return (

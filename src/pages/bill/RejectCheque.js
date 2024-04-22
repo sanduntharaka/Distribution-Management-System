@@ -245,7 +245,7 @@ const RejectCheque = () => {
                 <div className="form__row__col__input">
                   <input
                     type="number"
-                    placeholder="Type cheque number here"
+                    placeholder="Type Cheque Number Here"
                     value={data.cheque_number ? data.cheque_number : ''}
                     required
                   />
@@ -256,7 +256,7 @@ const RejectCheque = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type bank here"
+                    placeholder="Type Bank Here"
                     value={data.bank ? data.bank : ''}
                     required
                   />
@@ -267,7 +267,7 @@ const RejectCheque = () => {
                 <div className="form__row__col__input">
                   <input
                     type="text"
-                    placeholder="Type branch name here"
+                    placeholder="Type Branch Name Here"
                     value={data.branch ? data.branch : ''}
                     required
                   />

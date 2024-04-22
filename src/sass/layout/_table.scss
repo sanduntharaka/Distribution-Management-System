@@ -5,18 +5,22 @@
   }
 
   box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   border-radius: 25px;
   padding-top: 20px;
   padding-bottom: 20px;
+
   table {
     width: 100%;
+
     thead {
       height: 50px;
       background-color: $color-colum-background;
     }
+
     tbody {
       text-align: center;
+
       tr {
         position: relative;
         height: 50px;
@@ -26,8 +30,10 @@
             @include mobile {
               display: none;
             }
+
             display: flex;
             justify-content: flex-end;
+
             .btn {
               border: none;
               display: flex;
@@ -38,6 +44,7 @@
               font-size: 20px;
               border-radius: 25px;
             }
+
             .edit {
               background-color: $color-white;
               color: $color-btn-warning;
@@ -48,6 +55,7 @@
                 transition: all 0.5s ease-in;
               }
             }
+
             .delete {
               background-color: $color-white;
               color: $color-danger;
@@ -58,6 +66,7 @@
                 transition: all 0.5s ease-in;
               }
             }
+
             .details {
               background-color: $color-white;
               color: $color-details;
@@ -69,8 +78,10 @@
               }
             }
           }
+
           .action_btn {
             display: none;
+
             @include mobile {
               display: flex;
               align-items: center;
@@ -78,6 +89,7 @@
               padding: 5px;
               box-sizing: border-box;
               border-radius: 5px;
+
               &:hover {
                 background-color: $color-colum-background;
               }
@@ -85,6 +97,7 @@
           }
         }
       }
+
       .sp {
         box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
           rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
@@ -92,6 +105,7 @@
     }
   }
 }
+
 .tbl_side_menu {
   box-sizing: border-box;
   width: 150px;
@@ -109,12 +123,14 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 5px;
+
   &__row {
     padding: 10px;
     box-sizing: border-box;
     height: 40px;
     display: flex;
     align-items: center;
+
     &:hover {
       background-color: $color-colum-background;
     }

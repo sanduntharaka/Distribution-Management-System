@@ -197,8 +197,8 @@ const FocReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -208,7 +208,7 @@ const FocReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributorDateBy(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -221,7 +221,7 @@ const FocReport = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -232,7 +232,7 @@ const FocReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"

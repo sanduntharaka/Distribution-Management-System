@@ -15,6 +15,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -43,11 +44,11 @@ const PaymentsForperiodTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
     { title: 'Invoice', field: 'invoice_number' },
-    { title: 'Total', field: 'total' },
+    { title: 'Total', field: 'total', render: (rowData) => formatNumberPrice(rowData.total) },
 
-    { title: 'Cash', field: 'cash' },
-    { title: 'Cheque', field: 'cheque' },
-    { title: 'Credit', field: 'credit' },
+    { title: 'Cash', field: 'cash', render: (rowData) => formatNumberPrice(rowData.cash) },
+    { title: 'Cheque', field: 'cheque', render: (rowData) => formatNumberPrice(rowData.cheque) },
+    { title: 'Credit', field: 'credit', render: (rowData) => formatNumberPrice(rowData.credit) },
   ];
   return (
     <MaterialTable

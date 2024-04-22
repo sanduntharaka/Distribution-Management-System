@@ -25,6 +25,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import EditIcon from '@mui/icons-material/Edit';
+import { formatNumberValue } from '../../var/NumberFormats';
 
 
 
@@ -65,8 +66,8 @@ const DistributorInventory = ({ inventory, user }) => {
       { title: 'Category', field: 'category_name' },
       { title: 'Description', field: 'description' },
       { title: 'Base', field: 'base' },
-      { title: 'Foc', field: 'foc' },
-      { title: 'Qty', field: 'qty' },
+      { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc), },
+      { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
     ],
     []
   );
@@ -104,7 +105,7 @@ const DistributorInventory = ({ inventory, user }) => {
       })
       .then((res) => {
         console.log(res.data)
-        setTableData(res.data.results);
+        setTableData(res.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -305,7 +306,7 @@ const DistributorInventory = ({ inventory, user }) => {
                             <EditIcon />
                           </IconButton>
                         ) : props.action.icon === DeleteOutline &&
-                          user.is_distributor ? (
+                          user.is_superuser ? (
                           <IconButton
                             onClick={(event) =>
                               props.action.onClick(event, props.data)

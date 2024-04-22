@@ -26,13 +26,8 @@ import { styled, alpha } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
+import { formatNumberPrice, formatNumberValue } from '../../var/NumberFormats';
 const StyledMenu = styled((props) => (
   <Menu
     elevation={0}
@@ -114,10 +109,10 @@ const SalesRefInventory = ({ inventory }) => {
     { title: 'Item Code', field: 'item_code' },
     { title: 'Description', field: 'description' },
     { title: 'Pack Size', field: 'pack_size' },
-    { title: 'Whole Sale Price', field: 'whole_sale_price' },
-    { title: 'Retail Price', field: 'retail_price' },
-    { title: 'Foc', field: 'foc' },
-    { title: 'Qty', field: 'qty' },
+    { title: 'Whole Sale Price', field: 'whole_sale_price', render: (rowData) => formatNumberPrice(rowData.whole_sale_price), },
+    { title: 'Retail Price', field: 'retail_price', render: (rowData) => formatNumberPrice(rowData.retail_price), },
+    { title: 'Foc', field: 'foc', render: (rowData) => formatNumberValue(rowData.foc), },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
   ];
 
   //modal

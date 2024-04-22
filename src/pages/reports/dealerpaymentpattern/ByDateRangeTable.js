@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -41,12 +42,12 @@ const tableIcons = {
 };
 const ByDateRangeTable = (props) => {
   const columns = [
-    { title: 'Invoice date', field: 'invoice_date' },
-    { title: 'Invoice number', field: 'invoice_number' },
-    { title: 'Amount', field: 'invoice_amount' },
-    { title: 'Payment method', field: 'payment_type' },
-    { title: 'Settled date', field: 'date' },
-    { title: 'Payed amount', field: 'paid_amount' },
+    { title: 'Invoice Date', field: 'invoice_date' },
+    { title: 'Invoice Number', field: 'invoice_number' },
+    { title: 'Amount', field: 'invoice_amount', render: (rowData) => formatNumberPrice(rowData.invoice_amount) },
+    { title: 'Payment Method', field: 'payment_type' },
+    { title: 'Settled Date', field: 'date' },
+    { title: 'Payed Amount', field: 'paid_amount', render: (rowData) => formatNumberPrice(rowData.paid_amount) },
   ];
 
   return (

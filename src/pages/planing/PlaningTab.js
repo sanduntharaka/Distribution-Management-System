@@ -15,7 +15,7 @@ const PlaningTab = () => {
                     className={`item ${selected === 0 ? 'selected' : ''}`}
                     onClick={() => handleSelect(0)}
                 >
-                    Create
+                    Approve
                 </div>
                 <div
                     className={`item ${selected === 1 ? 'selected' : ''}`}

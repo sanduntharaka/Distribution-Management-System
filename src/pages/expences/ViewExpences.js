@@ -66,7 +66,7 @@ const ViewExpences = ({ inventory }) => {
             headerStyle: { width: '10px' },
             editable: false,
         },
-        { title: 'Name', field: 'name' },
+        { title: 'Name', field: 'name', editable: false },
         { title: 'Amount', field: 'amount' },
         { title: 'Date', field: 'date' },
 
@@ -116,7 +116,7 @@ const ViewExpences = ({ inventory }) => {
         setError(false);
         setSuccess(false);
         axiosInstance
-            .put(`/category/update/${newData.id}`, newData, {
+            .put(`/expences/edit/${newData.id}`, newData, {
                 headers: {
                     Authorization:
                         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -127,7 +127,7 @@ const ViewExpences = ({ inventory }) => {
                 setError(false);
                 setSuccess(true);
                 setTitle('Success');
-                setMsg('Category has been updated successfully');
+                setMsg('Current Expense has been updated successfully');
                 handleModalOpen();
                 resolve();
             })
@@ -138,6 +138,7 @@ const ViewExpences = ({ inventory }) => {
                 setMsg('Server error!, Please try again');
                 handleModalOpen();
                 resolve();
+                console.log(error);
             });
     };
     const handleDelete = (oldData, resolve) => {
@@ -145,7 +146,7 @@ const ViewExpences = ({ inventory }) => {
         setError(false);
         setSuccess(false);
         axiosInstance
-            .delete(`/category/delete/${oldData.id}`, {
+            .delete(`/expences/delete/${oldData.id}`, {
                 headers: {
                     Authorization:
                         'JWT ' + JSON.parse(sessionStorage.getItem('userInfo')).access,
@@ -157,7 +158,7 @@ const ViewExpences = ({ inventory }) => {
                 setError(false);
                 setSuccess(true);
                 setTitle('Success');
-                setMsg('Category has been deleted successfully');
+                setMsg('Selected Expense has been deleted successfully');
                 handleModalOpen();
                 resolve();
             })
@@ -183,7 +184,7 @@ const ViewExpences = ({ inventory }) => {
                 />
             </Modal>
             <div className="page__title">
-                <p>View Expences</p>
+                <p>View Expenses</p>
             </div>
             <div className="page__pcont">
                 <div className="page__pcont__row">

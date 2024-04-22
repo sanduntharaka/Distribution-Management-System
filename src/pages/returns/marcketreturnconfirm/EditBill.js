@@ -78,7 +78,7 @@ const EditBill = (props) => {
       headerStyle: { width: '10px' },
       editable: false,
     },
-    { title: 'Item code', field: 'item_code', editable: false },
+    { title: 'Item', render: rowData => `${rowData.item_code} - ${rowData.item_description}`, editable: false },
     { title: 'Description', field: 'reason', editable: false },
     { title: 'Qty', field: 'qty' },
     { title: 'Foc', field: 'foc' },
@@ -184,19 +184,19 @@ const EditBill = (props) => {
         icons={tableIcons}
         editable={
           props.user.is_manager ||
-          props.user.is_excecutive ||
-          props.user.is_distributor
+            props.user.is_excecutive ||
+            props.user.is_distributor
             ? {
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve) => {
-                    handleEdit(newData, oldData, resolve);
-                  }),
+              onRowUpdate: (newData, oldData) =>
+                new Promise((resolve) => {
+                  handleEdit(newData, oldData, resolve);
+                }),
 
-                onRowDelete: (oldData) =>
-                  new Promise((resolve) => {
-                    handleDelete(oldData, resolve);
-                  }),
-              }
+              onRowDelete: (oldData) =>
+                new Promise((resolve) => {
+                  handleDelete(oldData, resolve);
+                }),
+            }
             : ''
         }
       />

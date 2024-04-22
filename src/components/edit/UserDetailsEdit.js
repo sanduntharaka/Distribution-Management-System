@@ -12,6 +12,7 @@ const UserDetailsEdit = (props) => {
     company_number: props.data.company_number,
     personal_number: props.data.personal_number,
     home_number: props.data.home_number,
+    vat_no: props.data.vat_no,
     immediate_contact_person_name: props.data.immediate_contact_person_name,
     immediate_contact_person_number: props.data.immediate_contact_person_number,
     terriotory: props.data.terriotory,
@@ -228,6 +229,19 @@ const UserDetailsEdit = (props) => {
                     value={editedData.dob}
                     onChange={(e) =>
                       setEditedData({ ...editedData, dob: e.target.value })
+                    }
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>VAT Invoice Number(Optional)</td>
+                <td>
+                  {' '}
+                  <input
+                    type="text"
+                    value={editedData.vat_no}
+                    onChange={(e) =>
+                      setEditedData({ ...editedData, vat_no: e.target.value })
                     }
                   />
                 </td>

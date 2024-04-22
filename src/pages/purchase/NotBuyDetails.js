@@ -439,7 +439,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
                   Action: (props) => (
                     <React.Fragment>
                       {props.action.icon === EditIcon &&
-                        (user.is_company || user.is_manager) ? (
+                        (user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)
@@ -452,7 +452,7 @@ const NotBuyDetails = ({ user, userdetail }) => {
                           <EditIcon />
                         </IconButton>
                       ) : props.action.icon === DeleteOutline &&
-                        (user.is_company || user.is_manager) ? (
+                        (user.is_manager) ? (
                         <IconButton
                           onClick={(event) =>
                             props.action.onClick(event, props.data)

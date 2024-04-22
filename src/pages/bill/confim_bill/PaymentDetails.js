@@ -19,11 +19,10 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import EditIcon from '@mui/icons-material/Edit';
 import RequsetStatus from '../../../components/requeststatus/RequsetStatus';
 import ShowPaymentDetails from '../creaditpayments/ShowPaymentDetails';
 import EditCheque from '../../../components/edit/EditCheque';
+import { formatNumberValue, formatNumberPrice } from '../../../var/NumberFormats';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -80,8 +79,8 @@ const PaymentDetails = (props) => {
         { title: 'Date', field: 'date', editable: false },
         { title: 'Due date', field: 'due_date', editable: false },
         { title: 'Payment type', field: 'payment_type', editable: false },
-        { title: 'Amount', field: 'paid_amount', editable: false },
-        { title: 'Cheque Amount', field: 'cheque_amount', editable: false },
+        { title: 'Amount', field: 'paid_amount', editable: false, render: (rowData) => formatNumberPrice(rowData.paid_amount), },
+        { title: 'Cheque Amount', field: 'cheque_amount', editable: false, render: (rowData) => formatNumberPrice(rowData.cheque_amount), },
         {
             title: 'Cheque Status',
             field: 'cheque_status',

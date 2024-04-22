@@ -25,12 +25,10 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 
 import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import EditIcon from '@mui/icons-material/Edit';
+import { formatNumberPrice, formatNumberValue } from '../../var/NumberFormats';
 const StyledMenu = styled((props) => (
   <Menu
     elevation={0}
@@ -112,10 +110,10 @@ const ViewInventory = () => {
     { title: 'Category', field: 'category_name' },
     { title: 'Description', field: 'description' },
     { title: 'Pack Size', field: 'pack_size' },
-    { title: 'Whole Sale Price', field: 'whole_sale_price' },
-    { title: 'Retail Price', field: 'retail_price' },
-    { title: 'Foc', field: 'free_of_charge' },
-    { title: 'Qty', field: 'qty' },
+    { title: 'Whole Sale Price', field: 'whole_sale_price', render: (rowData) => formatNumberPrice(rowData.whole_sale_price), },
+    { title: 'Retail Price', field: 'retail_price', render: (rowData) => formatNumberPrice(rowData.retail_price), },
+    { title: 'Foc', field: 'free_of_charge', render: (rowData) => formatNumberValue(rowData.free_of_charge), },
+    { title: 'Qty', field: 'qty', render: (rowData) => formatNumberValue(rowData.qty), },
   ];
 
   //modal

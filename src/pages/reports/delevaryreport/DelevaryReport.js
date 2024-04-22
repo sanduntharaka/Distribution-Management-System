@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ByDateRangeTable from './ByDateRangeTable';
 import ByCategoryTable from './ByCategoryTable';
 import { utils, writeFile } from 'xlsx';
-
+import { formatNumberPrice } from '../../../var/NumberFormats';
 import { axiosInstance } from '../../../axiosInstance';
 
 function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
@@ -267,8 +267,8 @@ const DelevaryReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -278,7 +278,7 @@ const DelevaryReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributorDateBy(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -291,7 +291,7 @@ const DelevaryReport = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -302,7 +302,7 @@ const DelevaryReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -337,7 +337,7 @@ const DelevaryReport = (props) => {
           <div className="page__pcont__row__col total">
             <p>Total</p>
             <p>
-              Rs {dateByData.reduce((sum, item) => sum + item.total, 0)}
+              Rs {formatNumberPrice(dateByData.reduce((sum, item) => sum + item.total, 0))}
               /-
             </p>
           </div>
@@ -357,8 +357,8 @@ const DelevaryReport = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -368,7 +368,7 @@ const DelevaryReport = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributorCategory(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -381,7 +381,7 @@ const DelevaryReport = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -392,7 +392,7 @@ const DelevaryReport = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -466,11 +466,10 @@ const DelevaryReport = (props) => {
           <div className="page__pcont__row__col total">
             <p>Total</p>
             <p>
-              Rs{' '}
-              {categoryByData.reduce(
+              Rs{formatNumberPrice(categoryByData.reduce(
                 (sum, item) => sum + item.extended_price,
                 0
-              )}
+              ))}
               /-
             </p>
           </div>

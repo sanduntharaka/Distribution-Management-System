@@ -16,6 +16,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import { formatNumberPrice, formatNumberValue } from '../../../var/NumberFormats';
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -42,8 +43,8 @@ const tableIcons = {
 const ByDateRangeTable = (props) => {
   const columns = [
     { title: 'Date', field: 'date' },
-    { title: 'Total', field: 'total' },
-    { title: 'Pc', field: 'count' },
+    { title: 'Total', field: 'total', render: (rowData) => formatNumberPrice(rowData.total) },
+    { title: 'Pc', field: 'count', render: (rowData) => formatNumberValue(rowData.count) },
   ];
   return (
     <MaterialTable

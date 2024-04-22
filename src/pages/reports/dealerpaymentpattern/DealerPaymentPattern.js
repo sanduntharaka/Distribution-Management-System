@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ByDateRangeTable from './ByDateRangeTable';
 import { utils, writeFile } from 'xlsx';
-
+import { formatNumberPrice } from '../../../var/NumberFormats';
 import { axiosInstance } from '../../../axiosInstance';
 
 function exportExcell(columnOrder, columnTitles, data, totalRow, file_name) {
@@ -132,8 +132,7 @@ const DealerPaymentPattern = (props) => {
     setDateByData([]);
     axiosInstance
       .post(
-        `/reports/dealer-pattern/payment/distributor/data/${
-          JSON.parse(sessionStorage.getItem('user_details')).id
+        `/reports/dealer-pattern/payment/distributor/data/${JSON.parse(sessionStorage.getItem('user_details')).id
         }`,
         dateBy,
         {
@@ -199,8 +198,8 @@ const DealerPaymentPattern = (props) => {
         <div className="form">
           <div className="form__row">
             {props.user.is_manager ||
-            props.user.is_company ||
-            props.user.is_excecutive ? (
+              props.user.is_company ||
+              props.user.is_excecutive ? (
               <div className="form__row__col">
                 <div className="form__row__col__label">Distributor</div>
                 <div className="form__row__col__input">
@@ -210,7 +209,7 @@ const DealerPaymentPattern = (props) => {
                     defaultValue={'1'}
                     onChange={(e) => handleDistributorDateBy(e)}
                   >
-                    <option value="">Select distributor</option>
+                    <option value="">Select Distributor</option>
                     {distributors.map((item, i) => (
                       <option value={item.id} key={i}>
                         {item.full_name}
@@ -223,7 +222,7 @@ const DealerPaymentPattern = (props) => {
               ''
             )}
             <div className="form__row__col">
-              <div className="form__row__col__label">Date from</div>
+              <div className="form__row__col__label">Date From</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -234,7 +233,7 @@ const DealerPaymentPattern = (props) => {
               </div>
             </div>
             <div className="form__row__col">
-              <div className="form__row__col__label">Date to</div>
+              <div className="form__row__col__label">Date To</div>
               <div className="form__row__col__input">
                 <input
                   type="date"
@@ -268,7 +267,7 @@ const DealerPaymentPattern = (props) => {
                     setDateBy({ ...dateBy, dealer: e.target.value })
                   }
                 >
-                  <option value="0">Select dealer</option>
+                  <option value="0">Select Dealer</option>
                   {dealers.map((item, i) => (
                     <option value={item.id} key={i}>
                       {item.name}
@@ -301,10 +300,10 @@ const DealerPaymentPattern = (props) => {
             <p>Total</p>
             <p>
               Rs{' '}
-              {dateByData.reduce(
+              {formatNumberPrice(dateByData.reduce(
                 (sum, item) => sum + parseFloat(item.paid_amount),
                 0
-              )}
+              ))}
               /-
             </p>
           </div>

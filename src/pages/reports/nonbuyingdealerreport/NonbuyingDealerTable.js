@@ -41,7 +41,7 @@ const tableIcons = {
 
 const NonbuyingDealerTable = (props) => {
   const columns = [
-    { title: 'Dealer name', field: 'dealer' },
+    { title: 'Dealer Name', field: 'dealer' },
     { title: 'PSA', field: 'psa' },
     { title: 'Reason', field: 'reason' },
   ];
